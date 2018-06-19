@@ -58,10 +58,43 @@ class reminderCommand extends Command
 
             }
         }
+        //VERIFICAR SI LA FUNCION ES addDays addDays addDays addDays addDays addDays
+        $reminder = reminder::where('type','Cita Confirmada')->where('days_before',2)->where('options','Si')->get();
+
+        foreach ($reminder as $value) {
+
+            $events = event::where('medico_id', $value->medico_id)->where('confirmed_medico','Si')->where('start','>',\Carbon\Carbon::now()->addDays(2)->addHours(1))->where('start','<',\Carbon\Carbon::now()->addDays(2)->addHours(24))->where('state','!=','Rechazada/Cancelada')->get();
+
+            foreach ($events as $event) {
+              Mail::send('mails.reminder',['event'=>$event],function($msj) use($event){
+                 $msj->subject('Recordatorio Cita MédicosSi');
+                 // $msj->to($event->patient->email);
+                 $msj->to('eavc53189@gmail.com');
+               });
+
+            }
+        }
+
+        //VERIFICAR SI LA FUNCION ES addDays addDays addDays addDays addDays addDays
+        $reminder = reminder::where('type','Cita Confirmada')->where('days_before',4)->where('options','Si')->get();
+
+        foreach ($reminder as $value) {
+
+            $events = event::where('medico_id', $value->medico_id)->where('confirmed_medico','Si')->where('start','>',\Carbon\Carbon::now()->addDays(4)->addHours(1))->where('start','<',\Carbon\Carbon::now()->addDays(4)->addHours(24))->where('state','!=','Rechazada/Cancelada')->get();
+  
+            foreach ($events as $event) {
+              Mail::send('mails.reminder',['event'=>$event],function($msj) use($event){
+                 $msj->subject('Recordatorio Cita MédicosSi');
+                 // $msj->to($event->patient->email);
+                 $msj->to('eavc53189@gmail.com');
+               });
+
+            }
+        }
 
         $medico = medico::find(11);
-        $medico->lastName = 'lasttt';
+        $medico->lastName = 'Briceño';
         $medico->save();
       }
-      
+
 }

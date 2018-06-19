@@ -59,6 +59,7 @@ class plansController extends Controller
 
         return redirect()->route('home');
      }
+
      public function plan_agenda_contract($id){
        $medico = medico::find($id);
        $specialty = specialty::where('name', $medico->specialty)->first();
@@ -74,9 +75,19 @@ class plansController extends Controller
      }
 
      public function plan_profesional_contract($id){
+       $medico = medico::find($id);
+       $specialty = specialty::where('name', $medico->specialty)->first();
 
-       return view('plans.select_suscription');
+        if($specialty->specialty_category->name != 'Medicos y Especialistas'){
+          $plan = plan::where('name','Plan Profesional')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();
+        }else{
+          $plan = plan::where('name','Plan Profesional')->where('applicable','Medicos y Especialistas' )->first();
+        }
+
+       return view('plans.select_subscription',compact('medico','plan'));
      }
+
+    
 
      public function plan_platino_contract($id){
 
@@ -104,7 +115,7 @@ class plansController extends Controller
          $plan_basico = plan::where('name','Plan Basico')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();
 
           $plan_mi_agenda = plan::where('name','Plan Mi Agenda')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();
-           
+
           $plan_profesional = plan::where('name','Plan Profesional')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();
 
           $plan_platino = plan::where('name','Plan Platino')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();

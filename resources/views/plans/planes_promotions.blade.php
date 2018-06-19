@@ -119,7 +119,7 @@
           <div class="my-2">
             <div class="col-12 text-center">
 
-              <button type="button" name="button" class="btn btn-primary btn-block" onclick="modal_plan_profesional()">Contratar</button>
+              <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
 
             </div>
           </div>

@@ -7,8 +7,12 @@ $(document).ready(function(){
   $("#show").click(function(){
     // $("#dashboard").fadeToggle(200);
 });
+  ////me
+
+  /////
   $("#filter").click(function(){
      $("#panel").slideToggle(200);
+
  });
 });
 

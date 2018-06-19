@@ -197,10 +197,10 @@ class promotersController extends Controller
          $user->attachRole($role);
          $promoter = promoter::find($request->promoter_id);
 
-         Mail::send('mails.confirmMedicoInvited',['medico'=>$medico,'user'=>$user,'code'=>$code,'promoter'=>$promoter],function($msj){
-            $msj->subject('Médicos Si');
-            $msj->to($medico->email);
-       });
+       //   Mail::send('mails.confirmMedicoInvited',['medico'=>$medico,'user'=>$user,'code'=>$code,'promoter'=>$promoter],function($msj){
+       //      $msj->subject('Médicos Si');
+       //      $msj->to($medico->email);
+       // });
 
            return redirect()->route('list_client',$request->promoter_id)->with('success', 'Se ha Registrado un nuevo Médico como su invitado, solo falta que confirme su cuenta a travez de el correo asociado a su registro.');
 

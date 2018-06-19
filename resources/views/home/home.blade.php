@@ -383,11 +383,19 @@
                     <a class="btn btn-primary" href="{{route('medico.edit',$medico['id'])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
                   </div>
                   <div class="form-group">
+                  @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
+
+                    <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar citas</a>
+                  @else
                     @if(Auth::check() and Auth::user()->role == 'Paciente')
                     <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar citas</a>
                     @else
                     <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
                     @endif
+                  @endif
+
+
+
                   </div>
 
                   <div class="form-group">
@@ -434,7 +442,7 @@
           <input type="hidden" name="" value="{{$requestCity = request()->get('city')}}">
           <input type="hidden" name="" value="{{$requestState = request()->get('state')}}">
           <h4>Busqueda de Centro Medico: {{$search}}</h4>
-          <h5>Filtros:</h5>
+          {{-- <h5>Filtros:</h5> --}}
 
           @isset($typeSearch)
           <p>Tipo de Busqueda: <strong>{{$typeSearch}}</strong></p>
@@ -642,6 +650,7 @@
 
 
   <script type="text/javascript">
+
     $(document).ready(function(){
       $('#modal-login').modal('show');
 
@@ -655,31 +664,24 @@
   <script src="http://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY"></script>
   <script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>
   <script type="text/javascript">
-        // function conocerEvento(e) {
-        //  if(!e) var e = window.event;
-        //     console.log(e.type);
+
+    $(document).ready(function(){
+
+      if($('#search').length > 0){
+        $("#panel").slideToggle(200);
+      }
+
+      // if($('#stateRequest').length > 0){
+      //   $("#state").val($('#stateRequest').val());
+      //
+      // }
+      //
+      // if($('#cityRequest').length > 0){
+      //   $("#city").val($('#stateRequest').val());
+      // }
 
 
-        // function show_calification(result){
-        //   medico_id = result.name;
-        //   route = " ";
-        //   $.ajax({
-        //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        //     type:'post',
-        //     url: route,
-        //     data:{medico_id:medico_id},
-        //     success:function(result){
-        //       console.log(result);
-        //       $('#list_calification').html(result);
-        //       $('#modal_calification').modal('show');
-        //
-        //     },
-        //     error:function(error){
-        //       console.log(error);
-        //   }
-        // });
-        //
-        // }
+    });
 
         typeSearch2 =$('#typeSearch2').val();
 
@@ -973,6 +975,8 @@
            $('#modal_verify_patient').modal('hide');
            $('#modal-login').modal('show');
          });
+
+
        </script>
 
        @endsection

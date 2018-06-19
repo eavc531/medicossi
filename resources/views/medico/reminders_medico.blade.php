@@ -1,4 +1,4 @@
-@extends('layouts.app-panel')
+ @extends('layouts.app-panel')
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
@@ -6,6 +6,10 @@
 <style media="screen">
 .fc-event {
     border-width: 1px;
+}
+
+.fc-toolbar{
+  background: rgb(83, 36, 143);
 }
 </style>
 
@@ -21,11 +25,10 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-9 col-12">
-
+        <div class="register">
           <div class="row">
             <div class="col-12">
-              <h2 class="text-center font-title">Mi Agenda</h2>
-
+              <h2 class="text-center font-title">Recordatorios</h2>
 
             </div>
           </div>
@@ -34,27 +37,13 @@
             <div class="col-lg-6 col-12">
             </div>
             </div>
-
+          </div>
           <div class="alert-info p-3 m-2" style="display:none" id="alert_carga5">
             Procesando...
           </div>
         @include('medico.includes.alert_calendar')
         @include('medico.includes.card_edit')
           <hr>
-          {{-- //busqueda --}}
-
-            <label for="" class="mt-2">Agendar con:</label>
-            <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search">
-            <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()">Buscar</button>
-            <button type="button" name="button" class="btn btn-secondary btn-sm" onclick="vaciar_search()">vaciar</button>
-            <div class="" id="result_search">
-
-            </div>
-            <div class="mb-3">
-
-            </div>
-          {{-- // --}}
-
           <div class="" id="example">
             {{-- //////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT --}}
 
@@ -69,15 +58,13 @@
 
             <div class="row text-center mt-2">
               <div class="col">
-                <div class="" style="width:15px;height:15px;background:">
 
-                </div>
                   <input type="radio" value="Disponible" name="opcion" onclick="filtro_todas()"/><br />
-                <label for="" class="mx-2" style="background:rgb(230, 230, 230)">Todas</label>
+                <label for="" class="mx-2" style="background:rgb(230, 230, 230)">Pendientes</label>
               </div>
               <div class="col">
               <input type="radio" value="A" name="opcion" onclick="filtro_title('Cita por Internet')"/><br />
-                <label for="" style="background:rgb(35, 44, 173);color:white">Cita por internet</label>
+                <label for="" style="background:rgb(35, 44, 173);color:white">Ejecutados</label>
               </div>
               <div class="col">
 
@@ -1253,65 +1240,6 @@
       cerrar();
     }
 
-
-
-    $('#input_search').keyup(function(){
-      medico_id = "{{$medico->id}}";
-      search = $('#input_search').val();
-      route = "{{route('search_patients_diary')}}";
-        $.ajax({
-         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-         type:'post',
-         url:route,
-         data:{search:search,medico_id:medico_id},
-         error:function(error){
-           console.log(error);
-        },
-        success:function(result){
-          $('#result_search').html(result);
-          $('#result_search').show();
-          if(search.length == 0){
-            $('#result_search').hide();
-          }
-          console.log(result);
-          cerrar();
-
-        }
-      });
-    });
-
-      function search_medic(){
-        alert('sd');
-      medico_id = "{{$medico->id}}";
-      search = $('#input_search').val();
-      route = "{{route('search_patients_diary')}}";
-        $.ajax({
-         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-         type:'post',
-         url:route,
-         data:{search:search,medico_id:medico_id},
-         error:function(error){
-           console.log(error);
-        },
-        success:function(result){
-          $('#result_search').html(result);
-          $('#result_search').show();
-          if(search.length == 0){
-            $("#input_search").fadeTo(200, .2)
-            .fadeTo(200, 1).fadeTo(200, .2).fadeTo(200, 1);
-            $('#result_search').hide();
-          }
-          console.log(result);
-          cerrar();
-
-        }
-      });
-    }
-
-    function vaciar_search(){
-      $("#input_search").val('');
-      $('#result_search').hide();
-    }
   </script>
 
 

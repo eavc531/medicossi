@@ -133,6 +133,9 @@
               </div>
               @endif
               <div class="col-12">
+                <a href="{{route('reminders_medico',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+              </div>
+              <div class="col-12">
                 <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Descarga tu app</span></a>
               </div>
               <div class="col-12">

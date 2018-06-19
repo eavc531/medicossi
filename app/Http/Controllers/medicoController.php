@@ -42,6 +42,53 @@ class medicoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     public function search_patients(Request $request){
+
+       $patients = DB::table('patients_doctors')
+       ->Join('medicos', 'patients_doctors.medico_id', '=', 'medicos.id')
+       ->Join('patients', 'patients_doctors.patient_id', '=', 'patients.id')
+       ->select('patients.*')
+       ->where(function($query) use($request){
+          $query->where('medico_id',$request->medico_id)
+          ->where('patients.name','LIKE','%'.$request->search.'%');
+        })->orWhere(function($query) use($request){
+           $query->where('medico_id',$request->medico_id)
+           ->where('patients.lastName','LIKE','%'.$request->search.'%');
+         })->orWhere(function($query) use($request){
+            $query->where('medico_id',$request->medico_id)
+            ->where('patients.identification','LIKE','%'.$request->search.'%');
+          })->get();
+
+
+          $medico = medico::find($request->medico_id);
+
+          $data = [];
+          foreach ($patients as $patient) {
+          $photo = photo::where('patient_id',$patient->id)->where('type', 'perfil')->first();
+          if($photo == Null){
+            $image = Null;
+          }else{
+            $image = $photo->path;
+          }
+
+          $data[$patient->id] = ['id'=>$patient->id,'identification'=>$patient->identification,'name'=>$patient->name,'lastName'=>$patient->lastName,'city'=>$patient->city,'state'=>$patient->state,'image'=>$image];
+
+          }
+
+          $currentPage = LengthAwarePaginator::resolveCurrentPage();
+          $col = new Collection($data);
+          $perPage = 10;
+
+
+          $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
+          $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
+          $patients->setPath(route('tolist2'));
+
+
+        return view('medico.patient.medico_patients',compact('medico','patients'));
+
+     }
+
      public function calification_medic($id){
 
       $medico = medico::find($id);
@@ -728,7 +775,7 @@ class medicoController extends Controller
                                     ->select('patients.*','patients_doctors.id as patients_doctor_id')
                                     ->where('medicos.id',$id)
                                     ->orderBy('patients_doctors.created_at','desc')
-                                    ->paginate(10);
+                                    ->get();
 
           $data = [];
           foreach ($patients as $patient) {
@@ -751,7 +798,7 @@ class medicoController extends Controller
           $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
           $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
           $patients->setPath(route('tolist2'));
-          
+
 
         return view('medico.patient.medico_patients',compact('medico','patients'));
 

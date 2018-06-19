@@ -57,13 +57,20 @@
 
          {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
          <a class="btn btn-secondary mr-2" href="{{route('medico.edit',$medico['id'])}}" data-toggle="tooltip" data-html="true" title="<em>Ver Perfil</em>"><i class="fas fa-sign-in-alt"></i></a>
-         @if(Auth::check() and Auth::user()->role == 'Paciente')
-         <a class="btn btn-primary mr-2" href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>"><i class="fas fa-notes-medical mr-0"></i></a>
+         @if($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
+           <a class="btn mr-2" href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>" style="color:white;background:rgb(168, 168, 168)"><i class="fas fa-notes-medical mr-0"></i></a>
          @else
-         <button onclick="return verifySession()" class="btn btn-primary mr-2"  data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>"><i class="fas fa-notes-medical mr-0"></i></button>
+           @if(Auth::check() and Auth::user()->role == 'Paciente')
+
+           <a class="btn btn-primary mr-2" href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>"><i class="fas fa-notes-medical mr-0"></i></a>
+
+           @else
+           <button onclick="return verifySession()" class="btn btn-primary mr-2"  data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>"><i class="fas fa-notes-medical mr-0"></i></button>
+           @endif
          @endif
+
          <a href="{{route('delete_patient_doctors',$medico['patients_doctor_id'])}}" class="btn btn-danger mr-2" onclick="return confirm('¿Esta Segur@ de Querer Eliminar este Médico de su lista de Médicos?')" data-toggle="tooltip" data-html="true" title="<em>Eliminar</em>"><i class="fas fa-trash mr-0"></i></a>
-       <a class="btn btn-warning" href="{{route('calification_medic',$medico['id'])}}" data-toggle="tooltip" data-html="true" title="<em>Calificación</em>"><i class="fas fa-star"></i></a>
+       {{-- <a class="btn btn-warning" href="{{route('calification_medic',$medico['id'])}}" data-toggle="tooltip" data-html="true" title="<em>Calificación</em>"><i class="fas fa-star"></i></a> --}}
 
 <!--        <div class="form-group">
 

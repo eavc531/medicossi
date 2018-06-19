@@ -24,7 +24,7 @@ Route::get('medico/{id}/plan/agenda/contract','plansController@plan_agenda_contr
 Route::get('medico/{id}/plan/profesional/contract','plansController@plan_profesional_contract')->name('plan_profesional_contract');
 
 Route::get('medico/{id}/plans/contract_basic','plansController@contract_basic')->name('contract_basic');
-//
+////////////
 Route::post('compare/hours/{id}','medico_diaryController@compare_hours')->name('compare_hours');
 
 Route::get('medico/{id}/diary/event','medico_diaryController@medico_diary_events')->name('medico_diary_events');
@@ -34,13 +34,17 @@ Route::post('medico/{id}/diary/events2','medico_diaryController@medico_diary_eve
 Route::resource('medico_diary','medico_diaryController');
 Route::post('appoitment/store','medico_diaryController@appointment_store')->name('appointment_store');
 Route::post('medico/update/event', 'medico_diaryController@update_event')->name('update_event');
+
 Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
+
 
 Route::group(['middleware' => ['medic_plan_basic']], function (){
 
 });
 //PLAN AGENDA
 Route::group(['middleware' => ['medic_plan_agenda']], function (){
+    Route::post('search_patients','medicoController@search_patients')->name('search_patients');
+    Route::post('search_patients_diary','medico_diaryController@search_patients_diary')->name('search_patients_diary');
     Route::post('verify_change_date','medico_diaryController@verify_change_date')->name('verify_change_date');
     Route::get('medico/confirmed/payment/appointment/','medico_diaryController@confirmed_payment_app')->name('confirmed_payment_app');
     Route::get('medico/confirmed/appointment/completed','medico_diaryController@confirmed_completed_app')->name('confirmed_completed_app');
@@ -59,13 +63,14 @@ Route::group(['middleware' => ['medic_plan_agenda']], function (){
     Route::get('medico/{id}/panel/diary', 'medico_diaryController@medico_diary')->name('medico_diary');
     Route::get('medico/{id}/panel/schedule', 'medico_diaryController@medico_schedule')->name('medico_schedule');
     Route::post('medico/{id}/schedule/store','medico_diaryController@medico_schedule_store')->name('medico_schedule_store');
-    Route::get('medico/{m_id}/stipulate/appointment/patient/{p_id}','medico_diaryController@medico_stipulate_appointment')->name('medico_stipulate_appointment');
+
     Route::get('medico/{id}/delete/schedule','medico_diaryController@medico_schedule_delete')->name('medico_schedule_delete');
 });
 
 //PLAN Profesional
 Route::group(['middleware' => ['medic_plan_profesional']], function (){
-//calification_medic//
+//calification_medic//b
+    Route::get('medico/{m_id}/stipulate/appointment/patient/{p_id}','medico_diaryController@medico_stipulate_appointment')->name('medico_stipulate_appointment');
     Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
     Route::get('medico/{m_id}/calification','medicoController@calification_medic')->name('calification_medic');
     Route::get('medico/{m_id}/calification/viewed','medicoController@calification_medic_viewed')->name('calification_medic_viewed');
@@ -418,7 +423,14 @@ Route::get('patient/{p_id}/medic/{m_id}/qualify/{app_id}','patientController@qua
 
 
 
-
+//config reminder
 Route::post('reminder_switch_confirmed','reminderController@reminder_switch_confirmed')->name('reminder_switch_confirmed');
 Route::post('reminder_time_confirmed','reminderController@reminder_time_confirmed')->name('reminder_time_confirmed');
+Route::post('switch_payment_and_past','reminderController@switch_payment_and_past')->name('switch_payment_and_past');
+
 Route::get('test','reminderController@test')->name('test');
+//
+
+
+//Recordatorios
+Route::get('medico/{id}/reminders','reminderController@reminders_medico')->name('reminders_medico');

@@ -15,8 +15,18 @@
     </div>
   </div>
 
+    {!!Form::open(['route'=>'search_patients','method'=>'POST'])!!}
+    <div class="form-inline mb-5">
+      {!!Form::hidden('medico_id',$medico->id)!!}
+      {!!Form::text('search',null,['class'=>'form-control','placeholder'=>'nombre/cedula del paciente'])!!}
+      {!!Form::submit('Buscar',['class'=>'btn btn-success'])!!}
+      <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-primary ml-2">Mostrar Todos</a>
+    </div>
+    {!!Form::close()!!}
+
   @if($patients->first() != Null)
-  <div class="">
+  <div class="card">
+    <div class="card-body">
     @foreach ($patients as $patient)
 
     <div class="row">
@@ -32,7 +42,7 @@
      <div class="col-12 col-sm-5 col-lg-5">
       <div class="card-body p-2">
        <h5 class="card-title font-title">
-         <a href="{{route('patient_profile',$patient['id'])}}">{{$patient['name']}}</h5></a>
+         <a href="{{route('patient_profile',$patient['id'])}}">{{$patient['name']}} {{$patient['lastName']}}</h5></a>
        <div class="form-inline">
          <label for="" class="font-title-grey">Cédula:</label> <span class="">{{$patient['identification']}}</span>
        </div>
@@ -58,7 +68,7 @@
       @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
       <div class="col-lg-2 col-2  col-sm-3 text-center">
 
-          <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
+          <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
       </div>
     @endif
       <div class="col-lg-2 col-2  col-sm-4 text-center">
@@ -75,16 +85,19 @@
     {{-- <a href="{{route('delete_patient_doctors',$patient->patients_doctor_id)}}" class="btn btn-danger" onclick="return confirm('¿Esta Segur@ de Querer Eliminar este Médico de su lista de Médicos?')">Eliminar de la lista</a> --}}
   </div>
 </div>
-</div>
 <hr>
 @endforeach
+
+
+</div>
+</div>
 <div class="card-heading">
   {{$patients->appends(Request::all())->links()}}
 </div>
 </div>
 @else
 <div class="text-center">
-  <h4 class="text-primary">No ahi Historial de Pacientes con que hallas Interactuado</h4>
+  <h4 class="text-primary">Sin registros que mostrar</h4>
 </div>
 
 @endif

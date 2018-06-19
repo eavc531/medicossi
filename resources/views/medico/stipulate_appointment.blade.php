@@ -572,29 +572,6 @@
 
    }
 
-   function filtrar(filtro){
-      $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
-      test = 1;
-      route = '{{route('medico_diary_events2',$medico->id)}}';
-      $.ajax({
-       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-       type:'post',
-       url:route,
-       data:{test:test},
-       error:function(error){
-         console.log(error);
-       },
-       success:function(result){
-                $.each(result,function(index,value){//for each event, I will compare the value with the filter, if true, render
-                  if(value.eventType == 'Consulta Medica Importante' || value.rendering == 'background'){
-                    $("#calendar").fullCalendar('renderEvent', value, true);
-                  }
-                });
-
-              }
-            });
-
-    }
 
     function filtroDisponible(filtro){
         $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
@@ -644,7 +621,7 @@
 
         }
 
-        function  CerradaYCobrada(){
+        function pagada_y_completada(){
             $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
             test = 1;
             route = '{{route('medico_diary_events2',$medico->id)}}';
@@ -658,7 +635,7 @@
              },
              success:function(result){
                       $.each(result,function(index,value){//for each event, I will compare the value with the filter, if true, render
-                        if(value.state == 'Cerrada y Cobrada'){
+                        if(value.state == 'Pagada y Completada'){
                           $("#calendar").fullCalendar('renderEvent', value, true);
                         }
                       });

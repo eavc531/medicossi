@@ -15,10 +15,14 @@ class medic_plan_profesional
      */
     public function handle($request, Closure $next)
     {
-      if(Auth::user()->role == 'medico' and Auth::user()->medico->plan == 'plan_profesional'){
-        return $next($request);
-      }else{
-        return redirect()->route('planes_medic',Auth::user()->medico_id)->with('warning', 'Para Poder acceder a ciertos Paneles, debes adquirir uno de nuestros planes, cada uno de estos te permitira hacer acciones extras en el sistema, a continuacion se detallan nuestros planes, de acuerdo a tu especialidad');
+
+      if (Auth::user()->role == 'medico') {
+        if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino'){
+          return $next($request);
+        }else{
+          return redirect()->route('planes_medic',Auth::user()->medico_id)->with('warning', 'Para Poder acceder a ciertos Paneles, debes adquirir uno de nuestros planes, cada uno de estos te permitira hacer acciones extras en el sistema, a continuacion se detallan nuestros planes, de acuerdo a tu especialidad');
+        }
       }
+
     }
 }

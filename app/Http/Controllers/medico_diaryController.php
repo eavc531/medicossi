@@ -10,6 +10,8 @@ use App\patient;
 use App\event;
 use App\patients_doctor;
 use Mail;
+use App\reminder;
+use DB;
 class medico_diaryController extends Controller
 {
     /**
@@ -17,6 +19,29 @@ class medico_diaryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     public function search_patients_diary(Request $request){
+
+       $patients = DB::table('patients_doctors')
+       ->Join('medicos', 'patients_doctors.medico_id', '=', 'medicos.id')
+       ->Join('patients', 'patients_doctors.patient_id', '=', 'patients.id')
+       ->select('patients.*')
+       ->where(function($query) use($request){
+          $query->where('medico_id',$request->medico_id)
+          ->where('patients.name','LIKE','%'.$request->search.'%');
+        })->orWhere(function($query) use($request){
+           $query->where('medico_id',$request->medico_id)
+           ->where('patients.lastName','LIKE','%'.$request->search.'%');
+         })->orWhere(function($query) use($request){
+            $query->where('medico_id',$request->medico_id)
+            ->where('patients.identification','LIKE','%'.$request->search.'%');
+          })->get();
+
+          $medico_id = $request->medico_id;
+
+       return view('medico.panel.ajax_result_search',compact('patients','medico_id'));
+
+
+     }
 
      public function confirmed_payment_app(Request $request){
        $event = event::find($request->event_id);
@@ -476,8 +501,10 @@ class medico_diaryController extends Controller
 
      public function medico_stipulate_appointment($id,$p_id)
        {
+
          // $months = month::where('user_id',Auth::user()->id)->get();
          $medico = medico::find($id);
+
          $patient =  patient::find($p_id);
 
          $lunes = event::where('medico_id',$id)->where('title','lunes')->orderBy('end','asc')->get();
@@ -663,7 +690,7 @@ class medico_diaryController extends Controller
        if($request->title == 'Cita por Internet'){
          $event->color = 'rgb(35, 44, 173)';
        }else{
-         $event->color = 'rgb(151, 166, 232)';
+         $event->color = 'rgb(69, 189, 39)';
        }
 
        if(Auth::check() and Auth::user()->role == 'Paciente'){
@@ -699,8 +726,9 @@ class medico_diaryController extends Controller
        $medico = medico::find($request->medico_id);
        $patient = patient::find($request->patient_id);
 
-       if($event->stipulated == 'Medico'){
-         $medico->confirmedMedico == 'Si';
+       if(Auth::check() and Auth::user()->role == 'medico'){
+         $event->confirmedMedico == 'Si';
+         $event->save();
          Mail::send('mails.med_notification_patient_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($patient){
             $msj->subject('Médicos Si');
             $msj->to($patient->email);
@@ -738,8 +766,11 @@ class medico_diaryController extends Controller
 
      public function stipulate_appointment($id)
      {
-       // $months = month::where('user_id',Auth::user()->id)->get();
        $medico = medico::find($id);
+       if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
+         return back()->with('warning','La opcion de agendar citas online con el médico: "'.$medico->name.' '.$medico->lastName.'" estas desabilitadas en este momento,por favor intente contactarlo por otro medio o intente con otro médico, para los Médicos que poseen esta opcion habilitida  se muestra el boton "Agendar Cita" en color "Azul Claro".');
+       }
+       // $months = month::where('user_id',Auth::user()->id)->get();
 
        $lunes = event::where('medico_id',$id)->where('title','lunes')->orderBy('end','asc')->get();
        $martes = event::where('medico_id',$id)->where('title','martes')->orderBy('end','asc')->get();
@@ -853,7 +884,6 @@ class medico_diaryController extends Controller
 
      public function medico_diary($id)
      {
-
        // $months = month::where('user_id',Auth::user()->id)->get();
        $medico = medico::find($id);
 
@@ -937,13 +967,16 @@ class medico_diaryController extends Controller
          }
 
          $days_hide = ['lunes'=>$lunes3,'martes'=>$martes3,'miercoles'=>$miercoles3,'jueves'=>$jueves3,'viernes'=>$viernes3,'sabado'=>$sabado3,'domingo'=>$domingo3];
+         //Configuración para recordatorio cita confirmada
+         $reminder_confirmed = reminder::where('medico_id',$medico->id)->where('type', 'Cita Confirmada')->first();
+          //Configuración para citas pagadas con fecha pasada
+         $config_past_and_payment_auto = reminder::where('medico_id',$medico->id)->where('type', 'Pasada y Pagada')->first();
 
-
-         return view('medico.panel.diary')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule);
+         return view('medico.panel.diary')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule)->with('reminder_confirmed', $reminder_confirmed)->with('config_past_and_payment_auto', $config_past_and_payment_auto);
 
        }
 
-       return view('medico.panel.diary')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule);
+       return view('medico.panel.diary')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule)->with('config_past_and_payment_auto', $config_past_and_payment_auto);
        // ->with($months, 'months');
      }
 
@@ -959,22 +992,40 @@ class medico_diaryController extends Controller
 
      }
 
+
+     public function verify_past_and_payment($id){
+       $verify_config_past_and_payment = reminder::where('medico_id', $id)->where('type','Pasada y Pagada')->first();
+       if($verify_config_past_and_payment != Null and $verify_config_past_and_payment->options == 'Si'){
+         $event_past_and_payment = event::where('medico_id',$id)->where('end','<', \Carbon\Carbon::now())->where('state', 'Pagada y Pendiente')->get();
+
+         foreach ($event_past_and_payment as $value) {
+           $value->color = 'rgb(255, 255, 255)';
+           $value->state = 'Pagada y Completada';
+           $value->save();
+         }
+
+       }
+
+     }
+
      public function medico_diary_events($id)
      {
 
       medico_diaryController::verify_past_appointment($id);
+      medico_diaryController::verify_past_and_payment($id);
+
        $data = event::where('medico_id',$id)->where('state','!=','Rechazada/Cancelada')->get();
 
         return Response()->json($data);
      }
 
-     public function medico_diary_events2($id)
-     {
-       $data = event::where('medico_id',$id)->get();
-
-       // return view('fullCalendar.fullCalendar');
-        return Response()->json($data);
-     }
+     // public function medico_diary_events2($id)
+     // {
+     //   $data = event::where('medico_id',$id)->get();
+     //
+     //   // return view('fullCalendar.fullCalendar');
+     //    return Response()->json($data);
+     // }
 
      public function medico_diary_fullscreen($id)
      {

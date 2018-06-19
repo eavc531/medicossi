@@ -260,7 +260,7 @@ class patientController extends Controller
               $image = $photo->path;
             }
 
-            $data[$medico->id] = ['identification'=>$medico->identification,'specialty'=>$medico->specialty,'id'=>$medico->id,'name'=>$medico->name,'lastName'=>$medico->lastName,'city'=>$medico->city,'state'=>$medico->state,'latitud'=>$medico->latitud,'longitud'=>$medico->longitud,'image'=>$image,'patients_doctor_id'=>$medico->patients_doctor_id,'calification'=>$medico->calification,'votes'=>$medico->votes];
+            $data[$medico->id] = ['identification'=>$medico->identification,'specialty'=>$medico->specialty,'id'=>$medico->id,'name'=>$medico->name,'lastName'=>$medico->lastName,'city'=>$medico->city,'state'=>$medico->state,'latitud'=>$medico->latitud,'longitud'=>$medico->longitud,'image'=>$image,'patients_doctor_id'=>$medico->patients_doctor_id,'calification'=>$medico->calification,'votes'=>$medico->votes,'plan'=>$medico->plan];
 
 
       }
@@ -557,8 +557,6 @@ class patientController extends Controller
           $patient->save();
 
           return redirect()->route('patient_profile',$patient->id)->with('success', 'Datos de dirección guardados de forma satisfactoria');
-
-
     }
 
     public function stipulate_appointment($id){
