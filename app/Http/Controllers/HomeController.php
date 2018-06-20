@@ -217,7 +217,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
             ]);
           }
 
-
           $lat = $request->latitud;
           $lng = $request->longitud;
 
@@ -231,6 +230,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
               if($request->filter_ranking == 'si'){
                 $data = collect($data)->sortByDesc('calification')->toArray();
+              }else{
+                $data = collect($data)->sortBy('dist')->toArray();
               }
               $currentPage = LengthAwarePaginator::resolveCurrentPage();
               $medicosCerc = HomeController::paginate_custom($data,$currentPage);
@@ -322,6 +323,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   $data = HomeController::create_array_medicos($medicos);
                   if($request->filter_ranking == 'si'){
                     $data = collect($data)->sortByDesc('calification')->toArray();
+                  }else{
+                    $data = collect($data)->sortBy('dist')->toArray();
                   }
                   $currentPage = LengthAwarePaginator::resolveCurrentPage();
                   $medicosCerc = HomeController::paginate_custom($data,$currentPage);
@@ -344,6 +347,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   $data = HomeController::create_array_medicos($medicos);
                   if($request->filter_ranking == 'si'){
                     $data = collect($data)->sortByDesc('calification')->toArray();
+                  }else{
+                    $data = collect($data)->sortBy('dist')->toArray();
                   }
                   $currentPage = LengthAwarePaginator::resolveCurrentPage();
                   $medicosCerc = HomeController::paginate_custom($data,$currentPage);
@@ -364,7 +369,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
           $data = HomeController::calculate_dist_to_array($medicos,$dist,$lat,$lng);
           if($request->filter_ranking == 'si'){
             $data = collect($data)->sortByDesc('calification')->toArray();
+          }else{
+            $data = collect($data)->sortBy('dist')->toArray();
           }
+
           $currentPage = LengthAwarePaginator::resolveCurrentPage();
           $medicosCerc = HomeController::paginate_custom($data,$currentPage);
           $medicosCercCount = count($medicosCerc);
@@ -388,8 +396,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
               ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
               ->get();
 
+
               $data = [];
               foreach ($medicos as $medico){
+
 
                 if($medico->city == $request->city){
                   $consulting_room = consulting_room::where('medico_id',$medico->id)->get()->toArray();
@@ -406,6 +416,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
               if($request->filter_ranking == 'si'){
                 $data = collect($data)->sortByDesc('calification')->toArray();
+              }else{
+                $data = collect($data)->sortBy('dist')->toArray();
               }
 
 
@@ -447,6 +459,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 }
                 if($request->filter_ranking == 'si'){
                   $data = collect($data)->sortByDesc('calification')->toArray();
+                }else{
+                  $data = collect($data)->sortBy('dist')->toArray();
                 }
                 $currentPage = LengthAwarePaginator::resolveCurrentPage();
                 $medicosCerc = HomeController::paginate_custom($data,$currentPage);
@@ -471,6 +485,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
               $data = HomeController::calculate_dist_to_array($medicos,$dist,$lat,$lng);
               if($request->filter_ranking == 'si'){
                 $data = collect($data)->sortByDesc('calification')->toArray();
+              }else{
+                $data = collect($data)->sortBy('dist')->toArray();
               }
 
 
@@ -497,6 +513,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
             // if(isset())
             if($request->filter_ranking == 'si'){
               $data = collect($data)->sortByDesc('calification')->toArray();
+            }else{
+              $data = collect($data)->sortBy('dist')->toArray();
             }
 
           // dd($data);
@@ -570,6 +588,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
             $data = array_slice($data,$numberPageNow, 4);
             if($request->filter_ranking == 'si'){
               $data = collect($data)->sortByDesc('calification')->toArray();
+            }else{
+              $data = collect($data)->sortBy('dist')->toArray();
             }
             return response()->json($data);
         }
@@ -639,6 +659,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 $data = HomeController::create_array_medicos($medicos);
                 if($request->filter_ranking == 'si'){
                   $data = collect($data)->sortByDesc('calification')->toArray();
+                }else{
+                  $data = collect($data)->sortBy('dist')->toArray();
                 }
                 $data = array_slice($data,$numberPageNow, 4);
                 return response()->json($data);
@@ -662,6 +684,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 $data = array_slice($data,$numberPageNow, 4);
                 if($request->filter_ranking == 'si'){
                   $data = collect($data)->sortByDesc('calification')->toArray();
+                }else{
+                  $data = collect($data)->sortBy('dist')->toArray();
                 }
                 return response()->json($data);
           }
@@ -677,6 +701,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
         $data = HomeController::calculate_dist_to_array($medicos,$dist,$lat,$lng);
         if($request->filter_ranking == 'si'){
           $data = collect($data)->sortByDesc('calification')->toArray();
+        }else{
+          $data = collect($data)->sortBy('dist')->toArray();
         }
         $data = array_slice($data,$numberPageNow, 4);
         return response()->json($data);
@@ -708,6 +734,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
             if($request->filter_ranking == 'si'){
               $data = collect($data)->sortByDesc('calification')->toArray();
+            }else{
+              $data = collect($data)->sortBy('dist')->toArray();
             }
             $data = array_slice($data,$numberPageNow, 4);
             return response()->json($data);
@@ -736,6 +764,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
               if($request->filter_ranking == 'si'){
                 $data = collect($data)->sortByDesc('calification')->toArray();
+              }else{
+                $data = collect($data)->sortBy('dist')->toArray();
               }
               $data = array_slice($data,$numberPageNow, 4);
               return response()->json($data);
@@ -756,6 +786,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
             $data = HomeController::calculate_dist_to_array($medicos,$dist,$lat,$lng);
             if($request->filter_ranking == 'si'){
               $data = collect($data)->sortByDesc('calification')->toArray();
+            }else{
+              $data = collect($data)->sortBy('dist')->toArray();
             }
             $data = array_slice($data,$numberPageNow, 4);
             return response()->json($data);
@@ -777,6 +809,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
         $data = HomeController::create_array_medicos($medicos,$dist);
         if($request->filter_ranking == 'si'){
           $data = collect($data)->sortByDesc('calification')->toArray();
+        }else{
+          $data = collect($data)->sortBy('dist')->toArray();
         }
         $data = array_slice($data,$numberPageNow, 4);
         return response()->json($data);

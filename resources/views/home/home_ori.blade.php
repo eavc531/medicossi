@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('css')
+<style media="screen">
+.widthDiv{
+  width: 100%;
+  height: 800px;
+}
 
+   </style>
 
 @endsection
 @section('content')
@@ -76,13 +82,16 @@
           </div>
           <div class="col-8">
             <div class="col-12 mt-3">
-
-
-                @if(request()->state != Null or request()->city != Null)
-                  <button type="button" name="button" onclick="ubicacion()" id="btn-ubicacion" class="btn btn-primary" disabled>Ubicación</button>
-                  <button type="button" name="button" onclick="distancia()" id="btn-distancia" class="btn btn-secondary" style="color:black">Distancia</button>
-                  <div class="tab-content" id="myTabContent">
-                <div class="" id="div_ubicacion">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Ubicación</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Distancia</a>
+                </li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                   <div class="row mt-3">
                     <div class="form-group col-6">
                       {!!Form::select('state',$states,request()->state,['class'=>'form-control','id'=>'stateMedic','placeholder'=>'estado'])!!}
@@ -91,40 +100,16 @@
                       {!!Form::select('city',$cities,request()->city,['class'=>'form-control','id'=>'cityMedic','placeholder'=>'ciudad'])!!}
                     </div>
                   </div>
-                </div>
 
-                <div class="" id="div_distancia"  aria-labelledby="profile-tab" style="display:none">
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                   <div class="form-group mt-3">
-                    <div class="col-12 mt2-">
+                    <div class="col-6 mt2-">
                       {{Form::select('dist',[50=>'50 Km',100=>'100 Km',200=>'200 Km',400=>'400 Km',800=>'800 Km',1000=>'1000 Km',2000=>'2000 Km',10000=>'10000 Km',15000=>'15000 Km',50000=>'50000 Km'],null,['class'=>'form-control','id'=>'dist','placeholder'=>'seleccione una opcion'])}}
                     </div>
                   </div>
                 </div>
               </div>
-              @else
-                <button type="button" name="button" onclick="ubicacion()" id="btn-ubicacion" class="btn btn-primary">Ubicación</button>
-                <button type="button" name="button" onclick="distancia()" id="btn-distancia" class="btn btn-secondary" disabled style="color:black">Distancia</button>
-                <div class="tab-content" id="myTabContent">
-                <div class="" id="div_ubicacion" style="display:none">
-                  <div class="row mt-3">
-                    <div class="form-group col-6">
-                      {!!Form::select('state',$states,request()->state,['class'=>'form-control','id'=>'stateMedic','placeholder'=>'estado'])!!}
-                    </div>
-                    <div class="form-group col-6">
-                      {!!Form::select('city',$cities,request()->city,['class'=>'form-control','id'=>'cityMedic','placeholder'=>'ciudad'])!!}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="" id="div_distancia"  aria-labelledby="profile-tab">
-                  <div class="form-group mt-3">
-                    <div class="col-12 mt2-">
-                      {{Form::select('dist',[50=>'50 Km',100=>'100 Km',200=>'200 Km',400=>'400 Km',800=>'800 Km',1000=>'1000 Km',2000=>'2000 Km',10000=>'10000 Km',15000=>'15000 Km',50000=>'50000 Km'],null,['class'=>'form-control','id'=>'dist','placeholder'=>'seleccione una opcion'])}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              @endif
               {{Form::close()}}
             </div>
           </div>
@@ -193,8 +178,8 @@
                 @if(!isset($requestCity) or $requestCity == 'ciudad')
                 @isset($requestState)
                 <p>Estado: <strong>{{request()->get('state')}}<strong></p>
-                @endisset
-                @endif
+                  @endisset
+                  @endif
                 </div>
                 @foreach ($medicalCenter as $mc)
                 <hr>
@@ -255,8 +240,7 @@
 
 
              <div class="tab-pane fade" id="mapa2" role="tabpanel" aria-labelledby="profile-tab">
-
-               <div id="map" class="mb-4 p-4" style="width:600;height:800px;">
+               <div id="map" class="mb-4 p-4">
 
                </div>
              </div>
@@ -295,8 +279,8 @@
             @if(!isset($requestCity) or $requestCity == 'ciudad')
             @isset($requestState)
             <p>Estado: <strong>{{request()->get('state')}}<strong></p>
-            @endisset
-            @endif
+              @endisset
+              @endif
             </div>
 
           </div>
@@ -309,10 +293,9 @@
           <div class="col-12 content-profile">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home2" role="tab" aria-controls="home" aria-selected="true" onclick="hide_map()">Médicos</a>
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home2" role="tab" aria-controls="home" aria-selected="true">Médicos</a>
               </li>
               <li class="nav-item">
-
                 <a onclick="show_map2()" class="nav-link" id="profile-tab" data-toggle="tab" href="" role="tab" aria-controls="profile" aria-selected="false">Mapa</a>
               </li>
 
@@ -348,14 +331,12 @@
                  @if(!isset($requestCity) or $requestCity == 'ciudad')
                  @isset($requestState)
                  <p>Estado: <strong>{{request()->get('state')}}<strong></p>
-                  @endisset
-                  @endif
+                   @endisset
+                   @endif
 
 
                  </div>
-                 <input type="hidden" name="" value="{!!$position = 0!!}">
                  @foreach ($medicosCerc as $medico )
-                   <input type="hidden" name="" value="{!!$position = $position + 1!!}">
 
                  <hr>
                  <div class="row">
@@ -371,7 +352,7 @@
                   </div>
                   <div class="col-12 col-sm-5 col-lg-5">
                    <div class="card-body p-2">
-                    <h5 class="card-title title-edit">{{$medico['name']}} {{$medico['lastName']}}</h5>
+                    <h5 class="card-title title-edit">{{$medico['name']}}</h5>
                     <p>Cédula: {{$medico['identification']}}</p>
                     <span>Especialidad:</span> <a href="#" class="outstanding mr-2"> {{$medico['specialty']}}</a>
                     <div class="star-profile">
@@ -387,7 +368,7 @@
                     </div>
                     <div class="row mt-3 align-self-end">
                       <div class="col-12">
-                        <a href="{{route('detail_medic_map',$medico['id'])}}" class="btn btn-primary btn-sm text-white"><p class="card-text">({{$position}}) - <i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
+                        <a href="{{route('detail_medic_map',$medico['id'])}}" class="btn btn-primary btn-sm text-white"><p class="card-text"><i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
                       </div>
                     </div>
 
@@ -441,7 +422,7 @@
            </div>
 
            <div class="tab-pane fade" id="mapa2" role="tabpanel" aria-labelledby="profile-tab">
-             <div id="map" class="mb-4 p-4" style="width:600;height:800px">
+             <div id="map" class="mb-4 p-4">
 
              </div>
            </div>
@@ -684,24 +665,6 @@
   <script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>
   <script type="text/javascript">
 
-    function distancia(){
-      $("#stateMedic").val('');
-      $("#cityMedic").val('');
-      $("#div_distancia").show();
-      $("#div_ubicacion").hide();
-      $("#btn-ubicacion").prop('disabled',false);
-      $("#btn-distancia").prop('disabled',true);
-    }
-
-
-
-    function ubicacion(){
-      $("#div_distancia").hide();
-      $("#div_ubicacion").show();
-      $("#dist").val('');
-      $("#btn-ubicacion").prop('disabled',true);
-      $("#btn-distancia").prop('disabled',false);
-    }
     $(document).ready(function(){
 
       if($('#search').length > 0){
@@ -765,23 +728,17 @@
           }
 
         //Esto me permitio MOSTRAR EL MAPA DIRECTAMENTE EN LA EPSTAÑA
-        function hide_map(){
-          $("#map").hide();
-
-        }
 
         function show_map2(){
 
           $('.tab-content div.active').removeClass('active');
           $('#mapa2').tab('show');
-          $("#map").show();
+          $("#map").addClass("widthDiv");
           map();
         }
 
 
         //UBICA LOS PUNTOS EN EL MAPA  //UBICA LOS PUNTOS EN EL MAPA
-
-
         function map(){
 
           search = $('#search').val();
@@ -829,7 +786,6 @@
                 number = number + 1;
                 if(number == 1){
                   icon = "{{asset('img/markers/marker_green1.png')}}";
-
                 }else if(number == 2){
                   icon = "{{asset('img/markers/marker_green2.png')}}";
                 }else if(number == 3){
@@ -849,26 +805,16 @@
                 }else if(number == 10){
                   icon = "{{asset('img/markers/marker_green10.png')}}";
                 }
-                if(value.lastName == 'undefined'){
-                  map.addMarker({
-                    lat: value.latitud,
-                    lng: value.longitud,
-                    title: value.name,
-                    icon: icon,
-                    infoWindow : {content :'<p>'+value.name+'</p>'}
 
-                });//fin marker
-              }else{
                 map.addMarker({
                   lat: value.latitud,
                   lng: value.longitud,
                   title: value.name,
                   icon: icon,
-                  infoWindow : {content :'<p>'+value.name+' '+value.lastName+'</p>'}
-
-              });//fin mark
-              }
-
+                  click: function(e) {
+                    alert(value.name);
+                  }
+              });//fin marker
 
               });
             },//fin success
@@ -878,8 +824,6 @@
             },
           });
         }
-
-
 
 
         $('#stateMedic').on('change', function() {
