@@ -42,7 +42,7 @@
         @include('medico.includes.card_edit')
           <hr>
           {{-- //busqueda --}}
-
+          @if($countEventSchedule != 0)
             <label for="" class="mt-2">Agendar con:</label>
             <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search">
             <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()">Buscar</button>
@@ -53,6 +53,7 @@
             <div class="mb-3">
 
             </div>
+          @endif
           {{-- // --}}
 
           <div class="" id="example">
@@ -112,13 +113,14 @@
             </div>
 
 
-            <div class="row mt-5">
+
 
               <div class="col-lg-10 col-12 align-items-center">
                 <h6>¿Desea que se mande un mensaje de recordatorio a sus pacientes con citas confirmadas?</h6>
               </div>
               <div class="col-lg-2 col-12">
                 <div class="radio-switch">
+                @if($reminder_confirmed != Null)
                   @if ($reminder_confirmed->options == Null or $reminder_confirmed->options == 'No')
                     <div class="radio-switch-field">
 
@@ -139,10 +141,21 @@
                     <label for="switch-on">Si</label>
                   </div>
                 @endif
+              @else
+                <div class="radio-switch-field">
+
+                  <input id="switch-off" type="radio" name="radio-switch" value="No" checked onclick="switch_reminder1('No')">
+                  <label for="switch-off">No</label>
+                </div>
+                <div class="radio-switch-field">
+                  <input id="switch-on" type="radio" name="radio-switch" value="Si"  onclick="switch_reminder1('Si')">
+                  <label for="switch-on">Si</label>
+                </div>
+              @endif
                 </div>
               </div>
 
-              @if ($reminder_confirmed->options == Null or $reminder_confirmed->options == 'No')
+              {{-- @if ($reminder_confirmed->options == Null or $reminder_confirmed->options == 'No')
                 <div class="col-12" id="open-check" style="display: none;">
                   <div class="custom-control custom-radio custom-control-inline">
                     <input value="" type="radio" id="customRadioInline1" name="tyme_before" class="custom-control-input" onclick="reminder_time_confirmed('5')">
@@ -174,7 +187,7 @@
                   {!!Form::close()!!}
                 </div>
               </div>
-            @endif
+            @endif --}}
 
 
 
@@ -188,6 +201,7 @@
 
                 <div class="col-lg-2 col-12">
                   <div class="radio-switch">
+                  @if ($config_past_and_payment_auto != Null)
                     @if($config_past_and_payment_auto->options == 'Si')
                       <label for="switch-off">No</label>
                       <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('No')">
@@ -199,6 +213,13 @@
                       <label for="switch-off">Si</label>
                       <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('Si')">
                     @endif
+                  @else
+                    <label for="switch-off">No</label>
+                    <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('No')" checked>
+                    <label for="switch-off">Si</label>
+                    <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('Si')">
+                  @endif
+
 
                   </div>
                 </div>
@@ -489,7 +510,7 @@
       <div class="modal-body">
 
         <h5 class="font-title-grey">¿Como Agendar Cita con un Paciente Registrado?</h5>
-        <p>Para agendar cita, debe seleccionar en la barra lateral izquierda,la opcion "Mis Pacientes",seleccionar el
+        <p>Para agendar cita, debe buscar medico a travez del filtro "Agendar con" ubicado en la parte superior de la agenda, o seleccionar en la barra lateral izquierda la opcion "Mis Pacientes",seleccionar el
         paciente al que desea agendar la consulta, y luego hacer click en el boton "Agendar cita", con esto se abrira el panel correspondiente para agendar cita con el paciente seleccionado.</p>
 
         <h5 class="font-title-grey">Mi Agenda</h5>

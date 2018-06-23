@@ -897,6 +897,7 @@ class medico_diaryController extends Controller
 
        // event::max('');
        $countEventSchedule = event::where('medico_id',$id)->where('eventType','horario')->max('end');
+       $config_past_and_payment_auto = reminder::where('medico_id',$medico->id)->where('type', 'Pasada y Pagada')->first();
        if($countEventSchedule != 0){
 
          $lunes1 = event::where('medico_id',$id)->where('title','lunes')->max('end');
@@ -970,7 +971,7 @@ class medico_diaryController extends Controller
          //Configuración para recordatorio cita confirmada
          $reminder_confirmed = reminder::where('medico_id',$medico->id)->where('type', 'Cita Confirmada')->first();
           //Configuración para citas pagadas con fecha pasada
-         $config_past_and_payment_auto = reminder::where('medico_id',$medico->id)->where('type', 'Pasada y Pagada')->first();
+
 
          return view('medico.panel.diary')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule)->with('reminder_confirmed', $reminder_confirmed)->with('config_past_and_payment_auto', $config_past_and_payment_auto);
 
@@ -1063,8 +1064,6 @@ class medico_diaryController extends Controller
 
      public function medico_schedule_store(Request $request,$id)
      {
-
-
          $request->validate([
            'day'=>'required',
          ]);
@@ -1073,7 +1072,7 @@ class medico_diaryController extends Controller
            $data = array('lunes','martes','miercoles','jueves','viernes');
            $dow = 0;
            foreach ($data as $i => $value) {
-             echo $value;
+             
              $schedule = new event;
              $dow = $dow + 1;
              $schedule->dow = $dow;

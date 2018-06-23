@@ -416,7 +416,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
                 if($medico->city == $request->city){
                   $consulting_room = consulting_room::where('medico_id',$medico->id)->get()->toArray();
-                  $photo = photo::where('medicalCenter_id',$medico->id)->where('type', 'perfil')->first();
+                  $photo = photo::where('medico_id',$medico->id)->where('type', 'perfil')->first();
                     if($photo == Null){
                       $image = Null;
                     }else{

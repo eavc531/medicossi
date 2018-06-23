@@ -14,7 +14,6 @@
 @endsection
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 @section('content')
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-9 col-sm-8 col-12">
@@ -81,7 +80,7 @@
         </div>
 
         <label for="" class="mt-2 font-title">Tipo de Evento</label>
-        {!!Form::select('title',['Ambulatoria'=>'Ambulatoria','Externa o a Domicilio'=>'Externa o a Domicilio','Urgencias'=>'Urgencias','Cita por Internet'=>'Cita por Internet'],null,['class'=>'form-control','id'=>'eventType2','placeholder'=>'seleccionar'])!!}
+        {!!Form::select('title',['Cita por Internet'=>'Cita por internet'],null,['class'=>'form-control','id'=>'eventType2','placeholder'=>'seleccionar'])!!}
         <label for="" class="mt-2 font-title">Metodo de Pago</label>
         {!!Form::select('payment_method',['Normal'=>'Normal','Aseguradora'=>'Aseguradora'],null,['class'=>'form-control','id'=>'payment_method6'])!!}
         {{-- <input class="form-control my-2" type="text" placeholder="Titulo" id="title2"> --}}
@@ -572,7 +571,7 @@
 
     }
 
-        
+
 
   function parpadeo(){
 
