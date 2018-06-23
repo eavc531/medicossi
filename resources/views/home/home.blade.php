@@ -2,10 +2,16 @@
 
 @section('css')
 
+{{-- <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css"> --}}
+<link rel="stylesheet" href="{{asset('jqueryui/jquery-ui.css')}}">
 
 @endsection
 @section('content')
 
+  {{-- {{ Form::open(['action' => ['HomeController@autocomplete_specialty'], 'method' => 'GET']) }}
+    {{ Form::text('q', '', ['id' =>  'q', 'placeholder' =>  'Enter name'])}}
+    {{ Form::submit('Search', array('class' => 'button expand')) }}
+{{ Form::close() }} --}}
 
   @if(!isset(Auth::user()->id))
   <div class="row">
@@ -14,7 +20,6 @@
         <h5 class="font-title-index">¿Ya eres un profesional registrado?</h5>
           <a class="mr-3" href="" data-toggle="modal" data-target="#modal-register"><img width="130px" height="50px" class="box-shadox" src="{{asset('img/botones-medicossi-18.png')}}"></a>
       </div>
-
     </div>
     <div class="col-5">
       <div class="text-center">
@@ -22,21 +27,14 @@
      </div>
      <div class="text-center">
       <a class="mr-3" href="{{route('patient_register_view')}}"><img width="130px" height="50px" class="box-shadox" src="{{asset('img/botones-medicossi-18.png')}}"></a>
-
     </div>
     </div>
     <div class="col-2">
       <div class="" style="margin-top:23px">
         <a href="" data-toggle="modal" data-target="#modal-login"><img width="130px" height="50px" class="box-shadox mt-4" src="{{asset('img/botones-medicossi-20.png')}}"></a>
       </div>
-
     </div>
   </div>
-
-
-
-
-
 @endif
 <div class="row box-index mt-4">
   <div class="col-12">
@@ -53,7 +51,6 @@
           {{Form::hidden('state',null,['id'=>'state'])}} --}}
           <button type="submit" class="ml-2 white"><span id="filter"><i class="fas fa-search fa-2x"></i></span></button>
         </div>
-
       </div>
     </div>
     <div id="panel">
@@ -62,25 +59,21 @@
           <div class="col-4">
             <div class="col-12 mt-3">
               <div class="form-group">
-                <p><strong>Filtrar por:</strong></p>
-
                   <label class="custom-control-description">Ordenar por Puntaje</label>
-
                   <div class="text-center">
                   {{Form::select('filter_ranking',['no'=>'no','si'=>'si'],null,['class'=>'form-control','id'=>'filter_ranking','style'=>'width:100px'])}}
                 </div>
-
-
               </div>
             </div>
           </div>
           <div class="col-8">
             <div class="col-12 mt-3">
-
-
-                @if(request()->state != Null or request()->city != Null)
-                  <button type="button" name="button" onclick="ubicacion()" id="btn-ubicacion" class="btn btn-primary" disabled>Ubicación</button>
-                  <button type="button" name="button" onclick="distancia()" id="btn-distancia" class="btn btn-secondary" style="color:black">Distancia</button>
+                @if(request()->dist == Null)
+                  <div class="form-inline">
+                    <p class="mr-4"><strong>Filtrar por:</strong></p>
+                    <button type="button" name="button" onclick="ubicacion()" id="btn-ubicacion" class="btn btn-primary" disabled>Ubicación</button>
+                    <button type="button" name="button" onclick="distancia()" id="btn-distancia" class="btn btn-secondary" style="color:black">Distancia</button>
+                  </div>
                   <div class="tab-content" id="myTabContent">
                 <div class="" id="div_ubicacion">
                   <div class="row mt-3">
@@ -92,7 +85,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="" id="div_distancia"  aria-labelledby="profile-tab" style="display:none">
                   <div class="form-group mt-3">
                     <div class="col-12 mt2-">
@@ -102,8 +94,11 @@
                 </div>
               </div>
               @else
+                <div class="form-inline">
+                  <p class="mr-4"><strong>Filtrar por:</strong></p>
                 <button type="button" name="button" onclick="ubicacion()" id="btn-ubicacion" class="btn btn-primary">Ubicación</button>
                 <button type="button" name="button" onclick="distancia()" id="btn-distancia" class="btn btn-secondary" disabled style="color:black">Distancia</button>
+                </div>
                 <div class="tab-content" id="myTabContent">
                 <div class="" id="div_ubicacion" style="display:none">
                   <div class="row mt-3">
@@ -115,7 +110,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="" id="div_distancia"  aria-labelledby="profile-tab">
                   <div class="form-group mt-3">
                     <div class="col-12 mt2-">
@@ -144,7 +138,6 @@
           <div class="float-left p-3">
             {{Form::open(['route'=>'tolist2','method'=>'get'])}}
             {{Form::hidden('search',$specialty->name)}}
-
             {{Form::hidden('typeSearch2','Especialidad Medica')}}
             <button onclick="geolocation2()" type="submit" class="btn-primary btn-link" style="cursor: pointer"><strong>{{$specialty->name}}</strong></button>
             {{Form::close()}}
@@ -242,7 +235,7 @@
                       {{-- <a href="{{route('medicos_of_the_medical_center',$mc['id'])}}" class="btn-icon"><i class="fas fa-user-md"></i> Ver Profesionales Médicos</a> --}}
                     </div>
                     <div class="form-group">
-                     <a href="" class="btn-icon"><i class="fa fa-phone mr-2"></i>Ver Teléfonos</a>
+                     {{-- <a href="" class="btn-icon"><i class="fa fa-phone mr-2"></i>Ver Teléfonos</a> --}}
                    </div>
                  </div>
                </div>
@@ -255,12 +248,9 @@
 
 
              <div class="tab-pane fade" id="mapa2" role="tabpanel" aria-labelledby="profile-tab">
-
                <div id="map" class="mb-4 p-4" style="width:600;height:800px;">
-
                </div>
              </div>
-
            </div>
          </div>
        </div>
@@ -305,6 +295,7 @@
         {{-- FIn CENTROS MEDICOS   FIn CENTROS MEDICOS  --}}
 
         @if(isset($medicosCercCount) and $medicosCercCount != 0)
+
         <div class="row">
           <div class="col-12 content-profile">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -320,25 +311,20 @@
 
 
             <div class="tab-content" id="myTabContent">
-
               <div class="tab-pane fade show active" id="home2" role="tabpanel" aria-labelledby="home-tab">
-
                <input type="hidden" name="" value="{{$medicosCercCount}}" id="medicosCercCount">
-
                <div class="card-header">
                  <a href="{{route('home')}}" class="close"><span aria-hidden="true">&times;</span></a>
                  <input type="hidden" name="" value="{{$distRequest = request()->get('dist')}}">
                  <input type="hidden" name="" value="{{$typeSearch = request()->get('typeSearch')}}">
                  <input type="hidden" name="" value="{{$requestCity = request()->get('city')}}" id="cityRequest">
                  <input type="hidden" name="" value="{{$requestState = request()->get('state')}}"id="stateRequest">
-
                  @isset($typeSearch)
                  <p>Tipo de Busqueda: <strong>{{$typeSearch}}</strong></p>
                  @endisset
                  @isset($search)
                  <p>Nombre: <strong>{{$search}}</strong></p>
                  @endisset
-
                  @isset($distRequest)
                  <p>Diametro: <strong>{{request()->get('dist')}} Km</strong></p>
                  @endisset
@@ -346,22 +332,18 @@
                  <p>Ciudad: <strong>{{request()->get('city')}}</strong></p>
                  @endif
                  @if(!isset($requestCity) or $requestCity == 'ciudad')
-                 @isset($requestState)
-                 <p>Estado: <strong>{{request()->get('state')}}<strong></p>
-                  @endisset
+                       @isset($requestState)
+                       <p>Estado: <strong>{{request()->get('state')}}</strong></p>
+                        @endisset
                   @endif
-
-
                  </div>
                  <input type="hidden" name="" value="{!!$position = 0!!}">
                  @foreach ($medicosCerc as $medico )
                    <input type="hidden" name="" value="{!!$position = $position + 1!!}">
-
                  <hr>
                  <div class="row">
                   <div class="col-8 m-auto col-sm-3 col-lg-3">
                     <div class="cont-img">
-
                       @isset($medico['image'])
                       <img src="{{asset($medico['image'])}}" class="prof-img2 img-thumbnail" alt="..." >
                       @else
@@ -390,11 +372,7 @@
                         <a href="{{route('detail_medic_map',$medico['id'])}}" class="btn btn-primary btn-sm text-white"><p class="card-text">({{$position}}) - <i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
                       </div>
                     </div>
-
-
-
                   </div>
-
                 </div>
                 <div class="col-12 col-sm-4 col-lg-4 p-4">
                   <div class="form-group">
@@ -412,9 +390,6 @@
                     <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
                     @endif
                   @endif
-
-
-
                   </div>
 
                   <div class="form-group">
@@ -460,7 +435,7 @@
           <input type="hidden" name="" value="{{$typeSearch = request()->get('typeSearch')}}">
           <input type="hidden" name="" value="{{$requestCity = request()->get('city')}}">
           <input type="hidden" name="" value="{{$requestState = request()->get('state')}}">
-          <h4>Busqueda de Centro Medico: {{$search}}</h4>
+          <h4>Busqueda Medico: {{$search}}</h4>
           {{-- <h5>Filtros:</h5> --}}
 
           @isset($typeSearch)
@@ -610,24 +585,17 @@
       </div>
     </div>
   </div>
-
-
-
-
   <!-- Modal-verify-patient -->
   <div class="modal fade" id="modal_verify_patient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header bg-warning text-white">
           <h5 class="modal-title" id="text_modal"></h5>
-
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-
-
           <div class="row">
             <div class="col-6">
               <p>Crear una cuenta para Pacientes</p>
@@ -679,10 +647,35 @@
   </script>
   @endif
 
-  {{-- <script src="http://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY&callback=initMap"></script> --}}
-  <script src="http://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY"></script>
+  {{-- <script src="https://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY&callback=initMap"></script> --}}
+  <script src="https://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY"></script>
   <script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>
+
+  {{-- <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script> --}}
+  <script src="{{asset('jqueryui/jquery-ui.js')}}"></script>
+
   <script type="text/javascript">
+
+
+
+  $(function()
+  {
+    $("#search").autocomplete({
+      source: "{{route('autocomplete_specialty')}}",
+      minLength: 2,
+      select: function(event, ui) {
+        $('#q').val(ui.item.value);
+      }
+    });
+  });
+
+
+    $("#typeSearch").change(function() {
+        if($("#typeSearch").val() == 'Especialidad Medica'){
+          $("#panel").slideUp(200);
+        }
+
+    });
 
     function distancia(){
       $("#stateMedic").val('');
@@ -704,11 +697,11 @@
     }
     $(document).ready(function(){
 
-      if($('#search').length > 0){
+      if($('#search').val().length > 0){
         $("#panel").slideToggle(200);
       }
 
-      // if($('#stateRequest').length > 0){
+      // if($('#stateRequest').(length > 0){
       //   $("#state").val($('#stateRequest').val());
       //
       // }

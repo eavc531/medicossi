@@ -87,7 +87,7 @@ class plansController extends Controller
        return view('plans.select_subscription',compact('medico','plan'));
      }
 
-    
+
 
      public function plan_platino_contract($id){
 
@@ -99,6 +99,8 @@ class plansController extends Controller
        if($medico->plan != 'plan_agenda' and $medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
          $medico->plan = 'plan_basico';
          $medico->save();
+       }else{
+         return back()->with('warning','Imposible realizar accion, posees un plan activo con mayores beneficios, al vencerse se estableceran automaticamente los ajustes del Plan basico');
        }
 
        return view('plans.success_plan_basic');

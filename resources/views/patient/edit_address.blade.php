@@ -63,13 +63,13 @@
      </div>
      <div class="col-lg-6 col-12">
       <div class="form-group">
-        <label for="">Numero Externo</label>
+        <label for="">Numero Externo (Opcional)</label>
         {{Form::text('number_ext',null,['class'=>'form-control'])}}
       </div>
     </div>
     <div class="col-lg-6 col-12">
       <div class="form-group">
-        <label for="">Numero Interno</label>
+        <label for="">Numero Interno (Opcional)</label>
         {{Form::text('number_int',null,['class'=>'form-control','id'=>'input2'])}}
       </div>
     </div>

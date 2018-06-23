@@ -1,6 +1,16 @@
 @extends('layouts.app')
+@section('css')
+  <style media="screen">
+    .form-control{
+      border-color:rgb(200, 38, 38);
+    }
 
+
+  </style>
+@endsection
 @section('content')
+
+
   <div class="container">
     <div class="register">
       <div class="row">
@@ -49,13 +59,13 @@
         <div class="col-lg-6 col-12">
           <div class="form-group">
            <label for="" class="font-title">Teléfono de Oficina 1 (Opcional)</label>
-           {!!Form::number('phoneOffice1',null,['class'=>'form-control','id'=>'phoneOffice1Medic'])!!}
+           {!!Form::number('phoneOffice1',null,['class'=>'form-control','id'=>'phoneOffice1Medic','style'=>'border-color:black'])!!}
          </div>
        </div>
        <div class="col-lg-6 col-12">
         <div class="form-group">
           <label for="" class="font-title">Teléfono de Oficina 2 (Opcional)</label>
-          {!!Form::number('phoneOffice2',null,['class'=>'form-control','id'=>'phoneOffice2Medic'])!!}
+          {!!Form::number('phoneOffice2',null,['class'=>'form-control','id'=>'phoneOffice2Medic','style'=>'border-color:black'])!!}
         </div>
       </div>
       </div>
@@ -83,10 +93,17 @@
 
       </div>
 
-
+      <hr>
       <div class="text-center mt-3">
-        <p style="color:rgb(127, 131, 128)">Selecciones disponibles para el plan Profesional o plan Platino activo</p>
+
+        @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+
+        @elseif(Auth::user()->medico->stateConfirm == 'complete' and Auth::user()->medico->plan != 'plan_profesional' and Auth::user()->medico->plan != 'plan_platino')
+          <p style="color:rgb(127, 131, 128)">Selecciones disponibles para el plan Profesional o plan Platino activo</p>
+        @endif
+
       </div>
+    @if(Auth::user()->medico->stateConfirm == 'complete')
       <div class="row mt-3">
         <div class="col-12">
           <div class="form-group">
@@ -95,11 +112,11 @@
                 <p for="">¿Desea que su teléfono celular aparezca visible en información a pacientes?</p>
               </div>
               <div class="col-4">
-                
+
                 @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-                  {{Form::select('showNumber',['si'=>'si','no'=>'no'],null,['class'=>'form-control'])}}
+                  {{Form::select('showNumber',['si'=>'si','no'=>'no'],null,['class'=>'form-control','style'=>'border-color:black'])}}
                 @else
-                  {{Form::select('showNumber',['si'=>'si','no'=>'no'],null,['class'=>'form-control','disabled'])}}
+                  {{Form::select('showNumber',['si'=>'si','no'=>'no'],null,['class'=>'form-control','disabled','style'=>'border-color:black'])}}
                 @endif
 
              </div>
@@ -116,9 +133,9 @@
               </div>
               <div class="col-4">
                 @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-                  {{Form::select('showNumberOffice',['si'=>'si','no'=>'no'],null,['class'=>'form-control'])}}
+                  {{Form::select('showNumberOffice',['si'=>'si','no'=>'no'],null,['class'=>'form-control','style'=>'border-color:black'])}}
                 @else
-                  {{Form::select('showNumberOffice',['si'=>'si','no'=>'no'],null,['class'=>'form-control','disabled'])}}
+                  {{Form::select('showNumberOffice',['si'=>'si','no'=>'no'],null,['class'=>'form-control','disabled','style'=>'border-color:black'])}}
                 @endif
 
              </div>
@@ -126,6 +143,7 @@
          </div>
        </div>
       </div>
+    @endif
       <div class="row">
         <div class="col-lg-6 col-12">
           {{-- <button type="submit" name="button" class="btn btn-primary btn-block">Guardar Cambios</button>

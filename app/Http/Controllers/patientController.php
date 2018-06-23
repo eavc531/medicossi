@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\patient;
-use App\user;
-use App\role;
+use App\User;
+use App\Role;
 use Illuminate\Http\Request;
 use Mail;
 use App\country;
@@ -31,8 +31,6 @@ class patientController extends Controller
      public function calification_medic_show_patient(Request $request){
        $rate_medicCount = rate_medic::where('medico_id', $request->medico_id)->count();//marcar
 
-
-
        $paginate = 5;//MARCAR
         $page_calification = 1;//
         if($request->page == 'Sig'){
@@ -50,9 +48,9 @@ class patientController extends Controller
 
 
 
-        if($page_calification > $cant_page){
-          return response()->json('limite');
-        }
+        // if($page_calification > $cant_page){
+        //   return response()->json('limite');
+        // }
 
         $rate_medic = rate_medic::where('medico_id',$request->medico_id)->skip($skip)->take($paginate)->get();//marcar
 
@@ -527,7 +525,7 @@ class patientController extends Controller
           'postal_code'=>'required',
           'colony'=>'required',
           'street'=>'required',
-          'number_ext'=>'required',
+          // 'number_ext'=>'required',
         ]);
 
          if($request->city == 'opciones'){

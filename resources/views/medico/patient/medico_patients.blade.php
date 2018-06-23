@@ -18,7 +18,7 @@
     {!!Form::open(['route'=>'search_patients','method'=>'POST'])!!}
     <div class="form-inline mb-5">
       {!!Form::hidden('medico_id',$medico->id)!!}
-      {!!Form::text('search',null,['class'=>'form-control','placeholder'=>'nombre/cedula del paciente'])!!}
+      {!!Form::text('search','FALTA por CORREGIR',['class'=>'form-control','placeholder'=>'nombre/cedula del paciente'])!!}
       {!!Form::submit('Buscar',['class'=>'btn btn-success'])!!}
       <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-primary ml-2">Mostrar Todos</a>
     </div>

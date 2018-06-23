@@ -42,6 +42,14 @@ class medicoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     public function add_image($id){
+       $medico = medico::find($id);
+       $images = photo::where('medico_id', $medico->id)->where('type','image')->get();
+
+       return view('medico.includes_perfil.add_image',compact('medico','images'));
+     }
+
      public function search_patients(Request $request){
 
        $patients = DB::table('patients_doctors')
@@ -58,7 +66,6 @@ class medicoController extends Controller
             $query->where('medico_id',$request->medico_id)
             ->where('patients.identification','LIKE','%'.$request->search.'%');
           })->get();
-
 
           $medico = medico::find($request->medico_id);
 
@@ -78,7 +85,6 @@ class medicoController extends Controller
           $currentPage = LengthAwarePaginator::resolveCurrentPage();
           $col = new Collection($data);
           $perPage = 10;
-
 
           $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
           $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
@@ -133,11 +139,9 @@ class medicoController extends Controller
        $medico = medico::find($request->medico_id);
        $medico->type_patient_service = $request->type_patient_service;
        $medico->save();
-
        return response()->json($request->all());
 
      }
-
 
      public function appointments_all($id){
        $appointments = event::where('medico_id',$id)->whereNull('rendering')->where('title','!=', 'Ausente')->paginate(4);
@@ -266,7 +270,7 @@ class medicoController extends Controller
            'postal_code'=>'required',
            'colony'=>'required',
            'street'=>'required',
-           'number_ext'=>'required',
+           // 'number_ext'=>'required',
          ]);
 
           if($request->city == 'opciones'){
@@ -545,7 +549,7 @@ class medicoController extends Controller
       }
 
           $user->save();
-         return redirect()->route('successRegMedico',$medico->id)->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
+         return redirect()->route('successRegMedico',$user->medico_id)->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
 
      }
 
@@ -559,7 +563,7 @@ class medicoController extends Controller
            'gender'=>'required',
            'specialty'=>'required',
            'country'=>'required',
-           'email'=>'required|unique:medicos|unique:users',
+           'email'=>'email|required|unique:medicos|unique:users',
            'password'=>'required',
            //'medicalCenter_id'=>'required',
            //'id_promoter'=>'nullable',
@@ -574,6 +578,7 @@ class medicoController extends Controller
 
         $medico = new medico;
         $medico->fill($request->all());
+        $medico->nameComplete = $medico->name.' '.$medico->lastName;
         $medico->password = bcrypt($request->password);
         $medico->stateConfirm = 'porConfirmar';
         $medico->save();
@@ -665,10 +670,9 @@ class medicoController extends Controller
     public function edit($id)
     {
       //permission_patient
-        if(Auth::user()->role == 'medico' and Auth::user()->medico_id != $id){
-          return redirect()->route('home');
-        }
-
+        // if(Auth::user()->role == 'medico' and Auth::user()->medico_id != $id){
+        //   return redirect()->route('home');
+        // }
 
         $insurance_carrier = insurance_carrier::where('medico_id',$id)->get();
         $medicalCenter = medicalCenter::orderBy('name','asc')->pluck('name','name');
@@ -681,6 +685,7 @@ class medicoController extends Controller
           $medico->showNumberOffice = 'no';
           $medico->save();
         }
+
         $consulting_room = consulting_room::where('medico_id',$medico->id)->get();
         $consultingIsset = consulting_room::where('medico_id',$medico->id)->count();
         $photo = photo::where('medico_id', $medico->id)->where('type', 'perfil')->first();
@@ -716,15 +721,12 @@ class medicoController extends Controller
          //'medicalCenter_id'=>'required',
          'id_promoter'=>'nullable',
          'phone'=>'required|numeric',
-
-         //'facebook'=>'required',
-
       ]);
       $city = city::find($request->city_id);
 
       $medico = medico::find($id);
       $medico->fill($request->all());
-
+      $medico->nameComplete = $medico->name.' '.$medico->lastName;
       // $medico->latitud = $city->latitud;
       // $medico->longitud = $medico->longitud;
       //$medico->state = 'complete';
@@ -937,24 +939,52 @@ class medicoController extends Controller
       return Back()->with('success', 'Todas las opiniones entrantes de los usuarios, estaran configuradas para ocultar los comentarios de forma predeterminada');
     }
 
-    public function show_all_comentary($id){
-      $rate_medic = rate_medic::where('medico_id',$id)->get();
+    public function show_all_comentary_new($id){
+      $rate_medic = rate_medic::where('medico_id',$id)->where('viewed','No')->get();
+
       foreach ($rate_medic as $value) {
         $value->show ='Si';
+        $value->viewed ='Si';
         $value->save();
-
       }
-      return back()->with('success', 'Se han comfigurado todas as Opiniones registradas hasta ahora, para ser mostradas a los usuarios');
+      return back()->with('success','Todas las opiniones nuevas, se han configurado para mostrarse a los usuarios.');
     }
+
+    public function hide_all_comentary_new($id){
+      $rate_medic = rate_medic::where('medico_id',$id)->where('viewed','No')->get();
+
+      foreach ($rate_medic as $value) {
+        $value->show ='No';
+        $value->viewed ='Si';
+        $value->save();
+      }
+
+      return back()->with('success','Todas las opiniones nuevas, se han configurado para ocultarse a los usuarios.');
+
+    }
+
+    public function show_all_comentary($id){
+      $rate_medic = rate_medic::where('medico_id',$id)->get();
+
+      foreach ($rate_medic as $value) {
+        $value->show ='Si';
+        $value->viewed ='Si';
+        $value->save();
+      }
+      return back()->with('warning','Todas las opiniones registradas hasta la fecha, se configuraron para ocultarse.');
+    }
+
     public function hide_all_comentary($id){
       $rate_medic = rate_medic::where('medico_id',$id)->get();
 
       foreach ($rate_medic as $value) {
         $value->show ='No';
+        $value->viewed ='Si';
         $value->save();
       }
 
-      return back()->with('success', 'Se han comfigurado todas as Opiniones registradas hasta ahora, para ser ocultadas a los usuarios');
+      return back()->with('success','Todas las opiniones registradas hasta la fecha, se configuraron para mostrarse.');
+
     }
 
     public function income_medic($id){

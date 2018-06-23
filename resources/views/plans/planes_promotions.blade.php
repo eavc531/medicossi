@@ -3,6 +3,7 @@
 
 
   <div class="container my-5 box-register">
+
     @if($plan_actual != Null)
 
           <div class="card mb-5">
@@ -75,7 +76,15 @@
             </div>
             <div class="my-2">
               <div class="col-12 text-center">
-                <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                @if($plan_actual == Null)
+                  <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                @else
+                  <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
+                    Contratar
+                  </button>
+                @endif
+
+
               </div>
             </div>
           </div>
@@ -118,8 +127,14 @@
           </div>
           <div class="my-2">
             <div class="col-12 text-center">
+              @if($plan_actual == Null)
+                <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+              @else
+                <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal11">
+                  Contratar
+                </button>
+              @endif
 
-              <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
 
             </div>
           </div>
@@ -157,7 +172,14 @@
         </div>
         <div class="my-2">
           <div class="col-12 text-center">
-            <a href="" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a>
+            @if($plan_actual == Null)
+              <a href="" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a>
+            @else
+              <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal22">
+                Contratar
+              </button>
+            @endif
+
           </div>
         </div>
       </div>
@@ -182,6 +204,7 @@
       <div class="my-2">
         <div class="col-12 text-center">
           {{-- <a href="" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a> --}}
+
           <a class="btn btn-primary btn-block" href="{{route('contract_basic',Auth::user()->medico_id)}}">Contratar</a>
         </div>
       </div>
@@ -193,10 +216,8 @@
 </div>
 
 </div>
-
-@include('plans.modals')
-
-
+{{-- @include('plans.modals') --}}
+<!-- Button trigger modal -->
 @endsection
 
 @section('scriptJS')

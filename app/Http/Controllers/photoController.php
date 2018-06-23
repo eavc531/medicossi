@@ -25,7 +25,7 @@ class photoController extends Controller
 
        if($photoCount != 0){
          $photo = photo::where('patient_id',$request->patient_id)->where('type','perfil')->first();
-        
+
          if(\File::exists(public_path($photo->path))){
            \File::delete(public_path($photo->path));
            $photo->delete();
@@ -92,9 +92,11 @@ class photoController extends Controller
 
     public function image_store(Request $request)
     {
-
+      $request->validate([
+        'name'=>'required'
+      ]);
       if(empty($request->file('image'))){
-        return back()->with('warning2', 'Debes seleccionar una Imagen');
+        return back()->with('warning', 'Debes seleccionar una Imagen');
 
       }
 
@@ -106,7 +108,7 @@ class photoController extends Controller
           $photoImageCount = photo::where('medico_id',$request->medico_id)->where('type','image')->count();
 
           if($photoImageCount >= 8){
-            return back()->with('warning2', 'Has excedido el numero de Imagenes que es posible almacenar en tu Cuenta.');
+            return back()->with('warning', 'Has excedido el numero de Imagenes que es posible almacenar en tu Cuenta.');
           }
           $photos = photo::where('medico_id',$request->medico_id)->orderBy('id','desc')->first();
 
@@ -121,7 +123,7 @@ class photoController extends Controller
           $pathSave = 'img/users/'.$request->medico_id.'/photos';
 
           $photo = new photo;
-          $photo->name = $nameP;
+          $photo->name = $request->name;
           $photo->path = $pathSave.'/'.$namePhoto;
           $photo->medico_id = $request->medico_id;
           $photo->type = 'image';
@@ -129,9 +131,9 @@ class photoController extends Controller
 
           $request->file('image')->move($pathSave,$namePhoto);
 
-          return back()->with('success2', 'Imagen Guardada Con Exito');
+          return back()->with('success', 'Imagen Guardada Con Exito');
         }else{
-          return back()->with('warning2', 'Imposible Subir Imagen, imagen o archivo no compatible');
+          return back()->with('warning', 'Imposible Subir Imagen, imagen o archivo no compatible');
 
         }
 

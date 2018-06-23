@@ -1,13 +1,13 @@
 
 <div class="row">
   <div class="col-12 mb-3">
-    <h2 class="text-center font-title">Calificación Médico: {{$medico->name}} {{$medico->lastName}}</h2>
+    <h3 class="text-center font-title">Calificación Médico: {{$medico->name}} {{$medico->lastName}}</h3>
   </div>
 </div>
 
 @if($rate_medic->first() != Null)
 <div class="card">
-  <h3>Calificación Total: @include('medico.star_rate_calification') de {{$medico->votes}} voto(s)</h3>
+  <h4>Calificación Total: @include('medico.star_rate_calification') de {{$medico->votes}} voto(s)</h4>
 </div>
 <div class="row">
   <div class="col-12 mb-3 mt-4">
@@ -63,8 +63,11 @@
 @endif
 {{-- //pagiate_ajax --}}
 @else
-  <div class="text-center mt-5">
-    <h3 class="text-primary"><strong>El Médico aun no ha sido Calificado</strong></h3>
+  <div class=" mt-5 card">
+    <div class="card-body text-center">
+      <h4 class="text-primary"><strong>El Médico aun no ha sido Calificado</strong></h4>
+
+    </div>
   </div>
 @endif
 

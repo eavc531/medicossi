@@ -18,7 +18,7 @@ class medic_plan_basic
       if(Auth::user()->role == 'medico'){
         return $next($request);
       }else{
-        return redirect()->route('home')->with('warning', 'value');
+        return redirect()->route('home')->with('warning', 'no tienes permisos para acceder a este panel');
       }
     }
 }

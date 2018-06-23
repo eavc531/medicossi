@@ -12,7 +12,6 @@ $(document).ready(function(){
   /////
   $("#filter").click(function(){
      $("#panel").slideToggle(200);
-
  });
 });
 

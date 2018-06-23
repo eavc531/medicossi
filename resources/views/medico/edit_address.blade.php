@@ -1,10 +1,18 @@
 @extends('layouts.app')
 
+@section('css')
+  <style media="screen">
+    .form-control{
+      border-color:rgb(200, 38, 38);
+    }
+  </style>
+@endsection
+
 @section('content')
 <section class="box">
   <div class="row">
     <div class="col-12 mb-3">
-      <h2 class="text-center font-title">Editar Datos de Centro Médico</h2>
+      <h2 class="text-center font-title">Editar Datos de Médico {{$medico->name}} {{$medico->lastName}}</h2>
     </div>
   </div>
   {!!Form::model($medico,['route'=>['medico_update_address',$medico],'method'=>'update'])!!}
@@ -53,13 +61,13 @@
      <div class="col-lg-6 col-12">
       <div class="form-group">
         <label for="">Numero Externo</label>
-        {{Form::text('number_ext',null,['class'=>'form-control'])}}
+        {{Form::text('number_ext',null,['class'=>'form-control','style'=>'border-color:black'])}}
       </div>
     </div>
     <div class="col-lg-6 col-12">
       <div class="form-group">
         <label for="">Numero Interno</label>
-        {{Form::text('number_int',null,['class'=>'form-control','id'=>'input2'])}}
+        {{Form::text('number_int',null,['class'=>'form-control','id'=>'input2','style'=>'border-color:black'])}}
       </div>
     </div>
   </div>

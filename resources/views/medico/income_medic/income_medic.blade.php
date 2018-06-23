@@ -11,39 +11,39 @@
     </div>
           <div class="card">
             <div class="card-body">
-              <h4>Ingresos Obtenidos:{{$ingresos_obtenidos}}</h4>
-              {{-- <h4>Ingresos Pendientes:{{$ingresos_pendientes}}</h4> --}}
-              <p>Cantidad de Citas Cobradas:{{$citas_cobradas}}</p>
-              <p>Cantidad de Citas por Cobrar:{{$citas_pendientes}}</p>
+              <h4>Ingresos Obtenidos:&nbsp;{{$ingresos_obtenidos}}</h4>
+              {{-- <h4>Ingresos Pendientes:&nbsp;{{$ingresos_pendientes}}</h4> --}}
+              <p>Cantidad de Citas Cobradas:&nbsp;{{$citas_cobradas}}</p>
+              <p>Cantidad de Citas por Cobrar:&nbsp;{{$citas_pendientes}}</p>
             </div>
           </div>
 
-        <a href="{{route('income_medic',request()->id)}}" class="btn btn-primary disabled">Citas Cobradas</a>
-        <a href="{{route('income_medic_without_pay',request()->id)}}" class="btn btn-warning">Citas por Cobrar</a>
-        <div class="">
-          <h5>Citas por Cobrar</h5>
+        <a href="{{route('income_medic',request()->id)}}" class="btn btn-primary disabled space-btw-w-color">Citas Cobradas</a>
+        <a href="{{route('income_medic_without_pay',request()->id)}}" class="btn btn-warning space-btw-w-color">Citas por Cobrar</a>
+        <div class="text-center mt-5">
+          <h5 class="title-citas">Citas Cobradas</h5>
         </div>
 
         @if(@isset($list_citas_cobradas) and $list_citas_cobradas->first() != Null)
-        <table class="table">
-          <thead>
+        <table class="table mt-5">
+          <thead class="head-table">
             <tr>
-              <th>Fecha de Realizacion</th>
-              <th>Nombre del Paciente</th>
-              <th>Tipo de Consulta</th>
-              <th>Precio</th>
-              <th>Tipo de Pago</th>
+              <th class="table-infor">Fecha de Realizacion</th>
+              <th class="table-infor">Nombre del Paciente</th>
+              <th class="table-infor">Tipo de Consulta</th>
+              <th class="table-infor">Precio</th>
+              <th class="table-infor">Tipo de Pago</th>
             </tr>
 
           </thead>
-          <tbody>
+          <tbody class="body-table">
             @foreach ($list_citas_cobradas as $value)
             <tr>
-              <td>{{$value->start}}</td>
-              <td>{{$value->namePatient}}</td>
-              <td>{{$value->eventType}}</td>
-              <td>{{$value->price}}</td>
-              <td>{{$value->payment_method}}</td>
+              <td class="table-infor">{{$value->start}}</td>
+              <td class="table-infor">{{$value->namePatient}}</td>
+              <td class="table-infor">{{$value->eventType}}</td>
+              <td class="table-infor">{{$value->price}}</td>
+              <td class="table-infor">{{$value->payment_method}}</td>
             </tr>
           @endforeach
           </tbody>

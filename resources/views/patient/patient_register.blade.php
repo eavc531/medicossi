@@ -73,7 +73,7 @@
 					</div>
 				  <div class="row">
 				  	<div class="col-lg-6 col-12 mt-2">
-              <a href="{{route('patient.index')}}" class="btn-config-blue btn btn-block">Cancelar</a>
+              <a href="{{route('home')}}" class="btn-config-blue btn btn-block">Cancelar</a>
 
 				  	</div>
 				  	<div class="col-lg-6 col-12 mt-2">

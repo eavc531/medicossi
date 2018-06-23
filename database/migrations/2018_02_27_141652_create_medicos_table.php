@@ -18,6 +18,7 @@ class CreateMedicosTable extends Migration
             $table->string('identification')->nullable();
             $table->string('name');
             $table->string('lastName');
+            $table->string('nameComplete')->nullable();
             $table->string('gender');
             $table->string('email',60);
             $table->string('password');

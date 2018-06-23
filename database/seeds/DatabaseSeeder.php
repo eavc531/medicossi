@@ -32,9 +32,11 @@ class DatabaseSeeder extends Seeder
      ]);
 
          DB::table('administrators')->insert([
+        'id'=>1,
         'name'=>'admin',
         'lastName'=>'',
-        'password'=>bcrypt('1234'),
+        'email'=>'admin@admin.com',
+        // 'password'=>bcrypt('1234'),
 
         ]);
 
@@ -43,34 +45,34 @@ class DatabaseSeeder extends Seeder
        'email'=>'admin@admin.com',
        'password'=>bcrypt('1234'),
        'role'=>'Administrador',
-       'administrator_id'=>1;
+       'administrator_id'=>1
        ]);
 
 
 
-          DB::table('medicos')->insert([
-         'name'=>'med',
-         'lastName'=>'med',
-         'gender'=>'Masculino',
-         'email'=>'eavcssss@hotmail.com',
-         'password'=>bcrypt('124578'),
-         ]);
-
-         DB::table('medicos')->insert([
-        'name'=>'med2',
-        'lastName'=>'msss',
-        'gender'=>'Masculino',
-        'email'=>'eavcssssss@hotmail.com',
-        'password'=>bcrypt('124578'),
-        ]);
-
-        DB::table('medicos')->insert([
-       'name'=>'med3',
-       'lastName'=>'msssxxxss',
-       'gender'=>'Masculino',
-       'email'=>'ezzzsssss@hotmail.com',
-       'password'=>bcrypt('124578'),
-       ]);
+       //    DB::table('medicos')->insert([
+       //   'name'=>'med',
+       //   'lastName'=>'med',
+       //   'gender'=>'Masculino',
+       //   'email'=>'eavcssss@hotmail.com',
+       //   'password'=>bcrypt('124578'),
+       //   ]);
+       //
+       //   DB::table('medicos')->insert([
+       //  'name'=>'med2',
+       //  'lastName'=>'msss',
+       //  'gender'=>'Masculino',
+       //  'email'=>'eavcssssss@hotmail.com',
+       //  'password'=>bcrypt('124578'),
+       //  ]);
+       //
+       //  DB::table('medicos')->insert([
+       // 'name'=>'med3',
+       // 'lastName'=>'msssxxxss',
+       // 'gender'=>'Masculino',
+       // 'email'=>'ezzzsssss@hotmail.com',
+       // 'password'=>bcrypt('124578'),
+       // ]);
 
 
           DB::table('roles')->insert([
@@ -167,61 +169,73 @@ class DatabaseSeeder extends Seeder
        DB::table('plans')->insert([
       'name'=>'Plan Basico',
       'applicable'=>'Medicina Alternativa, Psicologos y Terapeutas',
-      'price'=>0,
+      'price1'=>0,
+      'price2'=>0,
+      'price3'=>0,
       ]);
 
        DB::table('plans')->insert([
          'name'=>'Plan Mi Agenda',
          'applicable'=>'Medicina Alternativa, Psicologos y Terapeutas',
-         'price'=>0,
+         'price1'=>0,
+         'price2'=>0,
+         'price3'=>0,
        ]);
        DB::table('plans')->insert([
       'name'=>'Plan Profesional',
       'applicable'=>'Medicina Alternativa, Psicologos y Terapeutas',
-      'price'=>0,
+      'price1'=>0,
+      'price2'=>0,
+      'price3'=>0,
       ]);
 
 
      DB::table('plans')->insert([
     'name'=>'Plan Platino',
     'applicable'=>'Medicina Alternativa, Psicologos y Terapeutas',
-    'price'=>0,
+    'price1'=>0,
+    'price2'=>0,
+    'price3'=>0,
     ]);
 
 
       DB::table('plans')->insert([
      'name'=>'Plan Basico',
      'applicable'=>'Nucleos Medicos',
-     'price'=>0,
+     'price1'=>0,
+     'price2'=>0,
+     'price3'=>0,
      ]);
 
       DB::table('plans')->insert([
      'name'=>'Plan Control',
      'applicable'=>'Nucleos Medicos',
-     'price'=>0,
+     'price1'=>0,
+     'price2'=>0,
+     'price3'=>0,
      ]);
 
          DB::table('plans')->insert([
         'name'=>'Plan Profesional-Plus',
         'applicable'=>'Nucleos Medicos',
-        'price'=>0,
+        'price1'=>0,
+        'price2'=>0,
+        'price3'=>0,
         ]);
 
         DB::table('plans')->insert([
        'name'=>'Plan Platino-Plus',
        'applicable'=>'Nucleos Medicos',
-       'price'=>0,
+       'price1'=>0,
+       'price2'=>0,
+       'price3'=>0,
        ]);
-
-
 
         DB::table('permissions')->insert([
        'name'=>'edit',
        'display_name'=>'Edit Users',
        'description'=>'edit existing users'
        ]);
-
-
 
       DB::table('permissions')->insert([
      'name'=>'Editar',

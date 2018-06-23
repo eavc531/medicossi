@@ -17,17 +17,14 @@
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 @section('content')
 
-
-
-
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-9 col-12">
         <div class="register">
           <div class="row">
             <div class="col-12">
+              <h1 class="text-center">//En Desarrollo//</h1>
               <h2 class="text-center font-title">Editar Cita: {{$app->title}},Paciente: {{$patient->name}} {{$patient->lastName}}</h2>
-
             </div>
           </div>
 
@@ -50,33 +47,19 @@
             @else
               @include('medico.includes.card_edit_noti')
             @endif
-
-
             @include('medico.includes.alert_calendar')
-
           </div>
-
           <hr>
           <div class="" id="example">
             {{-- //////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT --}}
-
           {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
           {{-- IF SHOW CALENDAR --}}
-
-
           <div id='calendar' style=""></div>
-
-
           {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
-
         {{-- IF SHOW CALENDAR --}}
             </div>
-
-
-
           </div>
         <div class="col-12 col-lg-3">
-
       </div>
     </div>
   </div>

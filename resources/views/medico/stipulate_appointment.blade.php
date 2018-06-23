@@ -39,7 +39,7 @@
       <div id="alert_success_1" class="alert alert-success alert-dismissible fade show text-left" role="alert" style="display:none">
        <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
        <p id="text_success_1" style="font-size:12px"></p>
-       <a href="{{route('home')}}" class="btn btn-outline-success">volver a Pacientes</a>
+       <a href="{{route('home')}}" class="btn btn-outline-success">ir a Pacientes</a>
        <a href="{{route('medico_diary',$medico->id)}}" class="btn btn-outline-primary">ir a Mi Agenda</a>
        {{--<a class="btn btn-outline-success" href="{{route('patient_appointments',Auth::user()->patient->id)}}">Tus Citas Pendientes</a>--}}
      </div>

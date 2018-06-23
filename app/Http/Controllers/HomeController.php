@@ -12,11 +12,25 @@ use App\state;
 use App\city;
 use App\consulting_room;
 use App\photo;
+use Input;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
       class HomeController extends Controller
       {
+
+        public function autocomplete_specialty(){
+          $specialtyName = request()->input('term');
+          $specialty = specialty::where('name','LIKE','%'.$specialtyName.'%')->get();
+
+          foreach ($specialty as $query)
+          	{
+          	    $results[] = ['id'=>$query->id,'value'=>$query->name];
+          	}
+
+          return response()->json($results);
+        }
+
         public function __construct(){
           $states = state::orderby('name','asc')->pluck('name','name');
           $cities = city::orderby('name','asc')->pluck('name','name');
@@ -59,6 +73,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
               cos($myLat) * cos($medicLat) * pow(sin($lonDelta / 2), 2)));
               $distCalculate =  $angle * $earthRadius;
 
+
               if($dist > $distCalculate or $dist == Null){
                 $consulting_room = consulting_room::where('medico_id',$medico->id)->get()->toArray();
                 $photo = photo::where('medico_id',$medico->id)->where('type', 'perfil')->first();
@@ -73,8 +88,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
             }
 
           }
-
-
           return $data;
         }
 
@@ -193,6 +206,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   return view('home.home')->with('medicosCerc', $medicosCerc)->with('data', $data)->with('medicosCercCount', $medicosCercCount)->with('search', $request->search)->with('currentPage', $currentPage)->with('states', $this->states)->with('cities',$this->cities)->with('typeSearch2', $request->typeSearch2);
             }
             //**Especialidad medica por distancia**///
+
             $medicos = DB::table('medicos')
             //->Join('medico_specialties', 'medicos.id', '=', 'medico_specialties.medico_id')
             ->Join('cities', 'medicos.city_id', '=', 'cities.id')
@@ -219,9 +233,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
           $lat = $request->latitud;
           $lng = $request->longitud;
-
-
-
           $dist = $request->dist;
 
           if($request->typeSearch2 == 'Medicos de la Institucion'){
@@ -243,6 +254,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
           //Centro Medico por nombre
           //Centro Medico DISTANCIA
           if($request->typeSearch == 'Centro Medico'){
+
               if($dist != null){
                 $medicalCenter = medicalCenter::where('name','LIKE','%'.$request->search.'%')->get();
                 $data = HomeController::calculate_dist_to_array_medicalCenter($medicalCenter,$dist,$lat,$lng);
@@ -275,7 +287,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 //dd($medicalCenterCount);
                 return view('home.home')->with('medicalCenter', $medicalCenter)->with('medicalCenterCount', $medicalCenterCount)->with('search', $request->search)->with('currentPage', $currentPage)->with('states', $this->states)->with('cities',$this->cities);
               }
-
             $medicalCenter = medicalCenter::where('name','LIKE','%'.$request->search.'%')->get();
             $medicalCenterCount = medicalCenter::where('name','LIKE','%'.$request->search.'%')->count();
             //dd($medicalCenter);
@@ -334,6 +345,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
               }
             }
 
+
             //especialidad por Estado
             if($request->state != null){
                 $medicos = DB::table('medicos')
@@ -383,6 +395,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
         if($request->typeSearch == 'Nombre/Cedula del Medico'){
 
+
           if($request->city != null and $request->city != 'ciudad'){
             if($request->city != 'ciudad'){
               $medicos = DB::table('medicos')
@@ -391,8 +404,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
               ->Join('states', 'medicos.state_id', '=', 'states.id')
               ->select('medicos.*')
               //->where('cities.name','=',$request->city)
-              ->where('medicos.name','LIKE','%'.$request->search.'%')
-              ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+              ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+              //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
               ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
               ->get();
 
@@ -428,8 +441,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
               $medicosCercCount = count($medicosCerc);
 
               return view('home.home')->with('medicosCerc', $medicosCerc)->with('data', $data)->with('medicosCercCount', $medicosCercCount)->with('search', $request->search)->with('currentPage', $currentPage)->with('typeSearchSpecialty', $typeSearchSpecialty)->with('states', $this->states)->with('cities',$this->cities);
+
             }
             }
+
+
             //estado
             if($request->state != null and $request->state != 'estado'){
                 $medicos = DB::table('medicos')
@@ -438,8 +454,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 ->Join('states', 'medicos.state_id', '=', 'states.id')
                 ->select('medicos.*')
                 //->where('cities.name','=',$request->city)
-                ->where('medicos.name','LIKE','%'.$request->search.'%')
-                ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+                ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+                //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
                 ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
                 ->get();
 
@@ -447,7 +463,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 foreach ($medicos as $medico) {
                   if($medico->state == $request->state){
                     $consulting_room = consulting_room::where('medico_id',$medico->id)->get()->toArray();
-                    $photo = photo::where('medicalCenter_id',$medico->id)->where('type', 'perfil')->first();
+                    $photo = photo::where('medico_id',$medico->id)->where('type', 'perfil')->first();
                     if($photo == Null){
                       $image = Null;
                     }else{
@@ -457,6 +473,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   ];
                   }
                 }
+
+
                 if($request->filter_ranking == 'si'){
                   $data = collect($data)->sortByDesc('calification')->toArray();
                 }else{
@@ -465,10 +483,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 $currentPage = LengthAwarePaginator::resolveCurrentPage();
                 $medicosCerc = HomeController::paginate_custom($data,$currentPage);
                 $medicosCercCount = count($medicosCerc);
+
+
                 return view('home.home')->with('medicosCerc', $medicosCerc)->with('data', $data)->with('medicosCercCount', $medicosCercCount)->with('search', $request->search)->with('currentPage', $currentPage)->with('typeSearchSpecialty', $typeSearchSpecialty)->with('states', $this->states)->with('cities',$this->cities);
               }
               //busqueda nombre normal
-
+              ;
               $dist = $request->dist;
 
               if($request->dist != Null){
@@ -477,8 +497,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   // ->Join('cities', 'medicos.city_id', '=', 'cities.id')
                   // ->Join('states', 'medicos.state_id', '=', 'states.id')
                 ->select('medicos.*')
-                ->where('medicos.name','LIKE','%'.$request->search.'%')
-                ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+                ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+                //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
                 ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
                 ->get();
 
@@ -504,8 +524,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
               // ->Join('cities', 'medicos.city_id', '=', 'cities.id')
               // ->Join('states', 'medicos.state_id', '=', 'states.id')
             ->select('medicos.*')
-            ->where('medicos.name','LIKE','%'.$request->search.'%')
-            ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+            ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+            //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
             ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
             ->get();
 
@@ -719,8 +739,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
             ->Join('states', 'medicos.state_id', '=', 'states.id')
             ->select('medicos.*')
             //->where('cities.name','=',$request->city)
-            ->where('medicos.name','LIKE','%'.$request->search.'%')
-            ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+            ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+            //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
             ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
             ->get();
 
@@ -750,10 +770,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
               ->Join('states', 'medicos.state_id', '=', 'states.id')
               ->select('medicos.*')
               //->where('cities.name','=',$request->city)
-              ->where('medicos.name','LIKE','%'.$request->search.'%')
-              ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+              ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+              //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
               ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
               ->get();
+
               $data = [];
               foreach ($medicos as $medico) {
                 if($medico->state == $request->state){
@@ -778,8 +799,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 // ->Join('cities', 'medicos.city_id', '=', 'cities.id')
                 // ->Join('states', 'medicos.state_id', '=', 'states.id')
               ->select('medicos.*')
-              ->where('medicos.name','LIKE','%'.$request->search.'%')
-              ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+              ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+              //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
               ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
               ->get();
 
@@ -800,8 +821,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
             // ->Join('cities', 'medicos.city_id', '=', 'cities.id')
             // ->Join('states', 'medicos.state_id', '=', 'states.id')
           ->select('medicos.*')
-          ->where('medicos.name','LIKE','%'.$request->search.'%')
-          ->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
+          ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+          //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
           ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
           ->get();
 

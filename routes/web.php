@@ -15,7 +15,10 @@ Route::get('/', function(){
 });
 
 //plans
-
+////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
+Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
+//////////
+Route::get('autocomplete_specialty','HomeController@autocomplete_specialty')->name('autocomplete_specialty');
 
 Route::post('medico/plan/set','plansController@set_plan')->name('set_plan');
 
@@ -39,6 +42,7 @@ Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appoin
 
 
 Route::group(['middleware' => ['medic_plan_basic']], function (){
+  Route::get('medico/{id}/add_image','medicoController@add_image')->name('add_image');
 
 });
 //PLAN AGENDA
@@ -71,7 +75,7 @@ Route::group(['middleware' => ['medic_plan_agenda']], function (){
 Route::group(['middleware' => ['medic_plan_profesional']], function (){
 //calification_medic//b
     Route::get('medico/{m_id}/stipulate/appointment/patient/{p_id}','medico_diaryController@medico_stipulate_appointment')->name('medico_stipulate_appointment');
-    Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
+
     Route::get('medico/{m_id}/calification','medicoController@calification_medic')->name('calification_medic');
     Route::get('medico/{m_id}/calification/viewed','medicoController@calification_medic_viewed')->name('calification_medic_viewed');
     Route::get('mark_all_see/{id}','medicoController@mark_all_see')->name('mark_all_see');
@@ -82,6 +86,9 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
     Route::get('hide_all_comentary_default/{id}','medicoController@hide_all_comentary_default')->name('hide_all_comentary_default');
     Route::get('show_all_comentary/{id}','medicoController@show_all_comentary')->name('show_all_comentary');
     Route::get('hide_all_comentary/{id}','medicoController@hide_all_comentary')->name('hide_all_comentary');
+
+    Route::get('show_all_comentary_new/{id}','medicoController@show_all_comentary_new')->name('show_all_comentary_new');
+    Route::get('hide_all_comentary_new/{id}','medicoController@hide_all_comentary_new')->name('hide_all_comentary_new');
 ////////
 });
 

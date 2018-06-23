@@ -2,11 +2,13 @@
 
 @section('content')
 
-  @if(Auth::check() and Auth::user()->role != 'medico')
-    <button onclick="volver()" type="button" name="button" class="btn btn-secondary">Volver</button>
-  @elseif(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id != $medico->id)
-    <button onclick="volver()" type="button" name="button" class="btn btn-secondary">Volver</button>
-  @endif
+  <div class="text-right">
+@if(Auth::check() and Auth::user()->role != 'medico')
+  <button onclick="volver()" type="button" name="button" class="btn btn-secondary">Volver</button>
+@else
+  <button onclick="volver()" type="button" name="button" class="btn btn-secondary">Volver</button>
+@endif
+</div>
 
 
 <div class="row">
@@ -36,149 +38,155 @@
   <div class="container">
    <div class="register">
 
-  <div class="row mt-3">
-   <div class="col-lg-6 col-12">
+    <div class="row mt-3">
+     <div class="col-lg-6 col-12">
 
-    @isset($photo->path)
-    <div class="cont-img my-2">
-      <img src="{{asset($photo->path)}}" class="prof-img" alt="" id="img">
-    </div>
-    @else
+      @isset($photo->path)
+      <div class="cont-img my-2">
+        <img src="{{asset($photo->path)}}" class="prof-img" alt="" id="img">
+      </div>
+      @else
       <div class="cont-img my-2">
         <img src="{{asset('img/profile.png')}}" class="prof-img" alt="" id="img">
       </div>
-    @endisset
+      @endisset
 
-    {!!Form::open(['route'=>'photo.store','method'=>'POST','files'=>true])!!}
-    {!!Form::hidden('email',$medico->email)!!}
-    {!!Form::hidden('medico_id',$medico->id)!!}
-    {!!Form::file('image')!!}
-    {!!Form::submit('Subir')!!}
-    {!!Form::close()!!}
-  </div>
-  @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id = $medico->id)
-  <div class="col-lg-6">
+      {!!Form::open(['route'=>'photo.store','method'=>'POST','files'=>true])!!}
+      {!!Form::hidden('email',$medico->email)!!}
+      {!!Form::hidden('medico_id',$medico->id)!!}
+      {!!Form::file('image')!!}
+      {!!Form::submit('Subir')!!}
+      {!!Form::close()!!}
+    </div>
+    @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id = $medico->id)
+    <div class="col-lg-6">
       <h3>Calificación:</h3>
       <span class="">@include('home.star_rate')</span>
       <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
-        @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          <div class="">
-          <h4>
-              <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2">Opinion de los Usuarios</a>
-          </h4>
-            <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
-          </div>
-        @else
-          <div class="">
-          <h4>
-              <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2 disabled">Opinion de los Usuarios</a>
-          </h4>
-            <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
-          </div>
-        @endif
-  </div>
-@else
-  <div class="col-lg-6">
+      @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+      <div class="">
+        <h4>
+          <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2">Opinion de los Usuarios</a>
+        </h4>
+        {{-- <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p> --}}
+      </div>
+      @else
+      <div class="">
+        <h4>
+          <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2 disabled">Opinion de los Usuarios</a>
+        </h4>
+        <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
+      </div>
+      @endif
+    </div>
+    @else
+    <div class="col-lg-6">
       <h3>Calificación:</h3>
       <span class="">@include('home.star_rate')</span>
       <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
       <div class="">
-      <h4>
+        <h4>
           <button class="btn btn-success" type="button" name="button" onclick="calification_medic_show_patient()">Calificaciones y Comentarios</button>
-      </h4>
+        </h4>
       </div>
-  </div>
-@endif
-
-</div>
-<hr>
-
-<div class="m-2">
-  <div class="row my-2">
-    <div class="col-12">
-      <h4 class="font-title-blue text-center">Datos personales:</h4>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-6">
-      <ul>
-        <li><b>Nombres</b>:{{$medico->name}}</li>
-        <li><b>Apellidos</b>:{{$medico->lastName}}</li>
-        <li><b>Cedula</b>:{{$medico->identification}}</li>
-        <li><b>Sexo</b>:{{$medico->gender}}</li>
+    @endif
 
-      </ul>
+  </div>
+  <hr>
+
+  <div class="m-2">
+    <div class="row my-2">
+      <div class="col-12">
+        <h4 class="font-title-blue text-center">Datos personales:</h4>
+      </div>
     </div>
-    <div class="col-6">
-      <ul>
-        <li><b>Especialidad:</b>{{$medico->specialty}}</li>
-        @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+    <div class="row">
+      <div class="col-6">
+        <ul>
+          <li><b>Nombres</b>:&nbsp;{{$medico->name}}</li>
+          <li><b>Apellidos</b>:&nbsp;{{$medico->lastName}}</li>
+          <li><b>Cedula</b>:&nbsp;{{$medico->identification}}</li>
+          <li><b>Sexo</b>:&nbsp;{{$medico->gender}}</li>
+
+        </ul>
+      </div>
+      <div class="col-6">
+        <ul>
+          <li><b>Especialidad:&nbsp;</b>{{$medico->specialty}}</li>
+          @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           @if ($medico->showNumber == 'si')
-            <li><b>Telefono celular</b>: {{$medico->phone}}</li>
+          <li><b>Teléfono celular</b>: {{$medico->phone}}</li>
           @endif
-        @endif
+          @endif
 
-        @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+          @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice1 != Null)
-            <li><b>Telefono de oficina 1:</b>{{$medico->phoneOffice1}}</li>
+          <li><b>Telefono de oficina 1:</b>{{$medico->phoneOffice1}}</li>
           @endif
           @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice2 != Null)
-            <li><b>Telefono de oficina 2:</b>{{$medico->phoneOffice2}}</li>
+          <li><b>Telefono de oficina 2:</b>{{$medico->phoneOffice2}}</li>
           @endif
-        @endif
+          @endif
 
-        <li><b>Mostrar Numero Personal:</b><span style="color:rgb(215, 141, 15)">{{$medico->showNumber}}</span></li>
-        <li><b>Mostrar Numeros de officina:</b><span style="color:rgb(215,141,15)">{{$medico->showNumberOffice}}</span></li>
-      </ul>
+          <li><b>Mostrar Numero Personal:&nbsp;</b><span style="color:rgb(215, 141, 15)">{{$medico->showNumber}}</span></li>
+          <li><b>Mostrar Numeros de officina:&nbsp;</b><span style="color:rgb(215,141,15)">{{$medico->showNumberOffice}}</span></li>
+        </ul>
         <a href="{{route('data_primordial_medico',$medico->id)}}" class="btn btn-block btn-success">Editar</a>
+      </div>
     </div>
   </div>
-</div>
-<hr>
-<div class="row mt-3">
-  <div class="col-12">
-   <h4 class="font-title-blue text-center">Redes sociales</h4>
+  <hr>
+  <div class="row mt-3">
+    <div class="col-12">
+     <h4 class="font-title-blue text-center">Redes sociales</h4>
 
-   <hr>
+     <hr>
+   </div>
  </div>
+ @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico->plan != 'plan_profesional' and Auth::user()->medico->plan != 'plan_platino')
+ <div class="text-center">
+  <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
 </div>
-@if(Auth::user()->medico->plan != 'plan_profesional' and Auth::user()->medico->plan != 'plan_platino')
-  <div class="text-center">
-    <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
-  </div>
 @endif
 <div class="row">
   <div class="col-12">
     <div class="row">
       <div class="col-lg-3 col-12">
         <div class="form-group">
-          @if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+          @if(Auth::check() and Auth::user()->role == 'medico')
+            @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
               {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control','placeholder'=>'Red Social','id'=>'name_social'])!!}
-          @else
+              @else
               {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control','placeholder'=>'Red Social','id'=>'name_social','disabled'])!!}
+            @endif
+
           @endif
         </div>
       </div>
       <div class="col-lg-7 col-12">
         <div class="form-group">
-          @if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-            {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social'])!!}
-            {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
-          @else
-            {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social','disabled'])!!}
-            {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
+          @if(Auth::check() and Auth::user()->role == 'medico')
+            @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+              {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social'])!!}
+              {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
+              @else
+                {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social','disabled'])!!}
+                {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
+            @endif
           @endif
 
         </div>
       </div>
       <div class="col-lg-2 col-12">
         <div class="form-group">
-          @if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+          @if(Auth::check() and Auth::user()->role == 'medico')
+            @if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
             <button onclick="storeSocial()" type="button" name="button" class="btn btn-block btn-success">Agregar</button>
-          @else
+            @else
             <button onclick="storeSocial()" type="button" name="button" class="btn btn-block btn-success" disabled>Agregar</button>
+            @endif
           @endif
-
         </div>
       </div>
       {{-- alert error  --}}
@@ -191,10 +199,17 @@
       {{-- {!! $errors->first('name','<span class="help-block">:message</span>') !!} --}}
     </div>
     {{-- BOTONES QUE SE MUESTRAN CON AJAX DESDE LISTA-Social --}}
-      @if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+    @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
     <div id="list_social_ajax">
     </div>
-      @endif
+    @else
+      <div class="">
+        <div class="">
+          <p class="text-center">Sin Direcciones de Redes Sociales que Mostrar</p>
+
+        </div>
+      </div>
+    @endif
   </div>
 </div>
 <hr>
@@ -264,7 +279,7 @@
 <div class="row">
   <div class="col-12">
     <h4 class="font-title-blue text-center" id="consul">Consultorios</h4>
-
+    <h5 style="color:red">Por Corregir</h5>
   </div>
 </div>
 <div class="row">
@@ -306,82 +321,84 @@
           <td>{{$consulting_room->city}}</td>
           <td>{{$consulting_room->state}}</td>
           {{-- @isset($consulting_room->passwordUnique)
-          <td>{{$consulting_room->passwordUnique}}</td>
-          @else
-          <td style="color:rgb(173, 173, 173)">N.P.</td>
-          @endisset --}}
-          <td>{{$consulting_room->addres}}</td>
-        </tr>
-      </tbody>
-      @endforeach
-      <tfoot>
-        <td colspan="12">{{$medico_specialty->links()}}</td>
-      </tfoot>
-    </table>
+            <td>{{$consulting_room->passwordUnique}}</td>
+            @else
+            <td style="color:rgb(173, 173, 173)">N.P.</td>
+            @endisset --}}
+            <td>{{$consulting_room->addres}}</td>
+          </tr>
+        </tbody>
+        @endforeach
+        <tfoot>
+          <td colspan="12">{{$medico_specialty->links()}}</td>
+        </tfoot>
+      </table>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-12 col-lg-12 text-right">
-   <a href="{{route('consulting_room_create',$medico->id)}}" class="btn btn-success">Agregar Consultorio</a>
+  <div class="row">
+    <div class="col-12 col-lg-12 text-right">
+     <a href="{{route('consulting_room_create',$medico->id)}}" class="btn btn-success">Agregar Consultorio</a>
+   </div>
  </div>
-</div>
-@if($consultingIsset == 0)
+ @if($consultingIsset == 0)
 
-@endif
-<hr>
-<div class="row mt-3">
- <div class="col-12">
-   <h4 class="font-title-blue text-center">Especialidad/Estudios Realizados</h4>
-   <hr>
+ @endif
+ <hr>
+ <div class="row mt-3">
+   <div class="col-12">
+     <h4 class="font-title-blue text-center">Especialidad/Estudios Realizados</h4>
+     <hr>
+     <h5 style="color:red">Por Corregir</h5>
+   </div>
  </div>
-</div>
-<div class="row">
- <div class="col-12 scroll-table">
-   <table class="table table-config">
-     <thead class="thead-color">
-       <th>Tipo</th>
-       <th>Especialidad</th>
-       <th>Institución</th>
-       <th>Desde</th>
-       <th>Hasta</th>
-       <th>Estado</th>
-       <th>información Adicional</th>
-     </thead>
-     <tbody>
-       @foreach ($medico_specialty as $info)
-       <tr>
-         <td>{{$info->type}}</td>
-         <td>{{$info->specialty}}</td>
-         <td>{{$info->institution}}</td>
-         <td>{{\Carbon\Carbon::parse($info->from)->format('m-d-Y')}}</td>
-         <td>{{\Carbon\Carbon::parse($info->until)->format('m-d-Y')}}</td>
-         <td>{{$info->state}}</td>
-         @isset($info->aditional)
-         <td>{{$info->aditional}}</td>
-         @else
-         <td style="color:rgb(173, 173, 173)">N.P.</td>
-         @endisset
+ <div class="row">
+   <div class="col-12 scroll-table">
+     <table class="table table-config">
+       <thead class="thead-color">
+         <th>Tipo</th>
+         <th>Especialidad</th>
+         <th>Institución</th>
+         <th>Desde</th>
+         <th>Hasta</th>
+         <th>Estado</th>
+         <th>información Adicional</th>
+       </thead>
+       <tbody>
+         @foreach ($medico_specialty as $info)
+         <tr>
+           <td>{{$info->type}}</td>
+           <td>{{$info->specialty}}</td>
+           <td>{{$info->institution}}</td>
+           <td>{{\Carbon\Carbon::parse($info->from)->format('m-d-Y')}}</td>
+           <td>{{\Carbon\Carbon::parse($info->until)->format('m-d-Y')}}</td>
+           <td>{{$info->state}}</td>
+           @isset($info->aditional)
+           <td>{{$info->aditional}}</td>
+           @else
+           <td style="color:rgb(173, 173, 173)">N.P.</td>
+           @endisset
 
-       </tr>
-       @endforeach
-     </tbody>
-     <tfoot>
-       <td colspan="12">{{$medico_specialty->links()}}</td>
-     </tfoot>
-   </table>
+         </tr>
+         @endforeach
+       </tbody>
+       <tfoot>
+         <td colspan="12">{{$medico_specialty->links()}}</td>
+       </tfoot>
+     </table>
+   </div>
  </div>
-</div>
 
-<div class="row">
- <div class="col-12 text-right">
-   <a href="{{route('medico_specialty_create',$medico->id)}}" class="btn btn-success">Agregar Especialidad/Estudios Realizados</a>
+ <div class="row">
+   <div class="col-12 text-right">
+     <a href="{{route('medico_specialty_create',$medico->id)}}" class="btn btn-success">Agregar Especialidad/Estudios Realizados</a>
+   </div>
  </div>
-</div>
-<hr>
-<div class="row">
+ <hr>
+ <div class="row">
   <div class="col-12 mb-1">
    <h4 class="font-title-blue text-center">Servicios otorgados</h4>
+   <h5 style="color:red">Por Corregir</h5>
  </div>
 </div>
 
@@ -416,30 +433,39 @@
    <h4 id="imgs" class="font-title-blue text-center">Imagenes</h4>
  </div>
 </div>
+<div class="text-right">
+  <div class="row">
+    <div class="col-12">
+     <div class="form-group">
 
-<div class="row">
-  <div class="col-12">
-   <div class="form-group">
-     @include('medico.alert2.alert2')
-     <div class="row" id="">
-      @foreach ($images as $image)
-      {{-- div que encierra cada imagen --}}
+       <div class="row mt-5" id="">
+         @foreach ($images as $image)
+  			 {{-- div que encierra cada imagen --}}
 
-      <div class="col my-2">
-        <img src="{{asset($image->path)}}" width="auto" height="80px" alt="">
-        <a onclick="return confirm('¿Esta seguro de eliminar esta Imagen?')"href="{{route('photo_delete',$image->id)}}">x</a>
+  			 <div class="col-4 card">
+  				 <div class="card-body">
+  					 <img onclick="expandir(this)" id="myImg" src="{{asset($image->path)}}" width="auto" height="150px" alt="">
+
+  				 </div>
+  				 <div class="card-footer text-center">
+  				 	<p>{{$image->name}}</p>
+  				 </div>
+  			 </div>
+  			 <!-- The Modal -->
+  			 <div id="myModal-img" class="modal-img">
+  				 <span class="cerrar">&times;</span>
+  				 <img class="modal-content-img" id="img01">
+  				 <div id="caption"></div>
+  			 </div>
+  			 @endforeach
       </div>
-      @endforeach
+      <hr>
+
     </div>
-    <hr>
-    {!!Form::open(['route'=>'image_store','method'=>'POST','files'=>true])!!}
-    {!!Form::file('image')!!}
-    {!!Form::hidden('medico_id',$medico->id)!!}
-    {!!Form::hidden('email',$medico->email)!!}
-    {!!Form::submit('Subir imagen',['class'=>'btn btn-success'])!!}
-    {!!Form::close()!!}
   </div>
-</div>
+  </div>
+  <a href="{{'add_image',$medico->id}}" class="btn btn-success">Agregar/Eliminar Imagenes</a>
+
 </div>
 {{-- //videos --}}
 <hr>
@@ -497,56 +523,56 @@
  </div>
 </div>
 
-      <div class="row my-3">
-        <div class="col-lg-9 col-12 m-auto">
-          <div class="custom-control custom-radio">
-            {{-- {{Form::radio('type_patient_service','Solo pacientes privados',['class'=>'custom-control-input','id'=>'radio'])}} --}}
+<div class="row my-3">
+  <div class="col-lg-9 col-12 m-auto">
+    <div class="custom-control custom-radio">
+      {{-- {{Form::radio('type_patient_service','Solo pacientes privados',['class'=>'custom-control-input','id'=>'radio'])}} --}}
 
-            @if($medico->type_patient_service == "Solo pacientes privados")
-            <input type="radio" name="type_patient_service" value="solo medicos privados" checked="checked" id="radio" onclick="hide_aseguradoras()">
-            @else
-              <input type="radio" name="type_patient_service" value="Solo pacientes privados" id="radio" onclick="hide_aseguradoras()">
-            @endif
-            <label class="" for="show-question1" id="radio"  >Solo pacientes privados</label>
+      @if($medico->type_patient_service == "Solo pacientes privados")
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo medicos privados" checked="checked" id="radio" onclick="hide_aseguradoras()">
+      @else
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Solo pacientes privados" id="radio" onclick="hide_aseguradoras()">
+      @endif
+      <label class="" for="show-question1" id="radio"  >Solo pacientes privados</label>
+    </div>
+    <div class="custom-control custom-radio">
+
+      @if($medico->type_patient_service == "Pacientes por aseguradoras, convenios y privados")
+
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" checked="checked" id="radio2" onclick="show_aseguradoras()">
+      @else
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" id="radio2" onclick="show_aseguradoras()">
+      @endif
+      <label class="" for="show-question1" id="radioxxx"  >Pacientes por aseguradoras, convenios y privados</label>
+      <label class="" for="show-question2"></label>
+    </div>
+    <div class= "p-3 mt-3" id="panel-insurance" style="display:none;">
+      <a href="{{route('create_add_insurrances',$medico->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
+    </div>
+    <div class="aseguradoras" id="aseguradoras" style="display:none">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            @foreach ($insurance_carrier as $key => $value)
+            <div class="col-6">
+              <li>{{$value->name}}</li>
+            </div>
+            @endforeach
           </div>
-          <div class="custom-control custom-radio">
+          <div class="row">
+            <div class="col-6">
 
-            @if($medico->type_patient_service == "Pacientes por aseguradoras, convenios y privados")
-
-            <input type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" checked="checked" id="radio2" onclick="show_aseguradoras()">
-            @else
-              <input type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" id="radio2" onclick="show_aseguradoras()">
-            @endif
-            <label class="" for="show-question1" id="radioxxx"  >Pacientes por aseguradoras, convenios y privados</label>
-            <label class="" for="show-question2"></label>
+            </div>
+            <div class="col-6 mt-2">
+              <a href="{{route('medico_create_add_insurrances',$medico->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
+            </div>
           </div>
-          <div class= "p-3 mt-3" id="panel-insurance" style="display:none;">
-            <a href="{{route('create_add_insurrances',$medico->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
-          </div>
-          <div class="aseguradoras" id="aseguradoras" style="display:none">
-              <div class="card">
-                <div class="card-body">
-                  <div class="row">
-                    @foreach ($insurance_carrier as $key => $value)
-                      <div class="col-6">
-                      <li>{{$value->name}}</li>
-                      </div>
-                    @endforeach
-                  </div>
-                  <div class="row">
-                    <div class="col-6">
-
-                    </div>
-                    <div class="col-6 mt-2">
-                        <a href="{{route('medico_create_add_insurrances',$medico->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-         </div>
-       </div>
+        </div>
       </div>
+
+    </div>
+  </div>
+</div>
 
 
 <div class="row my-2">
@@ -680,11 +706,32 @@
 @endsection
 
 @section('scriptJS')
-<script src="https://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY"></script>
-
-<script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>
+  <script src="https://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY"></script>
+  <script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>
 <script type="text/javascript">
 
+// Get the modal
+var modal = document.getElementById('myModal-img');
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+
+function expandir(result){
+  var modalImg = document.getElementById("img01");
+  var captionText = document.getElementById("caption");
+  modal.style.display = "block";
+  modalImg.src = result.src;
+  captionText.innerHTML = result.alt;
+}
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("cerrar");
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function(){
+    modal.style.display = "none";
+}
 
   function cerrar_calificaciones(){
     $('#modal-calification').modal('hide');
@@ -703,33 +750,33 @@
      success:function(result){
        $('#modal-calification').modal('show');
        $('#content_calification').empty().html(result);
-       console.log(result);
+
 
      },
      error:function(error){
        console.log(error);
      },
    });
-  }
+ }
   // calification_medic_show_patient();
 
   function paginate_calification(result){
-     page = result;
-     page1 = $('#page_calificatione_exp').val();
-     route = "{{route('calification_medic_show_patient')}}";
-     medico_id = $('#medico_id').val();
-     $.ajax({
-       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-       type:'post',
-       url: route,
-       data:{medico_id:medico_id,page:page,page1:page1},
-       success:function(result){
-         if(result == 'limite'){
-           return false;
-         }
-         $('#content_calification').empty().html(result);
+   page = result;
+   page1 = $('#page_calificatione_exp').val();
+   route = "{{route('calification_medic_show_patient')}}";
+   medico_id = $('#medico_id').val();
+   $.ajax({
+     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+     type:'post',
+     url: route,
+     data:{medico_id:medico_id,page:page,page1:page1},
+     success:function(result){
+       if(result == 'limite'){
+         return false;
+       }
+       $('#content_calification').empty().html(result);
          // $('#div_calification').empty().html(result);
-         console.log(result);
+
 
        },
        error:function(error){
@@ -737,8 +784,8 @@
        },
      });
 
-   }
-function paginate_experience(result){
+ }
+ function paginate_experience(result){
    page = result;
    page1 = $('#page_exp').val();
    route = "{{route('medico_experience_list')}}";
@@ -754,17 +801,17 @@ function paginate_experience(result){
        }
        $('#medico_experience_ajax').empty().html(result);
        // $('#div_calification').empty().html(result);
-       console.log(result);
-         $('.bd-example-modal-lg').modal('show');
+
+       $('.bd-example-modal-lg').modal('show');
      },
      error:function(error){
        console.log(error);
      },
    });
 
-}
+ }
 
-  function list_experience(){
+ function list_experience(){
    route = "{{route('medico_experience_list')}}";
    medico_id = $('#medico_id').val();
 
@@ -775,7 +822,7 @@ function paginate_experience(result){
      data:{medico_id:medico_id},
      success:function(result){
        $('#medico_experience_ajax').empty().html(result);
-       console.log(result);
+
 
      },
      error:function(error){
@@ -785,189 +832,189 @@ function paginate_experience(result){
  }
 
 
-  function volver(){
-    window.history.back();
-  }
+ function volver(){
+  window.history.back();
+}
 
-  function delete_video(request){
-    question = confirm('¿Esta segur@ de Eliminar este video?')
-    if(question == false){
-      return false;
-    }
-    video_id = request;
-    route = "{{route('delete_video')}}";
-    $.ajax({
-     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
-     url:route,
-     data:{video_id:video_id},
-     error:function(error){
-       console.log(error);
-    },
-    success:function(result){
+function delete_video(request){
+  question = confirm('¿Esta segur@ de Eliminar este video?')
+  if(question == false){
+    return false;
+  }
+  video_id = request;
+  route = "{{route('delete_video')}}";
+  $.ajax({
+   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+   type:'post',
+   url:route,
+   data:{video_id:video_id},
+   error:function(error){
+     console.log(error);
+   },
+   success:function(result){
+    cerrar();
+    list_videos();
+  }
+});
+}
+
+$('#form_video').submit(function(){
+  errormsj = '';
+  $.ajax({
+   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+   type:'post',
+   url: $(this).attr('action'),
+   data: $(this).serialize(),
+   error:function(error){
+     cerrar();
+     console.log(error);
+     $.each(error.responseJSON.errors, function(index, val){
+       errormsj+='<li>'+val+'</li>';
+     });
+     $('#text_error_video').html('<ul>'+errormsj+'</ul>');
+     $('#alert_error_video').fadeIn();
+     console.log(errormsj);
+   },
+   success:function(result){
+    cerrar();
+
+    if(result == 'invalida'){
+      $('#text_error_video').html('La Url es invalida, o esta mal escrita, solo puede ingresar urls de videos de youtube,para realizar esta opcion, busque en la pagina de youtube el video que desea insertar, etando en la ventana de reproduccion del mismo, seleccione la url de youtube en ese momento: ejemplo: https://www.youtube.com/watch?v=YxC9UB49x04');
+      $('#alert_error_video').fadeIn();
+    }else if(result == 'limite'){
+      $('#text_error_video').html('imposible realizar acción,Haz agregado el numero maximo de videos admitidos.');
+      $('#alert_error_video').fadeIn();
+
+    }else if(result == 'ok'){
       cerrar();
       list_videos();
+      $("#form_video")[0].reset();
     }
+
+
+  }
+
+});
+  return false;
+});
+
+$(document).ready(function() {
+  list_social();
+  list_service();
+  list_experience();
+  list_videos();
+  comprueba_checkbox();
+});
+
+function hide_aseguradoras(){
+  type_patient_service = $('#radio').val();
+  medico_id = "{{$medico->id}}"
+  route = "{{route('select_insurrances2')}}"
+  $.ajax({
+   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+   type:'post',
+   url:route,
+   data:{type_patient_service:type_patient_service,medico_id:medico_id},
+   error:function(error){
+   },
+   success:function(result){
+
+  }
+});
+  $('#aseguradoras').hide();
+}
+
+function show_aseguradoras(){
+  type_patient_service = $('#radio2').val();
+  medico_id = "{{$medico->id}}"
+  route = "{{route('select_insurrances2')}}"
+  $.ajax({
+   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+   type:'post',
+   url:route,
+   data:{type_patient_service:type_patient_service,medico_id:medico_id},
+   error:function(error){
+   },
+   success:function(result){
+
+  }
+});
+  $('#aseguradoras').show();
+}
+
+function comprueba_checkbox(){
+  if($("#radio2").is(':checked')) {
+    $('#aseguradoras').show();
+  }
+}
+
+
+function modal_service2(){
+  $('#modal-service2').modal('toggle');
+  $('#modal-service2').on('shown.bs.modal', function() {
+    $('#input_service').val('');
+    $('#input_service').focus();
   });
 }
 
-  $('#form_video').submit(function(){
-    errormsj = '';
-    $.ajax({
-     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
-     url: $(this).attr('action'),
-     data: $(this).serialize(),
-     error:function(error){
-       cerrar();
-       console.log(error);
-       $.each(error.responseJSON.errors, function(index, val){
-         errormsj+='<li>'+val+'</li>';
-       });
-       $('#text_error_video').html('<ul>'+errormsj+'</ul>');
-       $('#alert_error_video').fadeIn();
-       console.log(errormsj);
-    },
-    success:function(result){
-      cerrar();
-      console.log(result);
-      if(result == 'invalida'){
-        $('#text_error_video').html('La Url es invalida, o esta mal escrita, solo puede ingresar urls de videos de youtube,para realizar esta opcion, busque en la pagina de youtube el video que desea insertar, etando en la ventana de reproduccion del mismo, seleccione la url de youtube en ese momento: ejemplo: https://www.youtube.com/watch?v=YxC9UB49x04');
-        $('#alert_error_video').fadeIn();
-      }else if(result == 'limite'){
-        $('#text_error_video').html('imposible realizar acción,Haz agregado el numero maximo de videos admitidos.');
-        $('#alert_error_video').fadeIn();
-
-      }else if(result == 'ok'){
-        cerrar();
-        list_videos();
-        $("#form_video")[0].reset();
-      }
-
-
-    }
-
+function modal_experience(){
+  $('#modal-experience').modal('toggle');
+  $('#modal-experience').on('shown.bs.modal', function() {
+    $('#name_experience').val('');
+    $('#name_experience').focus();
   });
-    return false;
-  });
-
-  $(document).ready(function() {
-    list_social();
-    list_service();
-    list_experience();
-    list_videos();
-    comprueba_checkbox();
-  });
-
-  function hide_aseguradoras(){
-    type_patient_service = $('#radio').val();
-    medico_id = "{{$medico->id}}"
-    route = "{{route('select_insurrances2')}}"
-    $.ajax({
-     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
-     url:route,
-     data:{type_patient_service:type_patient_service,medico_id:medico_id},
-     error:function(error){
-    },
-    success:function(result){
-      console.log(result);
-    }
-  });
-    $('#aseguradoras').hide();
-  }
-
-  function show_aseguradoras(){
-    type_patient_service = $('#radio2').val();
-    medico_id = "{{$medico->id}}"
-    route = "{{route('select_insurrances2')}}"
-    $.ajax({
-     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
-     url:route,
-     data:{type_patient_service:type_patient_service,medico_id:medico_id},
-     error:function(error){
-    },
-    success:function(result){
-      console.log(result);
-    }
-  });
-    $('#aseguradoras').show();
-  }
-
-  function comprueba_checkbox(){
-      if($("#radio2").is(':checked')) {
-        $('#aseguradoras').show();
-        }
-  }
+}
 
 
-  function modal_service2(){
-    $('#modal-service2').modal('toggle');
-    $('#modal-service2').on('shown.bs.modal', function() {
-      $('#input_service').val('');
-      $('#input_service').focus();
-    });
-  }
+$('#stateMedic').on('change', function() {
+ state_id = $('#stateMedic').val();
 
-  function modal_experience(){
-    $('#modal-experience').modal('toggle');
-    $('#modal-experience').on('shown.bs.modal', function() {
-      $('#name_experience').val('');
-      $('#name_experience').focus();
-    });
-  }
+ route = "{{route('inner_cities_select')}}";
+ $.ajax({
+  headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+  type:'post',
+  url: route,
+  data:{state_id:state_id},
+  success:function(result){
+    $("#cityMedic").empty();
+    $('#cityMedic').append($('<option>', {
+      value: null,
+      text: 'Ciudad'
+    }));
+    $.each(result,function(key, val){
+     $('#cityMedic').append($('<option>', {
+      value: key,
+      text: val
+    }));
+   });
+  },
+  error:function(error){
+   console.log(error);
+ },
+});
+})
 
+function list_videos(){
+ route = "{{route('medico_list_videos')}}";
+ medico_id = $('#medico_id').val();
+ $.ajax({
+   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+   type:'post',
+   url: route,
+   data:{medico_id:medico_id},
+   success:function(result){
+     $('#list_videos').empty().html(result);
 
-  $('#stateMedic').on('change', function() {
-   state_id = $('#stateMedic').val();
-
-   route = "{{route('inner_cities_select')}}";
-   $.ajax({
-    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-    type:'post',
-    url: route,
-    data:{state_id:state_id},
-    success:function(result){
-      $("#cityMedic").empty();
-      $('#cityMedic').append($('<option>', {
-        value: null,
-        text: 'Ciudad'
-      }));
-      $.each(result,function(key, val){
-       $('#cityMedic').append($('<option>', {
-        value: key,
-        text: val
-      }));
-     });
-    },
-    error:function(error){
+   },
+   error:function(error){
      console.log(error);
    },
  });
- })
-
-  function list_videos(){
-     route = "{{route('medico_list_videos')}}";
-     medico_id = $('#medico_id').val();
-     $.ajax({
-       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-       type:'post',
-       url: route,
-       data:{medico_id:medico_id},
-       success:function(result){
-         $('#list_videos').empty().html(result);
-         console.log(result);
-       },
-       error:function(error){
-         console.log(error);
-       },
-     });
-  }
+}
 
 
 
- function list_social(){
+function list_social(){
   route = "{{route('social_network_list')}}";
 
   medico_id = $('#medico_id').val();
@@ -979,7 +1026,7 @@ function paginate_experience(result){
     data:{medico_id:medico_id},
     success:function(result){
       $('#list_social_ajax').empty().html(result);
-      console.log(result);
+
 
     },
     error:function(error){
@@ -1000,7 +1047,7 @@ function list_service(){
     data:{medico_id:medico_id},
     success:function(result){
       $('#list_service_ajax').empty().html(result);
-      console.log(result);
+
 
     },
     error:function(error){
@@ -1030,7 +1077,7 @@ function storeSocial(){
      console.log(errormsj);
    },
    success:function(result){
-     console.log(result);
+
      $('#alert_error_s').fadeOut();
      name = $('#name_social').val('');
      link = $('#link_social').val('');
@@ -1060,7 +1107,7 @@ function medico_experience_delete(service_id){
    console.log(errormsj);
  },
  success:function(result){
-   console.log(result);
+
    list_experience();
  },
 });
@@ -1088,7 +1135,7 @@ function medico_service_delete(service_id){
    console.log(errormsj);
  },
  success:function(result){
-   console.log(result);
+
    list_service();
  },
 });
@@ -1116,7 +1163,7 @@ function social_network_delete(social_id){
    console.log(errormsj);
  },
  success:function(result){
-   console.log(result);
+
    list_social();
 
  },
@@ -1143,7 +1190,7 @@ function service_medico_store(){
     console.log(errormsj);
   },
   success:function(result){
-    console.log(result);
+
     $('#modal-service2').modal('toggle');
     list_service();
   }
@@ -1170,7 +1217,7 @@ function service_medico_experience(){
     console.log(errormsj);
   },
   success:function(result){
-    console.log(result);
+
     $('#modal-experience').modal('toggle');
     list_experience();
   }
@@ -1209,7 +1256,7 @@ function updateMedic(){
     console.log(errormsj);
   },
   success:function(result){
-    console.log(result);
+
     $('#alert_error_update').fadeOut();
     $('#text_success_service').html('Cambios Guardados con Exito');
     $('#alert_success_update').fadeIn();
@@ -1234,6 +1281,7 @@ $('document').ready(function(){
 });
 
 function show_map(){
+
   $('#store_coordinates').attr('disabled', false);
   lat = '{{$medico->latitud}}';
   lng = '{{$medico->longitud}}';
@@ -1318,7 +1366,7 @@ function store_coordinates(){
     },
     success:function(result){
 
-      console.log(result);
+
         // //$('#input_descripion').val(result);
         // $('#div_descripion').html(result);
         // decription = $('#description_text').html();
