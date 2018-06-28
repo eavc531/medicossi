@@ -5,7 +5,7 @@ use Mail;
 use App\reminder;
 use App\medico;
 use Illuminate\Http\Request;
-
+use App\reminder_alarm;
 //borrar
 use App\event;
 
@@ -13,9 +13,225 @@ use App\event;
 class reminderController extends Controller
 {
 
+    public function reminder_delete(Request $request){
+      $reminder_alarm = reminder_alarm::find($request->reminder_id);
+      $reminder_alarm->delete();
+      return response()->json('ok');
+
+    }
+
+    public function reminder_alarm_update(Request $request){
+          $request->validate([
+            'title'=>'required',
+            'description'=>'max:255',
+            'date_start'=>'required',
+            'hourStart'=>'required',
+            'minsStart'=>'required',
+          ]);
+
+          // return response()->json('ok');
+          //return response()->json($request->all());
+          $hour_start1 = $request->hourStart.':'.$request->minsStart;
+          $hour_end1 = $request->hourEnd.':'.$request->minsEnd;
+          $hourStart = $request->hourStart.':'.$request->minsStart.':'.'00';
+          $start = $request->date_start.' '.$request->hourStart.':'.$request->minsStart.':'.'00';
+
+        if($request->date_End == Null){
+          $date_End = $request->date_start;
+        }else{
+          $date_End = $request->date_End;
+        }
+
+        if($request->hourEnd == '--' or $request->minsEnd == '--' or $request->hourEnd == Null or $request->minsEnd == Null){
+          $hend = null;
+          $mend = null;
+          $hourEnd = $request->hourStart.':'.$request->minsStart.':'.'00';
+          $end = $date_End.' '.$request->hourStart.':'.$request->minsStart.':'.'00';
+
+        }else{
+          $hend = $request->hourEnd;
+          $mend = $request->minsEnd;
+          $end = $date_End.' '.$request->hourEnd.':'.$request->minsEnd.':'.'00';
+          $hourEnd = $request->hourEnd.':'.$request->minsEnd.':'.'00';
+        }
 
 
-    public function reminders_medico($id)
+        $day1 = \Carbon\Carbon::parse($start)->dayOfWeek;
+
+        $hour_start2 = \Carbon\Carbon::parse($start)->format('H:i');
+        $hour_end2 = \Carbon\Carbon::parse($end)->format('H:i');
+
+        if($day1 == 1){
+          $day = 'lunes';
+        }
+        if($day1 == 2){
+          $day = 'martes';
+        }
+        if($day1 == 3){
+          $day = 'miercoles';
+        }
+        if($day1 == 4){
+          $day = 'jueves';
+        }
+        if($day1 == 5){
+          $day = 'viernes';
+        }
+        if($day1 == 6){
+          $day = 'sabado';
+        }
+        if($day1 == 0){
+          $day = 'domingo';
+        }
+
+
+        $comprobar_horario = reminder_alarm::where('medico_id',$request->medico_id)->where('title', $day)->where('rendering', 'background')->where('start','<=',$hour_start2)->where('end','>=',$hour_start2)->count();
+
+        $comprobar_horario2 = reminder_alarm::where('medico_id',$request->medico_id)->where('title', $day)->where('rendering', 'background')->where('start','<=',$hour_end2)->where('end','>=',$hour_end2)->count();
+
+        if($comprobar_horario == 0 or $comprobar_horario2 == 0){
+          return response()->json('fuera del horario');
+        }
+
+        $reminder_alarm = reminder_alarm::find($request->event_id);
+
+        if($reminder_alarm->start != $start){
+          $comprobar_disponibilidad = reminder_alarm::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<=',$start)->where('end','>',$start)->where('state','!=','Rechazada/Cancelada')->count();
+
+         $comprobar_disponibilidad2 = reminder_alarm::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<',$end)->where('end','>=',$end)->where('state','!=','Rechazada/Cancelada')->count();
+
+         if($comprobar_disponibilidad != 0 or $comprobar_disponibilidad2 != 0){
+           return response()->json('ya existe');
+         }
+        }
+
+
+
+
+
+       $reminder_alarm->fill($request->all());
+       //$reminder_alarm->title
+       $reminder_alarm->start = $start;
+       $reminder_alarm->end = $end;
+       $reminder_alarm->save();
+
+       return response()->json('ok');
+    }
+
+    public function reminder_store(Request $request)
+    {
+      $request->validate([
+
+        'date_start'=>'required',
+        'hourStart'=>'required',
+        'minsStart'=>'required',
+
+      ]);
+
+
+      if($request->title == Null){
+        $title = 'Recordatorio';
+      }else{
+        $title = $request->title;
+      }
+      //return response()->json($request->all());
+      $hour_start1 = $request->hourStart.':'.$request->minsStart;
+
+      $hour_end1 = $request->hourEnd.':'.$request->minsEnd;
+
+      $hourStart = $request->hourStart.':'.$request->minsStart.':'.'00';
+
+      $start = $request->date_start.' '.$request->hourStart.':'.$request->minsStart.':'.'00';
+
+
+    if($request->date_End == Null){
+      $date_End = $request->date_start;
+    }else{
+      $date_End = $request->date_End;
+    }
+
+    if($request->hourEnd == '--' or $request->minsEnd == '--' or $request->hourEnd == Null or $request->minsEnd == Null){
+      $hend = null;
+      $mend = null;
+      $hourEnd = $request->hourStart.':'.$request->minsStart.':'.'00';
+      $end = $date_End.' '.$request->hourStart.':'.$request->minsStart.':'.'00';
+
+    }else{
+      $hend = $request->hourEnd;
+      $mend = $request->minsEnd;
+      $end = $date_End.' '.$request->hourEnd.':'.$request->minsEnd.':'.'00';
+      $hourEnd = $request->hourEnd.':'.$request->minsEnd.':'.'00';
+    }
+
+
+    $day1 = \Carbon\Carbon::parse($start)->dayOfWeek;
+
+    $hour_start2 = \Carbon\Carbon::parse($start)->format('H:i');
+    $hour_end2 = \Carbon\Carbon::parse($end)->format('H:i');
+
+    if($day1 == 1){
+      $day = 'lunes';
+    }
+    if($day1 == 2){
+      $day = 'martes';
+    }
+    if($day1 == 3){
+      $day = 'miercoles';
+    }
+    if($day1 == 4){
+      $day = 'jueves';
+    }
+    if($day1 == 5){
+      $day = 'viernes';
+    }
+    if($day1 == 6){
+      $day = 'sabado';
+    }
+    if($day1 == 0){
+      $day = 'domingo';
+    }
+
+
+    $comprobar_horario = reminder_alarm::where('medico_id',$request->medico_id)->where('title', $day)->where('rendering', 'background')->where('start','<=',$hour_start2)->where('end','>=',$hour_start2)->count();
+
+
+    $comprobar_horario2 = reminder_alarm::where('medico_id',$request->medico_id)->where('title', $day)->where('rendering', 'background')->where('start','<=',$hour_end2)->where('end','>=',$hour_end2)->count();
+
+    if($comprobar_horario == 0 or $comprobar_horario2 == 0){
+      return response()->json('fuera del horario');
+    }
+
+    $comprobar_disponibilidad = reminder_alarm::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<=',$start)->where('end','>',$start)->where('state','!=','Rechazada/Cancelada')->count();
+
+   $comprobar_disponibilidad2 = reminder_alarm::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<',$end)->where('end','>=',$end)->where('state','!=','Rechazada/Cancelada')->count();
+
+
+   if($comprobar_disponibilidad != 0 or $comprobar_disponibilidad2 != 0){
+     return response()->json('ya existe');
+   }
+
+   $reminders = new reminder_alarm;
+   $reminders->medico_id = $request->medico_id;
+   $reminders->title = $title;
+   $reminders->description =  $request->description;
+   $reminders->start =  $start;
+   $reminders->end =  $end;
+   $reminders->state = 'Pendiente';
+   $reminders->color = 'rgba(250, 61, 35, 0.95)';
+   $reminders->save();
+
+   return response()->json('ok');
+
+    }
+
+    public function reminder_calendar($id)
+    {
+      $reminders = reminder_alarm::where('medico_id',$id)->get();
+
+      return response()->json($reminders);
+    }
+
+
+    public function medico_reminders($id)
     {
       // $months = month::where('user_id',Auth::user()->id)->get();
       $medico = medico::find($id);
@@ -30,6 +246,9 @@ class reminderController extends Controller
 
       // event::max('');
       $countEventSchedule = event::where('medico_id',$id)->where('eventType','horario')->max('end');
+      $reminder_alarm = reminder::where('medico_id',$id)->where('type','Alarma')->first();
+
+
       if($countEventSchedule != 0){
 
         $lunes1 = event::where('medico_id',$id)->where('title','lunes')->max('end');
@@ -105,11 +324,11 @@ class reminderController extends Controller
          //Configuración para citas pagadas con fecha pasada
         $config_past_and_payment_auto = reminder::where('medico_id',$medico->id)->where('type', 'Pasada y Pagada')->first();
 
-        return view('medico.reminders_medico')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule)->with('reminder_confirmed', $reminder_confirmed)->with('config_past_and_payment_auto', $config_past_and_payment_auto);
+        return view('medico.panel.medico_reminders')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule)->with('reminder_alarm', $reminder_alarm);
 
       }
 
-      return view('medico.reminders_medico')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule)->with('config_past_and_payment_auto', $config_past_and_payment_auto);
+      return view('medico.panel.medico_reminders')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule)->with('reminder_alarm', $reminder_alarm);
       // ->with($months, 'months');
   }
 
@@ -122,8 +341,8 @@ class reminderController extends Controller
         foreach ($events as $event) {
           Mail::send('mails.reminder',['event'=>$event],function($msj) use($event){
              $msj->subject('Recordatorio Cita MédicosSi');
-             // $msj->to($event->patient->email);
-             $msj->to('eavc53189@gmail.com');
+             $msj->to($event->patient->email);
+             //$msj->to('eavc53189@gmail.com');
            });
 
         }
@@ -148,10 +367,36 @@ class reminderController extends Controller
     return response()->json('ok1');
   }
 
+  public function config_acvtivate_reminder_alarm(Request $request){
+
+    $count = reminder::where('medico_id', $request->medico_id)->where('type','Alarma')->count();
+
+    if($count == 0){
+      $reminder = new reminder;
+      $reminder->type = 'Alarma';
+      $reminder->medico_id = $request->medico_id;
+      $reminder->options = $request->options;
+      $reminder->save();
+    }else{
+      $reminder = reminder::where('medico_id', $request->medico_id)->where('type','Alarma')->first();
+      $reminder->options = $request->options;
+      $reminder->save();
+    }
+    return response()->json('ok2');
+  }
+
   public function reminder_time_confirmed(Request $request){
 
 
     $reminder = reminder::where('medico_id', $request->medico_id)->where('type','Cita Confirmada')->first();
+    $reminder->days_before = $request->time;
+    $reminder->save();
+    return response()->json('ok2');
+  }
+
+  public function reminder_time_alarm(Request $request){
+
+    $reminder = reminder::where('medico_id', $request->medico_id)->where('type','Alarma')->first();
     $reminder->days_before = $request->time;
     $reminder->save();
     return response()->json('ok2');

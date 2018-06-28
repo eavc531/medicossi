@@ -85,10 +85,14 @@
         <label for="" class="mt-2 font-title">Metodo de Pago</label>
         {!!Form::select('payment_method',['Normal'=>'Normal','Pre-pagada'=>'Pre-pagada','Aseguradora'=>'Aseguradora'],null,['class'=>'form-control','id'=>'payment_method6'])!!}
 
+        <label for="" class="mt-2 font-title">Precio (Opcional)</label>
+        {!!Form::number('price',null,['class'=>'form-control','id'=>'price6'])!!}
+        <label for="" class="mt-2 font-title">Descripción (Opcional)</label>
+        {!!Form::text('price',null,['class'=>'form-control','id'=>'description6'])!!}
         {{-- <input class="form-control my-2" type="text" placeholder="precio (Opcional)" id="price2"> --}}
-        <div class="row">
+        <div class="row mt-2">
           <div class="col-lg-4 col-sm-12 font-title">
-           <label for="" class="col-form-label font-title-grey"> Inicio</label>
+           <label for="" class="col-form-label font-title-green"> Inicio</label>
          </div>
          <div class="col-lg-8 col-sm-12">
            {!!Form::date('date_start',null,['class'=>'form-control','id'=>'date_start2'])!!}
@@ -120,7 +124,7 @@
       {{-- {!!Form::select('endformatHour',['am'=>'am','pm'=>'pm'],null,['id'=>'endFormatHour2','class'=>'form-control  mb-1'])!!} --}}
     </div>
   </div>
-  <div id="alert_carga" class="alert alert-warning alert-dismissible fade show text-left mt-1" role="alert" style="display:none">
+  <div id="alert_carga" class="alert alert-info alert-dismissible fade show text-left mt-1" role="alert" style="display:none">
     Procesando...
   </div>
 
@@ -418,7 +422,9 @@
       $('#alert_carga').fadeIn();
       title = $('#eventType2').val();
       payment_method = $('#payment_method6').val();
+      description = $('#description6').val();
       date_start = $('#date_start2').val();
+      price = $('#price6').val();
       hourStart = $('#hourStart2').val();
       minsStart = $('#minsStart2').val();
       dateEnd = $('#date_end3').val();
@@ -433,7 +439,7 @@
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
        type:'post',
        url:route,
-       data:{title:title,payment_method:payment_method,date_start:date_start,hourStart:hourStart,minsStart:minsStart,dateEnd:dateEnd,hourEnd:hourEnd,minsEnd:minsEnd,medico_id:medico_id,patient_id:patient_id},
+       data:{title:title,payment_method:payment_method,date_start:date_start,hourStart:hourStart,minsStart:minsStart,dateEnd:dateEnd,hourEnd:hourEnd,minsEnd:minsEnd,medico_id:medico_id,patient_id:patient_id,price:price,description:description},
        error:function(error){
          stop_loader();
           console.log(error);
@@ -456,6 +462,10 @@
         console.log(result);
         if(result == 'fuera de horario'){
           $('#text_error').html('Imposible crear evento fuera del horario establecido,  por favor compruebe la fecha en el calendario e intente nuevamente');
+          $('#alert_error').fadeIn();
+          $('#alert_success').fadeOut();
+        }else if(result == 'error_prepagada'){
+          $('#text_error').html('Error. Para agendar cita prepagada, añada el monto del pago');
           $('#alert_error').fadeIn();
           $('#alert_success').fadeOut();
         }else if(result == 'ya existe'){

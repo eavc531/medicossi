@@ -21,25 +21,19 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-9 col-12">
-
           <div class="row">
             <div class="col-12">
               <h2 class="text-center font-title">Mi Agenda</h2>
-
-
             </div>
           </div>
-
           <div class="row">
             <div class="col-lg-6 col-12">
             </div>
             </div>
-
           <div class="alert-info p-3 m-2" style="display:none" id="alert_carga5">
             Procesando...
           </div>
-        @include('medico.includes.alert_calendar')
-        @include('medico.includes.card_edit')
+
           <hr>
           {{-- //busqueda --}}
           @if($countEventSchedule != 0)
@@ -50,15 +44,11 @@
             <div class="" id="result_search">
 
             </div>
-            <div class="mb-3">
 
-            </div>
           @endif
+          @include('medico.includes.alert_calendar')
+          @include('medico.includes.card_edit')
           {{-- // --}}
-
-          <div class="" id="example">
-            {{-- //////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT --}}
-
 
           {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
           {{-- IF SHOW CALENDAR --}}
@@ -66,12 +56,9 @@
 
           <div id='calendar' style=""></div>
           {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
-
-
             <div class="row text-center mt-2">
               <div class="col">
                 <div class="" style="width:15px;height:15px;background:">
-
                 </div>
                   <input type="radio" value="Disponible" name="opcion" onclick="filtro_todas()"/><br />
                 <label for="" class="mx-2" style="background:rgb(230, 230, 230)">Todas</label>
@@ -113,122 +100,7 @@
             </div>
 
 
-
-
-              <div class="col-lg-10 col-12 align-items-center">
-                <h6>¿Desea que se mande un mensaje de recordatorio a sus pacientes con citas confirmadas?</h6>
-              </div>
-              <div class="col-lg-2 col-12">
-                <div class="radio-switch">
-                @if($reminder_confirmed != Null)
-                  @if ($reminder_confirmed->options == Null or $reminder_confirmed->options == 'No')
-                    <div class="radio-switch-field">
-
-                      <input id="switch-off" type="radio" name="radio-switch" value="No" checked onclick="switch_reminder1('No')">
-                      <label for="switch-off">No</label>
-                    </div>
-                    <div class="radio-switch-field">
-                      <input id="switch-on" type="radio" name="radio-switch" value="Si"  onclick="switch_reminder1('Si')">
-                      <label for="switch-on">Si</label>
-                    </div>
-                  @else
-                  <div class="radio-switch-field">
-                    <input id="switch-off" type="radio" name="radio-switch" value="off"  onclick="switch_reminder1('No')">
-                    <label for="switch-off">No</label>
-                  </div>
-                  <div class="radio-switch-field">
-                    <input id="switch-on" type="radio" name="radio-switch" value="on" checked onclick="switch_reminder1('Si')">
-                    <label for="switch-on">Si</label>
-                  </div>
-                @endif
-              @else
-                <div class="radio-switch-field">
-
-                  <input id="switch-off" type="radio" name="radio-switch" value="No" checked onclick="switch_reminder1('No')">
-                  <label for="switch-off">No</label>
-                </div>
-                <div class="radio-switch-field">
-                  <input id="switch-on" type="radio" name="radio-switch" value="Si"  onclick="switch_reminder1('Si')">
-                  <label for="switch-on">Si</label>
-                </div>
-              @endif
-                </div>
-              </div>
-
-              {{-- @if ($reminder_confirmed->options == Null or $reminder_confirmed->options == 'No')
-                <div class="col-12" id="open-check" style="display: none;">
-                  <div class="custom-control custom-radio custom-control-inline">
-                    <input value="" type="radio" id="customRadioInline1" name="tyme_before" class="custom-control-input" onclick="reminder_time_confirmed('5')">
-                    <label class="custom-control-label" for="customRadioInline1">5 dias antes</label>
-                  </div>
-                  <div class="custom-control custom-radio custom-control-inline">
-                    <input type="radio" id="customRadioInline2" name="tyme_before" class="custom-control-input" onclick="reminder_time_confirmed('2')">
-                    <label class="custom-control-label" for="customRadioInline2">2 dias antes</label>
-                  </div>
-                  <div class="custom-control custom-radio custom-control-inline">
-                    <input type="radio" id="customRadioInline3" name="1d" class="custom-control-input" onclick="reminder_time_confirmed('1')">
-                    <label class="custom-control-label" for="customRadioInline3">1 dia antes</label>
-                  </div>
-                </div>
-                </div>
-              @else
-                <div class="col-12" id="open-check">
-                  {!!Form::model($reminder_confirmed,['route'=>'medico.store','method'=>'POST'])!!}
-
-                    {!!Form::radio('days_before','1',null,['onclick'=>'reminder_time_confirmed(1)'])!!}
-                    <label class="" for="customRadioInline1">5 dias antes</label>
-
-                    {!!Form::radio('days_before','2',null,['onclick'=>'reminder_time_confirmed(2)'])!!}
-                    <label class="" for="customRadioInline1">2 dias antes</label>
-
-                    {!!Form::radio('days_before','5',null,['onclick'=>'reminder_time_confirmed(5)'])!!}
-                    <label class="" for="customRadioInline2">1 dia antes</label>
-
-                  {!!Form::close()!!}
-                </div>
-              </div>
-            @endif --}}
-
-
-
-
-            <h6 style="color:red">arreglar animaciones de los switch</h6>
-            <div class="row my-5">
-              <div class="col-lg-10 col-12 align-items-center">
-                <h6>¿Desea que las citas que han sido pagadas con anticipacion, se marquen como completadas automaticamente despues de pasar la fecha de la misma?</h6>
-              </div>
-              <div class="col-lg-2 col-12">
-
-                <div class="col-lg-2 col-12">
-                  <div class="radio-switch">
-                  @if ($config_past_and_payment_auto != Null)
-                    @if($config_past_and_payment_auto->options == 'Si')
-                      <label for="switch-off">No</label>
-                      <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('No')">
-                      <label for="switch-off">Si</label>
-                      <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('Si')" checked>
-                    @else
-                      <label for="switch-off">No</label>
-                      <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('No')" checked>
-                      <label for="switch-off">Si</label>
-                      <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('Si')">
-                    @endif
-                  @else
-                    <label for="switch-off">No</label>
-                    <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('No')" checked>
-                    <label for="switch-off">Si</label>
-                    <input type="radio" name="switch_payment_and_past" value="" onclick="switch_payment_and_past('Si')">
-                  @endif
-
-
-                  </div>
-                </div>
-
-
-                </div>
-
-
-                </div>
+          @include('medico.panel.config_reminder')
 
           <div class="card mt-5 mb-5" >
           <div class="row">
@@ -260,7 +132,6 @@
                               {{$day->start}}
                                       a
                               {{$day->end}}
-
                             </li>
                               <hr>
                           </ul>
@@ -363,20 +234,17 @@
         @else
           <div class="card mt-5 mb-5">
             <div class="card-header">
-              <h4>Bienevenido al Panel de Control</h4>
+              <h4>Bienevenido al Panel Mi Agenda</h4>
             </div>
             <div class="card-body">
-              <h5>Para poder ver el Calendario y todas sus fucniones debe Otorgar un Horario de Trabajo</h5>
+              <h5>Para poder ver el Calendario de agenda y todas sus fucniones debe Otorgar un Horario de Trabajo</h5>
               <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
             </div>
           </div>
         @endif
         {{-- IF SHOW CALENDAR --}}
-            </div>
-
-
-
-          </div>
+    </div>
+          {{-- </div> --}}
         <div class="col-12 col-lg-3">
           <div id="dashboard">
             <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
@@ -692,6 +560,10 @@
     }
 
     function switch_reminder1(request){
+      if(request == 'No'){
+        $('.open-check').fadeIn();
+
+      }
       medico_id = "{{$medico->id}}";
       options = request;
       route = "{{route('reminder_switch_confirmed')}}";
@@ -732,8 +604,8 @@
 
     $(document).ready(function(){
 
-      $('#form, #fo3').submit(function() {
-
+      $('#form, #fo3').submit(function(){
+        loader();
         cerrar();
         $('#alert_carga5').fadeIn();
         $('#guardar5').attr("disabled", true);
@@ -747,6 +619,7 @@
                data: $(this).serialize(),
                // Mostramos un mensaje con la respuesta de PHP
                error:function(error){
+                 stop_loader();
                  $('#alert_carga5').fadeOut();
                  $('#guardar5').attr("disabled", false);
                  $('#delete5').attr("disabled", false);
@@ -762,6 +635,7 @@
                 console.log(errormsj);
               },
                success:function(result){
+                 stop_loader();
                  console.log(result);
                  $('#alert_carga5').fadeOut();
                  $('#guardar5').attr("disabled", false);
@@ -775,6 +649,11 @@
                    $('#text_success_up1').html('Se ha cambiado la "Hora/Fecha" de la consulta con Exito. Se ha enviado un correo al Paciente para notificarle del cambio de la consulta.');
                    $('#alert_success_up1').fadeIn();
                    $('#card_edit').fadeOut();
+                 }else if(result == 'ya existe'){
+                   $('#text_error_up1').html('Imposible actualizar evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
+                   $('#alert_error_up1').fadeIn();
+                   $('#alert_success').fadeOut();
+
                  }else {
                    console.log(result);
                    $('#card_edit').fadeOut();
@@ -832,9 +711,9 @@
         domingo = 0;
       }
 
-
+        //comentario fc
     // function calendario(){
-          $('#calendar').fullCalendar({
+      $('#calendar').fullCalendar({
 
         header: {
           left: 'prev,next today myCustomButton',
@@ -1302,7 +1181,7 @@
     });
 
       function search_medic(){
-        alert('sd');
+
       medico_id = "{{$medico->id}}";
       search = $('#input_search').val();
       route = "{{route('search_patients_diary')}}";

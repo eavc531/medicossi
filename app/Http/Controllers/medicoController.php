@@ -28,7 +28,9 @@ use App\note;
 use App\rate_medic;
 use App\video;
 use DB;
+use Session;
 use Auth;
+use App\info_patient;
 use App\insurrance_show;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -43,11 +45,238 @@ class medicoController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+     public function add_patient_registered(Request $request){
+       $patients_doctor = patients_doctor::where('medico_id', $request->medico_id)->where('patient_id',$request->patient_id)->first();
+       $patient = patient::find($request->patient_id);
+       if($patients_doctor == Null){
+         // $medico = medico::find($request->medico_id);
+         $patient = patient::find($request->patient_id)->toArray();
+
+         $info_patient = new info_patient;
+         $info_patient->fill($patient);
+         $info_patient->nameComplete = $patient['name']." ".$patient['lastName'];
+         $info_patient->save();
+
+         $patients_doctor = new patients_doctor;
+         $patients_doctor->medico_id = $request->medico_id;
+         $patients_doctor->patient_id = $request->patient_id;
+         $patients_doctor->info_patient_id = $info_patient->id;
+         $patients_doctor->save();
+
+         return back()->with('success', 'Se ha agregado el Paciente: '.$patient['nameComplete'].' a su lista de pacientes');
+       }
+        return back()->with('warning', 'el Paciente: '.$patient->nameComplete.' ya esta registrado en su lista de pacientes');
+     }
+
+     public function medico_store_new_patient(Request $request)
+     {
+       $request->validate([
+         'identification'=>'required|unique:patients',
+         'gender'=>'required',
+         'name'=>'required',
+         'lastName'=>'required',
+         'phone1'=>'required|numeric',
+         'phone2'=>'numeric|nullable',
+         'email'=>'required|email|unique:patients',
+         'country'=>'required',
+         'state'=>'required',
+         'city'=>'required',
+         'postal_code'=>'required',
+         'colony'=>'required',
+         'street'=>'required',
+       ]);
+
+       if($request->city == 'opciones'){
+         return back()->with('warning', 'El campo ciudad es requerido')->withInput();
+       }
+
+       $Coordinates = Geocoder::getCoordinatesForAddress($request->country.','.$request->city.','.$request->colony.','.$request->street.','.$request->number_ext);
+
+       $patient = new patient;
+       $patient->fill($request->all());
+       $patient->nameComplete = $request->name.' '.$request->lastName;
+       $patient->country = $request->country;
+       $patient->state = $request->state;
+       $patient->city = $request->city;
+       $patient->postal_code = $request->postal_code;
+       $patient->colony = $request->colony;
+       $patient->street = $request->street;
+       $patient->number_ext = $request->number_ext;
+       $patient->number_int = $request->number_int;
+       $patient->longitud = $Coordinates['lng'];
+       $patient->latitud = $Coordinates['lat'];
+
+       $patient->stateConfirm = 'complete';
+       $patient->save();
+
+       $user = new User;
+       $user->name = $request->name;
+       $user->email = $request->email;
+       $password = '1234';
+       $user->password = bcrypt($password);
+       $user->password_send = $password;
+       $user->patient_id = $patient->id;
+       $user->role = 'Paciente';
+       $user->save();
+
+       $role = Role::where('name','patient')->first();
+
+       $user->attachRole($role);
+
+
+
+       $info_patient = new info_patient;
+       $info_patient->fill($request->all());
+       $info_patient->nameComplete = $request->name.' '.$request->lastName;
+       $age =  \Carbon\Carbon::parse($request->birthdate)->diffInYears(\Carbon\Carbon::now());
+       $info_patient->age = $age;
+       $info_patient->save();
+
+       $patients_doctor = new patients_doctor;
+       $patients_doctor->medico_id = $request->medico_id;
+       $patients_doctor->patient_id = $patient->id;
+       $patients_doctor->info_patient_id = $info_patient->id;
+       $patients_doctor->save();
+
+       $medico = medico::find($request->medico_id);
+
+       Mail::send('mails.medico_register_new_patient',['patient'=>$patient,'medico'=>$medico,'user'=>$user],function($msj) use($patient){
+          $msj->subject('Médicos Si');
+          //$msj->to($patient->email);
+          $msj->to('eavc53189@gmail.com');
+
+        });
+
+       return redirect()->route('medico_patients',$request->medico_id)->with('success','Se a registrado el paciente '.$patient->nameComplete.' de forma satisfactoria. Se ha enviado un mensaje al correo electronico asociado,con los datos necesarios para que el paciente pueda acceder a su ceunta creada, en caso de que lo desee, asi poder calificarle, agendar, estar al tanto de las citas entre otras opciones.');
+     }
+
+     public function medico_register_new_patient($id)
+     {
+       $medico = medico::find($id);
+       $states = state::orderBy('name','asc')->pluck('name','name');
+       $cities = city::orderBy('name','asc')->pluck('name','name');
+
+       return view('medico.patient.medico_register_new_patient',compact('medico','states','cities'));
+     }
+
      public function add_image($id){
        $medico = medico::find($id);
        $images = photo::where('medico_id', $medico->id)->where('type','image')->get();
 
        return view('medico.includes_perfil.add_image',compact('medico','images'));
+     }
+
+     public function patients_registered($id)
+     {
+         $medico = medico::find($id);
+         $patients = patient::where('stateConfirm','complete')->orderBy('name','asc')->get();
+
+           $data = [];
+           foreach ($patients as $patient){
+           $patients_doctors = patients_doctor::where('medico_id', $medico->id)->where('patient_id', $patient->id)->get();
+           if($patients_doctors->first() == null){
+             $photo = photo::where('patient_id',$patient->id)->where('type', 'perfil')->first();
+             if($photo == Null){
+               $image = Null;
+             }else{
+               $image = $photo->path;
+             }
+
+             $data[$patient->id] = ['id'=>$patient->id,'identification'=>$patient->identification,'name'=>$patient->name,'lastName'=>$patient->lastName,'city'=>$patient->city,'state'=>$patient->state,'image'=>$image];
+
+             }
+           }
+
+           $currentPage = LengthAwarePaginator::resolveCurrentPage();
+           $col = new Collection($data);
+           $perPage = 10;
+
+           $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
+           $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
+           $patients->setPath(route('patients_registered',$medico->id));
+
+         return view('medico.patient.patients_registered',compact('medico','patients'));
+
+     }
+
+     public function search_patients_registered(Request $request){
+
+       $patients = DB::table('patients')
+       ->select('patients.*')
+       ->where(function($query) use($request){
+          $query->where('patients.nameComplete','LIKE','%'.$request->search.'%')->where('stateConfirm', 'complete');
+         })->orWhere(function($query) use($request){
+            $query->where('patients.identification',$request->search)
+            ->where('stateConfirm', 'complete');
+          })->get();
+
+
+          $medico = medico::find($request->medico_id);
+
+          $data = [];
+          foreach ($patients as $patient) {
+            $patients_doctors = patients_doctor::where('medico_id', $medico->id)->where('patient_id', $patient->id)->get();
+            if($patients_doctors->first() == null){
+          $photo = photo::where('patient_id',$patient->id)->where('type', 'perfil')->first();
+          if($photo == Null){
+            $image = Null;
+          }else{
+            $image = $photo->path;
+          }
+
+
+          $data[$patient->id] = ['id'=>$patient->id,'identification'=>$patient->identification,'name'=>$patient->name,'lastName'=>$patient->lastName,'city'=>$patient->city,'state'=>$patient->state,'image'=>$image];
+        }
+          }
+
+          $currentPage = LengthAwarePaginator::resolveCurrentPage();
+          $col = new Collection($data);
+          $perPage = 10;
+
+          $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
+          $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
+          $patients->setPath(route('patients_registered',$medico->id));
+
+        return view('medico.patient.patients_registered',compact('medico','patients'));
+
+     }
+
+     public function medico_patients($id)
+     {
+         $medico = medico::find($id);
+
+         $patients = patients_doctor::Join('medicos', 'patients_doctors.medico_id', '=', 'medicos.id')
+                                     ->Join('patients', 'patients_doctors.patient_id', '=', 'patients.id')
+                                     ->select('patients.*','patients_doctors.id as patients_doctor_id')
+                                     ->where('medicos.id',$id)
+                                     ->orderBy('patients.name','asc')
+                                     ->get();
+                                     // dd($patients);
+
+           $data = [];
+           foreach ($patients as $patient) {
+           $photo = photo::where('patient_id',$patient->id)->where('type', 'perfil')->first();
+           if($photo == Null){
+             $image = Null;
+           }else{
+             $image = $photo->path;
+           }
+
+           $data[$patient->id] = ['id'=>$patient->id,'identification'=>$patient->identification,'name'=>$patient->name,'lastName'=>$patient->lastName,'city'=>$patient->city,'state'=>$patient->state,'image'=>$image];
+
+           }
+
+           $currentPage = LengthAwarePaginator::resolveCurrentPage();
+           $col = new Collection($data);
+           $perPage = 10;
+
+           $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
+           $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
+           $patients->setPath(route('tolist2'));
+
+
+         return view('medico.patient.medico_patients',compact('medico','patients'));
+
      }
 
      public function search_patients(Request $request){
@@ -58,10 +287,7 @@ class medicoController extends Controller
        ->select('patients.*')
        ->where(function($query) use($request){
           $query->where('medico_id',$request->medico_id)
-          ->where('patients.name','LIKE','%'.$request->search.'%');
-        })->orWhere(function($query) use($request){
-           $query->where('medico_id',$request->medico_id)
-           ->where('patients.lastName','LIKE','%'.$request->search.'%');
+          ->where('patients.nameComplete','LIKE','%'.$request->search.'%');
          })->orWhere(function($query) use($request){
             $query->where('medico_id',$request->medico_id)
             ->where('patients.identification','LIKE','%'.$request->search.'%');
@@ -599,8 +825,8 @@ class medicoController extends Controller
 
         Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           // $msj->to($medico->email);
-           $msj->to('eavc53189@gmail.com');
+           $msj->to($medico->email);
+           //$msj->to('eavc53189@gmail.com');
 
       });
 
@@ -768,43 +994,7 @@ class medicoController extends Controller
 
     }
 
-    public function medico_patients($id)
-    {
-        $medico = medico::find($id);
 
-        $patients = patients_doctor::Join('medicos', 'patients_doctors.medico_id', '=', 'medicos.id')
-                                    ->Join('patients', 'patients_doctors.patient_id', '=', 'patients.id')
-                                    ->select('patients.*','patients_doctors.id as patients_doctor_id')
-                                    ->where('medicos.id',$id)
-                                    ->orderBy('patients_doctors.created_at','desc')
-                                    ->get();
-
-          $data = [];
-          foreach ($patients as $patient) {
-          $photo = photo::where('patient_id',$patient->id)->where('type', 'perfil')->first();
-          if($photo == Null){
-            $image = Null;
-          }else{
-            $image = $photo->path;
-          }
-
-          $data[$patient->id] = ['id'=>$patient->id,'identification'=>$patient->identification,'name'=>$patient->name,'lastName'=>$patient->lastName,'city'=>$patient->city,'state'=>$patient->state,'image'=>$image];
-
-          }
-
-          $currentPage = LengthAwarePaginator::resolveCurrentPage();
-          $col = new Collection($data);
-          $perPage = 10;
-
-
-          $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
-          $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
-          $patients->setPath(route('tolist2'));
-
-
-        return view('medico.patient.medico_patients',compact('medico','patients'));
-
-    }
 
     public function medico_appointments_patient($medico_id,$patient_id)
     {

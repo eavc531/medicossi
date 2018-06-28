@@ -10,25 +10,30 @@
    <div class="register">
     <div class="row">
      <div class="col-12 mb-3">
-      <h2 class="text-center font-title">Mis Pacientes</h2>
+      <h2 class="text-center font-title">Pacientes Registrados en MédicosSi</h2>
       <hr>
     </div>
   </div>
+  <div class="text-right">
+    <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-secondary">Mis Pacientes</a>
 
+  </div>
     <div class="form-inline mb-5">
-      {!!Form::open(['route'=>'search_patients','method'=>'GET'])!!}
+
+      {!!Form::open(['route'=>'search_patients_registered','method'=>'GET'])!!}
       {!!Form::hidden('medico_id',$medico->id)!!}
       {!!Form::text('search',null,['class'=>'form-control','placeholder'=>'nombre/cedula del paciente'])!!}
       {!!Form::submit('Buscar',['class'=>'btn btn-success'])!!}
       {!!Form::close()!!}
-        </div>
+
+      </div>
+
     <div class="mb-2">
-      <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-primary ml-2">Mostrar Todos</a>
-      <a href="{{route('patients_registered',$medico->id)}}" class="btn btn-warning ml-2">Buscar Paciente Registrado</a>
+      <a href="{{route('patients_registered',$medico->id)}}" class="btn btn-primary ml-2">Mostrar Todos</a>
+      <a href="{{route('patients_registered',$medico->id)}}" class="btn btn-warning ml-2 disabled">Buscar Paciente Registrado</a>
       <a href="{{route('medico_register_new_patient',$medico->id)}}" class="btn btn-info ml-2">Registrar nuevo Paciente</a>
-
     </div>
-
+<hr>
   @if($patients->first() != Null)
   <div class="card">
     <div class="card-body">
@@ -63,27 +68,18 @@
      <div class="form-group">
        {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
      </div>
-     <div class="row">
-      <div class="col-lg-2 col-2  col-sm-3 text-center">
-        <a class="btn btn-secondary" href="{{route('patient_profile',$patient['id'])}}" data-toggle="tooltip" data-html="true" title="<em>Perfil</em>"><i class="fas fa-user"></i></a>
-      </div>
-      <div class="col-lg-2 col-2  col-sm-3 text-center">
-        <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>$medico->id,'patient_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Lista de citas con paciente</em>"><i class="fas fa-bars"></i></a>
-      </div>
-      @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-      <div class="col-lg-2 col-2  col-sm-3 text-center">
 
-          <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
-      </div>
-    @endif
-      <div class="col-lg-2 col-2  col-sm-4 text-center">
-        <a href="{{route('medico_stipulate_appointment',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>" class="btn btn-secondary"><i class="fas fa-envelope-open"></i></a>
-      </div>
 
-    </div>
+
+
     <div class="row">
       <div class="col-10 text-center mt-2">
-        <a href="{{route('medico_stipulate_appointment',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" class="btn btn-primary btn-block">Agendar Cita</a>
+        {!!Form::open(['route'=>'add_patient_registered','method'=>'POST'])!!}
+          <input type="hidden" name="medico_id" value="{{$medico->id}}">
+          <input type="hidden" name="patient_id" value="{{$patient['id']}}">
+          <button type="submit" name="button" class="btn btn-primary btn-block">Agregar Paciente</button>
+        {!!Form::close()!!}
+
       </div>
     </div>
 
@@ -101,15 +97,59 @@
 </div>
 </div>
 @else
-  <div class="text-center card mt-2">
+<div class="text-center card mt-2">
+  @if(isset(request()->search))
+    <div class="card-body">
+
+      <h4 class="text-primary">No se encontraron resultados para la Busqueda: {{request()->search}}</h4>
+    </div>
+  @else
     <div class="card-body">
 
       <h4 class="text-primary">Sin registros que mostrar</h4>
     </div>
-  </div>
+  @endif
+
+</div>
 
 @endif
 </div>
 </div>
 </section>
 @endsection
+
+<script type="text/javascript">
+
+/////////////////////////////
+
+$('#state').on('change', function() {
+
+  state = $('#state').val();
+
+  route = "{{route('inner_cities_select3')}}";
+  $.ajax({
+    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    type:'post',
+    url: route,
+    data:{name:state},
+    success:function(result){
+      console.log(result);
+      $("#city").empty();
+      $('#city').append($('<option>', {
+       value: null,
+       text: 'opciones'
+     }));
+      $.each(result,function(key, val){
+       $('#city').append($('<option>', {
+        value: val,
+        text: val
+      }));
+     });
+    },
+    error:function(error){
+      console.log(error);
+    },
+  });
+})
+
+</script>

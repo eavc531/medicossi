@@ -1073,6 +1073,11 @@ a:hover, a:active, a:focus{
     	box-shadow: 0px 5px 0px 0px #c69f29;
     }
 
+		.btn-menu-medico-azul-claro{
+    	background: #31a1f1;
+    	box-shadow: 0px 5px 0px 0px #c69f29;
+    }
+
     .btn-menu-medico-amarillo:hover{
     	color: #fff;
     	background: #ffcc32;

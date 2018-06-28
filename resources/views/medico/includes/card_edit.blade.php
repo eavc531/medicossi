@@ -1,7 +1,7 @@
-<div class="card p-2" id="card_edit" style="display:none">
+<div class="card p-2 mb-2" id="card_edit" style="display:none">
   <div class="row">
     <div class="col-12">
-      <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
+      <button type="button" class="close" onclick="cerrar_edit()"><span >&times;</span></button>
 
       {{-- &times; --}}
     </button>

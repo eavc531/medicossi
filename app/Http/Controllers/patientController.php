@@ -28,6 +28,7 @@ class patientController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+
      public function calification_medic_show_patient(Request $request){
        $rate_medicCount = rate_medic::where('medico_id', $request->medico_id)->count();//marcar
 
@@ -208,8 +209,8 @@ class patientController extends Controller
 
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
-          //$msj->to($patient->email);
-          $msj->to('eavc53189@gmail.com');
+          $msj->to($patient->email);
+          //$msj->to('eavc53189@gmail.com');
 
         });
 
@@ -420,6 +421,7 @@ class patientController extends Controller
 
       $patient = new patient;
       $patient->fill($request->all());
+      $patient->nameComplete = $request->name.' '.$request->lastName;
       $patient->save();
 
       $user = new User;
@@ -477,6 +479,7 @@ class patientController extends Controller
       }
       $age =  \Carbon\Carbon::parse($request->birthdate)->diffInYears(\Carbon\Carbon::now());
         $patient->fill($request->all(),['except'=>['email']]);
+        $patient->nameComplete = $request->name.' '.$request->lastName;
         $patient->age = $age;
         $patient->save();
         $user->name = $request->name;
@@ -533,6 +536,9 @@ class patientController extends Controller
          }
 
            $Coordinates = Geocoder::getCoordinatesForAddress($request->country.','.$request->city.','.$request->colony.','.$request->street.','.$request->number_ext);
+
+
+
           $patient = patient::find($id);
           $patient->country = $request->country;
           $patient->state = $request->state;

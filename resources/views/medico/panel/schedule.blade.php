@@ -8,8 +8,15 @@
       <div class="col-lg-11 col-10">
         <h3 class="font-title text-center">Editar Horario</h3>
       </div>
-      <div class="col-lg-1 col-1 text-right">
-        <a href="{{route('medico_diary',$medico->id)}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn"><i class="fas fa-arrow-left mr-2"></i></a>
+    </div>
+    <div class="row">
+      <div class="col-6 ">
+          <a class="btn btn-secondary" href="{{route('medico_diary',$medico->id)}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Mi Agenda</a>
+
+
+      </div>
+      <div class="col-6 text-right">
+          <a class="btn btn-secondary ml-2" href="{{route('medico_reminders',$medico->id)}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Recordatorios</a>
       </div>
     </div>
     <div class="my-4 card p-3">

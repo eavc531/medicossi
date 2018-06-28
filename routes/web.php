@@ -14,6 +14,9 @@ Route::get('/', function(){
     return redirect()->route('home');
 });
 
+
+Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
+
 //plans
 ////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
 Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
@@ -40,14 +43,29 @@ Route::post('medico/update/event', 'medico_diaryController@update_event')->name(
 
 Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
 
-
+//PLAN BASICO
 Route::group(['middleware' => ['medic_plan_basic']], function (){
   Route::get('medico/{id}/add_image','medicoController@add_image')->name('add_image');
+
+  Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
+  Route::post('medico/{id}/medico_store_new_patient','medicoController@medico_store_new_patient')->name('medico_store_new_patient');
+  Route::post('medico/add_patient_registered','medicoController@add_patient_registered')->name('add_patient_registered');
 
 });
 //PLAN AGENDA
 Route::group(['middleware' => ['medic_plan_agenda']], function (){
-    Route::post('search_patients','medicoController@search_patients')->name('search_patients');
+  //REMINDER
+    Route::post('reminder_delete','reminderController@reminder_delete')->name('reminder_delete');
+    Route::post('reminder_alarm_update','reminderController@reminder_alarm_update')->name('reminder_alarm_update');
+
+    Route::get('medico/{id}/reminder_calendar','reminderController@reminder_calendar')->name('reminder_calendar');
+    Route::post('reminder_store','reminderController@reminder_store')->name('reminder_store');
+
+    Route::get('medico/{id}/patients_registered','medicoController@patients_registered')->name('patients_registered');
+
+    Route::get('search_patients_registered','medicoController@search_patients_registered')->name('search_patients_registered');
+
+    Route::get('search_patients','medicoController@search_patients')->name('search_patients');
     Route::post('search_patients_diary','medico_diaryController@search_patients_diary')->name('search_patients_diary');
     Route::post('verify_change_date','medico_diaryController@verify_change_date')->name('verify_change_date');
     Route::get('medico/confirmed/payment/appointment/','medico_diaryController@confirmed_payment_app')->name('confirmed_payment_app');
@@ -431,6 +449,9 @@ Route::get('patient/{p_id}/medic/{m_id}/qualify/{app_id}','patientController@qua
 
 
 //config reminder
+
+Route::post('reminder_time_alarm','reminderController@reminder_time_alarm')->name('reminder_time_alarm');
+Route::post('config_acvtivate_reminder_alarm','reminderController@config_acvtivate_reminder_alarm')->name('config_acvtivate_reminder_alarm');
 Route::post('reminder_switch_confirmed','reminderController@reminder_switch_confirmed')->name('reminder_switch_confirmed');
 Route::post('reminder_time_confirmed','reminderController@reminder_time_confirmed')->name('reminder_time_confirmed');
 Route::post('switch_payment_and_past','reminderController@switch_payment_and_past')->name('switch_payment_and_past');
@@ -440,4 +461,4 @@ Route::get('test','reminderController@test')->name('test');
 
 
 //Recordatorios
-Route::get('medico/{id}/reminders','reminderController@reminders_medico')->name('reminders_medico');
+Route::get('medico/{id}/reminders','reminderController@medico_reminders')->name('medico_reminders');

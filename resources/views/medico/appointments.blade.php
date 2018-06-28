@@ -25,7 +25,8 @@
 
       @if($type == 'sin confirmar')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' and $medico->plan == 'plan_platino')
+        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning disabled" disabled> sin Confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
         @endif
@@ -35,7 +36,7 @@
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'confirmadas')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' and $medico->plan == 'plan_platino')
+        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary disabled" disabled> Confirmadas</a>
         @endif
@@ -45,7 +46,7 @@
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'Pagadas y Pendientes')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' and $medico->plan == 'plan_platino')
+        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
         @endif
@@ -55,7 +56,7 @@
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'Pagadas y Completadas')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' and $medico->plan == 'plan_platino')
+        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
         @endif
@@ -65,7 +66,7 @@
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'todas')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success disabled">Todas</a>
-        @if ($medico->plan == 'plan_profesional' and $medico->plan == 'plan_platino')
+        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
         @endif
@@ -75,7 +76,7 @@
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'Pasada y por Cobrar')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success disabled">Todas</a>
-        @if ($medico->plan == 'plan_profesional' and $medico->plan == 'plan_platino')
+        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
         @endif
@@ -85,7 +86,7 @@
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @else
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' and $medico->plan == 'plan_platino')
+        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
         @endif
