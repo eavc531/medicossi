@@ -8,10 +8,6 @@ use Illuminate\Http\Request;
 
 class photoController extends Controller
 {
-
-
-
-
     public function patient_image_profile(Request $request)
     {
 
@@ -20,9 +16,7 @@ class photoController extends Controller
        ]);
 
        $extension = $request->file('image')->getClientOriginalExtension();
-
        $photoCount = photo::where('patient_id',$request->patient_id)->where('type','perfil')->count();
-
        if($photoCount != 0){
          $photo = photo::where('patient_id',$request->patient_id)->where('type','perfil')->first();
 
@@ -35,36 +29,31 @@ class photoController extends Controller
         $patient = patient::find($request->patient_id);
          $namePhoto = $patient->name.'.'.$extension;
          $pathSave = 'img/users/'.$patient->identification.'/photos';
-
          $photo = new photo;
          $photo->name = $patient->name;
          $photo->path = $pathSave.'/'.$namePhoto;
-
          $photo->type = 'perfil';
          $photo->patient_id = $request->patient_id;
-
          $photo->save();
-
          $request->file('image')->move($pathSave,$namePhoto);
 
          return back()->with('success', 'Nueva imagen de Perfil establecida');
       }
 
-
-
     public function store(Request $request)
     {
+
         $request->validate([
           'image'=>'image|required'
         ]);
 
         $extension = $request->file('image')->getClientOriginalExtension();
         $photoCount = photo::where('medico_id',$request->medico_id)->count();
-
         $photoCount = photo::where('medico_id',$request->medico_id)->orderBy('id','desc')->count();
         $photos = photo::where('medico_id',$request->medico_id)->orderBy('id','desc')->first();
 
         $photos1 = photo::where('medico_id',$request->medico_id)->where('type','perfil')->orderBy('id','desc')->first();
+
         if($photos1 != Null){
           $photos1->delete();
         }
@@ -78,32 +67,32 @@ class photoController extends Controller
         $namePhoto = $nameP.'.'.$extension;
         $pathSave = 'img/users/'.$request->medico_id.'/photos';
 
+
         $photo = new photo;
         $photo->name = $nameP;
         $photo->path = $pathSave.'/'.$namePhoto;
         $photo->type = 'perfil';
         $photo->medico_id = $request->medico_id;
         $photo->save();
-
-        $request->file('image')->move($pathSave,$namePhoto);
+        $request->file('image')->move('public/'.$pathSave,$namePhoto);
 
         return back()->with('success', 'Nueva imagen de Perfil establecida');
     }
 
     public function image_store(Request $request)
     {
+
       $request->validate([
         'name'=>'required'
       ]);
+
       if(empty($request->file('image'))){
         return back()->with('warning', 'Debes seleccionar una Imagen');
 
       }
 
       $extension = $request->file('image')->getClientOriginalExtension();
-
         if($extension == 'jpg' or $extension == 'jpeg' or $extension == 'png'){
-
           $photoCount = photo::where('medico_id',$request->medico_id)->count();
           $photoImageCount = photo::where('medico_id',$request->medico_id)->where('type','image')->count();
 
@@ -129,7 +118,7 @@ class photoController extends Controller
           $photo->type = 'image';
           $photo->save();
 
-          $request->file('image')->move($pathSave,$namePhoto);
+          $request->file('image')->move('public/'.$pathSave,$namePhoto);
 
           return back()->with('success', 'Imagen Guardada Con Exito');
         }else{
@@ -143,6 +132,7 @@ class photoController extends Controller
 
     public function photo_perfil_medical_store(Request $request)
     {
+
         $request->validate([
           'image'=>'image|required'
         ]);
@@ -203,15 +193,12 @@ class photoController extends Controller
 
           $namePhoto = $nameP.'.'.$extension;
           $pathSave = 'img/medicalCenter/'.$request->identification.'/photos';
-
           $photo = new photo;
           $photo->name = $nameP;
           $photo->path = $pathSave.'/'.$namePhoto;
-
           $photo->medicalCenter_id = $request->medicalCenter_id;
           $photo->type = 'image';
           $photo->save();
-
           $request->file('image')->move($pathSave,$namePhoto);
 
           return back()->with('success2', 'Imagen Guardada Con Exito');
@@ -219,7 +206,6 @@ class photoController extends Controller
           return back()->with('warning2', 'Imposible Subir Imagen, imagen o archivo no compatible');
 
         }
-
 
     }
     /**
@@ -232,7 +218,6 @@ class photoController extends Controller
     {
         //
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -243,7 +228,6 @@ class photoController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -271,9 +255,10 @@ class photoController extends Controller
        if(\File::exists(public_path($photo->path))){
          \File::delete(public_path($photo->path));
 
-         return back()->with('danger2','Imagen Eliminada con Exito');
+         return back()->with('danger','Imagen Eliminada con Exito');
        }else{
-         dd('El archivo no existe.');
+         return back()->with('danger','El archivo no existe.');
+
        }
      }
 
@@ -285,9 +270,9 @@ class photoController extends Controller
        if(\File::exists(public_path($photo->path))){
          \File::delete(public_path($photo->path));
 
-         return back()->with('danger2','Imagen Eliminada con Exito');
+         return back()->with('danger','Imagen Eliminada con Exito');
        }else{
-         return back()->with('danger2','El archivo no existe.');
+         return back()->with('danger','El archivo no existe.');
        }
      }
 

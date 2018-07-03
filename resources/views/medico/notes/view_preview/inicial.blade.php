@@ -8,25 +8,27 @@
 </style>
 @endsection
 @section('content')
-<div class="row">
-  <div class="col-12 mb-3">
-    <h2 class="text-center font-title">Vista previa: "{{$note->title}}" para el Paciente: {{$patient->name}} {{$patient->lastName}}</h2>
+<div class="container">
+  <div class="row">
+    <div class="col-12 mb-3">
+      <h2 class="text-center font-title">Vista previa: "{{$note->title}} {{\Carbon\Carbon::parse($note->created_at)->format('m-d-Y H:i')}}"</h2>
 
+    </div>
   </div>
-</div>
-{{-- MENU DE PACIENTES --}}
-{{-- @include('medico.includes.main_medico_patients') --}}
+
+  <div class="text-right">
+      <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+  </div>
 
 <div class="card">
-  <div class="card-header card-edit">
-   <b> {{$note->title}}</b>
- </div>
  <div class="card-body">
+   <div class="text-center mb-3">
+     <h4>{{$note->title}}</h4>
+   </div>
+
+   @include('medico.notes.include_data_patient')
   {{-- {!!Form::model($note,['route'=>'note_store','method'=>'POST'])!!} --}}
-  {!!Form::hidden('note_id',$note->id)!!}
-  {!!Form::hidden('title',$note->title)!!}
-  {!!Form::hidden('medico_id',$medico->id)!!}
-  {!!Form::hidden('patient_id',$patient->id)!!}
+
   <div class="form-group mt-3">
     <h5 class="font-title-blue">Exploracion fisica</h5>
     <p>{{$note->Exploracion_fisica}}</p>
@@ -74,39 +76,34 @@
 
 
   <hr>
-  <div class="row">
-    <div class="col-6">
+  <div class="mt-5">
+
+    <div class="" style="width:50%;float:left">
       <p class="font-title-grey"><strong>Médico Tratante:</strong> {{$medico->name}} {{$medico->lastName}}</p>
       <p class="font-title-grey"><strong>Cedula profesional:</strong> {{$medico->identification}}</p>
     </div>
-    <div class="col-6">
-      <div class="row">
-        <div class="col-12 text-center">
+
+    <div class="" style="width:50%;float:right">
+
+        <div class="text-center">
           <p>_________________________________</p>
         </div>
 
-        <div class="col-12 text-center">
+        <div class="text-center">
           <p>             <b> Firma </b>              </p>
         </div>
-      </div>
+
     </div>
   </div>
 </div>
 </div>
 
+
+  <div class="text-right">
+      <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+      <a href="{{route('download_pdf',$note->id)}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
+  </div>
+
+</div>
+
 @endsection
-
-@section('scriptJS')
-<script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
-<script type="text/javascript">
-
-  $(document).ready(function(){
-
-          // CKEDITOR.replace('Signos_vitales');
-          // CKEDITOR.replace('Pruebas_de_laboratorio');
-        });
-
-
-      </script>
-
-      @endsection

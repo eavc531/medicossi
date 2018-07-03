@@ -13,10 +13,7 @@
 Route::get('/', function(){
     return redirect()->route('home');
 });
-
-
 Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
-
 //plans
 ////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
 Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
@@ -112,6 +109,8 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
 
 //PLAN PLATINO
 Route::group(['middleware' => ['medic_plan_profesional']], function (){
+
+    Route::get('medico/patient/notes/search','notesController@note_search')->name('note_search');
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/edit','medicoController@medico_note_edit')->name('medico_note_edit');
     Route::post('medico/patient/note/config/store','notesController@note_config_store')->name('note_config_store');
     Route::get('medico/{m_id}/patient/{p_id}/edit/appointment/{app_id}','medico_diaryController@edit_appointment')->name('edit_appointment');
@@ -173,22 +172,7 @@ Route::get('patient/{id}/edit','patientController@patient_edit_data')->name('pat
 Route::post('patient/{id}/updates','patientController@patient_update')->name('patient_update');
 
 Route::get('patient/{id}resend/mail/confirm','patientController@resend_mail_confirm_patient')->name('resend_mail_confirm_patient');
-
-
-
 //event appoitment diary
-
-
-
-
-
-
-
-
-
-
-
-
 
 /////////////////
 Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}','medicoController@create_note_patient')->name('create_note_patient');
@@ -200,16 +184,11 @@ Route::resource('user','userController');
 Route::resource('medico','medicoController');
 Route::get('medico/{id}/perfil','medicoController@medico_perfil')->name('medico_perfil');
 
-
-
 Route::post('medico/list/social_network','medicoController@social_network_list')->name('social_network_list');
 Route::post('medicalCenter/list/social_network','medicalCenterController@medicalCenter_social_list')->name('medicalCenter_social_list');
 Route::post('medico/list/services','medicoController@medico_service_list')->name('medico_service_list');
 
-
 Route::post('medico/list/experience','medicoController@medico_experience_list')->name('medico_experience_list');
-
-
 
 Route::post('medico_list_videos','medicoController@medico_list_videos')->name('medico_list_videos');
 Route::post('delete_video','medicoController@delete_video')->name('delete_video');
@@ -219,7 +198,6 @@ Route::post('medico/experience/delete','medicoController@medico_experience_delet
 Route::post('medico/service/store','medicoController@service_medico_store')->name('service_medico_store');
 Route::post('medic/experience/store','medicoController@medico_experience_store')->name('medico_experience_store');
 Route::post('medic/social_network/store','medicoController@medico_social_network_store')->name('medico_social_network_store');
-
 
 Route::get('medico/{id}/appointments/all', 'medicoController@appointments_all')->name('appointments_all');
 Route::get('medico/{id}/appointments/past_collect', 'medicoController@appointments_past_collect')->name('appointments_past_collect');
@@ -242,7 +220,9 @@ Route::post('borrar_social','medicoController@borrar_social')->name('borrar_soci
 Route::get('medico/{id}/data/primordial/','medicoController@data_primordial_medico')->name('data_primordial_medico');
 
 Route::get('medic/{id}/consulting_room/create','consulting_roomController@consulting_room_create')->name('consulting_room_create');
-
+Route::post('medic/{id}/consulting_room/store','consulting_roomController@consulting_room_store')->name('consulting_room_store');
+Route::get('medic/{id}/consulting_room/edit','consulting_roomController@consulting_room_edit')->name('consulting_room_edit');
+Route::post('medic/{id}/consulting_room/update','consulting_roomController@consulting_room_update')->name('consulting_room_update');
 Route::resource('patient','patientController');
 
 
@@ -319,7 +299,9 @@ Route::post('image/medical_center/store','photoController@image_store_medical_ce
 Route::resource('consulting_room','consulting_roomController');
 
 Route::get('medico/{id}/info/create','medicoController@medico_specialty_create')->name('medico_specialty_create');
+Route::get('medico/{id}/info/edit','medicoController@medico_specialty_edit')->name('medico_specialty_edit');
 Route::post('medico/specialty/store','medicoController@medico_specialty_store')->name('medico_specialty_store');
+Route::post('medico/specialty{id}/update','medicoController@medico_specialty_update')->name('medico_specialty_update');
 
 Route::post('inner/cities/select','medicoController@inner_cities_select')->name('inner_cities_select');
 Route::post('inner/cities/select2','medicoController@inner_cities_select2')->name('inner_cities_select2');
@@ -462,3 +444,6 @@ Route::get('test','reminderController@test')->name('test');
 
 //Recordatorios
 Route::get('medico/{id}/reminders','reminderController@medico_reminders')->name('medico_reminders');
+
+// pdf
+Route::get('note/{id}/download_pdf','notesController@download_pdf')->name('download_pdf');

@@ -17,16 +17,19 @@ class CreateConsultingRoomsTable extends Migration
             $table->increments('id');
             $table->string('name')->nullable();
             $table->string('type');
-            $table->string('addres');
+
             $table->string('numberExt')->nullable();
             $table->string('numberInt')->nullable();
             $table->string('colony')->nullable();
-            $table->string('CP')->nullable();
             $table->string('city');
             $table->string('state');
             $table->string('passwordUnique')->nullable();
+
             $table->integer('medico_id')->unsigned();
             $table->foreign('medico_id')->references('id')->on('medicos');
+            $table->string('postal_code')->nullable();
+            $table->string('street')->nullable();
+
             $table->timestamps();
         });
     }

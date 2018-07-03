@@ -5,12 +5,15 @@
 <div class="row mt-4">
   <div class="col-12">
     <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Tipo de Estudio</label>
+      <label for="example-text-input" class="col-3 col-form-label">Tipo de Estudiosss</label>
       <div class="col-8">
         {!!Form::open(['route'=>'info_medico.store','method'=>'POST'])!!}
         <div class="m-3">
-          {{Form::radio('type','Pregrado o  Carrera Profesional')}}
-          <span for=""> Pregrado o  Carrera Profesional </span>
+          <div class="form-group">
+            xxxxxx
+            {{Form::radio('type','Pregrado o  Carrera Profesional')}}
+            <span for=""> Pregrado o  Carrera Profesional </span>
+          </div>
           {{Form::radio('type','Post-Grado o Residencia Medica')}}
           <span for="">Post-Grado o Residencia Medica</span>
 

@@ -13,6 +13,7 @@ class medico_specialty extends Model
     'from',
     'until',
     'aditional',
+    'state',
     'medico_id',
   ];
 

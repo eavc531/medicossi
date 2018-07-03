@@ -25,6 +25,7 @@
       {!!Form::hidden('note_id',$note->id)!!}
       {!!Form::hidden('title',$note->title)!!}
       {!!Form::hidden('medico_id',$medico->id)!!}
+      {!!Form::hidden('patient_id',$medico->id)!!}
       <div class="row">
         <div class="col-lg-6 col-sm-6 col-12">
           <h5 class="font-title-blue">Fecha de ingreso:</h5>
@@ -75,7 +76,7 @@
       </div>
 
   <input type="submit" class="btn btn-success" name="" value="Guardar">
-    <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
+      <a href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
     {!!Form::close()!!}
 </div>
 </div>

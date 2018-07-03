@@ -43,18 +43,18 @@
     <div class="form-group row">
       <label for="example-text-input" class="col-3 col-form-label">Especialidad que cursó</label>
       <div class="col-8">
-        {!!Form::select('specialty',$specialty,null,['class'=>'form-control','placeholder'=>'Seleccione Especialidad'])!!}
+        {!!Form::text('specialty',null,['class'=>'form-control'])!!}
 
         </div>
     </div>
 
-    {{-- <div class="form-group row">
+    <div class="form-group row">
       <label for="example-text-input" class="col-3 col-form-label">Estado del Estudio</label>
       <div class="col-8">
         {!!Form::select('state',['Culminado'=>'Culminado','En Curso'=>'En Curso'],null,['class'=>'form-control','placeholder'=>'Seleccione una opción'])!!}
 
         </div>
-    </div> --}}
+    </div>
 
     <div class="form-group row">
       <label for="example-datetime-local-input" class="col-3 col-form-label">Periodo en que lo curso</label>
@@ -76,10 +76,10 @@
     </div>
      <div class="row my-5">
        <div class="col-6">
-          <button type="submit" name="button" class="btn-config-blue btn btn-block">Registrar</button>
+         <button name="button" class="btn-config-blue btn btn-block">Cancelar</button>
        </div>
       <div class="col-6">
-        <button name="button" class="btn-config-green btn btn-block">Cancelar</button>
+        <button type="submit" name="button" class="btn-config-green btn btn-block">Registrar</button>
       </div>
      </div>
     {!!Form::close()!!}

@@ -94,8 +94,8 @@
               </div>
               <div class="col-lg-6 col-12">
                 <div class="form-group">
-                  <label for=""  class="font-title">Codigo Postal</label>
-                  {{Form::number('postal_code',null,['class'=>'form-control'])}}
+                  <label for=""  class="font-title">Colonia</label>
+                  {{Form::text('colony',null,['class'=>'form-control'])}}
                 </div>
               </div>
               <div class="col-lg-6 col-12">
@@ -108,16 +108,18 @@
             <div class= "row mt-2">
               <div class="col-lg-6 col-12">
                 <div class="form-group">
-                  <label for=""  class="font-title">Colonia</label>
-                  {{Form::text('colony',null,['class'=>'form-control'])}}
-                </div>
-              </div>
-              <div class="col-lg-6 col-12">
-                <div class="form-group">
 
                  <label for="[object Object]" class="font-title">Calle/Av (especifique)</label>
                  {{Form::text('street',null,['class'=>'form-control'])}}
                </div>
+              </div>
+              <div class="col-lg-6 col-12">
+                <div class="form-group">
+                  <label for=""  class="font-title">Codigo Postal</label>
+                  {{Form::number('postal_code',null,['class'=>'form-control','style'=>'border-color:black'])}}
+                </div>
+
+
              </div>
              <div class="col-lg-6 col-12">
               <div class="form-group">

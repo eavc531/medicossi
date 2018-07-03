@@ -128,6 +128,7 @@
         </div>
         <div class="" id="comentary">
           @if(isset($value->comentary))
+            
           <span style="">Comentario: {{$value->comentary}}</span>
           @else
             <span style="">Comentario: Sin Comentarios</span>
@@ -140,7 +141,11 @@
         @if($value->show == 'Si')
           <div class="row">
             <div class="col-8">
-              ¿Mostrar Coemntario y marcar como visto?
+              @if ($value->viewed == 'Si')
+                ¿Mostrar Comentario?
+              @else
+                ¿Mostrar Comentario y marcar como visto?
+              @endif
             </div>
             <div class="col-4">
               <button onclick="this.disabled=true;show_comentary(this)" class="btn btn-success" style="border:solid 3px black" id="uno" name="{{$value->id}}" disabled><i class="fas fa-eye"></i></button>
@@ -153,10 +158,15 @@
         @else
           <div class="row">
             <div class="col-8">
-              ¿Mostrar Coemntario y marcar como visto?
+              @if ($value->viewed == 'Si')
+                ¿Mostrar Comentario?
+              @else
+                ¿Mostrar Comentario y marcar como visto?
+              @endif
             </div>
             <div class="col-4">
-              <button onclick="this.disabled=true;show_comentary(this)" class="btn btn-success" id="uno" name="{{$value->id}}"><i class="fas fa-eye-slash"></i></button>
+
+              <button onclick="this.disabled=true;show_comentary(this)" class="btn btn-success" id="uno" name="{{$value->id}}"><i class="fas fa-ey"></i></button>
               <button style="border:solid 3px black" onclick="this.disabled=true;hide_comentary(this)" class="btn btn-danger" id="dos" name="{{$value->id}}" disabled><i class="fas fa-eye-slash"></i></button>
               @if ($value->viewed == 'no')
                 <button onclick="this.disabled=true;checked(this)" name="{{$value->id}}" class="btn btn-warning" id="tres"><i class="fas fa-check"></i></button>

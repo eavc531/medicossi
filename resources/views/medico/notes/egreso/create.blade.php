@@ -19,6 +19,7 @@
 <div class="card">
   <div class="card-header card-edit">
   <b>{{$note->title}}</b>
+</div>
   {{-- <h5 class="font-title-blue">Fecha de elaboracion::</h5>
   {{Form::date('fecha_ingreso',\Carbon\Carbon::now(),['class'=>'form-control','id'=>'signos_vitales'])}}
   </div> --}}

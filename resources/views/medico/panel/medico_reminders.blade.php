@@ -153,16 +153,12 @@
             <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
             <div class="col-12 border-head-panel text-center">
               <span>Usuario firmado:</span>
-              <span>{{$medico->email}}</span>
+              <span>{{$medico->name}} {{$medico->lastName}}</span>
             </div>
-            <div class="col-12 border-panel-green text-center my-1">
-              <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
-                Otorgar horario de consulta
-              </a>
-            </div>
+
             <div class="border-panel-blue my-1">
               <div class="form-group text-center">
-                <button type="button" class="btn-info btn disabled" data-toggle="modal" data-target="#info1"><i class="fas fa-info mr-2" disabled></i>Ayuda</button>
+              
                 <div class="form-group" style="margin-top:35px">
                   <label for="" class="label-title ">Crear Nuevo Recordatorio </label>
                 </div>

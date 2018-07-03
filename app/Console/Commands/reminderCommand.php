@@ -157,9 +157,6 @@ class reminderCommand extends Command
             }
         }
 
-
-
-
         ////////////////SOLO de PRUEBA
         $medico = medico::find(11);
         $medico->lastName = \Carbon\Carbon::now();

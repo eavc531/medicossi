@@ -10,6 +10,7 @@ class medico extends Model
       'identification',
       'name',
       'lastName',
+      'nameComplete',
       'gender',
       'email',
       'password',
@@ -27,6 +28,7 @@ class medico extends Model
        'specialty',
        'sub_specialty',
        'country',
+       'name_comercial'
     ];
 
     public function medico_specialty(){

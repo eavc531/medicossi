@@ -10,7 +10,7 @@
    <div class="register">
     <div class="row">
      <div class="col-12 mb-3">
-      <h2 class="text-center font-title">Mis Pacientes</h2>
+      <h2 class="text-center font-title">Mis PacientesXXXX</h2>
       <hr>
     </div>
   </div>

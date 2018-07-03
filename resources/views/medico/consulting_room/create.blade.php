@@ -1,124 +1,178 @@
 @extends('layouts.app')
 
+@section('css')
+  <style media="screen">
+    .form-control{
+      border-color:rgb(200, 38, 38);
+    }
+
+
+  </style>
+@endsection
+
 @section('content')
-  <h4>Agregar Consultorio</h4>
-  <div class="row mt-4">
-    <div class="col-12">
-      <div class="form-group row text-left">
-        <label for="example-text-input" class="col-3 col-form-label">Tipo de Consultorio</label>
-        <div class="col-8">
-          {!!Form::open(['route'=>'consulting_room.store','method'=>'POST'])!!}
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              {{Form::radio('type','Medicina General o Familiar', ['class' => 'custom-control-input'])}}
-              <span for="radio1"> Medicina General o Familiar </span>
-            </li>
-            <li class="nav-item">
-              {{Form::radio('type','Consultorio de Especialidades')}}
-              <span for="">Consultorio de Especialidades</span>
-            </li>
-            <li class="nav-item">
-              {{Form::radio('type','Consultorio Odontologia')}}
-              <span for="">Consultorio Odontologia</span>
-            </li>
-            <li class="nav-item">
-
-              <div class="row">
-                <div class="form-inline">
-                  {{Form::radio('type','other')}}
-                  <span for="">Otro, especifique: </span>{!!Form::text('other',null,['class'=>'form-control'])!!}
-                </div>
-
-              </li>
-            </ul>
-            <!--<div class="" style="display:list-item;">
-            {{Form::radio('type','Medicina General o Familiar')}}
-
-            {{Form::radio('type','Consultorio de Especialidades')}}
-            <span for="">Consultorio de Especialidades</span>
-
-            {{Form::radio('type','Consultorio Odontologia')}}
-            <span for="">Consultorio Odontologia</span>
-
-            <div class="form-inline">
-
-            <span for="">Otro tipo de Consulta Especifique: </span>
-          </div>
-        </div> -->
-      </div>
+<section class="box">
+  <div class="row">
+    <div class="col-12 mb-3">
+      <h2 class="text-center font-title">Agregar Consultorio</h2>
     </div>
-    <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Nombre Comercial (Opcional)</label>
-      <div class="col-8">
-        {!!Form::text('name',null,['class'=>'form-control'])!!}
+  </div>
+  {!!Form::open(['route'=>['consulting_room_store',$medico->id],'method'=>'POST'])!!}
+
+  <div class="col-12">
+    <div class="row" id="comb">
+      <div class="col-lg-6 col-12">
+        <div class="form-group">
+          <label for="">Tipo de Consultorio</label>
+          {{Form::select('type',['Medicina General o Familiar'=>'Medicina General o Familiar','Consultorio de Especialidades'=>'Consultorio de Especialidades','Consultorio Odontologia'=>'Consultorio Odontologia','Otro Especifique:'=>'Otro Especifique:'],null,['class'=>'form-control','id'=>'type2','placeholder'=>'Opciones'])}}
+        </div>
       </div>
-    </div>
-    <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Dirección</label>
-      <div class="col-8">
-        {!!Form::text('addres',null,['class'=>'form-control'])!!}
+        <div class="col-lg-6 col-12" id="otro2" style="Display:none">
+          <label for="">Escriba el Tipo de Consultorio</label>
+          {{Form::text('otro',null,['class'=>'form-control','id'=>'especifique2','placeholder'=>'escriba el tipo de consultorio'])}}
+        </div>
 
+    </div>
+    <div class="row mt-3">
+      {{-- <div class="col-lg-6 col-12">
+        <div class="form-group">
+          <label for="">Pais</label>
+          {{Form::select('country',['Mexíco'=>'Mexíco'],null,['class'=>'form-control'])}}
+        </div>
+      </div> --}}
+      <div class="col-lg-6 col-12">
+        <div class="form-group">
+          <label for="">Estado</label>
+          {{Form::select('state',$states,null,['class'=>'form-control','id'=>'state','placeholder'=>'opciones'])}}
+        </div>
       </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Numero Ext (Opcional)</label>
-      <div class="col-8">
-        {!!Form::text('numberExt',null,['class'=>'form-control'])!!}
-
+      <div class="col-lg-6 col-12">
+        <div class="form-group">
+          <label for="">Ciudad</label>
+          {{Form::select('city',$cities,null,['class'=>'form-control','id'=>'city','placeholder'=>'opciones'])}}
+        </div>
       </div>
-    </div>
+      <div class="col-lg-6 col-12">
+        <div class="form-group">
+          <label for="street">Calle/Av (especifique)</label>
+          {{Form::text('street',null,['class'=>'form-control'])}}
+        </div>
+      </div>
+      <div class="col-lg-6 col-12">
+        <div class="form-group">
+          <label for="" >Colonia</label>
+          {{Form::text('colony',null,['class'=>'form-control'])}}
+        </div>
+      </div>
+      <div class="col-lg-6 col-12">
+        <div class="form-group">
+          <label for="">Clave Unica (Opcional)</label>
+          {{Form::text('password_unique',null,['class'=>'form-control','id'=>'input2','style'=>'border-color:black'])}}
 
-    <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Numero Int (Opcional)</label>
-      <div class="col-8">
-        {!!Form::text('numberInt',null,['class'=>'form-control'])!!}
+
+       </div>
+     </div>
+     <div class="col-lg-6 col-12">
+      <div class="form-group">
+        <label for="">Nombre Comercial del Consultorio</label>
+        {{Form::text('name_comercial',null,['class'=>'form-control','id'=>'input2','style'=>'border-color:black'])}}
 
       </div>
     </div>
-
-    <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Colonia</label>
-      <div class="col-8">
-        {!!Form::text('colony',null,['class'=>'form-control'])!!}
-
+    <div class="col-lg-6 col-12">
+      <div class="form-group">
+        <label for="">Numero Interno (opcional)</label>
+        {{Form::text('number_int',null,['class'=>'form-control','id'=>'input2','style'=>'border-color:black'])}}
       </div>
     </div>
-
-    <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Ciudad</label>
-      <div class="col-8">
-        {!!Form::text('city',null,['class'=>'form-control'])!!}
+    <div class="col-lg-6 col-12">
+      <div class="form-group">
+        <label for="">Numero Externo (opcional)</label>
+        {{Form::text('number_ext',null,['class'=>'form-control','style'=>'border-color:black'])}}
+      </div>
+    </div>
+    <div class="col-lg-6 col-12">
+      <div class="form-group">
+        <label for="">Codigo Postal (opcional)</label>
+        {{Form::number('postal_code',null,['class'=>'form-control','style'=>'border-color:black'])}}
 
       </div>
     </div>
 
-    <div class="form-group row">
-      <label for="example-text-input" class="col-3 col-form-label">Estado</label>
-      <div class="col-8">
-        {!!Form::text('state',null,['class'=>'form-control'])!!}
-
-      </div>
     </div>
 
-    {!!Form::hidden('medico_id',$medico_id)!!}
+  <div class="row">
 
-    <div class="row my-4 mb-2">
-      <div class="col-6">
-        <button type="submit" name="button" class="btn-config-blue btn btn-block">Registrar</button>
-      </div>
-      <div class="col-6">
-        <a href="{{route('medico.edit',$medico_id)}}" class="btn-config-green btn btn-block">Cancelar</a>
-
-      </div>
+    <div class="col-lg-6 col-12 mt-2">
+      <a href="{{route('medico.edit',$medico->id)}}" class="btn btn-primary btn-block">Cancelar</a>
     </div>
 
-    {!!Form::close()!!}
+    <div class="col-lg-6 col-12 mt-2">
+      <button type="submit" class="btn-config-green btn btn-block">Guardar</button>
+    </div>
   </div>
 </div>
+{!!Form::close()!!}
 
-<div class="" style="height:50px;margin-bottom:30px;backgroun:red">
+</section>
+@endsection
 
-</div>
-</div>
+@section('scriptJS')
+
+
+<script type="text/javascript">
+
+/////////////////////////////
+$(document).ready(function(){
+
+  if($('#type2').val() == 'Otro Especifique:'){
+    $('#comb').css('background','rgb(250, 251, 172)');
+  }
+
+  $('#type2').on('change', function(){
+    valor = $('#type2').val();
+
+    if(valor == 'Otro Especifique:'){
+      $('#otro2').show();
+    $('#comb').css('background','rgb(250, 251, 172)');
+
+    }else{
+      $('#otro2').hide();
+      $('#comb').css('background','white');
+    }
+
+  });
+
+  $('#state').on('change', function(){
+    state = $('#state').val();
+    route = "{{route('inner_cities_select3')}}";
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      type:'post',
+      url: route,
+      data:{name:state},
+      success:function(result){
+        console.log(result);
+        $("#city").empty();
+        $('#city').append($('<option>', {
+         value: null,
+         text: 'opciones'
+       }));
+        $.each(result,function(key, val){
+         $('#city').append($('<option>', {
+          value: val,
+          text: val
+        }));
+       });
+      },
+      error:function(error){
+        console.log(error);
+      },
+    });
+  });
+});
+
+
+
+</script>
 @endsection

@@ -15,19 +15,29 @@
 </div>
 {{-- MENU DE PACIENTES --}}
 {{-- @include('medico.includes.main_medico_patients') --}}
+<div class="text-right">
+  <a class="btn btn-secondary my-2" href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id,])}}">Atras</a>
+</div>
 
+<div class="my-2">
+  <p style="color:rgb(156, 156, 156)">Puedes Configurar los campos "signos vitales" o "Pruebas de laboratorio" para que almacenen de forma predefinida, el texto o preguntas que uses frecuentemente en este tipo de notas, solo tienes que editar su contenido en esta pantalla, y presionar el boton guardar.</p>
+</div>
 <div class="card">
-  <div class="card-header card-edit">
+  <div class="card-header card-edit text-white bg-warning">
     <b>{{$note->title}}</b>
   </div>
+
+
   <div class="card-body">
     {!!Form::model($note,['route'=>'note_config_store','method'=>'POST'])!!}
     {!!Form::hidden('note_id',$note->id)!!}
     {!!Form::hidden('title',$note->title)!!}
     {!!Form::hidden('medico_id',$medico->id)!!}
+    {!!Form::hidden('patient_id',$patient->id)!!}
+
     <div class="form-group">
       <h5 class="font-title-blue">Exploracion fisica:</h5>
-      {{Form::textarea('Exploracion_fisica',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+      {{Form::textarea('Exploracion_fisica',null,['class'=>'form-control','id'=>'Exploracion Fisica','disabled'])}}
     </div>
     <div class="form-group">
       <h5 class="font-title-blue">Signos vitales:</h5>
@@ -37,32 +47,32 @@
       {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control','id'=>'pruebas_labs'])}}
     </div><div class="form-group">
       <h5 class="font-title-blue">Diagnostico:</h5>
-      {{Form::textarea('Diagnostico',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+      {{Form::textarea('Diagnostico',null,['class'=>'form-control','id'=>'Exploracion Fisica','disabled'])}}
     </div><div class="form-group">
       <h5 class="font-title-blue">Afección principal o motivo de consulta:</h5>
-      {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+      {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control','id'=>'Exploracion Fisica','disabled'])}}
     </div>
     <div class="form-group">
       <h5 class="font-title-blue">Afeccion secundaria:</h5>
-      {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+      {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control','id'=>'Exploracion Fisica','disabled'])}}
     </div>
     <div class="form-group">
       <h5 class="font-title-blue">Pronostico:</h5>
-      {{Form::textarea('Pronostico',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+      {{Form::textarea('Pronostico',null,['class'=>'form-control','id'=>'Exploracion Fisica','disabled'])}}
     </div>
     <div class="form-group">
       <h5 class="font-title-blue">Tratamiento y o receta:</h5>
-      {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+      {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control','id'=>'Exploracion Fisica','disabled'])}}
     </div>
     <div class="form-group">
       <h5 class="font-title-blue">Indicaciones terapeuticas:</h5>
-      {{Form::textarea('Indicaciones_terapeuticas',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+      {{Form::textarea('Indicaciones_terapeuticas',null,['class'=>'form-control','id'=>'Exploracion Fisica','disabled'])}}
     </div>
 
     <input type="submit" class="btn btn-success" name="" value="Guardar">
-    <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
+    <a href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
     {!!Form::close()!!}
-    {!!Form::close()!!}
+
   </div>
 </div>
 

@@ -44,7 +44,7 @@
       {{Form::textarea('Diagnostico',null,['class'=>'form-control','id'=>'pruebas_labs'])}}
     </div>
   <input type="submit" class="btn btn-success" name="" value="Guardar">
-  <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
+    <a href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
   {!!Form::close()!!}
 
     {!!Form::close()!!}

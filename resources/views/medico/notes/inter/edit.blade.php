@@ -9,7 +9,7 @@
 @section('content')
 <div class="row">
   <div class="col-12 mb-3">
-    <h2 class="text-center font-title">Editar Nota: "{{$note->title}}" {{$note->created_at}}</h2>
+      <h2 class="text-center font-title">Editar Nota: "{{$note->title}} {{\Carbon\Carbon::parse($note->created_at)->format('m-d-Y H:i')}}" </h2>
 
   </div>
 </div>
@@ -17,9 +17,9 @@
 {{-- @include('medico.includes.main_medico_patients') --}}
 
 <div class="card">
-  <div class="card-header card-edit">
-    <b>{{$note->title}}</b>
-  </div>
+  <div class="card-header bg-success text-white">
+   <b> {{$note->title}}</b>
+ </div>
   <div class="card-body">
     {!!Form::model($note,['route'=>['note_update',$note],'method'=>'POST'])!!}
     {!!Form::hidden('note_id',$note->id)!!}

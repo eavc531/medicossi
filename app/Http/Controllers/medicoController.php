@@ -81,7 +81,7 @@ class medicoController extends Controller
          'country'=>'required',
          'state'=>'required',
          'city'=>'required',
-         'postal_code'=>'required',
+         // 'postal_code'=>'required',
          'colony'=>'required',
          'street'=>'required',
        ]);
@@ -488,7 +488,6 @@ class medicoController extends Controller
      }
 
      public function medico_update_address(Request $request,$id){
-
          $request->validate([
            'country'=>'required',
            'state'=>'required',
@@ -496,8 +495,19 @@ class medicoController extends Controller
            'postal_code'=>'required',
            'colony'=>'required',
            'street'=>'required',
+           'type_consulting_room'=>'required'
            // 'number_ext'=>'required',
          ]);
+
+         if($request->type_consulting_room == 'Otro Especifique:'){
+           if($request->otro == Null){
+             return back()->with('warning', 'Debes especificar el tipo de Consultiorio');
+           }
+           $type_consulting_room = $request->otro;
+         }else{
+           $type_consulting_room = $request->type_consulting_room;
+         }
+
 
           if($request->city == 'opciones'){
             return back()->with('warning', 'El campo ciudad es requerido')->withInput();
@@ -527,6 +537,9 @@ class medicoController extends Controller
            $medico->number_int = $request->number_int;
            $medico->longitud = $Coordinates['lng'];
            $medico->latitud = $Coordinates['lat'];
+           $medico->name_comercial = $request->name_comercial;
+           $medico->password_unique = $request->password_unique;
+           $medico->type_consulting_room = $type_consulting_room;
            $medico->save();
 
            if($medico->stateConfirm == 'data_primordial_complete'){
@@ -565,18 +578,62 @@ class medicoController extends Controller
 
      public function medico_specialty_create($id)
      {
-        $specialty = specialty::orderBy('name','asc')->pluck('name','name');
-         return view('medico.medico_specialty.create')->with('medico_id',$id)->with('specialty', $specialty);
+         return view('medico.medico_specialty.create')->with('medico_id',$id);
      }
 
-     public function medico_specialty_store(Request $request){
+     public function medico_specialty_edit($id)
+     {
+       $specialty = medico_specialty::find($id);
+         return view('medico.medico_specialty.edit',compact('specialty'))->with('medico_id',$id);
+     }
+
+     public function medico_specialty_update(Request $request,$id){
+
        $request->validate([
          'type'=>'required',
          'institution'=>'required',
          'specialty'=>'required',
          'from'=>'required',
-
          'until'=>'required',
+         'state'=>'required',
+         'aditional'=>'nullable',
+       ]);
+
+
+       if($request->type == 'other'){
+         $request->validate([
+           'other'=>'required'
+         ]);
+
+       }
+
+       // $specialty = specialty::where('name',$request->specialty)->first();
+       //
+       $medico_specialty = medico_specialty::find($id);
+       $medico_specialty->fill($request->all());
+
+       if($request->type == 'other'){
+
+         $medico_specialty->type = $request->other;
+       }else{
+
+         $medico_specialty->type = $request->type;
+       }
+       $medico_specialty->save();
+
+       return redirect()->route('medico.edit',$request->medico_id)->with('success','la información se ha actualizado de forma satisfactoria.');
+
+     }
+
+     public function medico_specialty_store(Request $request){
+
+       $request->validate([
+         'type'=>'required',
+         'institution'=>'required',
+         'specialty'=>'required',
+         'from'=>'required',
+         'until'=>'required',
+         'state'=>'required',
          'aditional'=>'nullable',
        ]);
 
@@ -587,15 +644,16 @@ class medicoController extends Controller
 
        }
 
-       $specialty = specialty::where('name',$request->specialty)->first();
-
-       $specialty_category = specialty_category::find($specialty->specialty_category_id);
+       // $specialty = specialty::where('name',$request->specialty)->first();
+       //
 
        $medico_specialty = new medico_specialty;
        $medico_specialty->fill($request->all());
-       $medico_specialty->specialty_category = $specialty_category->name;
+
        if($request->type == 'other'){
          $medico_specialty->type = $request->other;
+       }else{
+         $medico_specialty->type = $request->specialty;
        }
        $medico_specialty->save();
 
@@ -613,7 +671,7 @@ class medicoController extends Controller
 
     public function medico_service_list(Request $request){
 
-        $medico_services = medico_service::where('medico_id', $request->medico_id)->get();
+        $medico_services = medico_service::where('medico_id', $request->medico_id)->orderBy('id','desc')->orderBy('id','desc')->get();
 
         return view('medico.includes_perfil.list_service')->with('services', $medico_services);
     }
@@ -643,29 +701,8 @@ class medicoController extends Controller
 
      public function medico_experience_list(Request $request){
 
-       // $experiencesCount = medico_experience::where('medico_id', $request->medico_id)->count();
 
-       // $paginate = 6;//MARCAR
-       //  $page = 1;//no
-       //  if($request->page == 'Sig'){
-       //      $page = $request->page1 + 1;
-       //  }elseif($request->page == 'Ant'){
-       //      $page = $request->page1 - 1;
-       //  }else{
-       //    if($request->page != null){
-       //      $page = $request->page;
-       //    }
-       //  }
-       //
-       //  $skip = ($page - 1)* $paginate;//
-       //  $cant_page = round($experiencesCount / $paginate);
-
-        // if($page > $cant_page){
-        //   return response()->json('limite');
-        // }
-
-        // $experiences = medico_experience::where('medico_id', $request->medico_id)->skip($skip)->take($paginate)->get();
-        $experiences = medico_experience::where('medico_id', $request->medico_id)->get();
+        $experiences = medico_experience::where('medico_id', $request->medico_id)->orderBy('id','desc')->get();
 
          return view('medico.includes_perfil.list_experience',compact('experiences'));
 
@@ -781,7 +818,6 @@ class medicoController extends Controller
 
     public function store(Request $request)
     {
-
         $request->validate([
            //'identification'=>'required|unique:medicos',
            'name'=>'required',
@@ -795,7 +831,6 @@ class medicoController extends Controller
            //'id_promoter'=>'nullable',
            'phone'=>'required|numeric',
            //'facebook'=>'required',
-
         ]);
 
         if($request->terminos == Null){
@@ -895,11 +930,6 @@ class medicoController extends Controller
 
     public function edit($id)
     {
-      //permission_patient
-        // if(Auth::user()->role == 'medico' and Auth::user()->medico_id != $id){
-        //   return redirect()->route('home');
-        // }
-
         $insurance_carrier = insurance_carrier::where('medico_id',$id)->get();
         $medicalCenter = medicalCenter::orderBy('name','asc')->pluck('name','name');
         $cities = city::orderBy('name','asc')->pluck('name','id');
@@ -912,6 +942,7 @@ class medicoController extends Controller
           $medico->save();
         }
 
+
         $consulting_room = consulting_room::where('medico_id',$medico->id)->get();
         $consultingIsset = consulting_room::where('medico_id',$medico->id)->count();
         $photo = photo::where('medico_id', $medico->id)->where('type', 'perfil')->first();
@@ -920,7 +951,7 @@ class medicoController extends Controller
         $images = photo::where('medico_id', $medico->id)->where('type','image')->get();
         $specialties = specialty::orderBy('name','asc')->pluck('name','name');
 
-        return view('medico.edit')->with('medico', $medico)->with('photo', $photo)->with('consulting_rooms', $consulting_room)->with('consultingIsset', $consultingIsset)->with('cities', $cities)->with('medicalCenter', $medicalCenter)->with('medico_specialty', $medico_specialty)->with('social_networks', $social_networks)->with('images', $images)->with('insurance_carrier',$insurance_carrier)->with('states', $states)->with('specialties', $specialties);
+        return view('medico.edit')->with('medico', $medico)->with('photo', $photo)->with('consulting_rooms', $consulting_room)->with('consultingIsset', $consultingIsset)->with('cities', $cities)->with('medicalCenter', $medicalCenter)->with('medico_specialty', $medico_specialty)->with('social_networks', $social_networks)->with('images', $images)->with('insurance_carrier',$insurance_carrier)->with('states', $states)->with('specialties', $specialties)->with('consulting_room',$consulting_room);
     }
 
     /**
@@ -1161,7 +1192,8 @@ class medicoController extends Controller
         $value->viewed ='Si';
         $value->save();
       }
-      return back()->with('warning','Todas las opiniones registradas hasta la fecha, se configuraron para ocultarse.');
+
+        return back()->with('success','Todas las opiniones registradas hasta la fecha, se configuraron para mostrarse.');
     }
 
     public function hide_all_comentary($id){
@@ -1172,8 +1204,8 @@ class medicoController extends Controller
         $value->viewed ='Si';
         $value->save();
       }
+        return back()->with('warning','Todas las opiniones registradas hasta la fecha, se configuraron para ocultarse.');
 
-      return back()->with('success','Todas las opiniones registradas hasta la fecha, se configuraron para mostrarse.');
 
     }
 
