@@ -7,11 +7,19 @@ use App\note;
 use App\patient;
 use App\medico;
 use App\element_note;
+use App\data_patient;
+
 use PDF;
 class notesController extends Controller
 {
   public function download_pdf($id){
-      $note = note::find($id);
+    $note = note::find($id);
+    $data_patient = data_patient::where('medico_id',$note->medico_id)->where('patient_id',$note->patient_id)->first();
+    if($data_patient == Null){
+      return redirect()->route('data_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
+    }
+
+
       $medico = medico::find($note->medico_id);
       $patient = patient::find($note->patient_id);
 
@@ -52,6 +60,10 @@ class notesController extends Controller
   }
 
   public function view_preview($m_id,$p_id,$n_id){
+    $data_patient = data_patient::where('medico_id',$m_id)->where('patient_id',$p_id)->first();
+    if($data_patient == Null){
+      return redirect()->route('data_patient',['m_id'=>$m_id,'p_id'=>$p_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
+    }
     $patient = patient::find($p_id);
     $medico = medico::find($m_id);
     $note = note::find($n_id);
@@ -400,7 +412,7 @@ class notesController extends Controller
       $note->fill($request->all());
       $note->save();
 
-      return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id]);
+      return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'Nueva nota Médica creada');
 
     }
 }

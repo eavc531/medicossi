@@ -58,7 +58,7 @@
       {!!Form::submit('Subir')!!}
       {!!Form::close()!!}
     </div>
-    @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id = $medico->id)
+    @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id == $medico->id)
     <div class="col-lg-6">
       <h3>Calificación:</h3>
       <span class="">@include('home.star_rate')</span>
@@ -115,22 +115,27 @@
         <ul>
           <li><b>Especialidad:&nbsp;</b>{{$medico->specialty}}</li>
           @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          @if ($medico->showNumber == 'si')
-          <li><b>Teléfono celular</b>: {{$medico->phone}}</li>
-          @endif
+            @if ($medico->showNumber == 'si')
+            <li><b>Teléfono celular</b>: {{$medico->phone}}</li>
+            @endif
           @endif
 
           @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice1 != Null)
-          <li><b>Telefono de oficina 1:</b>{{$medico->phoneOffice1}}</li>
-          @endif
-          @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice2 != Null)
-          <li><b>Telefono de oficina 2:</b>{{$medico->phoneOffice2}}</li>
-          @endif
+            @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice1 != Null)
+            <li><b>Telefono de oficina 1:</b>{{$medico->phoneOffice1}}</li>
+            @endif
+            @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice2 != Null)
+            <li><b>Telefono de oficina 2:</b>{{$medico->phoneOffice2}}</li>
+            @endif
           @endif
 
-          <li><b>Mostrar Numero Personal:&nbsp;</b><span style="color:rgb(215, 141, 15)">{{$medico->showNumber}}</span></li>
-          <li><b>Mostrar Numeros de officina:&nbsp;</b><span style="color:rgb(215,141,15)">{{$medico->showNumberOffice}}</span></li>
+          @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+            <li><b>Mostrar Numero Personal:&nbsp;</b><span style="color:rgb(215, 141, 15)">{{$medico->showNumber}}</span></li>
+            <li><b>Mostrar Numeros de oficina:&nbsp;</b><span style="color:rgb(215,141,15)">{{$medico->showNumberOffice}}</span></li>
+          @else
+            <li><b>Mostrar Numero Personal:&nbsp;</b><span style="color:rgb(215, 141, 15)">No</span></li>
+            <li><b>Mostrar Numeros de oficina:&nbsp;</b><span style="color:rgb(215,141,15)">No</span></li>
+          @endif
         </ul>
         <a href="{{route('data_primordial_medico',$medico->id)}}" class="btn btn-block btn-success">Editar</a>
       </div>
@@ -233,7 +238,7 @@
   <div class="col-6">
     <ul>
       <li><strong>Ciudad:</strong> {{$medico->city}}</li>
-      <li><strong>Codigo Postal:</strong> {{$medico->postal_code}}</li>
+      <li><strong>Codigo POSTal:</strong> {{$medico->POSTal_code}}</li>
       <li><strong>Colonia:</strong>
         {{$medico->colony}}
       </li>
@@ -277,7 +282,7 @@
         <div class="col-6">
           <ul>
             <li><strong>Ciudad:</strong> {{$value->city}}</li>
-            <li><strong>Codigo Postal:</strong> @if($value->postal_code != Null){{$value->postal_code}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+            <li><strong>Codigo POSTal:</strong> @if($value->POSTal_code != Null){{$value->POSTal_code}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
             <li><strong>Colonia:</strong>
               {{$value->colony}}
             </li>
@@ -290,8 +295,9 @@
         <div class="col-6">
 
         </div>
-        <div class="col-6">
-          <a href="{{route('consulting_room_edit',$value->id)}}" class="btn btn-block btn-primary">Editar Consultorio</a>
+        <div class="col-6 text-right">
+          <a href="{{route('consulting_room_edit',$value->id)}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
+          <a href="{{route('consulting_room_delete',$value->id)}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
         </div>
       </div>
     </div>
@@ -373,7 +379,12 @@
            @else
            <span style="color:rgb(173, 173, 173)">No especifica</span>
            @endisset </li>
-           <a href="{{route('medico_specialty_edit',$info->id)}}" class="btn btn-block btn-primary mt-2">Editar</a>
+           <div class="text-right">
+             <a href="{{route('medico_specialty_edit',$info->id)}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
+             <a href="{{route('medico_specialty_delete',$info->id)}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+           </div>
+
+
          </div>
        </div>
      </div>
@@ -578,6 +589,8 @@
   </div>
 </div>
 </section>
+
+
 {{-- //////////////////Modals///////////////////////////////////////MODALS//////////////// --}}
 <!-- Modal insurance-->
 <div class="modal fade" id="modal-insurance" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -730,7 +743,7 @@ span.onclick = function(){
 
    $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
+     type:'POST',
      url: route,
      data:{medico_id:medico_id},
      success:function(result){
@@ -753,7 +766,7 @@ span.onclick = function(){
    medico_id = $('#medico_id').val();
    $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
+     type:'POST',
      url: route,
      data:{medico_id:medico_id,page:page,page1:page1},
      success:function(result){
@@ -778,7 +791,7 @@ span.onclick = function(){
    medico_id = $('#medico_id').val();
    $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
+     type:'POST',
      url: route,
      data:{medico_id:medico_id,page:page,page1:page1},
      success:function(result){
@@ -810,7 +823,7 @@ function delete_video(request){
   route = "{{route('delete_video')}}";
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-   type:'post',
+   type:'POST',
    url:route,
    data:{video_id:video_id},
    error:function(error){
@@ -827,7 +840,7 @@ $('#form_video').submit(function(){
   errormsj = '';
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-   type:'post',
+   type:'POST',
    url: $(this).attr('action'),
    data: $(this).serialize(),
    error:function(error){
@@ -876,7 +889,7 @@ $(document).ready(function() {
    medico_id = $('#medico_id').val();
    $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
+     type:'POST',
      url: route,
      data:{medico_id:medico_id},
      success:function(result){
@@ -897,7 +910,7 @@ $(document).ready(function() {
 
      $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-       type:'post',
+       type:'POST',
        url: route,
        data:{medico_id:medico_id},
        success:function(result){
@@ -919,7 +932,7 @@ $(document).ready(function() {
      errormsj = '';
      $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      type:'post',
+      type:'POST',
       url:route,
       data:{name:name,medico_id:medico_id},
       error:function(error){
@@ -944,7 +957,7 @@ $(document).ready(function() {
     medico_id = $('#medico_id').val();
     $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      type:'post',
+      type:'POST',
       url: route,
       data:{medico_id:medico_id},
       success:function(result){
@@ -963,7 +976,7 @@ function hide_aseguradoras(){
   route = "{{route('select_insurrances2')}}"
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-   type:'post',
+   type:'POST',
    url:route,
    data:{type_patient_service:type_patient_service,medico_id:medico_id},
    error:function(error){
@@ -981,7 +994,7 @@ function show_aseguradoras(){
   route = "{{route('select_insurrances2')}}"
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-   type:'post',
+   type:'POST',
    url:route,
    data:{type_patient_service:type_patient_service,medico_id:medico_id},
    error:function(error){
@@ -1023,7 +1036,7 @@ $('#stateMedic').on('change', function(){
  route = "{{route('inner_cities_select')}}";
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-  type:'post',
+  type:'POST',
   url: route,
   data:{state_id:state_id},
   success:function(result){
@@ -1054,7 +1067,7 @@ function list_service(){
 
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-    type:'post',
+    type:'POST',
     url: route,
     data:{medico_id:medico_id},
     success:function(result){
@@ -1077,7 +1090,7 @@ function storeSocial(){
 
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-    type:'post',
+    type:'POST',
     url:route,
     data:{name:name,link:link,medico_id:medico_id},
     error:function(error){
@@ -1109,7 +1122,7 @@ function medico_experience_delete(service_id){
  route = "{{route('medico_experience_delete')}}";
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-  type:'post',
+  type:'POST',
   url:route,
   data:{medico_id:id},
   error:function(error){
@@ -1135,7 +1148,7 @@ function medico_service_delete(service_id){
  route = "{{route('medicoBorrar')}}";
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-  type:'post',
+  type:'POST',
   url:route,
   data:{medico_id:id},
   error:function(error){
@@ -1163,7 +1176,7 @@ function social_network_delete(social_id){
  route = "{{route('borrar_social')}}";
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-  method:'post',
+  method:'POST',
   url:route,
   data:{id:id},
   error:function(error){
@@ -1190,7 +1203,7 @@ function service_medico_store(){
   errormsj = '';
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-   type:'post',
+   type:'POST',
    url:route,
    data:{name:name,medico_id:medico_id},
    error:function(error){
@@ -1341,7 +1354,7 @@ function store_coordinates(){
 
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-    type:'post',
+    type:'POST',
     url:route,
     data:{latitud:latitud,longitud:longitud},
     error:function(error){

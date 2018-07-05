@@ -7,9 +7,9 @@
     <div class="col-12 mb-3">
 
       @if($type == 'sin confirmar')
-        <h2 class="text-center font-title">Citas sin confirmar</h2>
-      @elseif($type == 'confirmadas')
-        <h2 class="text-center font-title">Citas Confirmadas</h2>
+        <h2 class="text-center font-title">Citas Nuevas / sin confirmar</h2>
+      @elseif($type == 'confirmadas / Creadas')
+        <h2 class="text-center font-title">Citas confirmadas / Creadas</h2>
       @elseif($type == 'Pasada y por Cobrar')
         <h2 class="text-center font-title">Citas Pasadas y por Cobrar</h2>
       @else
@@ -20,76 +20,76 @@
   </div>
   {{-- MENU DE PACIENTES --}}
   {{-- @include('medico.includes.main_medico_patients') --}}
-  <div class="row mt-4 mb-4">
-    <div class="col-12 mb-3">
+  <div class="row mt-4 mb-1">
+    <div class="col-12 mb-1">
 
       @if($type == 'sin confirmar')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+        {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
 
-          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning disabled" disabled> sin Confirmar</a>
-          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
-        @endif
+          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning disabled" disabled> Nuevas / sin confirmar</a>
+          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> confirmadas / Creadas</a>
+        {{-- @endif --}}
         <a href="{{route('appointments_paid_and_pending',request()->id)}}" class="btn btn-info"> Pagadas y Pendientes</a>
         <a href="{{route('appointments_past_collect',request()->id)}}" class="btn text-white" style="background:rgb(119, 38, 88)">Pasadas y por cobrar</a>
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary"> Completadas</a>
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'confirmadas')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
-          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary disabled" disabled> Confirmadas</a>
-        @endif
+        {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> Nuevas / sin confirmar</a>
+          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary disabled" disabled> confirmadas / Creadas</a>
+        {{-- @endif --}}
         <a href="{{route('appointments_paid_and_pending',request()->id)}}" class="btn btn-info"> Pagadas y Pendientes</a>
         <a href="{{route('appointments_past_collect',request()->id)}}" class="btn text-white" style="background:rgb(119, 38, 88)">Pasadas y por cobrar</a>
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary"> Completadas</a>
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'Pagadas y Pendientes')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
-          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
-        @endif
+        {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> Nuevas / sin confirmar</a>
+          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> confirmadas / Creadas</a>
+        {{-- @endif --}}
         <a href="{{route('appointments_paid_and_pending',request()->id)}}" class="btn btn-info disabled"> Pagadas y Pendientes</a>
         <a href="{{route('appointments_past_collect',request()->id)}}" class="btn text-white" style="background:rgb(119, 38, 88)">Pasadas y por cobrar</a>
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary"> Completadas</a>
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'Pagadas y Completadas')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
-          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
-        @endif
+        {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> Nuevas / sin confirmar</a>
+          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> confirmadas / Creadas</a>
+        {{-- @endif --}}
         <a href="{{route('appointments_paid_and_pending',request()->id)}}" class="btn btn-info"> Pagadas y Pendientes</a>
         <a href="{{route('appointments_past_collect',request()->id)}}" class="btn text-white" style="background:rgb(119, 38, 88)">Pasadas y por cobrar</a>
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary disabled text-black" style="color:black"> Completadas</a>
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'todas')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success disabled">Todas</a>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
-          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
-        @endif
+        {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> Nuevas / sin confirmar</a>
+          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> confirmadas / Creadas</a>
+        {{-- @endif --}}
         <a href="{{route('appointments_paid_and_pending',request()->id)}}" class="btn btn-info"> Pagadas y Pendientes</a>
         <a href="{{route('appointments_past_collect',request()->id)}}" class="btn text-white" style="background:rgb(119, 38, 88)">Pasadas y por cobrar</a>
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary text-black" style="color:black"> Completadas</a>
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @elseif($type == 'Pasada y por Cobrar')
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success disabled">Todas</a>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
-          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
-        @endif
+        {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> Nuevas / sin confirmar</a>
+          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> confirmadas / Creadas</a>
+        {{-- @endif --}}
         <a href="{{route('appointments_paid_and_pending',request()->id)}}" class="btn btn-info"> Pagadas y Pendientes</a>
         <a href="{{route('appointments_past_collect',request()->id)}}" class="btn text-white disabled" style="background:rgb(119, 38, 88)">Pasadas y por cobrar</a>
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary text-black" style="color:black"> Completadas</a>
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger"> Canceladas</a>
       @else
         <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success">Todas</a>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> sin Confirmar</a>
-          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> Confirmadas</a>
-        @endif
+        {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+          <a href="{{route('appointments',request()->id)}}" class="btn btn-warning"> Nuevas / sin confirmar</a>
+          <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary"> confirmadas / Creadas</a>
+        {{-- @endif --}}
         <a href="{{route('appointments_paid_and_pending',request()->id)}}" class="btn btn-info"> Pagadas y Pendientes</a>
         <a href="{{route('appointments_past_collect',request()->id)}}" class="btn text-white" style="background:rgb(119, 38, 88)">Pasadas y por cobrar</a>
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary"> Completadas</a>
@@ -99,7 +99,12 @@
     </div>
   </div>
 
+    @if($type == 'sin confirmar')
+<div class="">
+  <p class="text-justify text-secondary" style="font-size:12px"> Las Citas "Nuevas / sin confirmar" son las citas agendadas por los pacientes, a travez de su cuenta Médicossi. @if ($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino') (Debes tener activo almenos el plan "Profesional" para que los pacientes puedan realizar esta acción). @endif</p>
+</div>
 
+@endif
   @if($appointments->first() != Null)
     <div class="row">
       @foreach ($appointments as $app)
@@ -145,7 +150,7 @@
 
 
                     <a href="{{route('appointment_confirm',$app->id)}}" class="btn btn-success ml-2" data-toggle="tooltip" data-placement="top" title="Confirmar Cita"><i class="fas fa-check"></i></a>
-                  @elseif($type == 'confirmadas' or $type == 'Pagadas y Pendientes' or $type == 'todas' or $type == 'Pasada y por Cobrar')
+                  @elseif($type == 'confirmadas / Creadas' or $type == 'Pagadas y Pendientes' or $type == 'todas' or $type == 'Pasada y por Cobrar')
                     <a href="{{route('edit_appointment',['m_id'=>$app->medico_id,'p_id'=>$app->patient_id,'app_id'=>$app->id])}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Editar Cita"><i class="far fa-edit"></i></a>
 
                   @else

@@ -10,7 +10,7 @@
    <div class="register">
     <div class="row">
      <div class="col-12 mb-3">
-      <h2 class="text-center font-title">Mis PacientesXXXX</h2>
+      <h2 class="text-center font-title">Mis Pacientes</h2>
       <hr>
     </div>
   </div>
@@ -72,12 +72,11 @@
       </div>
       @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
       <div class="col-lg-2 col-2  col-sm-3 text-center">
-
-          <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
+        <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
       </div>
     @endif
       <div class="col-lg-2 col-2  col-sm-4 text-center">
-        <a href="{{route('medico_stipulate_appointment',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>" class="btn btn-secondary"><i class="fas fa-envelope-open"></i></a>
+        <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>" class="btn btn-secondary"><i class="fas fa-file-alt"></i></a>
       </div>
 
     </div>

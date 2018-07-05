@@ -14,6 +14,16 @@ class consulting_roomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     public function consulting_room_delete($id)
+     {
+         $type_consulting_room = consulting_room::find($id);
+         
+         $type_consulting_room->delete();
+
+         return back()->with('danger', 'Consultorio Eliminado');
+     }
+
     public function index()
     {
         //

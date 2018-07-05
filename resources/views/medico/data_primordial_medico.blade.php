@@ -116,7 +116,7 @@
                 @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
                   {{Form::select('showNumber',['si'=>'si','no'=>'no'],null,['class'=>'form-control','style'=>'border-color:black'])}}
                 @else
-                  {{Form::select('showNumber',['si'=>'si','no'=>'no'],null,['class'=>'form-control','disabled','style'=>'border-color:black'])}}
+                  {{Form::select('showNumber',['si'=>'si','no'=>'no'],'no',['class'=>'form-control','disabled','style'=>'border-color:black'])}}
                 @endif
 
              </div>
@@ -135,7 +135,7 @@
                 @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
                   {{Form::select('showNumberOffice',['si'=>'si','no'=>'no'],null,['class'=>'form-control','style'=>'border-color:black'])}}
                 @else
-                  {{Form::select('showNumberOffice',['si'=>'si','no'=>'no'],null,['class'=>'form-control','disabled','style'=>'border-color:black'])}}
+                  {{Form::select('showNumberOffice',['si'=>'si','no'=>'no'],'no',['class'=>'form-control','disabled','style'=>'border-color:black'])}}
                 @endif
 
              </div>

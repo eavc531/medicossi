@@ -27,10 +27,11 @@ use Geocoder;
 use App\note;
 use App\rate_medic;
 use App\video;
+use App\data_patient;
 use DB;
 use Session;
 use Auth;
-use App\info_patient;
+
 use App\insurrance_show;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -45,6 +46,78 @@ class medicoController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+      public function data_patient($m_id,$p_id){
+        $states = state::orderBy('name','asc')->pluck('name','name');
+        $cities = city::orderBy('name','asc')->pluck('name','name');
+        $medico = medico::find($m_id);
+        $patient = patient::find($p_id);
+
+        $data_patient = data_patient::where(['medico_id'=>$m_id,'patient_id'=>$p_id])->first();
+
+        return view('medico.patient.data_patient',compact('medico','patient','data_patient','states','cities'));
+
+      }
+
+      public function data_patient_extract_perfil($m_id,$p_id){
+        $states = state::orderBy('name','asc')->pluck('name','name');
+        $cities = city::orderBy('name','asc')->pluck('name','name');
+        $medico = medico::find($m_id);
+        $patient = patient::find($p_id);
+        $data_patient = patient::find($p_id);
+        $extract = 'extraer';
+        return view('medico.patient.data_patient',compact('medico','patient','data_patient','states','cities','extract'));
+
+      }
+
+      public function data_patient_store(Request $request){
+
+        $request->validate([
+          'identification'=>'required',
+          'gender'=>'required',
+          'name'=>'required',
+          'lastName'=>'required',
+          'phone1'=>'required|numeric',
+          'phone2'=>'numeric|nullable',
+          'email'=>'required|email',
+          'country'=>'required',
+          'state'=>'required',
+          'city'=>'required',
+          // 'postal_code'=>'required',
+          'colony'=>'required',
+          'street'=>'required',
+        ]);
+
+
+
+        if($request->city == 'opciones'){
+          return back()->with('warning', 'El campo ciudad es requerido')->withInput();
+        }
+
+        $data_patient = data_patient::where('medico_id',$request->medico_id)->where('patient_id',$request->patient_id)->first();
+
+        if($data_patient == Null){
+          $data_patient = new data_patient;
+          $data_patient->fill($request->all());
+          $data_patient->nameComplete = $request->name.' '.$request->lastName;
+          $age =  \Carbon\Carbon::parse($request->birthdate)->diffInYears(\Carbon\Carbon::now());
+          $data_patient->age = $age;
+          $data_patient->save();
+
+
+        }else{
+          $data_patient->fill($request->all());
+          $data_patient->nameComplete = $request->name.' '.$request->lastName;
+          $age =  \Carbon\Carbon::parse($request->birthdate)->diffInYears(\Carbon\Carbon::now());
+          $data_patient->age = $age;
+          $data_patient->save();
+
+        }
+
+        return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success','Se han Guardado los Datos Personales del Paciente');
+
+
+      }
+
      public function add_patient_registered(Request $request){
        $patients_doctor = patients_doctor::where('medico_id', $request->medico_id)->where('patient_id',$request->patient_id)->first();
        $patient = patient::find($request->patient_id);
@@ -52,15 +125,15 @@ class medicoController extends Controller
          // $medico = medico::find($request->medico_id);
          $patient = patient::find($request->patient_id)->toArray();
 
-         $info_patient = new info_patient;
-         $info_patient->fill($patient);
-         $info_patient->nameComplete = $patient['name']." ".$patient['lastName'];
-         $info_patient->save();
+         $data_patient = new data_patient;
+         $data_patient->fill($patient);
+         $data_patient->nameComplete = $patient['name']." ".$patient['lastName'];
+         $data_patient->save();
 
          $patients_doctor = new patients_doctor;
          $patients_doctor->medico_id = $request->medico_id;
          $patients_doctor->patient_id = $request->patient_id;
-         $patients_doctor->info_patient_id = $info_patient->id;
+         $patients_doctor->data_patient_id = $data_patient->id;
          $patients_doctor->save();
 
          return back()->with('success', 'Se ha agregado el Paciente: '.$patient['nameComplete'].' a su lista de pacientes');
@@ -105,7 +178,6 @@ class medicoController extends Controller
        $patient->number_int = $request->number_int;
        $patient->longitud = $Coordinates['lng'];
        $patient->latitud = $Coordinates['lat'];
-
        $patient->stateConfirm = 'complete';
        $patient->save();
 
@@ -123,22 +195,22 @@ class medicoController extends Controller
 
        $user->attachRole($role);
 
+        $medico = medico::find($request->medico_id);
 
-
-       $info_patient = new info_patient;
-       $info_patient->fill($request->all());
-       $info_patient->nameComplete = $request->name.' '.$request->lastName;
+       $data_patient = new data_patient;
+       $data_patient->fill($request->all());
+       $data_patient->medico_id = $medico->id;
+       $data_patient->patient_id = $patient->id;
+       $data_patient->nameComplete = $request->name.' '.$request->lastName;
        $age =  \Carbon\Carbon::parse($request->birthdate)->diffInYears(\Carbon\Carbon::now());
-       $info_patient->age = $age;
-       $info_patient->save();
+       $data_patient->age = $age;
+       $data_patient->save();
 
        $patients_doctor = new patients_doctor;
        $patients_doctor->medico_id = $request->medico_id;
        $patients_doctor->patient_id = $patient->id;
-       $patients_doctor->info_patient_id = $info_patient->id;
+       $patients_doctor->data_patient_id = $data_patient->id;
        $patients_doctor->save();
-
-       $medico = medico::find($request->medico_id);
 
        Mail::send('mails.medico_register_new_patient',['patient'=>$patient,'medico'=>$medico,'user'=>$user],function($msj) use($patient){
           $msj->subject('Médicos Si');
@@ -209,8 +281,6 @@ class medicoController extends Controller
             $query->where('patients.identification',$request->search)
             ->where('stateConfirm', 'complete');
           })->get();
-
-
           $medico = medico::find($request->medico_id);
 
           $data = [];
@@ -223,7 +293,6 @@ class medicoController extends Controller
           }else{
             $image = $photo->path;
           }
-
 
           $data[$patient->id] = ['id'=>$patient->id,'identification'=>$patient->identification,'name'=>$patient->name,'lastName'=>$patient->lastName,'city'=>$patient->city,'state'=>$patient->state,'image'=>$image];
         }
@@ -311,7 +380,6 @@ class medicoController extends Controller
           $currentPage = LengthAwarePaginator::resolveCurrentPage();
           $col = new Collection($data);
           $perPage = 10;
-
           $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
           $patients = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
           $patients->setPath(route('tolist2'));
@@ -379,9 +447,9 @@ class medicoController extends Controller
 
      public function appointments($id){
        $medico = medico::find($id);
-       if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
-         return redirect()->route('appointments_all',$id);
-       }
+       // if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
+       //   return redirect()->route('appointments_all',$id);
+       // }
 
        $appointments = event::where('medico_id',$id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
        $type = 'sin confirmar';
@@ -576,6 +644,15 @@ class medicoController extends Controller
        return $cities;
      }
 
+     public function medico_specialty_delete($id)
+     {
+       $medico_specialty = medico_specialty::find($id);
+
+       $medico_specialty->delete();
+
+       return back()->with('danger', 'Especialidad Eliminada');
+     }
+
      public function medico_specialty_create($id)
      {
          return view('medico.medico_specialty.create')->with('medico_id',$id);
@@ -673,7 +750,8 @@ class medicoController extends Controller
 
         $medico_services = medico_service::where('medico_id', $request->medico_id)->orderBy('id','desc')->orderBy('id','desc')->get();
 
-        return view('medico.includes_perfil.list_service')->with('services', $medico_services);
+        return response()->json(view('medico.includes_perfil.list_service',compact('medico_services')));
+
     }
 
     public function medico_experience_delete(Request $request){
@@ -914,18 +992,30 @@ class medicoController extends Controller
 
      public function medico_perfil($id)
      {
-         $insurance_carrier = insurance_carrier::where('medico_id',$id)->get();
-         $medicalCenter = medicalCenter::orderBy('name','asc')->pluck('name','name');
-         $cities = city::orderBy('name','asc')->pluck('name','name');
-         $medico = medico::find($id);
-         $consulting_room = consulting_room::where('medico_id',$medico->id)->get();
-         $consultingIsset = consulting_room::where('medico_id',$medico->id)->count();
-         $photo = photo::where('medico_id', $medico->id)->where('type', 'perfil')->first();
-         $medico_specialty = medico_specialty::where('medico_id', $medico->id)->paginate(10);
-         $social_networks = social_network::where('medico_id', $id)->get();
-         $images = photo::where('medico_id', $medico->id)->where('type','image')->get();
+       $insurance_carrier = insurance_carrier::where('medico_id',$id)->get();
+       $medicalCenter = medicalCenter::orderBy('name','asc')->pluck('name','name');
+       $cities = city::orderBy('name','asc')->pluck('name','id');
+       $states = state::orderBy('name','asc')->pluck('name','id');
+       $medico = medico::find($id);
 
-         return view('medico.perfil')->with('medico', $medico)->with('photo', $photo)->with('consulting_rooms', $consulting_room)->with('consultingIsset', $consultingIsset)->with('cities', $cities)->with('medicalCenter', $medicalCenter)->with('medico_specialty', $medico_specialty)->with('social_networks', $social_networks)->with('images', $images)->with('insurance_carrier',$insurance_carrier)->with('states', $states);
+       // if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
+       //
+       //   $medico->showNumber
+       //   $medico->showNumber = 'no';
+       //   $medico->showNumberOffice = 'no';
+       //   $medico->save();
+       // }
+
+
+       $consulting_room = consulting_room::where('medico_id',$medico->id)->get();
+       $consultingIsset = consulting_room::where('medico_id',$medico->id)->count();
+       $photo = photo::where('medico_id', $medico->id)->where('type', 'perfil')->first();
+       $medico_specialty = medico_specialty::where('medico_id', $medico->id)->paginate(10);
+       $social_networks = social_network::where('medico_id', $id)->get();
+       $images = photo::where('medico_id', $medico->id)->where('type','image')->get();
+       $specialties = specialty::orderBy('name','asc')->pluck('name','name');
+
+       return view('medico.perfil')->with('medico', $medico)->with('photo', $photo)->with('consulting_rooms', $consulting_room)->with('consultingIsset', $consultingIsset)->with('cities', $cities)->with('medicalCenter', $medicalCenter)->with('medico_specialty', $medico_specialty)->with('social_networks', $social_networks)->with('images', $images)->with('insurance_carrier',$insurance_carrier)->with('states', $states)->with('specialties', $specialties)->with('consulting_room',$consulting_room);
      }
 
     public function edit($id)
@@ -936,11 +1026,13 @@ class medicoController extends Controller
         $states = state::orderBy('name','asc')->pluck('name','id');
         $medico = medico::find($id);
 
-        if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
-          $medico->showNumber = 'no';
-          $medico->showNumberOffice = 'no';
-          $medico->save();
-        }
+        // if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
+        //
+        //   $medico->showNumber
+        //   $medico->showNumber = 'no';
+        //   $medico->showNumberOffice = 'no';
+        //   $medico->save();
+        // }
 
 
         $consulting_room = consulting_room::where('medico_id',$medico->id)->get();

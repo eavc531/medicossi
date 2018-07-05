@@ -49,9 +49,11 @@
         <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-info ml-1">Todas</a>
       </div>
       {!!Form::close()!!}
+        <div class="mb-3">
+          <a class="btn btn-info" href="{{route('type_notes',['medico_id'=>$medico->id,'patient_id'=>$patient->id])}}" data-toggle="tooltip" data-placement="top" title="Crear Nueva Nota"><i class="fas fa-file-medical"></i></a>
+          <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente"><i class="far fa-file-alt"></i><span style="font-size:11"></span></a>
 
-        <a class="btn btn-info mb-3" href="{{route('type_notes',['medico_id'=>$medico->id,'patient_id'=>$patient->id])}}" data-toggle="tooltip" data-placement="top" title="Crear Nueva Nota"><i class="fas fa-file-medical"></i></a>
-
+        </div>
 
 
 
@@ -134,10 +136,10 @@
       {{-- //////////centro de menu////////////centro de menu////////////centro de menu////////////centro de menu// --}}
     </div>
 
-    <div class="col-12 col-sm-6 m-sm-auto col-lg-3 bg-primary">
+    {{-- <div class="col-12 col-sm-6 m-sm-auto col-lg-3 bg-primary">
 
 
-    </div>
+    </div> --}}
 
   </div>
 </div>

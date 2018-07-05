@@ -2,25 +2,93 @@
 
 @section('content')
 
+  <div class="text-right">
+@if(Auth::check() and Auth::user()->role != 'medico')
+  <button onclick="volver()" type="button" name="button" class="btn btn-secondary">Volver</button>
+@else
+
+@endif
+</div>
+<div class="row">
+  <div class="col-12">
+    <h2 class="font-title text-center" id="title">Perfil Profesional Médico</h2>
+  </div>
+</div>
+@if(Session::Has('successComplete'))
+<div class="div-alert" style="padding:20px; max-width: 100%;">
+ <div class="alert alert-success alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <div class="row mt-4">
+   <div class="col-12 mb-3">
+    {{-- <h5 class="text-center font-title">Ya eres miembro de la mejor red de médicos y profesionales de la salud</h5> --}}
+  </div>
+</div>
+<h5>Registro Completado. Le invitamos a completar de forma (opcional),los datos de su perfil, para poder brindar la mayor información a sus clientes. </h5>
+</div>
+</div>
+@endif
+
 
 <section class="box-register">
   <div class="container">
    <div class="register">
-    <div class="row">
 
-  </div>
-  <div class="row mt-3" >
-   <div class="col-lg-6 col-12">
-    @isset($photo)
-    	<img src="{{asset($photo->path)}}" width="140px" height="100px" alt="" id="img">
-		@else
-			<img src="{{asset('img/no_image.jpg')}}" width="120px" height="80px" alt="" id="img">
-    @endisset
-  </div>
-  <div class="col-lg-6 col-12">
-    {{$medico->calification}}
-  </div>
-</div>
+     <div class="row mt-3">
+      <div class="col-lg-6 col-12">
+
+       @isset($photo->path)
+       <div class="cont-img my-2">
+         <img src="{{asset($photo->path)}}" class="prof-img" alt="" id="img">
+       </div>
+       @else
+       <div class="cont-img my-2">
+         <img src="{{asset('img/profile.png')}}" class="prof-img" alt="" id="img">
+       </div>
+       @endisset
+
+       {!!Form::open(['route'=>'photo.store','method'=>'POST','files'=>true])!!}
+       {!!Form::hidden('email',$medico->email)!!}
+       {!!Form::hidden('medico_id',$medico->id)!!}
+       {!!Form::file('image')!!}
+       {!!Form::submit('Subir')!!}
+       {!!Form::close()!!}
+     </div>
+     @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id == $medico->id)
+     <div class="col-lg-6">
+       <h3>Calificación:</h3>
+       <span class="">@include('home.star_rate')</span>
+       <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
+       @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+       <div class="">
+         <h4>
+           <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2">Opinion de los Usuarios</a>
+         </h4>
+         {{-- <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p> --}}
+       </div>
+       @else
+       <div class="">
+         <h4>
+           <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2 disabled">Opinion de los Usuarios</a>
+         </h4>
+         <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
+       </div>
+       @endif
+     </div>
+     @else
+     <div class="col-lg-6">
+       <h3>Calificación:</h3>
+       <span class="">@include('home.star_rate')</span>
+       <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
+       <div class="">
+         <h4>
+           <button class="btn btn-success" type="button" name="button" onclick="calification_medic_show_patient()">Calificaciones y Comentarios</button>
+         </h4>
+       </div>
+     </div>
+     @endif
+
+     </div>
+
 
 <div class="mt-3" >
 	<table class="table table-bordered">
@@ -448,7 +516,7 @@
 						<label class="custom-control-label" for="customRadio19">Zurich</label>
 					</div>
 				</div>
-				@foreach ($insurance_carriers as $insurance_carrier)
+				{{-- @foreach ($insurance_carriers as $insurance_carrier)
 					<div class="col-6">
 						<div class="custom-control custom-radio">
 							{{Form::radio($insurance_carrier)}}<label for="">{{$insurance_carrier}}</label>
@@ -456,7 +524,7 @@
 						</div>
 					</div>
 
-				@endforeach
+				@endforeach --}}
 			</div>
 
      <hr>

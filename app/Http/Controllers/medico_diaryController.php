@@ -149,7 +149,7 @@ class medico_diaryController extends Controller
       $medico->save();
 
 
-       return redirect()->route('appointments',$event->medico_id)->with('success', 'Se a confirmado la cita con el paciente: '.$event->patient->name.' '.$event->patient->lastName.' para la Fecha: '.$event->start);
+       return redirect()->route('appointments',$event->medico_id)->with('success', 'Se a confirmado la cita con el paciente: '.$event->patient->name.' '.$event->patient->lastName.' para la Fecha: '.\Carbon\Carbon::parse($event->start)->format('d-m-Y H:i'));
      }
 
      public function appointment_confirm_ajax(Request $request)

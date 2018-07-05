@@ -13,6 +13,7 @@
 Route::get('/', function(){
     return redirect()->route('home');
 });
+
 Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
 //plans
 ////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
@@ -40,8 +41,16 @@ Route::post('medico/update/event', 'medico_diaryController@update_event')->name(
 
 Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
 
+// MIDLEWARE Autenticacion
+Route::group(['middleware' => ['authenticate']], function (){
+  Route::get('consulting_room/{id}/delete','consulting_roomController@consulting_room_delete')->name('consulting_room_delete');
+});
+
+
 //PLAN BASICO
 Route::group(['middleware' => ['medic_plan_basic']], function (){
+
+
   Route::get('medico/{id}/add_image','medicoController@add_image')->name('add_image');
 
   Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
@@ -107,8 +116,8 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
 ////////
 });
 
-//PLAN PLATINO
-Route::group(['middleware' => ['medic_plan_profesional']], function (){
+//PLAN PLATINO corregir plan profesional a platino
+Route::group(['middleware' => ['medic_plan_platino']], function (){
 
     Route::get('medico/patient/notes/search','notesController@note_search')->name('note_search');
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/edit','medicoController@medico_note_edit')->name('medico_note_edit');
@@ -138,6 +147,12 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/evo_create','notesController@note_evo_create')->name('note_evo_create');
 });
 
+
+
+Route::get('medico/{m_id}/patient/{p_id}/data', 'medicoController@data_patient')->name('data_patient');
+Route::post('medico/patient/data/store', 'medicoController@data_patient_store')->name('data_patient_store');
+
+Route::get('medico/{m_id}/patient/{p_id}/data/extract', 'medicoController@data_patient_extract_perfil')->name('data_patient_extract_perfil');
 // income_medic
 Route::get('medico/{id}/income','medicoController@income_medic')->name('income_medic');
 Route::get('medico/{id}/income/without_pay','medicoController@income_medic_without_pay')->name('income_medic_without_pay');
@@ -302,6 +317,7 @@ Route::get('medico/{id}/info/create','medicoController@medico_specialty_create')
 Route::get('medico/{id}/info/edit','medicoController@medico_specialty_edit')->name('medico_specialty_edit');
 Route::post('medico/specialty/store','medicoController@medico_specialty_store')->name('medico_specialty_store');
 Route::post('medico/specialty{id}/update','medicoController@medico_specialty_update')->name('medico_specialty_update');
+Route::get('medico/specialty{id}/delete','medicoController@medico_specialty_delete')->name('medico_specialty_delete');
 
 Route::post('inner/cities/select','medicoController@inner_cities_select')->name('inner_cities_select');
 Route::post('inner/cities/select2','medicoController@inner_cities_select2')->name('inner_cities_select2');

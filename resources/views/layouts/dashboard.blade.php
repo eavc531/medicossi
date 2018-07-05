@@ -169,7 +169,11 @@
             <div class="row py-1">
               <div class="col-12">
                 @if (Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-                  <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(214, 84, 19);border-radius:10px;padding:5px">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                  @if(Auth::user()->medico->plan == 'plan_agenda')
+                    <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(214, 84, 19);border-radius:10px;padding:5px">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                  @else
+                    <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(214, 84, 19);border-radius:10px;padding:5px">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                  @endif
                 @endif
 
               </div>
