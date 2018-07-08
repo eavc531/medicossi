@@ -27,7 +27,10 @@ class patientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+     // public function __construct()
+     //  {
+     //     $this->middleware('authenticate', ['except' => ['patient_register_view','patient_register']]);
+     //  }
 
      public function calification_medic_show_patient(Request $request){
        $rate_medicCount = rate_medic::where('medico_id', $request->medico_id)->count();//marcar

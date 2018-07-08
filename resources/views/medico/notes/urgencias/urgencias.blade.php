@@ -1,10 +1,6 @@
 @extends('layouts.app')
 @section('css')
-<style media="screen">
-.form-control{
-  height: 100px;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
 @endsection
 @section('content')
   <div class="row">

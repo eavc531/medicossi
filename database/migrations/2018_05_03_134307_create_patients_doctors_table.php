@@ -19,8 +19,8 @@ class CreatePatientsDoctorsTable extends Migration
             $table->foreign('medico_id')->references('id')->on('medicos');
             $table->integer('patient_id')->unsigned();
             $table->foreign('patient_id')->references('id')->on('patients');
-            $table->integer('info_patient_id')->unsigned()->nullable();
-            $table->foreign('info_patient_id')->references('id')->on('info_patients');
+            $table->integer('data_patient_id')->unsigned();
+            $table->foreign('data_patient_id')->references('id')->on('data_patients');
             $table->string('status')->nullable();
             $table->timestamps();
         });

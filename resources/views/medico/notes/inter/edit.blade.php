@@ -1,10 +1,6 @@
 @extends('layouts.app')
 @section('css')
-<style media="screen">
-.form-control{
-  height: 100px;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
 @endsection
 @section('content')
 <div class="row">
@@ -28,29 +24,140 @@
     {!!Form::hidden('patient_id',$patient->id)!!}
 
     <div class="form-group">
-      <h5 class="font-title-blue">Afección principal o motivo de consulta:</h5>
-      {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+       @if($note->Afeccion_principal_o_motivo_de_consulta_show == 'si')
+         <h5 class="font-title-blue float-left">Afección principal o motivo de consulta:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Afeccion_principal_o_motivo_de_consulta_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @else
+        <h5 class="float-left font-title" style="color:grey">Afección principal o motivo de consulta:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+          {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Afeccion_principal_o_motivo_de_consulta_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @endif
+
+      @if($note->Afeccion_principal_o_motivo_de_consulta_show == 'si')
+        {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control','id'=>'Afeccion_principal_o_motivo_de_consulta','style'=>''])}}
+      @else
+        {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+      @endif
     </div>
+
     <div class="form-group">
-      <h5 class="font-title-blue">Afeccion secundaria:</h5>
-      {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+       @if($note->Afeccion_secundaria_show == 'si')
+         <h5 class="font-title-blue float-left">Afeccion secundaria:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Afeccion_secundaria_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @else
+        <h5 class="float-left font-title" style="color:grey">Afeccion secundaria:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+          {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Afeccion_secundaria_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @endif
+
+      @if($note->Afeccion_secundaria_show == 'si')
+        {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control','id'=>'Afeccion_secundaria','style'=>''])}}
+      @else
+        {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+      @endif
     </div>
+
+
+
     <div class="form-group">
-      <h5 class="font-title-blue">Pronostico:</h5>
-      {{Form::textarea('Pronostico',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+       @if($note->Pronostico_show == 'si')
+         <h5 class="font-title-blue float-left">Pronostico:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Pronostico_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @else
+        <h5 class="float-left font-title" style="color:grey">Pronostico:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+          {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Pronostico_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @endif
+
+      @if($note->Pronostico_show == 'si')
+        {{Form::textarea('Pronostico',null,['class'=>'form-control','id'=>'Pronostico','style'=>''])}}
+      @else
+        {{Form::textarea('Pronostico',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+      @endif
     </div>
+
     <div class="form-group">
-      <h5 class="font-title-blue">Pruebas de laboratorio:</h5>
-      {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control','id'=>'pruebas_labs'])}}
+       @if($note->Pruebas_de_laboratorio_show == 'si')
+         <h5 class="font-title-blue float-left">Pruebas de laboratorio:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @else
+        <h5 class="float-left font-title" style="color:grey">Pruebas de laboratorio:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+          {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @endif
+
+      @if($note->Pruebas_de_laboratorio_show == 'si')
+        {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control','id'=>'Pruebas_de_laboratorio','style'=>''])}}
+      @else
+        {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+      @endif
     </div>
+
+
     <div class="form-group">
-      <h5 class="font-title-blue">Evolucion y actualizacion del cuadro clinico:</h5>
-      {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+       @if($note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
+         <h5 class="font-title-blue float-left">Evolucion y actualizacion del cuadro clinico:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Evolucion_y_actualizacion_del_cuadro_clinico_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @else
+        <h5 class="float-left font-title" style="color:grey">Evolucion y actualizacion del cuadro clinico:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+          {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Evolucion_y_actualizacion_del_cuadro_clinico_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @endif
+
+      @if($note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
+        {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control','id'=>'Evolucion_y_actualizacion_del_cuadro_clinico','style'=>''])}}
+      @else
+        {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+      @endif
     </div>
+
     <div class="form-group">
-      <h5 class="font-title-blue">Sugerencias y tratamiento:</h5>
-      {{Form::textarea('Sugerencias_y_tratamiento',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
+       @if($note->Sugerencias_y_tratamiento_show == 'si')
+         <h5 class="font-title-blue float-left">Sugerencias y tratamiento:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Sugerencias_y_tratamiento_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @else
+        <h5 class="float-left font-title" style="color:grey">Sugerencias y tratamiento:</h5>
+        <label class="switch" style="display:block;margin-left:auto;">
+          {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Sugerencias_y_tratamiento_show'])}}
+           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+        </label>
+      @endif
+
+      @if($note->Sugerencias_y_tratamiento_show == 'si')
+        {{Form::textarea('Sugerencias_y_tratamiento',null,['class'=>'form-control','id'=>'Sugerencias_y_tratamiento','style'=>''])}}
+      @else
+        {{Form::textarea('Sugerencias_y_tratamiento',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+      @endif
     </div>
+
     <input type="submit" class="btn btn-success" name="" value="Guardar">
     <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
     {!!Form::close()!!}
@@ -65,13 +172,69 @@
 <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
 <script type="text/javascript">
 
-  $(document).ready(function(){
+      $(document).ready(function(){
+        if($("#Signos_vitales").is(":visible")){
+            CKEDITOR.replace('Signos_vitales');
+        }
 
-          // CKEDITOR.replace('Signos_vitales');
+        if($("#Pruebas_de_laboratorio").is(":visible")){
           CKEDITOR.replace('Pruebas_de_laboratorio');
-        });
+        }
 
+      });
 
-      </script>
+      function toogle(result){
+        label = result.parentNode;
+        div = label;
+        note_id = "{{$note->id}}";
+        variable = result.id;
+
+        route = "{{route('check_input_notes')}}";
+        $.ajax({
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          type: 'POST',
+          url: route,
+          data:{variable:variable,note_id:note_id},
+
+          success:function(result){
+            console.log(result);
+            // alert(result.variable);
+            // CKEDITOR.instances['Signos_vitales'].setReadOnly(true);
+
+            if(result.result == 'si'){
+              $(div).next('.form-control').show();
+              $(div).prev().css('color','#007bff');
+              if(result.variable == 'Signos_vitales_show'){
+                CKEDITOR.replace('Signos_vitales');
+              }
+              if(result.variable == 'Pruebas_de_laboratorio_show'){
+                CKEDITOR.replace('Pruebas_de_laboratorio');
+              }
+
+            }else{
+              if(result.variable == 'Pruebas_de_laboratorio_show'){
+                if(CKEDITOR.instances.Pruebas_de_laboratorio){
+                  CKEDITOR.instances.Pruebas_de_laboratorio.destroy(true);
+                }
+              }
+
+              if(result.variable == 'Signos_vitales_show'){
+                if(CKEDITOR.instances.Signos_vitales){
+                  CKEDITOR.instances.Signos_vitales.destroy(true);
+                }
+              }
+
+              $(div).next('.form-control').hide();
+              $(div).prev().css('color','grey');
+            }
+            // $(result).next('.form-control').css({"height":"1px"}).attr("disabled","true");
+          },
+          error:function(error){
+           console.log(error);
+         },
+      });
+      }
+
+</script>
 
       @endsection

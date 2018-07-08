@@ -216,7 +216,7 @@
 </div>
 
 </div>
-@include('plans.modals')
+{{-- @include('plans.modals') --}}
 <!-- Button trigger modal -->
 @endsection
 

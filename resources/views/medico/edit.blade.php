@@ -10,7 +10,6 @@
 @endif
 </div>
 
-
 <div class="row">
   <div class="col-12">
     <h2 class="font-title text-center" id="title">Perfil Profesional Médico</h2>
@@ -410,7 +409,7 @@
  </div>
 </div>
 
-<div id="list_service_ajax" style="text-align:justify">
+<div id="list_service_ajax">
 </div>
 
 <div class="row my-3">
@@ -727,9 +726,12 @@ function expandir(result){
 var span = document.getElementsByClassName("cerrar")[0];
 
 // When the user clicks on <span> (x), close the modal
-span.onclick = function(){
-    modal.style.display = "none";
+if ( $(".cerrar")[0] ) {
+  span.onclick = function(){
+      modal.style.display = "none";
+  }
 }
+
 
 
   function cerrar_calificaciones(){
@@ -1061,6 +1063,7 @@ $('#stateMedic').on('change', function(){
 
 
 function list_service(){
+
   route = "{{route('medico_service_list')}}";
 
   medico_id = $('#medico_id').val();
@@ -1072,8 +1075,6 @@ function list_service(){
     data:{medico_id:medico_id},
     success:function(result){
       $('#list_service_ajax').empty().html(result);
-
-
     },
     error:function(error){
       console.log(error);
@@ -1117,7 +1118,7 @@ function medico_experience_delete(service_id){
   errormsj = '';
   question = confirm('¿Esta seguro de Borrar este Servicio?');
   if(question == false){
-   exit();
+   return false;
  }
  route = "{{route('medico_experience_delete')}}";
  $.ajax({
@@ -1143,7 +1144,7 @@ function medico_service_delete(service_id){
   errormsj = '';
   question = confirm('¿Esta seguro de Borrar este Servicio?');
   if(question == false){
-   exit();
+    return false;
  }
  route = "{{route('medicoBorrar')}}";
  $.ajax({
@@ -1171,7 +1172,7 @@ function social_network_delete(social_id){
   errormsj = '';
   question = confirm('¿Esta seguro de Borrar esta Red Social?');
   if(question == false){
-   exit();
+    return false;
  }
  route = "{{route('borrar_social')}}";
  $.ajax({
@@ -1223,7 +1224,6 @@ function service_medico_store(){
 
 }
 
-
 function updateMedic(){
   nameMedic =  $('#nameMedic').val();
   lastNameMedic = $('#lastNameMedic').val();
@@ -1255,7 +1255,6 @@ function updateMedic(){
     console.log(errormsj);
   },
   success:function(result){
-
     $('#alert_error_update').fadeOut();
     $('#text_success_service').html('Cambios Guardados con Exito');
     $('#alert_success_update').fadeIn();

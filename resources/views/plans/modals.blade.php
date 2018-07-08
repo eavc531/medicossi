@@ -112,8 +112,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Actualmente Posee activo el plan: {{$plan_actual->name}},con fecha de vencimiento: {{\Carbon\Carbon::parse($plan_actual->date_end)->format('d-m-Y')}}. </p>
-        <p><strong>¿Esta segur@ de Querer contratar otro Plan?</strong></p>
+        @if($plan_actual != Null)
+          <p>Actualmente Posee activo el plan: {{$plan_actual->name}},con fecha de vencimiento: {{\Carbon\Carbon::parse($plan_actual->date_end)->format('d-m-Y')}}. </p>
+          <p><strong>¿Esta segur@ de Querer contratar otro Plan?</strong></p>
+        @endif
       </div>
       <div class="modal-footer">
         <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary">Aceptar</a>

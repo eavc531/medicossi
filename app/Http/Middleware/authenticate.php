@@ -16,7 +16,7 @@ class authenticate
     public function handle($request, Closure $next)
     {
       if(Auth::check() == false){
-        return redirect()->route('home');
+        return redirect()->route('home')->with('warning', 'Su sessión ha expirado.');
       }
         return $next($request);
     }

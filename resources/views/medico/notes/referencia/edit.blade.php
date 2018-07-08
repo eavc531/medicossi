@@ -1,10 +1,6 @@
 @extends('layouts.app')
 @section('css')
-<style media="screen">
-.form-control{
-  height: 100px;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
 @endsection
 @section('content')
 <div class="row">
@@ -28,29 +24,169 @@
     {!!Form::hidden('patient_id',$patient->id)!!}
 
     <div class="form-group">
-      <h5 class="font-title-blue">Motivo de envio:</h5>
-      {{Form::textarea('Motivo_de_envio',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
-    </div>
+         @if($note->Motivo_de_envio_show == 'si')
+           <h5 class="font-title-blue float-left">Motivo de envio:</h5>
+          <label class="switch" style="display:block;margin-left:auto;">
+             {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Motivo_de_envio_show'])}}
+             <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+          </label>
+        @else
+          <h5 class="float-left font-title" style="color:grey">Motivo de envio:</h5>
+          <label class="switch" style="display:block;margin-left:auto;">
+            {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Motivo_de_envio_show'])}}
+             <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+          </label>
+        @endif
 
-    <div class="form-group">
-      <h5 class="font-title-blue">Establecimiento que envia:</h5>
-      {{Form::textarea('Establecimiento_que_envia',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
-    </div>
-    <div class="form-group">
-      <h5 class="font-title-blue">Establecimiento receptor:</h5>
-      {{Form::textarea('Establecimiento_receptor',null,['class'=>'form-control','id'=>'Exploracion Fisica'])}}
-    </div>
+        @if($note->Motivo_de_envio_show == 'si')
+          {{Form::textarea('Motivo_de_envio',null,['class'=>'form-control','id'=>'Motivo_de_envio','style'=>''])}}
+        @else
+          {{Form::textarea('Motivo_de_envio',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        @endif
+      </div>
 
-    <div class="form-group">
-      <h5 class="font-title-blue">Diagnostico:</h5>
-      {{Form::textarea('Diagnostico',null,['class'=>'form-control','id'=>'pruebas_labs'])}}
-    </div>
+      <div class="form-group">
+         @if($note->Establecimiento_que_envia_show == 'si')
+           <h5 class="font-title-blue float-left">Establecimiento que envia:</h5>
+          <label class="switch" style="display:block;margin-left:auto;">
+             {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Establecimiento_que_envia_show'])}}
+             <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+          </label>
+        @else
+          <h5 class="float-left font-title" style="color:grey">Establecimiento que envia:</h5>
+          <label class="switch" style="display:block;margin-left:auto;">
+            {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Establecimiento_que_envia_show'])}}
+             <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+          </label>
+        @endif
+
+        @if($note->Establecimiento_que_envia_show == 'si')
+          {{Form::textarea('Establecimiento_que_envia',null,['class'=>'form-control','id'=>'Establecimiento_que_envia','style'=>''])}}
+        @else
+          {{Form::textarea('Establecimiento_que_envia',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        @endif
+      </div>
+
+      <div class="form-group">
+         @if($note->Establecimiento_receptor_show == 'si')
+           <h5 class="font-title-blue float-left">Establecimiento receptor:</h5>
+          <label class="switch" style="display:block;margin-left:auto;">
+             {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Establecimiento_receptor_show'])}}
+             <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+          </label>
+        @else
+          <h5 class="float-left font-title" style="color:grey">Establecimiento receptor:</h5>
+          <label class="switch" style="display:block;margin-left:auto;">
+            {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Establecimiento_receptor_show'])}}
+             <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+          </label>
+        @endif
+
+        @if($note->Establecimiento_receptor_show == 'si')
+          {{Form::textarea('Establecimiento_receptor',null,['class'=>'form-control','id'=>'Establecimiento_receptor','style'=>''])}}
+        @else
+          {{Form::textarea('Establecimiento_receptor',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        @endif
+      </div>
+
+
+      <div class="form-group">
+        @if($note->Diagnostico_show == 'si')
+          <h5 class="font-title-blue float-left">Diagnostico:</h5>
+         <label class="switch" style="display:block;margin-left:auto;">
+            {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Diagnostico_show'])}}
+            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+         </label>
+       @else
+         <h5 class="float-left font-title" style="color:grey">Diagnostico</h5>
+         <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Diagnostico_show'])}}
+            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+         </label>
+       @endif
+
+       @if($note->Diagnostico_show == 'si')
+         {{Form::textarea('Diagnostico',null,['class'=>'form-control',"id"=>"Diagnostico"])}}
+       @else
+         {{Form::textarea('Diagnostico',null,['class'=>'form-control',"id"=>"Diagnostico",'style'=>'display:none'])}}
+       @endif
+      </div>
+
     <input type="submit" class="btn btn-success" name="" value="Guardar">
     <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
-    {!!Form::close()!!}
     {!!Form::close()!!}
 
   </div>
 </div>
 
 @endsection
+
+@section('scriptJS')
+<script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
+<script type="text/javascript">
+
+      $(document).ready(function(){
+        if($("#Signos_vitales").is(":visible")){
+            CKEDITOR.replace('Signos_vitales');
+        }
+          if($("#Pruebas_de_laboratorio").is(":visible")){
+          CKEDITOR.replace('Pruebas_de_laboratorio');
+        }
+      });
+
+      function toogle(result){
+        label = result.parentNode;
+        div = label;
+        note_id = "{{$note->id}}";
+        variable = result.id;
+
+        route = "{{route('check_input_notes')}}";
+        $.ajax({
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          type: 'POST',
+          url: route,
+          data:{variable:variable,note_id:note_id},
+
+          success:function(result){
+            console.log(result);
+            // alert(result.variable);
+            // CKEDITOR.instances['Signos_vitales'].setReadOnly(true);
+
+            if(result.result == 'si'){
+              $(div).next('.form-control').show();
+              $(div).prev().css('color','#007bff');
+              if(result.variable == 'Signos_vitales_show'){
+                CKEDITOR.replace('Signos_vitales');
+              }
+              if(result.variable == 'Pruebas_de_laboratorio_show'){
+                CKEDITOR.replace('Pruebas_de_laboratorio');
+              }
+
+            }else{
+              if(result.variable == 'Pruebas_de_laboratorio_show'){
+                if(CKEDITOR.instances.Pruebas_de_laboratorio){
+                  CKEDITOR.instances.Pruebas_de_laboratorio.destroy(true);
+                }
+              }
+
+              if(result.variable == 'Signos_vitales_show'){
+                if(CKEDITOR.instances.Signos_vitales){
+                  CKEDITOR.instances.Signos_vitales.destroy(true);
+                }
+              }
+
+              $(div).next('.form-control').hide();
+              $(div).prev().css('color','grey');
+            }
+            // $(result).next('.form-control').css({"height":"1px"}).attr("disabled","true");
+          },
+          error:function(error){
+           console.log(error);
+         },
+      });
+      }
+
+</script>
+
+
+      @endsection

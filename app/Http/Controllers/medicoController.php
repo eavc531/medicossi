@@ -46,6 +46,11 @@ class medicoController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+     public function __construct()
+      {
+         // $this->middleware('authenticate', ['except' => ['edit','create','store']]);
+      }
+
       public function data_patient($m_id,$p_id){
         $states = state::orderBy('name','asc')->pluck('name','name');
         $cities = city::orderBy('name','asc')->pluck('name','name');
@@ -750,7 +755,7 @@ class medicoController extends Controller
 
         $medico_services = medico_service::where('medico_id', $request->medico_id)->orderBy('id','desc')->orderBy('id','desc')->get();
 
-        return response()->json(view('medico.includes_perfil.list_service',compact('medico_services')));
+        return view('medico.includes_perfil.list_service',compact('medico_services'));
 
     }
 
@@ -938,8 +943,8 @@ class medicoController extends Controller
 
         Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           $msj->to($medico->email);
-           //$msj->to('eavc53189@gmail.com');
+           // $msj->to($medico->email);
+           $msj->to('eavc53189@gmail.com');
 
       });
 

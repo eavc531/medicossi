@@ -37,7 +37,32 @@ class note extends Model
     'Establecimiento_receptor',
     'Sugerencias_y_tratamiento',
     'fecha_egreso',
-    'fecha_ingreso'
+    'fecha_ingreso',
+
+    'Signos_vitales_show',
+    'Motivo_de_atencion_show',
+    'Exploracion_fisica_show',
+    'Pruebas_de_laboratorio_show',
+    'Diagnostico_show',
+    'Afeccion_principal_o_motivo_de_consulta_show',
+    'Afeccion_secundaria_show',
+    'Pronostico_show',
+    'Tratamiento_y_o_recetas_show',
+    'Indicaciones_terapeuticas_show',
+    'Estado_mental_show',
+    'Resultados_relevantes_show',
+    'Manejo_durante_la_estancia_hospitalaria_show',
+    'Recomendaciones_para_vigilancia_ambulatoira_show',
+    'Otros_datos_show',
+    'Motivo_de_envio_show',
+    'Evolucion_y_actualizacion_del_cuadro_clinico_show',
+    'Motivo_del_egreso_show',
+    'Diagnosticos_finales_show',
+    'Resumen_de_evolucion_y_estado_actual_show',
+    'Problemas_clinicos_pendientes_show',
+    'Plan_de_manejo_y_tratamiento_show',
+    'Sugerencias_y_tratamiento_show',
+    
   ];
 
 

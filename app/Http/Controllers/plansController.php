@@ -121,11 +121,7 @@ class plansController extends Controller
           $plan_profesional = plan::where('name','Plan Profesional')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();
 
           $plan_platino = plan::where('name','Plan Platino')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();
-
-
-
        }else{
-
          $plan_basico = plan::where('name','Plan Basico')->where('applicable',$specialty->specialty_category->name )->first();
 
          $plan_mi_agenda = plan::where('name','Plan Mi Agenda')->where('applicable', $specialty->specialty_category->name)->first();
