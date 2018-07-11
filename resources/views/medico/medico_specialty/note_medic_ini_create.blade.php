@@ -1,37 +1,41 @@
 @extends('layouts.app')
 @section('css')
-<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
 
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+<style media="screen">
+  .line{
+    display: inline-block;
+    float:left;
+    /* border:solid 1px black; */
+  }
+</style>
 @endsection
 @section('content')
+
 <div class="row">
   <div class="col-12 mb-3">
-    <h2 class="text-center font-title">Configurar Nota: "{{$note->title}}" </h2>
+    <h2 class="text-center font-title">Crear Nota: "{{$note->title}}" para el Paciente: {{$patient->name}} {{$patient->lastName}}</h2>
 
   </div>
 </div>
 {{-- MENU DE PACIENTES --}}
 {{-- @include('medico.includes.main_medico_patients') --}}
-<div class="text-right">
-  <a class="btn btn-secondary my-2" href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id,])}}">Atras</a>
-</div>
 
-<div class="my-2">
-  <p style="color:rgb(156, 156, 156)">Puedes Configurar los campos "signos vitales" o "Pruebas de laboratorio" para que almacenen de forma predefinida, el texto o preguntas que uses frecuentemente en este tipo de notas, solo tienes que editar su contenido en esta pantalla, y presionar el boton guardar.</p>
-</div>
 <div class="card">
-  <div class="card-header card-edit text-white bg-warning">
+  <div class="card-header card-edit">
     <b>{{$note->title}}</b>
   </div>
-
-
   <div class="card-body">
-    {!!Form::model($note,['route'=>'note_config_store','method'=>'POST'])!!}
+    {!!Form::model($note,['route'=>'note_store','method'=>'POST'])!!}
     {!!Form::hidden('note_id',$note->id)!!}
     {!!Form::hidden('title',$note->title)!!}
     {!!Form::hidden('medico_id',$medico->id)!!}
     {!!Form::hidden('patient_id',$patient->id)!!}
-
+    {!!Form::hidden('date_edit',\Carbon\Carbon::now())!!}
+    <div class="text-right">
+      <label for="" class="font-title-blue mb-5">Fecha:</label>
+      {!!Form::date('date_start',\Carbon\Carbon::now())!!}
+    </div>
     <div class="form-group">
        @if($note->Exploracion_fisica_show == 'si')
          <h5 class="font-title-blue float-left">Exploracion fisica:</h5>
@@ -246,11 +250,12 @@
     </div>
 
     @if($expedient != Null)
+
       <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-        <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar">
-    @else
-    <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="guardar">
-@endif
+        <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar Nota en Expediente">
+    @endif
+    <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota Individual">
+
 
 
   {!!Form::close()!!}
@@ -259,7 +264,7 @@
   @else
     <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
   @endif
-  </div>
+</div>
 </div>
 
 
@@ -268,8 +273,6 @@
 
 @section('scriptJS')
 <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
-
-
 <script type="text/javascript">
 
       $(document).ready(function(){
@@ -298,8 +301,6 @@
 
           success:function(result){
             console.log(result);
-            // alert(result.variable);
-            // CKEDITOR.instances['Signos_vitales'].setReadOnly(true);
 
             if(result.result == 'si'){
               $(div).next('.form-control').show();
@@ -336,8 +337,5 @@
       }
 
 </script>
-
-
-
 
 @endsection

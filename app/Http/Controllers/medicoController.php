@@ -117,8 +117,12 @@ class medicoController extends Controller
           $data_patient->save();
 
         }
+        if($request->expedient_id != Null){
+          return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id])->with('success','Se han Guardado los Datos Personales del Paciente');
+        }else{
+          return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success','Se han Guardado los Datos Personales del Paciente');
+        }
 
-        return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success','Se han Guardado los Datos Personales del Paciente');
 
 
       }

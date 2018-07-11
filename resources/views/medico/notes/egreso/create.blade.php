@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('css')
   <style media="screen">
+
+  .line{
+    display: inline-block;
+    float:left;
+    /* border:solid 1px black; */
+  }
+
   .input-control{
     height: 100px;
   }
@@ -89,6 +96,12 @@
       {!!Form::hidden('title',$note->title)!!}
       {!!Form::hidden('medico_id',$medico->id)!!}
         {!!Form::hidden('patient_id',$patient->id)!!}
+        {!!Form::hidden('date_edit',\Carbon\Carbon::now())!!}
+        {!!Form::hidden('note_config_id',$note->id)!!}
+        <div class="text-right">
+          <label for="" class="font-title-blue mb-5">Fecha:</label>
+          {!!Form::date('date_start',\Carbon\Carbon::now())!!}
+        </div>
 
         <div class="row mb-3">
           <div class="col-lg-6 col-sm-6 col-12">
@@ -102,6 +115,7 @@
         </div>
 
         <div class="form-group">
+
           @if($note->Motivo_del_egreso_show == 'si')
             <h5 class="font-title-blue float-left">Motivo del egreso</h5>
            <label class="switch" style="display:block;margin-left:auto;">
@@ -282,12 +296,23 @@
 
 
 
-    <input type="submit" class="btn btn-success" name="" value="Guardar">
-      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
-      {!!Form::close()!!}
-  </div>
-</div>
+        @if($expedient != Null)
 
+          <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
+            <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar Nota en Expediente">
+        @endif
+        <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota">
+
+
+
+      {!!Form::close()!!}
+      @if($expedient != Null)
+        <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+      @else
+        <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
+      @endif
+    </div>
+    </div>
 
 
 @endsection

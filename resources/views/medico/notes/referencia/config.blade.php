@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('css')
-<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
 @endsection
 @section('content')
 <div class="row">
@@ -109,10 +109,22 @@
          {{Form::textarea('Diagnostico',null,['class'=>'form-control',"id"=>"Diagnostico",'style'=>'display:none'])}}
        @endif
       </div>
-  <input type="submit" class="btn btn-success" name="" value="Guardar">
-    <a href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
-  {!!Form::close()!!}
+      @if($expedient != Null)
+        <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
+          <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar">
+      @else
+      <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="guardar">
+  @endif
 
+
+    {!!Form::close()!!}
+    @if($expedient != Null)
+      <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+    @else
+      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
+    @endif
+    </div>
+  </div>
 
 
 </div>

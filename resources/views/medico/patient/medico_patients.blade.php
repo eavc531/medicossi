@@ -71,13 +71,14 @@
         <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>$medico->id,'patient_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Lista de citas con paciente</em>"><i class="fas fa-bars"></i></a>
       </div>
       @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+        <div class="col-lg-2 col-2  col-sm-4 text-center">
+          <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary"><i class="fas fa-folder"></i></a>
+        </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
       </div>
     @endif
-      <div class="col-lg-2 col-2  col-sm-4 text-center">
-        <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>" class="btn btn-secondary"><i class="fas fa-file-alt"></i></a>
-      </div>
+
 
     </div>
     <div class="row">

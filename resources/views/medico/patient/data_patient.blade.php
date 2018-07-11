@@ -16,9 +16,10 @@
 				<div class="row">
 					<div class="col-12 mb-3">
 						<h2 class="text-center font-title">Datos del Paciente: {{$patient->name}} {{$patient->lastName}}</h2>
-            
+
 					</div>
 				</div>
+
         <div class="row">
           <div class="col-12 mb-3">
             <h5 class="text-center font-title-blue">Datos Personales</h5>
@@ -28,21 +29,29 @@
 
         @if(isset($extract))
           <div class="text-right my-2">
-              <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-warning">Cancelar Extraccion</a>
-              <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-secondary ml-1">Pacientes</a>
-              <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success ml-1">notas {{$patient->nameComplete}}</a>
+
+              {{-- @if(isset(request()->expedient))
+                  <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>request()->expedient])}}" class="btn btn-secondary mr-1">Atras</a>
+              @else
+                  <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary ml-1">atras</a>
+              @endif --}}
+
           </div>
           <div class="alert alert-success">
-            Se han extraido los datos del perfil de la cuenta del paciente: {{$patient->nameComplete}}, es posible que estos datos esten desactualizados, depende del uso de la cuenta por parte del paciente, puede guardar los cambios, editarlos o presionar el boton cancelar para mantener la información antigua.<b>Modificar esta información no altera los datos de la cuenta Médicossi del paciente,el campo email, e identificación se mantienen para evitar confusiones, solo el paciente puede editar estos datos en su cuenta.</b>
+            <p>Se han extraido los datos del perfil de la cuenta del paciente: {{$patient->nameComplete}}, es posible que estos datos esten desactualizados, depende del uso de la cuenta por parte del paciente, puede guardar los cambios, editarlos o presionar el boton cancelar para mantener la información antigua.<b>Modificar esta información no altera los datos de la cuenta Médicossi del paciente,el campo email, e identificación se mantienen para evitar confusiones, solo el paciente puede editar estos datos en su cuenta.</p>
+            <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-outline-warning"><strong>Cancelar Extraccion</strong></a>
           </div>
         @else
           <div class="text-right my-2">
             <a href="{{route('data_patient_extract_perfil',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success">Extraer Datos del perfil del paciente</a>
-            <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-secondary ml-1">Pacientes</a>
-            <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-primary ml-1">notas {{$patient->nameComplete}}</a>
+            @if(isset(request()->expedient))
+                <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>request()->expedient])}}" class="btn btn-secondary mr-1">Atras</a>
+            @else
+                <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary ml-1">atras</a>
+            @endif
           </div>
 
-            <p style="color:rgb(156, 154, 151)">Estos son los Datos paciente que se mostraran en las notas Médicas que se creen para el, puede editarlos manualmente, o extraer la información del perfil del paciente.<b>Modificar esta información no altera los datos de la cuenta Médicossi del paciente,el campo email, e identificación se mantienen para evitar confusiones, solo el paciente puede editar estos datos en su cuenta.</b></p>
+            <p style="color:rgb(156, 154, 151)">Estos son los Datos se mostraran en las cabeceras de las notas Médicas y expedientes, puede editarlos manualmente, o extraer la información del perfil del paciente.<b>Modificar esta información no altera los datos de la cuenta Médicossi del paciente,el campo email, e identificación se mantienen para evitar confusiones, solo el paciente puede editar estos datos en su cuenta.</b></p>
         @endif
 
 				{!!Form::model($data_patient,['route'=>['data_patient_store'],'method'=>'POST'])!!}
@@ -158,7 +167,13 @@
 
 				  	</div>
 				  	<div class="col-lg-6 col-12 mt-2">
-				  		{!!Form::submit('Guardar',['class'=>'btn-config-green btn btn-block'])!!}
+              @if(isset(request()->expedient))
+                <input type="hidden" name="expedient_id" value="{{request()->expedient}}">
+                  <input type="submit" name="boton_submit" value="Guardar" class="btn btn-success btn-block">
+              @else
+                <input type="submit" name="boton_submit" value="guardar" class="btn btn-success btn-block">
+              @endif
+
 				  	</div>
 				  </div>
           {{Form::hidden('medico_id',$medico->id)}}

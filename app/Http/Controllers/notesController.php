@@ -9,6 +9,7 @@ use App\medico;
 use App\element_note;
 use App\data_patient;
 use App\expedient;
+use App\expedient_note;
 use Session;
 use PDF;
 //validacion personalizada
@@ -18,25 +19,104 @@ class notesController extends Controller
 {
 
 
+    public function expedient_search(Request $request){
+      $medico = medico::find($request->medico_id);
+      $patient = patient::find($request->patient_id);
 
-  public function expedient_delete(Request $request){
+      // $expedients = expedient::where('medico_id',$request->medico_id)->where('patient_id', $request->pateint_id)->paginate(10);
 
+      if($request->select == 'Nombre'){
+        $request->validate([
+          'search_name'=>'required|max:255'
+        ]);
+
+        $expedients = expedient::where('name','LIKE','%'.$request->search_name.'%')->where('medico_id', $medico->id)->where('patient_id', $patient->id)->paginate(10);
+
+
+      }else{
+        $request->validate([
+          'search_date'=>'required'
+        ]);
+
+          $expedients = expedient::where('date_start','LIKE','%'.$request->search_date.'%')->where('medico_id', $medico->id)->where('patient_id', $patient->id)->paginate(10);
+      }
+      $search = 'search';
+      return view('medico.expedients_patient.index',compact('expedients','medico','patient','search'));
+    }
+  public function expedient_update(Request $request,$id){
+    $expedient = expedient::find($id);
+    $name = $expedient->name;
+    $expedient->name = $request->name_exp;
+    $expedient->save();
+
+    return back()->with('success', 'Se ha cambiado el nombre del expediente: '.$name.' por el nombre: '.$request->name_exp);
+  }
+  public function download_expedient_pdf($id){
+
+    $expedient = expedient::find($id);
+    $expedient_notes = expedient_note::where('expedient_id',$id)->orderBy('date_start')->get();
+    $medico_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->medico_id;
+    $data_patient = data_patient::where('medico_id',$medico_id)->where('patient_id',$expedient->patient_id)->first();
+
+  if($data_patient == Null){
+    return redirect()->route('data_patient',['m_id'=>$medico_id,'p_id'=>$expedient->patient_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
+  }
+
+    $expedient_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->patient_id;
+
+    $patient = patient::find($expedient_id);
+    $medico = medico::find($medico_id);
+
+    $pdf = PDF::loadView('medico.expedients_patient.expedient_pdf', ['medico'=> $medico,'expedient_notes'=>$expedient_notes,'patient'=>$patient,'expedient'=>$expedient]);
+    $date = \Carbon\Carbon::now()->format('d-m-Y');
+    return $pdf->download($expedient->name.'_'.$date.'.pdf');
+
+    return view('medico.expedients_patient.expedient_pdf',compact('expedient_notes','expedient','patient','medico'));
+  }
+  public function expedient_preview($id){
+    $expedient = expedient::find($id);
+    $expedient_notes = expedient_note::where('expedient_id',$id)->orderBy('date_start')->get();
+    $expedient_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->patient_id;
+    $medico_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->medico_id;
+    $patient = patient::find($expedient_id);
+    $medico = medico::find($medico_id);
+    return view('medico.expedients_patient.preview',compact('expedient_notes','expedient','patient','medico'));
+  }
+
+  public function expedient_note_delete($id){
+
+    $expedient = expedient_note::find($id);
+    $name = $expedient->note->title.' '.\Carbon\Carbon::parse($expedient->note->date_start)->format('m-d-Y');
+    $expedient->delete();
+
+    return back()->with('danger', $name.' ha sido eliminada del Expediente.');
+  }
+
+  public function expedient_delete($id){
+    $expedient_note = expedient_note::where('expedient_id',$id)->count();
+    if($expedient_note > 0){
+      return back()->with('warning', 'Imposible Borrar Expediente, contiene "'.$expedient_note.'" nota(s) registrada(s)');
+    }
+
+    $expedient = expedient::find($id);
+    $name = $expedient->name;
+    $expedient->delete();
+
+    return back()->with('danger', 'se ha eliminado el Expediente: '.$name);
   }
   public function expedient_edit(Request $request){
 
   }
-  public function expedient_open(Request $request){
+  public function expedient_open($m_id,$p_id,$ex_id){
     $notes_pre = note::where('type', 'default')->get();
-    $expedient = expedient::find($request->expedient_id);
-    $notes = note::where('expedient_id', $request->expedient_id)->get();
-    $medico = medico::find($request->medico_id);
-    $patient = patient::find($request->patient_id);
+    $expedient = expedient::find($ex_id);
+    $expedient_notes  = expedient_note::where('expedient_id', $ex_id)->orderBy('note_id','desc')->paginate(10);
+    $medico = medico::find($m_id);
+    $patient = patient::find($p_id);
 
-    return view('medico.expedients_patient.expedient_open',compact('notes','medico','patient','notes_pre','expedient'));
+    return view('medico.expedients_patient.expedient_open',compact('expedient_notes','medico','patient','notes_pre','expedient'));
 
   }
-
-
 
   public function expedient_store(Request $request){
 //validacion personalizada
@@ -71,8 +151,11 @@ class notesController extends Controller
   }
 
   public function download_pdf($id){
+
     $note = note::find($id);
+
     $data_patient = data_patient::where('medico_id',$note->medico_id)->where('patient_id',$note->patient_id)->first();
+
     if($data_patient == Null){
       return redirect()->route('data_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
     }
@@ -100,6 +183,7 @@ class notesController extends Controller
         return $pdf->download($note->title.'_'.$date.'.pdf');
 
       }elseif($note->title == 'Nota médica de Egreso'){
+
         $pdf = PDF::loadView('medico.notes.pdf.egreso', ['medico'=> $medico,'note'=>$note,'patient'=>$patient]);
         $date = \Carbon\Carbon::parse($note->created_at)->format('d-m-Y');
         return $pdf->download($note->title.'_'.$date.'.pdf');
@@ -110,197 +194,164 @@ class notesController extends Controller
         return $pdf->download($note->title.'_'.$date.'.pdf');
       }
 
-
   }
 
-  public function view_preview($m_id,$p_id,$n_id){
-    $data_patient = data_patient::where('medico_id',$m_id)->where('patient_id',$p_id)->first();
+  public function view_preview(Request $request){
+
+    $data_patient = data_patient::where('medico_id',$request->medico_id)->where('patient_id',$request->patient_id)->first();
     if($data_patient == Null){
-      return redirect()->route('data_patient',['m_id'=>$m_id,'p_id'=>$p_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
+      return redirect()->route('data_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
     }
+    $patient = patient::find($request->patient_id);
+    $medico = medico::find($request->medico_id);
+    $note = note::find($request->note_id);
+      // dd($note->title);
+    $data_note = 0;
+
+    if($request->expedient_id == Null){
+      $expedient = Null;
+    }else{
+      $expedient = expedient::find($request->expedient_id);
+    }
+
+    if($note->title == 'Nota Médica Inicial'){
+        return view('medico.notes.view_preview.inicial',compact('patient','medico','note','data_note','expedient'));
+    }elseif($note->title == 'Nota Médica de Evolucion'){
+      return view('medico.notes.view_preview.evolucion',compact('patient','medico','note','data_note','expedient'));
+    }elseif($note->title == 'Nota de Interconsulta'){
+      return view('medico.notes.view_preview.interconsulta',compact('patient','medico','note','data_note','expedient'));
+    }elseif($note->title == 'Nota médica de Urgencias'){
+      return view('medico.notes.view_preview.urgencias',compact('patient','medico','note','data_note','expedient'));
+    }elseif($note->title == 'Nota médica de Egreso'){
+      return view('medico.notes.view_preview.egreso',compact('patient','medico','note','data_note','expedient'));
+    }elseif($note->title == 'Nota de Referencia o traslado'){
+      return view('medico.notes.view_preview.referencia',compact('patient','medico','note','data_note','expedient'));
+    }
+  }
+
+  public function note_referencia_edit(Request $request){
+      $patient = patient::find($request->patient_id);
+      $medico = medico::find($request->medico_id);
+      $note = note::find($request->note_id);
+
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
+      }
+      return view('medico.notes.referencia.edit',compact('patient','medico','note','expedient'));
+  }
+
+  public function note_egreso_edit(Request $request,$m_id,$p_id,$n_id){
     $patient = patient::find($p_id);
     $medico = medico::find($m_id);
     $note = note::find($n_id);
-    $data_note = 0;
 
-    if($note->title == 'Nota Médica Inicial'){
-        return view('medico.notes.view_preview.inicial',compact('patient','medico','note','data_note'));
-    }elseif($note->title == 'Nota Médica de Evolucion'){
-      return view('medico.notes.view_preview.evolucion',compact('patient','medico','note','data_note'));
-    }elseif($note->title == 'Nota de Interconsulta'){
-      return view('medico.notes.view_preview.interconsulta',compact('patient','medico','note','data_note'));
-    }elseif($note->title == 'Nota médica de Urgencias'){
-      return view('medico.notes.view_preview.urgencias',compact('patient','medico','note','data_note'));
-    }elseif($note->title == 'Nota médica de Egreso'){
-      return view('medico.notes.view_preview.egreso',compact('patient','medico','note','data_note'));
-    }elseif($note->title == 'Nota de Referencia o traslado'){
-      return view('medico.notes.view_preview.referencia',compact('patient','medico','note','data_note'));
-    }
-  }
-
-  public function note_referencia_create($m_id,$p_id,$n_id){
-    $patient = patient::find($p_id);
-    $medico = medico::find($m_id);
-    $notedefault = note::find($n_id);
-    $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
-
-    if($noteCount == 0){
-      $note = $notedefault;
+    if($request->expedient_id == Null){
+      $expedient = Null;
     }else{
-      $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-      $note = $noteb;
-    }
-    return view('medico.notes.referencia.create',compact('patient','medico','note'));
-  }
-  public function note_referencia_edit($m_id,$p_id,$n_id){
-      $patient = patient::find($p_id);
-      $medico = medico::find($m_id);
-      $note = note::find($n_id);
-
-      return view('medico.notes.referencia.edit',compact('patient','medico','note'));
-  }
-  public function note_egreso_create($m_id,$p_id,$n_id){
-    $patient = patient::find($p_id);
-    $medico = medico::find($m_id);
-    $notedefault = note::find($n_id);
-    $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
-
-    if($noteCount == 0){
-      $note = $notedefault;
-    }else{
-      $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-      $note = $noteb;
-    }
-    return view('medico.notes.egreso.create',compact('patient','medico','note'));
-  }
-
-  public function note_egreso_edit($m_id,$p_id,$n_id){
-      $patient = patient::find($p_id);
-      $medico = medico::find($m_id);
-      $note = note::find($n_id);
-
-      return view('medico.notes.egreso.edit',compact('patient','medico','note'));
-  }
-
-  public function note_urgencias_create($m_id,$p_id,$n_id){
-    $patient = patient::find($p_id);
-    $medico = medico::find($m_id);
-    $notedefault = note::find($n_id);
-    $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
-
-    if($noteCount == 0){
-      $note = $notedefault;
-    }else{
-      $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-      $note = $noteb;
-    }
-    return view('medico.notes.urgencias.create',compact('patient','medico','note'));
-  }
-
-    public function note_urgencias_edit($m_id,$p_id,$n_id){
-        $patient = patient::find($p_id);
-        $medico = medico::find($m_id);
-        $note = note::find($n_id);
-
-        return view('medico.notes.urgencias.edit',compact('patient','medico','note'));
+      $expedient = expedient::find($request->expedient_id);
     }
 
-      public function note_inter_create($m_id,$p_id,$n_id){
-        $patient = patient::find($p_id);
-        $medico = medico::find($m_id);
-        $notedefault = note::find($n_id);
-        $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+      return view('medico.notes.egreso.edit',compact('patient','medico','note','expedient'));
+  }
 
-        if($noteCount == 0){
-          $note = $notedefault;
-        }else{
-          $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-          $note = $noteb;
-        }
-        return view('medico.notes.inter.create',compact('patient','medico','note'));
+    public function note_urgencias_edit(Request $request){
+      $patient = patient::find($request->patient_id);
+      $medico = medico::find($request->medico_id);
+      $note = note::find($request->note_id);
+
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
       }
 
-      public function note_inter_edit($m_id,$p_id,$n_id){
-        $patient = patient::find($p_id);
-        $medico = medico::find($m_id);
-        $note = note::find($n_id);
+        return view('medico.notes.urgencias.edit',compact('patient','medico','note','expedient'));
+    }
 
-        return view('medico.notes.inter.edit',compact('patient','medico','note'));
+      public function note_inter_edit(Request $request){
+        $patient = patient::find($request->patient_id);
+        $medico = medico::find($request->medico_id);
+        $note = note::find($request->note_id);
+
+        if($request->expedient_id == Null){
+          $expedient = Null;
+        }else{
+
+          $expedient = expedient::find($request->expedient_id);
+        }
+
+        return view('medico.notes.inter.edit',compact('patient','medico','note','expedient'));
       }
 /////
+      public function note_evo_edit(Request $request){
+        $patient = patient::find($request->patient_id);
+        $medico = medico::find($request->medico_id);
+        $note = note::find($request->note_id);
 
-      public function note_evo_create($m_id,$p_id,$n_id){
-        $patient = patient::find($p_id);
-        $medico = medico::find($m_id);
-        $notedefault = note::find($n_id);
-        $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
-
-        if($noteCount == 0){
-          $note = $notedefault;
+        if($request->expedient_id == Null){
+          $expedient = Null;
         }else{
-          $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-          $note = $noteb;
+          $expedient = expedient::find($request->expedient_id);
         }
-        return view('medico.notes.evo.create',compact('patient','medico','note'));
+
+        return view('medico.notes.evo.edit',compact('patient','medico','note','expedient'));
       }
 
+    public function note_ini_edit(Request $request){
 
-      public function note_evo_edit($m_id,$p_id,$n_id){
-        $patient = patient::find($p_id);
-        $medico = medico::find($m_id);
-        $note = note::find($n_id);
+      $patient = patient::find($request->patient_id);
+      $medico = medico::find($request->medico_id);
+      $note = note::find($request->note_id);
 
-        return view('medico.notes.evo.edit',compact('patient','medico','note'));
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
       }
-
-    public function note_ini_edit($m_id,$p_id,$n_id){
-      $patient = patient::find($p_id);
-      $medico = medico::find($m_id);
-      $note = note::find($n_id);
-
-      return view('medico.notes.note_ini_edit',compact('patient','medico','note'));
+      return view('medico.notes.note_ini_edit',compact('patient','medico','note','expedient'));
     }
 
-  public function note_config($m_id,$p_id,$n_id){
+  public function note_config(Request $request){
 
-    $patient = patient::find($p_id);
-    $medico = medico::find($m_id);
-    $notedefault = note::find($n_id);
-    $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+    $patient = patient::find($request->patient_id);
+    $medico = medico::find($request->medico_id);
+    // dd($request->medico_id);
+    $notedefault = note::find($request->note_id);
+    $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
     if($noteCount == 0){
       $note = $notedefault;
     }else{
-      $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+      $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
       $note = $noteb;
+    }
+    if($request->expedient_id == Null){
+      $expedient = Null;
+    }else{
+      $expedient = expedient::find($request->expedient_id);
     }
 
     if($note->title == 'Nota Médica Inicial'){
-        return view('medico.notes.note_medic_ini_config',compact('patient','medico','note'));
+        return view('medico.notes.note_medic_ini_config',compact('patient','medico','note','expedient'));
     }elseif($note->title == 'Nota Médica de Evolucion'){
 
-      return view('medico.notes.evo.config',compact('patient','medico','note'));
+      return view('medico.notes.evo.config',compact('patient','medico','note','expedient'));
     }elseif($note->title == 'Nota de Interconsulta'){
-      return view('medico.notes.inter.config',compact('patient','medico','note'));
+      return view('medico.notes.inter.config',compact('patient','medico','note','expedient'));
     }elseif($note->title == 'Nota médica de Urgencias'){
-      return view('medico.notes.urgencias.config',compact('patient','medico','note'));
+      return view('medico.notes.urgencias.config',compact('patient','medico','note','expedient'));
     }elseif($note->title == 'Nota médica de Egreso'){
-      return view('medico.notes.egreso.config',compact('patient','medico','note'));
+      return view('medico.notes.egreso.config',compact('patient','medico','note','expedient'));
     }elseif($note->title == 'Nota de Referencia o traslado'){
-      return view('medico.notes.referencia.config',compact('patient','medico','note'));
+      return view('medico.notes.referencia.config',compact('patient','medico','note','expedient'));
     }
 
-    return view('medico.notes.note_medic_ini_config',compact('patient','medico','note'));
+    return view('medico.notes.note_medic_ini_config',compact('patient','medico','note','expedient'));
   }
-
 
   public function note_config_store(Request $request){
 
-    // if($request->title == 'Nota médica de Egreso'){
-    //   $request->validate([
-    //     'fecha_ingreso'=>'required',
-    //     'fecha_egreso'=>'required',
-    //   ]);
-    // }
     $noteCount = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->count();
 
     if($noteCount == 0){
@@ -318,22 +369,13 @@ class notesController extends Controller
       $note->save();
     }
     // dd($request->all());
-      return redirect()->route('type_notes',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'se a guardado una nueva configuracion para: '.$note->title);
-    }
+    if($request->boton_submit == 'Guardar'){
+      return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
 
-  public function note_medic_ini_create($m_id,$p_id,$n_id){
-    $patient = patient::find($p_id);
-    $medico = medico::find($m_id);
-    $notedefault = note::find($n_id);
-    $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
-    if($noteCount == 0){
-      $note = $notedefault;
     }else{
-      $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-      $note = $noteb;
+        return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
     }
-    return view('medico.notes.note_medic_ini_create',compact('patient','medico','note'));
-  }
+    }
 
   public function type_notes($m_id,$p_id){
     $patient = patient::find($p_id);
@@ -352,6 +394,8 @@ class notesController extends Controller
 
        return view('medico.notes.notes_patient',compact('notes','patient','medico','notes_pre'));
     }
+
+
 
     public function note_search(Request $request)
     {
@@ -393,7 +437,6 @@ class notesController extends Controller
       }
 
     }
-
 /////////////////////
     public function medico_note_edit($m_id,$p_id,$n_id){
       $note = note::find($n_id);
@@ -403,9 +446,8 @@ class notesController extends Controller
       return view('medico.edit_note',compact('note','medico','patient'));
     }
 
-
     public function note_update(Request $request,$id){
-      // dd($request->all());
+       // dd($request->all());
 
       if($request->title == 'Nota médica de Egreso'){
         $request->validate([
@@ -415,26 +457,33 @@ class notesController extends Controller
       }
 
       $request->validate([
-
         'exploracion_fisica'=>'max:255',
       ]);
+
       $note = note::find($id);
       $note->fill($request->all());
+      $note->date_edit = \Carbon\Carbon::now();
       $note->save();
 
-      return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$note->patient_id]);
+      if($request->boton_submit == 'Guardar'){
+        return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id])->with('success', 'se han guardado los datos de forma satisfactoria');;
+
+      }else{
+          return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'se han guardado los datos de forma satisfactoria');
+      }
 
     }
     public function note_store(Request $request){
 
       if($request->title == 'Nota médica de Egreso'){
         $request->validate([
-          'fecha_ingreso'=>'required',
           'fecha_egreso'=>'required',
+          'fecha_ingreso'=>'required',
         ]);
       }
 
       $request->validate([
+
         'Exploracion_fisica'=>'max:255',
         'Diagnostico'=>'max:255',
         'Afeccion_principal_o_motivo_de_consulta'=>'max:255',
@@ -461,13 +510,60 @@ class notesController extends Controller
         'Establecimiento_receptor'=>'max:255',
 
       ]);
+      $note_config = note::find($request->note_config_id);
 
       $note = new note;
+
+
       $note->fill($request->all());
+      $note->Signos_vitales_show = $note_config->Signos_vitales_show;
+      $note->Motivo_de_atencion_show = $note_config->Motivo_de_atencion_show;
+      $note->Exploracion_fisica_show = $note_config->Exploracion_fisica_show;
+      $note->Pruebas_de_laboratorio_show = $note_config->Pruebas_de_laboratorio_show;
+      $note->Diagnostico_show = $note_config->Diagnostico_show;
+      $note->Afeccion_principal_o_motivo_de_consulta_show = $note_config->Afeccion_principal_o_motivo_de_consulta_show;
+      $note->Afeccion_secundaria_show = $note_config->Afeccion_secundaria_show;
+      $note->Pronostico_show = $note_config->Pronostico_show;
+      $note->Tratamiento_y_o_recetas_show = $note_config->Tratamiento_y_o_recetas_show;
+      $note->Indicaciones_terapeuticas_show = $note_config->Indicaciones_terapeuticas_show;
+      $note->Estado_mental_show = $note_config->Estado_mental_show;
+      $note->Resultados_relevantes_show = $note_config->Resultados_relevantes_show;
+      $note->Manejo_durante_la_estancia_hospitalaria_show = $note_config->Manejo_durante_la_estancia_hospitalaria_show;
+      $note->Recomendaciones_para_vigilancia_ambulatoira_show = $note_config->Recomendaciones_para_vigilancia_ambulatoira_show;
+      $note->Otros_datos_show = $note_config->Otros_datos_show;
+      $note->Motivo_de_envio_show = $note_config->Motivo_de_envio_show;
+      $note->Evolucion_y_actualizacion_del_cuadro_clinico_show = $note_config->Evolucion_y_actualizacion_del_cuadro_clinico_show;
+      $note->Motivo_del_egreso_show = $note_config->Motivo_del_egreso_show;
+      $note->Diagnosticos_finales_show = $note_config->Diagnosticos_finales_show;
+      $note->Resumen_de_evolucion_y_estado_actual_show = $note_config->Resumen_de_evolucion_y_estado_actual_show;
+      $note->Problemas_clinicos_pendientes_show = $note_config->Problemas_clinicos_pendientes_show;
+      $note->Plan_de_manejo_y_tratamiento_show = $note_config->Plan_de_manejo_y_tratamiento_show;
+      $note->Establecimiento_que_envia_show = $note_config->Establecimiento_que_envia_show;
+      $note->Establecimiento_receptor_show = $note_config->Establecimiento_receptor_show;
+      $note->Sugerencias_y_tratamiento_show = $note_config->Sugerencias_y_tratamiento_show;
+
+
+
+      $note->date_start = $request->date_start;
       $note->save();
+      if($request->boton_submit == 'Guardar Nota en Expediente'){
+        $expedient_verify = expedient_note::where('expedient_id', $request->expedient_id)->first();
+          $expedient_note = new expedient_note;
+          $expedient_note->name = 'x';
+          $expedient_note->medico_id = $request->medico_id;
+          $expedient_note->patient_id = $request->patient_id;
+          $expedient_note->expedient_id = $request->expedient_id;
+          $expedient_note->note_id = $note->id;
+          $expedient_note->save();
+      }
 
-      return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'Nueva nota Médica creada');
 
+      if($request->boton_submit == 'Guardar Nota en Expediente'){
+        return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id]);
+
+      }else{
+          return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'Nueva nota Médica creada');
+      }
     }
 
     public function check_input_notes(Request $request){
@@ -708,5 +804,125 @@ class notesController extends Controller
       return response()->json($response);
     }
 
+    public function note_medic_ini_create(Request $request){
+
+      $patient = patient::find($request->patient_id);
+      $medico = medico::find($request->medico_id);
+      // dd($request->medico_id);
+      $notedefault = note::find($request->note_id);
+      $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+      if($noteCount == 0){
+        $note = $notedefault;
+      }else{
+        $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+        $note = $noteb;
+      }
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
+      }
+      return view('medico.notes.note_medic_ini_create',compact('patient','medico','note','expedient'));
+    }
+
+    public function note_referencia_create(Request $request){
+
+      $patient = patient::find($request->patient_id);
+      $medico = medico::find($request->medico_id);
+      // dd($request->medico_id);
+      $notedefault = note::find($request->note_id);
+      $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+      if($noteCount == 0){
+        $note = $notedefault;
+      }else{
+        $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+        $note = $noteb;
+      }
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
+      }
+
+      return view('medico.notes.referencia.create',compact('patient','medico','note','expedient'));
+    }
+    public function note_egreso_create(Request $request,$m_id,$p_id,$n_id){
+      $patient = patient::find($p_id);
+      $medico = medico::find($m_id);
+      // dd($request->medico_id);
+      $notedefault = note::find($n_id);
+      $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+      if($noteCount == 0){
+        $note = $notedefault;
+      }else{
+        $noteb = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+        $note = $noteb;
+      }
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
+      }
+      return view('medico.notes.egreso.create',compact('patient','medico','note','expedient'));
+    }
+    public function note_urgencias_create(Request $request){
+      $patient = patient::find($request->patient_id);
+      $medico = medico::find($request->medico_id);
+      // dd($request->medico_id);
+      $notedefault = note::find($request->note_id);
+      $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+      if($noteCount == 0){
+        $note = $notedefault;
+      }else{
+        $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+        $note = $noteb;
+      }
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
+      }
+
+      return view('medico.notes.urgencias.create',compact('patient','medico','note','expedient'));
+    }
+      public function note_inter_create(Request $request){
+        $patient = patient::find($request->patient_id);
+        $medico = medico::find($request->medico_id);
+        // dd($request->medico_id);
+        $notedefault = note::find($request->note_id);
+        $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+        if($noteCount == 0){
+          $note = $notedefault;
+        }else{
+          $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+          $note = $noteb;
+        }
+        if($request->expedient_id == Null){
+          $expedient = Null;
+        }else{
+          $expedient = expedient::find($request->expedient_id);
+        }
+        return view('medico.notes.inter.create',compact('patient','medico','note','expedient'));
+      }
+    public function note_evo_create(Request $request){
+      $patient = patient::find($request->patient_id);
+      $medico = medico::find($request->medico_id);
+      // dd($request->medico_id);
+      $notedefault = note::find($request->note_id);
+      $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+      if($noteCount == 0){
+        $note = $notedefault;
+      }else{
+        $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+        $note = $noteb;
+      }
+      if($request->expedient_id == Null){
+        $expedient = Null;
+      }else{
+        $expedient = expedient::find($request->expedient_id);
+      }
+
+      return view('medico.notes.evo.create',compact('patient','medico','note','expedient'));
+    }
 
 }

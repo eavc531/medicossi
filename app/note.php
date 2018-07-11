@@ -61,8 +61,11 @@ class note extends Model
     'Resumen_de_evolucion_y_estado_actual_show',
     'Problemas_clinicos_pendientes_show',
     'Plan_de_manejo_y_tratamiento_show',
+    'Establecimiento_que_envia_show',
     'Sugerencias_y_tratamiento_show',
-    
+
+    'date_start',
+    'date_edit',
   ];
 
 

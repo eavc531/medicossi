@@ -17,49 +17,60 @@
 <body>
 
 <div class="card">
+  @include('medico.notes.include_data_consultorio')
 
 
   <div class="card-body">
     <div class="text-center mb-3">
-      <h4>{{$note->title}}</h4>
+      <h4 style="text-decoration: underline;text-align:center;font-size: 1.5rem">{{$note->title}}</h4>
     </div>
     @include('medico.notes.include_data_patient')
 
-
+@if($note->Signos_vitales_show == 'si')
     <div class="form-group" style="margin-top:90px">
-      <hr>
-      <h5 class="font-title-blue">Signos vitales</h5>
+
+      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
       <p>{!!$note->Signos_vitales!!}</p>
 
     </div>
     <hr>
+@endif
+  @if($note->Motivo_de_atencion_show == 'si')
     <div class="form-group">
-      <h5 class="font-title-blue">Motivo_de_atencion</h5>
+      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Motivo_de_atencion</h5>
       <p>{{$note->Motivo_de_atencion}}</p>
     </div>
 <hr>
-
-
+@endif
+@if($note->Estado_mental_show == 'si')
     <div class="form-group">
-      <h5 class="font-title-blue">Estado mental</h5>
+      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Estado mental</h5>
       <p>{{$note->Estado_mental}}</p>
     </div>
 <hr>
+@endif
+@if($note->Resultados_relevantes_show == 'si')
     <div class="form-group">
-      <h5 class="font-title-blue">Resultados relevantes de los servicios auxiliares de diagnostico</h5>
+      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Resultados relevantes de los servicios auxiliares de diagnostico</h5>
       <p>{{$note->Resultados_relevantes_de_los_servicios_auxiliares_de_diagnostico}}</p>
     </div>
 <hr>
+@endif
+@if($note->Diagnostico_show == 'si')
     <div class="form-group">
-      <h5 class="font-title-blue">Diagnostico</h5>
+      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnostico</h5>
       <p>{{$note->Diagnostico}}</p>
     </div>
 <hr>
+@endif
+@if($note->Pronostico_show == 'si')
     <div class="form-group">
-      <h5 class="font-title-blue">Pronostico</h5>
+      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pronostico</h5>
       <p>{{$note->Pronostico}}</p>
     </div>
 <hr>
+@endif
+
     <div class="mt-5">
 
       <div class="" style="width:50%;float:left">

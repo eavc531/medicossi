@@ -1,4 +1,4 @@
-@extends('layouts.app-panel')
+@extends('layouts.app')
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
@@ -17,9 +17,10 @@
 
 @section('content')
 
+
 <div class="container-fluid">
   <div class="row">
-    <div class="col-lg-9 col-12">
+    <div class="col-lg-12 col-12">
       <div class="register">
         <div class="row">
           <div class="col-12">
@@ -33,94 +34,28 @@
       </div>
       {{-- ////////////////////////////////////////////centro de menu////////////centro de menu// --}}
 
-      {!!Form::model(request()->all(),['route'=>'note_search','method'=>'GET'])!!}
+      {!!Form::model(request()->all(),['route'=>'expedient_search','method'=>'GET'])!!}
       <div class="form-inline p-2 my-3" style="border:solid 1px rgb(115, 115, 115)">
         <label for="">Buscar Por:</label>
         <input type="hidden" name="medico_id" value="{{$medico->id}}">
         <input type="hidden" name="patient_id" value="{{$patient->id}}">
 
-        {!!Form::select('select',['Tipo de Nota'=>'Tipo de Nota','Tipo y Fecha'=>'Tipo y Fecha'],null,['class'=>'form-control ml-1','id'=>'select_input'])!!}
+        {!!Form::select('select',['Nombre'=>'Nombre','Fecha'=>' Fecha'],null,['class'=>'form-control ml-1','id'=>'select_input'])!!}
 
-        {!!Form::select('type',['Nota Médica Inicial'=>'Nota Médica Inicial','Nota de Referencia o traslado'=>'Nota de Referencia o traslado','Nota médica de Egreso'=>'Nota médica de Egreso','Nota médica de Urgencias'=>'Nota médica de Urgencias','Nota de Interconsulta'=>'Nota de Interconsulta','Nota Médica de Evolucion'=>'Nota Médica de Evolucion','Todas'=>'Todas'],null,['class'=>'form-control ml-1','placeholder'=>'Opciones de notas','id'=>'type'])!!}
-        @if(request()->date != Null)
-            {!!Form::date('date',null,['class'=>'form-control ml-1','placeholder'=>'Fecha','id'=>'date1'])!!}
-        @elseif(request()->select == 'Tipo y Fecha')
-            {!!Form::date('date',null,['class'=>'form-control ml-1','placeholder'=>'Fecha','id'=>'date1','style'=>''])!!}
-        @else
-            {!!Form::date('date',null,['class'=>'form-control ml-1','placeholder'=>'Fecha','id'=>'date1','style'=>'display:none'])!!}
-        @endif
+        {!!Form::text('search_name',null,['class'=>'form-control ml-1','placeholder'=>'busqueda por nombre','id'=>'search_name'])!!}
+
+        {!!Form::date('search_date',null,['class'=>'form-control ml-1','placeholder'=>'busqueda por nombre','id'=>'search_date','style'=>'display:none'])!!}
 
         <button class="btn btn-primary ml-1" type="submit" name="button"><i class="fas fa-search"></i></button>
-        <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-info ml-1">Todas</a>
+        <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-info ml-1">Todos los expedientes</a>
       </div>
       {!!Form::close()!!}
-        <div class="mb-3">
-          <div class="btn-group">
 
-            {{-- <button type="button" class="btn btn-primary">Agregar Nota a Expediente</button> --}}
-            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <div class="dropdown-menu">
+      <div class="mb-3">
+        <button class="btn btn-primary" onclick="create_exp()">Crear expediente</button>
+      </div>
 
-              @foreach ($notes_pre as $note)
-                <div class="dropdown-item" style="border:solid 1px rgb(187, 178, 178);background:rgb(231, 240, 249)">
-                  <div class="row col-12">
-                    <div class="col-8">
-                        <span class="mr-3">{{$note->title}}</span>
-                    </div>
 
-                  @if($note->title == 'Nota Médica Inicial')
-                    <div class="col-4">
-                  <a href="{{route('note_medic_ini_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                  <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                  </div>
-                  </div>
-                  </div>
-                  @elseif($note->title == 'Nota Médica de Evolucion')
-                      <div class="col-4">
-                  <a href="{{route('note_evo_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                  <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                </div>
-                </div>
-                </div>
-                  @elseif($note->title == 'Nota de Interconsulta')
-              <div class="col-4">
-                  <a href="{{route('note_inter_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                  <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                </div>
-                </div>
-                </div>
-                  @elseif($note->title == 'Nota médica de Urgencias')
-              <div class="col-4">
-                  <a href="{{route('note_urgencias_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                  <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                </div>
-                </div>
-                </div>
-                  @elseif($note->title == 'Nota médica de Egreso')
-              <div class="col-4">
-                    <a href="{{route('note_egreso_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                      <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                    </div>
-                    </div>
-                    </div>
-                  @elseif($note->title == 'Nota de Referencia o traslado')
-              <div class="col-4">
-                    <a href="{{route('note_referencia_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                      <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                    </div>
-                    </div>
-                    </div>
-                  @endif
-
-              @endforeach
-            </div>
-          </div>
-          <a class="btn btn-info" href="{{route('type_notes',['medico_id'=>$medico->id,'patient_id'=>$patient->id])}}" data-toggle="tooltip" data-placement="top" title="Tipos de Notas"><i class="fas fa-file-medical"></i></a>
-          <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente"><i class="far fa-file-alt"></i><span style="font-size:11"></span></a>
-            <button class="btn btn-success" onclick="create_exp()">Crear expediente</button>
-        </div>
 
         {{-- <input type="hidden" name="" value="{{$name_exp = 'expediente Nro'$expedients->count() + 1}}"> --}}
         @if(Session::Has('creando'))
@@ -211,19 +146,30 @@
           <tbody>
             @foreach ($expedients as $expedient)
             <tr>
-              <td>{{$expedient->name}}</td>
+              <td><span class="pre">{{$expedient->name}}</span>
+                <form class="" action="{{route('expedient_update',$expedient->id)}}" method="post">
+                  {{csrf_field()}}
+
+                <div class="input-group" style="display:none">
+                    <input name="name_exp" type="text" value="{{$expedient->name}}" class="form-control inp">
+                  <div class="input-group-append">
+                    <button type="submit" name="button" class="btn btn-primary btn-sm"><i class="fas fa-save"></i></button>
+                      <button class="cancel_edit" type="button" name="button" class="btn btn-warning btn-sm"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                </form>
+
+
+               </td>
               <td>{{\Carbon\Carbon::parse($expedient->created_at)->format('d-m-Y')}}</td>
               <td>{{$expedient->date_edit}}</td>
               <td>
                 <div class="form-inline">
-                  {!!Form::open(['route'=>'expedient_open','method'=>'POST'])!!}
-                    <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                      <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                        <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                        <button type="submit" class="btn btn-success m-1"><i class="fas fa-folder-open"></i></button>
-                  {!!Form::close()!!}
-                  <a href="{{route('expedient_edit',$expedient->id)}}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                  <a href="{{route('expedient_delete',$expedient->id)}}" class="btn btn-danger"> Eliminar</a>
+
+                  <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
+
+                  <a class="btn btn-warning mr-1 editar text-white"><i class="fas fa-edit"></i></a>
+                  <a href="{{route('expedient_delete',$expedient->id)}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
                 </div>
 
               </td>
@@ -236,15 +182,61 @@
           {{$expedients->appends(Request::all())->links()}}
           </div>
 
-    @elseif($expedients->first() != Null)
 
-      @elseif($expedients->first() == Null and isset($search))
-        <div class="card">
-          <div class="card-body">
-            <button type="close" name="button" class="close"></button>
-            <h5 class="font-title-blue text-center">No se encontraron resultados para la busqueda</h5>
+
+      @elseif($expedients->first() != Null and isset($search))
+
+        <table class="table table-bordered">
+          <thead>
+              <td>Nombre</td>
+              <td>Creación</td>
+              <td>ultima Edicion</td>
+              <td>Acciones</td>
+          </thead>
+          <tbody>
+            @foreach ($expedients as $expedient)
+            <tr>
+              <td><span class="pre">{{$expedient->name}}</span>
+                <form class="" action="{{route('expedient_update',$expedient->id)}}" method="post">
+                  {{csrf_field()}}
+
+                <div class="input-group" style="display:none">
+                    <input name="name_exp" type="text" value="{{$expedient->name}}" class="form-control inp">
+                  <div class="input-group-append">
+                    <button type="submit" name="button" class="btn btn-primary btn-sm"><i class="fas fa-save"></i></button>
+                      <button class="cancel_edit" type="button" name="button" class="btn btn-warning btn-sm"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                </form>
+
+
+               </td>
+              <td>{{\Carbon\Carbon::parse($expedient->created_at)->format('d-m-Y')}}</td>
+              <td>{{$expedient->date_edit}}</td>
+              <td>
+                <div class="form-inline">
+
+                  <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
+
+                  <a class="btn btn-warning mr-1 editar text-white"><i class="fas fa-edit"></i></a>
+                  <a href="{{route('expedient_delete',$expedient->id)}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
+                </div>
+
+              </td>
+
+            </tr>
+              @endforeach
+          </tbody>
+        </table>
+          <div class="">
+          {{$expedients->appends(Request::all())->links()}}
           </div>
-        </div>
+        @elseif($expedients->first() == Null and isset($search))
+          <div class="card">
+            <div class="card-body">
+              <h5 class="font-title-blue text-center">No se encontraron resultados para la Busqueda</h5>
+            </div>
+          </div>
       @elseif($expedients->first() == Null)
         <div class="card">
           <div class="card-body">
@@ -278,13 +270,38 @@
   function cerrar_exp(){
     $('#create_exp').fadeOut();
   }
+
+  $('.editar').click(function(){
+              variable = $(this).parents("tr").find("td").eq(0).html();
+              $(this).parents("tr").find("td").find('.pre').hide();
+              $(this).parents("tr").find("td").find('.input-group').show();
+  });
+
+  $('.cancel_edit').click(function(){
+              $(this).parents("tr").find("td").find('.pre').show();
+              $(this).parents("tr").find("td").find('.input-group').hide();
+  });
+
+  $(document).ready(function(){
+    if($('#select_input').val() == 'Fecha'){
+      $('#search_name').hide();
+      $('#search_date').show();
+    }
+
+  });
+
+  $('#select_input').change(function(){
+
+    if($('#select_input').val() == 'Fecha'){
+      $('#search_name').hide();
+      $('#search_date').show();
+    }else{
+      $('#search_date').hide();
+      $('#search_name').show();
+    }
+  });
+
 </script>
-
-
-
-
-
-
 
 
     @endsection

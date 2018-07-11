@@ -5,6 +5,11 @@
     height: 100px;
   }
 
+  .line{
+    display: inline-block;
+    float:left;
+    /* border:solid 1px black; */
+  }
   /* The switch - the box around the slider */
   .switch {
     position: relative;
@@ -69,7 +74,7 @@
 @section('content')
 <div class="row">
   <div class="col-12 mb-3">
-      <h2 class="text-center font-title">Editar Nota: "{{$note->title}} {{\Carbon\Carbon::parse($note->created_at)->format('m-d-Y H:i')}}"</h2>
+    <h2 class="text-center font-title">Editar Nota: "{{$note->title}} {{\Carbon\Carbon::parse($note->date_start)->format('m-d-Y')}}"</h2>
 
   </div>
 </div>
@@ -86,14 +91,21 @@
     {!!Form::hidden('title',$note->title)!!}
     {!!Form::hidden('medico_id',$medico->id)!!}
     {!!Form::hidden('patient_id',$patient->id)!!}
+    {!!Form::hidden('date_edit',null)!!}
+    <div class="text-right">
+
+      <label for="" class="font-title-blue mb-5">Fecha:</label>
+      {!!Form::date('date_start',\Carbon\Carbon::parse($note->date_start),['readOnly','style'=>'background:rgb(231, 231, 231)'])!!}
+    </div>
     <div class="row mb-3">
+
       <div class="col-lg-6 col-sm-6 col-12">
         <h5 class="font-title-blue">Fecha de ingreso:</h5>
-        {{Form::date('fecha_ingreso',null,['class'=>'form-control','id'=>'signos_vitales'])}}
+        {{Form::date('fecha_ingreso',\Carbon\Carbon::parse($note->Fecha_ingreso),['class'=>'form-control','id'=>'signos_vitales'])}}
       </div>
       <div class="col-lg-6 col-sm-6 col-12">
         <h5 class="font-title-blue">Fecha de egreso:</h5>
-        {{Form::date('fecha_egreso',null,['class'=>'form-control','id'=>'signos_vitales'])}}
+        {{Form::date('fecha_egreso',\Carbon\Carbon::parse($note->Fecha_egreso),['class'=>'form-control','id'=>'signos_vitales'])}}
       </div>
     </div>
     <div class="form-group">
@@ -276,11 +288,27 @@
     </div>
 
 
-    <input type="submit" class="btn btn-success" name="" value="Guardar">
-    <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
+    @if($expedient != Null)
+
+      <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
+        <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar">
+    @else
+
+        <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="guardar">
+
+    @endif
+    <input type="hidden" name="patient_id" value="{{$patient->id}}">
     {!!Form::close()!!}
-  </div>
-</div>
+
+
+    @if($expedient != Null)
+    <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+    @else
+    <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
+    @endif
+
+    </div>
+    </div>
 
 
 

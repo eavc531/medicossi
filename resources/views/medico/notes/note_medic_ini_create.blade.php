@@ -1,13 +1,17 @@
 @extends('layouts.app')
 @section('css')
 
-<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
-
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+<style media="screen">
+  .line{
+    display: inline-block;
+    float:left;
+    /* border:solid 1px black; */
+  }
+</style>
 @endsection
 @section('content')
-  <div class="" id="este">
-    xxxxx
-  </div>
+
 <div class="row">
   <div class="col-12 mb-3">
     <h2 class="text-center font-title">Crear Nota: "{{$note->title}}" para el Paciente: {{$patient->name}} {{$patient->lastName}}</h2>
@@ -27,6 +31,12 @@
     {!!Form::hidden('title',$note->title)!!}
     {!!Form::hidden('medico_id',$medico->id)!!}
     {!!Form::hidden('patient_id',$patient->id)!!}
+    {!!Form::hidden('date_edit',\Carbon\Carbon::now())!!}
+    {!!Form::hidden('note_config_id',$note->id)!!}
+    <div class="text-right">
+      <label for="" class="font-title-blue mb-5">Fecha:</label>
+      {!!Form::date('date_start',\Carbon\Carbon::now())!!}
+    </div>
     <div class="form-group">
        @if($note->Exploracion_fisica_show == 'si')
          <h5 class="font-title-blue float-left">Exploracion fisica:</h5>
@@ -195,16 +205,16 @@
 
     <div class="form-group">
 
-      @if($note->Tratamiento_y_o_recetas_show == 'si')
+      @if($note->Tratamiento_y_o_receta_show == 'si')
         <h5 class="font-title-blue float-left">Tratamiento y o receta:</h5>
        <label class="switch" style="display:block;margin-left:auto;">
-          {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
+          {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_receta_show'])}}
           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
        </label>
      @else
        <h5 class="float-left font-title" style="color:grey">Tratamiento y o receta:</h5>
        <label class="switch" style="display:block;margin-left:auto;">
-         {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
+         {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_receta_show'])}}
           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
        </label>
      @endif
@@ -240,11 +250,21 @@
 
     </div>
 
+    @if($expedient != Null)
 
-  <input type="submit" class="btn btn-success" name="" value="Guardar">
-  <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
+      <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
+        <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar Nota en Expediente">
+    @endif
+    <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota">
+
+
+
   {!!Form::close()!!}
-
+  @if($expedient != Null)
+    <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+  @else
+    <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
+  @endif
 </div>
 </div>
 

@@ -18,37 +18,45 @@
 
 
   <div class="card">
+  @include('medico.notes.include_data_consultorio')
+
   <div class="card-body">
    <div class="text-center mb-3">
-     <h4>{{$note->title}}</h4>
+     <h4 style="text-decoration: underline;text-align:center;font-size: 1.5rem">{{$note->title}}</h4>
    </div>
 
    @include('medico.notes.include_data_patient')
 
 
 
-    <div class="form-group" style="margin-top:90px">
-      <hr>
-    <h5 class="font-title-blue">Motivo de envio</h5>
+@if($note->Motivo_de_envio_show == 'si')
+    <div class="form-group">
+    <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Motivo de envio</h5>
     <p>{{$note->Motivo_de_envio}}</p>
   </div>
   <hr>
+@endif
+   @if($note->Establecimiento_que_envia_show == 'si')
   <div class="form-group">
-    <h5 class="font-title-blue">Establecimiento que envia</h5>
+    <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Establecimiento que envia</h5>
       <p>{{$note->Establecimiento_que_envia}}</p>
   </div>
   <hr>
+@endif
+  @if($note->Establecimiento_receptor_show == 'si')
   <div class="form-group">
-    <h5 class="font-title-blue">Establecimiento receptor</h5>
+    <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Establecimiento receptor</h5>
       <p>{{$note->Establecimiento_receptor}}</p>
   </div>
   <hr>
-
+@endif
+@if($note->Diagnostico_show == 'si')
   <div class="form-group">
-    <h5 class="font-title-blue">Diagnostico</h5>
+    <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnostico</h5>
       <p>{{$note->Diagnostico}}</p>
   </div>
   <hr>
+@endif
 
   <div class="mt-5">
     <div class="" style="width:50%;float:left">

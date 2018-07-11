@@ -160,39 +160,50 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
 //PLAN PLATINO corregir plan profesional a platino
 Route::group(['middleware' => ['medic_plan_platino']], function (){
 
-    Route::post('medico/patient/expedient/open','notesController@expedient_open')->name('expedient_open');
+      Route::post('medico/patient/expedient/{ex_id}/update','notesController@expedient_update')->name('expedient_update');
+    Route::get('medico/patient/expedient/{ex_id}/preview','notesController@expedient_preview')->name('expedient_preview');
+    Route::get('medico/patient/expedient/{ex_id}/print_pdf','notesController@download_expedient_pdf')->name('download_expedient_pdf');
+
+    Route::get('medico/{m_id}/patient/{p_id}/expedient/{ex_id}/open','notesController@expedient_open')->name('expedient_open');
     Route::get('medico/patient/expedient/{id}/edit','notesController@expedient_edit')->name('expedient_edit');
 
+    Route::get('medico/patient/expedient/note/{id}/delete','notesController@expedient_note_delete')->name('expedient_note_delete');
     Route::get('medico/patient/expedient/{id}/delete','notesController@expedient_delete')->name('expedient_delete');
+
     Route::post('medico/patient/expedient/store','notesController@expedient_store')->name('expedient_store');
 
     Route::get('medico/{m_id}/patient/{p_id}/expedients','notesController@expedients_patient')->name('expedients_patient');
+
+
+    Route::get('medico/patient/expedient/search','notesController@expedient_search')->name('expedient_search');
     Route::get('medico/patient/notes/search','notesController@note_search')->name('note_search');
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/edit','medicoController@medico_note_edit')->name('medico_note_edit');
     Route::post('medico/patient/note/config/store','notesController@note_config_store')->name('note_config_store');
     Route::get('medico/{m_id}/patient/{p_id}/edit/appointment/{app_id}','medico_diaryController@edit_appointment')->name('edit_appointment');
     ///////////////NOTES
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/view_preview','notesController@view_preview')->name('view_preview');
+    Route::post('medico/patient/note/view_preview','notesController@view_preview')->name('view_preview');
     Route::get('medico/{m_id}/patient/{p_id}/type_notes','notesController@type_notes')->name('type_notes');
 
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/config','notesController@note_config')->name('note_config');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/ini_create','notesController@note_medic_ini_create')->name('note_medic_ini_create');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/ini_edit','notesController@note_ini_edit')->name('note_ini_edit');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/evo_edit','notesController@note_evo_edit')->name('note_evo_edit');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/inter_edit','notesController@note_inter_edit')->name('note_inter_edit');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/urgencias_edit','notesController@note_urgencias_edit')->name('note_urgencias_edit');
+    Route::post('medico/patient/note/config','notesController@note_config')->name('note_config');
+
+    Route::post('medico/patient/note/ini_edit','notesController@note_ini_edit')->name('note_ini_edit');
+    Route::post('medico/patient/note/evo_edit','notesController@note_evo_edit')->name('note_evo_edit');
+    Route::post('medico/patient/note/inter_edit','notesController@note_inter_edit')->name('note_inter_edit');
+    Route::post('medico/patient/note/urgencias_edit','notesController@note_urgencias_edit')->name('note_urgencias_edit');
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/egreso_edit','notesController@note_egreso_edit')->name('note_egreso_edit');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/referencia_edit','notesController@note_referencia_edit')->name('note_referencia_edit');
+    Route::post('medico/patient/note/referencia_edit','notesController@note_referencia_edit')->name('note_referencia_edit');
 
     Route::get('medico/{m_id}/patient/{p_id}/notes/','notesController@notes_patient')->name('notes_patient');
     Route::post('medico/patient/note/store','notesController@note_store')->name('note_store');
     Route::post('medico/patient/note/update/{id}','notesController@note_update')->name('note_update');
 
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/referencia/create','notesController@note_referencia_create')->name('note_referencia_create');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/interconsulta_create','notesController@note_inter_create')->name('note_inter_create');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/urg_create','notesController@note_urgencias_create')->name('note_urgencias_create');
+    Route::post('medico/patient/note/ini_create','notesController@note_medic_ini_create')->name('note_medic_ini_create');
+    Route::post('medico/patient/note/referencia/create','notesController@note_referencia_create')->name('note_referencia_create');
+    Route::post('medico/patient/note/interconsulta_create','notesController@note_inter_create')->name('note_inter_create');
+    Route::post('medico/patient/note/urg_create','notesController@note_urgencias_create')->name('note_urgencias_create');
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/egreso_create','notesController@note_egreso_create')->name('note_egreso_create');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/evo_create','notesController@note_evo_create')->name('note_evo_create');
+
+    Route::post('medico/patient/note/evo_create','notesController@note_evo_create')->name('note_evo_create');
 });
 
 
@@ -487,6 +498,8 @@ Route::get('test','reminderController@test')->name('test');
 Route::get('medico/{id}/reminders','reminderController@medico_reminders')->name('medico_reminders');
 
 // pdf
+
+
 Route::get('note/{id}/download_pdf','notesController@download_pdf')->name('download_pdf');
 
 Route::post('check_input_notes','notesController@check_input_notes')->name('check_input_notes');

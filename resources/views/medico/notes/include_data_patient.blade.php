@@ -1,14 +1,14 @@
-<div class="mt-5 mb-4">
+<div class="mt-5" style="margin-bottom:60px">
 
 <div class="text-center">
-  <h5 class="">Datos del Paciente</h5>
+  <h5 class="" style="text-align:center;">Datos del Paciente</h5>
 </div>
 
 <div class="row">
   <div class="col-6" style="width:50%;float:left">
     <div class=""><b>Nombre(s): </b>:{{$patient->name}}</div>
     <div class=""><b>Apellido(s): </b>:{{$patient->lastName}}</div>
-    <div class="">Cedula:{{$patient->identification}}</div>
+    <div class=""><b>Cedula:</b>{{$patient->identification}}</div>
     <div class=""><b>Sexo: </b>:{{$patient->gender}}</div>
   </div>
   <div class="col-6" style="width:50%;float:right">
@@ -23,7 +23,7 @@
 <div class="">
 
   <div class="text-center">
-    <h5 class="mt-3">Dirección</h5>
+    <h5 class="mt-3" style="text-align:center;">Dirección</h5>
   </div>
   <div class="row">
     <div class="col-6" style="width:50%;float:left">

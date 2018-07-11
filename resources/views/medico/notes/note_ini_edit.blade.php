@@ -1,11 +1,11 @@
 @extends('layouts.app')
 @section('css')
-<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
 @endsection
 @section('content')
 <div class="row">
   <div class="col-12 mb-3">
-    <h2 class="text-center font-title">Editar Nota: "{{$note->title}} {{\Carbon\Carbon::parse($note->created_at)->format('m-d-Y H:i')}}" </h2>
+    <h2 class="text-center font-title">Editar Nota: "{{$note->title}} {{\Carbon\Carbon::parse($note->date_start)->format('m-d-Y')}}"</h2>
 
   </div>
 </div>
@@ -21,6 +21,12 @@
   {!!Form::hidden('note_id',$note->id)!!}
   {!!Form::hidden('title',$note->title)!!}
   {!!Form::hidden('medico_id',$medico->id)!!}
+  {!!Form::hidden('date_edit',null)!!}
+  <div class="text-right">
+
+    <label for="" class="font-title-blue mb-5">Fecha:</label>
+    {!!Form::date('date_start',\Carbon\Carbon::parse($note->date_start),['readOnly','style'=>'background:rgb(231, 231, 231)'])!!}
+  </div>
   <div class="form-group">
      @if($note->Exploracion_fisica_show == 'si')
        <h5 class="font-title-blue float-left">Exploracion fisica:</h5>
@@ -156,9 +162,9 @@
    @endif
 
    @if($note->Afeccion_secundaria_show == 'si')
-     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Afeccion_principal_o_motivo_de_consulta"])}}
+     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Afeccion_secundaria"])}}
    @else
-     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Afeccion_principal_o_motivo_de_consulta",'style'=>'display:none'])}}
+     {{Form::textarea('Afeccion_secundaria','este',['class'=>'form-control',"id"=>"Afeccion_secundaria",'style'=>'display:none'])}}
    @endif
 
   </div>
@@ -181,15 +187,15 @@
    @endif
 
    @if($note->Pronostico_show == 'si')
-     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Pronostico"])}}
+     {{Form::textarea('Pronostico',null,['class'=>'form-control',"id"=>"Pronostico"])}}
    @else
-     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Pronostico",'style'=>'display:none'])}}
+     {{Form::textarea('Pronostico','nullsd',['class'=>'form-control',"id"=>"Pronostico",'style'=>'display:none'])}}
    @endif
   </div>
 
   <div class="form-group">
 
-    @if($note->Tratamiento_y_o_recetas_show == 'si')
+    @if($note->Tratamiento_y_o_receta_show == 'si')
       <h5 class="font-title-blue float-left">Tratamiento y o receta:</h5>
      <label class="switch" style="display:block;margin-left:auto;">
         {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
@@ -232,10 +238,25 @@
    @endif
   </div>
 
-  <input type="submit" class="btn btn-success" name="" value="Guardar">
-  <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
-  {!!Form::close()!!}
-  {!!Form::close()!!}
+  @if($expedient != Null)
+
+    <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
+      <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar">
+  @else
+
+      <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="guardar">
+
+  @endif
+<input type="hidden" name="patient_id" value="{{$patient->id}}">
+{!!Form::close()!!}
+
+
+@if($expedient != Null)
+  <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+@else
+  <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
+@endif
+
 </div>
 </div>
 

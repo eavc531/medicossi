@@ -190,8 +190,10 @@
 	<script src="{{asset('jquery/jquery.js')}}"></script>
 
 	<script src="{{asset('tether/js/tether.min.js')}}"></script>
+	{{-- <script src="{{asset('popper/js/popper.js')}}"></script> --}}
 
-	<script src="{{asset('bootstrap/js/bootstrap.min.js')}}"></script>
+	{{-- <script src="{{asset('bootstrap/js/bootstrap.min.js')}}"></script> --}}
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 	<script src="{{asset('fontawesome/js/fontawesome.js')}}"></script>
 
 	<script type="text/javascript" src="{{asset('js/main.js')}}"></script>

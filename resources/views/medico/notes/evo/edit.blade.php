@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('css')
-<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
 @endsection
 @section('content')
 
@@ -8,7 +8,7 @@
 
 <div class="row">
   <div class="col-12 mb-3">
-      <h2 class="text-center font-title">Editar Nota: "{{$note->title}} {{\Carbon\Carbon::parse($note->created_at)->format('m-d-Y H:i')}}" </h2>
+    <h2 class="text-center font-title">Editar Nota: "{{$note->title}} {{\Carbon\Carbon::parse($note->date_start)->format('m-d-Y')}}"</h2>
 
   </div>
 </div>
@@ -24,7 +24,12 @@
       {!!Form::hidden('note_id',$note->id)!!}
       {!!Form::hidden('title',$note->title)!!}
       {!!Form::hidden('medico_id',$medico->id)!!}
+      {!!Form::hidden('date_edit',null)!!}
+      <div class="text-right">
 
+        <label for="" class="font-title-blue mb-5">Fecha:</label>
+        {!!Form::date('date_start',\Carbon\Carbon::parse($note->date_start),['readOnly','style'=>'background:rgb(231, 231, 231)'])!!}
+      </div>
       <div class="form-group">
          @if($note->Exploracion_fisica_show == 'si')
            <h5 class="font-title-blue float-left">Exploracion fisica:</h5>
@@ -98,6 +103,30 @@
        @endif
 
 
+      </div>
+
+      <div class="form-group">
+        @if($note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
+          <h5 class="font-title-blue float-left">Evolucion y actualizacion del cuadro clinico:</h5>
+         <label class="switch" style="display:block;margin-left:auto;">
+            {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Evolucion_y_actualizacion_del_cuadro_clinico_show'])}}
+            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+         </label>
+       @else
+         <h5 class="float-left font-title" style="color:grey">Evolucion y actualizacion del cuadro clinico:</h5>
+         <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Evolucion_y_actualizacion_del_cuadro_clinico_show'])}}
+            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+         </label>
+       @endif
+
+       @if($note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
+
+         {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control',"id"=>"Pruebas_de_laboratorio"])}}
+       @else
+
+         {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control',"id"=>"Pruebas_de_laboratorio",'style'=>'display:none'])}}
+       @endif
       </div>
 
       <div class="form-group">
@@ -238,15 +267,27 @@
 
       </div>
 
-    <input type="submit" name="" value="Guardar" class="btn btn-primary">
-    <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary">Cancelar</a>
-      {!!Form::close()!!}
+      @if($expedient != Null)
+
+        <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
+          <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar">
+      @else
+
+          <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="guardar">
+
+      @endif
+    <input type="hidden" name="patient_id" value="{{$patient->id}}">
+    {!!Form::close()!!}
 
 
+    @if($expedient != Null)
+      <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+    @else
+      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
+    @endif
 
-
-  </div>
-</div>
+    </div>
+    </div>
 
 
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('css')
-<link rel="stylesheet" type="text/css" href="{{asset('public/css/switch.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
 @endsection
 @section('content')
   <div class="row">

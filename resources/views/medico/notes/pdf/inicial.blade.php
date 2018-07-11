@@ -16,64 +16,86 @@
 </head>
 <body>
 
+  {{-- <div class="">
+    @include('medico.notes.include_data_consultorio')
+  </div> --}}
   <div class="">
 
+  </div>
+  @include('medico.notes.include_data_consultorio')
    <div class="">
      <div class="">
-       <h4>{{$note->title}}</h4>
+       <h4 style="text-decoration: underline;text-align:center;font-size: 1.5rem">{{$note->title}}</h4>
      </div>
      @include('medico.notes.include_data_patient')
 
     {{-- {!!Form::model($note,['route'=>'note_store','method'=>'POST'])!!} --}}
+    @if($note->Exploracion_fisica_show == 'si')
 
     <div class="" style="margin-top:90px">
-      <hr>
-      <h5 class="">Exploracion fisica</h5>
+
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Exploracion fisica</h5>
       <p>{{$note->Exploracion_fisica}}</p>
     </div>
     <hr>
+    @endif
+    @if($note->Signos_vitales_show == 'si')
     <div class="">
-      <h5 class="">Signos vitales</h5>
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
       <p>{!!$note->Signos_vitales!!}</p>
     </div>
     <hr>
+@endif
+    @if($note->Pruebas_de_laboratorio_show == 'si')
     <div class="form-group">
       <h5 class="font-title-blue">Pruebas de laboratorio</h5>
       <p>{!!$note->Pruebas_de_laboratorio!!}</p>
     </div>
     <hr>
+@endif
+    @if($note->Diagnostico_show == 'si')
     <div class="">
-      <h5 class="">Diagnostico</h5>
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnostico</h5>
       <p>{!!$note->Diagnostico!!}</p>
     </div>
     <hr>
+@endif
+    @if($note->Afeccion_principal_o_motivo_de_consulta_show == 'si')
     <div class="">
-      <h5 class="">Afección principal o motivo de consulta</h5>
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Afección principal o motivo de consulta</h5>
       <p>{!!$note->Afeccion_principal_o_motivo_de_consulta!!}</p>
     </div>
     <hr>
+@endif
+    @if($note->Afeccion_secundaria_show == 'si')
     <div class="">
-      <h5 class="">Afeccion secundaria</h5>
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Afeccion secundaria</h5>
       <p>{!!$note->Afeccion_secundaria!!}</p>
     </div>
     <hr>
+@endif
+    @if($note->Pronostico_show == 'si')
     <div class="">
-      <h5 class="">Pronostico</h5>
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Pronostico</h5>
       <p>{!!$note->Pronostico!!}</p>
     </div>
     <hr>
+@endif
+    @if($note->Tratamiento_y_o_recetas_show == 'si')
     <div class="">
-      <h5 class="">Tratamiento y o receta</h5>
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Tratamiento y o receta</h5>
       <p>{!!$note->Tratamiento_y_o_recetas!!}</p>
     </div>
     <hr>
+@endif
+    @if($note->Indicaciones_terapeuticas_show == 'si')
     <div class="">
-      <h5 class="">Indicaciones terapeuticas</h5>
+      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Indicaciones terapeuticas</h5>
       <p>{!!$note->Indicaciones_terapeuticas!!}</p>
     </div>
-
-
     <hr>
+@endif
+
 
     <div class="">
 

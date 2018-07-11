@@ -1,4 +1,4 @@
-@extends('layouts.app-panel')
+@extends('layouts.app')
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
@@ -7,7 +7,14 @@
   width: 430px !important;
 
 }
+
+.line{
+  display: inline-block;
+  float:left;
+  /* border:solid 1px black; */
+}
 </style>
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.css"> --}}
 {{-- <link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' /> --}}
@@ -19,7 +26,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-lg-9 col-12">
+    <div class="col-lg-12 col-12">
       <div class="register">
         <div class="row">
           <div class="col-12">
@@ -54,151 +61,130 @@
         <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-info ml-1">Todas</a>
       </div>
       {!!Form::close()!!}
-        <div class="mb-3">
-          <div class="btn-group">
-            <button type="button" class="btn btn-primary">Crear Nota</button>
-            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <div class="dropdown-menu">
+        @include('medico.notes.main_notes_create_config')
+          {{-- <a class="btn btn-info" href="{{route('type_notes',['medico_id'=>$medico->id,'patient_id'=>$patient->id])}}" data-toggle="tooltip" data-placement="top" title="Tipos de Notas"><i class="fas fa-file-medical"></i></a> --}}
+          <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
 
-            @foreach ($notes_pre as $note)
-              <div class="dropdown-item" style="border:solid 1px rgb(187, 178, 178);background:rgb(231, 240, 249)">
-                <div class="row col-12">
-                  <div class="col-8">
-                      <span class="mr-3">{{$note->title}}</span>
-                  </div>
+        </div>
 
-                @if($note->title == 'Nota Médica Inicial')
-                  <div class="col-4">
-                <a href="{{route('note_medic_ini_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                </div>
-                </div>
-                </div>
-                @elseif($note->title == 'Nota Médica de Evolucion')
-                    <div class="col-4">
-                <a href="{{route('note_evo_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-              </div>
-              </div>
-              </div>
-                @elseif($note->title == 'Nota de Interconsulta')
-  <div class="col-4">
-                <a href="{{route('note_inter_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-              </div>
-              </div>
-              </div>
-                @elseif($note->title == 'Nota médica de Urgencias')
-  <div class="col-4">
-                <a href="{{route('note_urgencias_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-              </div>
-              </div>
-              </div>
-                @elseif($note->title == 'Nota médica de Egreso')
-  <div class="col-4">
-                  <a href="{{route('note_egreso_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                    <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                  </div>
-                  </div>
-                  </div>
-                @elseif($note->title == 'Nota de Referencia o traslado')
-  <div class="col-4">
-                  <a href="{{route('note_referencia_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-primary mr-2 " data-toggle="tooltip" data-placement="top" title="Crear"><i class="fas fa-plus"></i></a>
-                    <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id ])}}" class="btn btn-secondary"  data-toggle="tooltip" data-placement="top" title="Configurar"><i class="fas fa-cog"></i></a>
-                  </div>
-                  </div>
-                  </div>
-                @endif
 
-            @endforeach
+
+        @if($notes->first() != Null and !isset($search))
+
+
+
+          <table class="table table-bordered mt-2">
+            <thead>
+              <td>Nombre</td>
+              <td>Creación</td>
+              <td>ultima Edicion</td>
+              <td>Acciones</td>
+            </thead>
+            <tbody>
+
+              @foreach ($notes as $note)
+                {{-- <input type="hidden" name="" value="{{$}}"> --}}
+                <tr>
+                  <td>{{$note->title}}</td>
+                  <td>{{\Carbon\Carbon::parse($note->date_start)->format('d-m-Y')}}</td>
+                  <td>{{\Carbon\Carbon::parse($note->date_edit)->format('d-m-Y')}}</td>
+                  <td>
+
+
+                    <form class="line" action="{{route('view_preview')}}" method="post">
+                      {{ csrf_field() }}
+                      <input type="hidden" name="medico_id" value="{{$medico->id}}">
+                      <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                      <input type="hidden" name="note_id" value="{{$note->id}}">
+
+                      <button type="submit" name="button" class="mr-2 btn btn-secondary"><i class="fas fa-eye"></i></button>
+                    </form>
+                    @if($note->title == 'Nota Médica Inicial')
+
+                      <form class="line" action="{{route('note_ini_edit')}}" method="post">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="medico_id" value="{{$medico->id}}">
+                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                        <input type="hidden" name="note_id" value="{{$note->id}}">
+
+                        <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
+                      </form>
+
+
+                    @elseif($note->title == 'Nota Médica de Evolucion')
+                      <form class="line" action="{{route('note_evo_edit')}}" method="post">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="medico_id" value="{{$medico->id}}">
+                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                        <input type="hidden" name="note_id" value="{{$note->id}}">
+
+                        <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
+                      </form>
+
+                    @elseif($note->title == 'Nota de Interconsulta')
+                      <form class="line" action="{{route('note_inter_edit')}}" method="post">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="medico_id" value="{{$medico->id}}">
+                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                        <input type="hidden" name="note_id" value="{{$note->id}}">
+
+                        <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
+                      </form>
+
+
+                    @elseif($note->title == 'Nota médica de Urgencias')
+                      <form class="line" action="{{route('note_urgencias_edit')}}" method="post">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="medico_id" value="{{$medico->id}}">
+                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                        <input type="hidden" name="note_id" value="{{$note->id}}">
+
+                        <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
+                      </form>
+
+                    @elseif($note->title == 'Nota médica de Egreso')
+                      <a class="mr-1 btn btn-primary" href="{{route('note_egreso_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}"><i class="fas fa-pencil-alt"></i></a>
+
+
+                    @elseif($note->title == 'Nota de Referencia o traslado')
+                      <form class="line" action="{{route('note_referencia_edit')}}" method="post">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="medico_id" value="{{$medico->id}}">
+                        <input type="hidden" name="patient_id" value="{{$patient->id}}">
+                        <input type="hidden" name="note_id" value="{{$note->id}}">
+
+                        <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
+                      </form>
+
+                    @endif
+                    <a href="{{route('download_pdf',$note->id)}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
+                      {{-- <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota Médica del expediente?, la nota seguira exisitiendo en el panel ´Notas del Paciente´ despues de realizar esta acción.');" href="{{route('expedient_note_delete',$note->id)}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a> --}}
+                  </td>
+
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+          <div class="">
+            {{$notes->appends(Request::all())->links()}}
+          </div>
+
+        @elseif($notes->first() != Null)
+
+        @elseif($notes->first() == Null and isset($search))
+          <div class="card">
+            <div class="card-body">
+              <button type="close" name="button" class="close"></button>
+              <h5 class="font-title-blue text-center">No se encontraron resultados para la busqueda</h5>
             </div>
           </div>
-          <a class="btn btn-info" href="{{route('type_notes',['medico_id'=>$medico->id,'patient_id'=>$patient->id])}}" data-toggle="tooltip" data-placement="top" title="Tipos de Notas"><i class="fas fa-file-medical"></i></a>
-          <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente"><i class="far fa-file-alt"></i><span style="font-size:11"></span></a>
-
-        </div>
-
-
-
-      @if($notes->first() != Null and !isset($search))
-      <ul class="list-group">
-        @foreach ($notes as $note)
-
-        <li class="list-group-item d-flex justify-content-between align-items-sm-start align-items-end"><span class="mr-auto">{{$note->title}} {{\Carbon\Carbon::parse($note->created_at)->format('d-m-Y H:i')}}</span>
-            <a href="{{route('view_preview',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Vista previa/Descargar"><i class="fas fa-eye"></i></a>
-          @if($note->title == 'Nota Médica Inicial')
-
-          <a href="{{route('note_ini_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-
-          @elseif($note->title == 'Nota Médica de Evolucion')
-
-          <a href="{{route('note_evo_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-          @elseif($note->title == 'Nota de Interconsulta')
-          <a href="{{route('note_inter_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-
-          @elseif($note->title == 'Nota médica de Urgencias')
-          <a href="{{route('note_urgencias_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-          @elseif($note->title == 'Nota médica de Egreso')
-          <a href="{{route('note_egreso_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-          @elseif($note->title == 'Nota de Referencia o traslado')
-          <a href="{{route('note_referencia_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-          @endif
-
-            <a href="{{route('download_pdf',$note->id)}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
-        </li>
-        @endforeach
-      </ul>
-      <div class="">
-      {{$notes->appends(Request::all())->links()}}
-      </div>
-    @elseif($notes->first() != Null)
-        <ul class="list-group">
-          @foreach ($notes as $note)
-
-          <li class="list-group-item d-flex justify-content-between align-items-sm-start align-items-end"><span class="mr-auto">{{$note->title}} {{\Carbon\Carbon::parse($note->created_at)->format('d-m-Y H:i')}}</span>
-              <a href="{{route('view_preview',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Vista previa/Descargar"><i class="fas fa-eye"></i></a>
-            @if($note->title == 'Nota Médica Inicial')
-
-            <a href="{{route('note_ini_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-
-            @elseif($note->title == 'Nota Médica de Evolucion')
-
-            <a href="{{route('note_evo_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-            @elseif($note->title == 'Nota de Interconsulta')
-            <a href="{{route('note_inter_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-
-            @elseif($note->title == 'Nota médica de Urgencias')
-            <a href="{{route('note_urgencias_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-            @elseif($note->title == 'Nota médica de Egreso')
-            <a href="{{route('note_egreso_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-            @elseif($note->title == 'Nota de Referencia o traslado')
-            <a href="{{route('note_referencia_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id])}}" class="mr-2 btn btn-primary" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-            @endif
-
-              <a href="{{route('download_pdf',$note->id)}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
-          </li>
-          @endforeach
-        </ul>
-        <div class="">
-        {{$notes->appends(Request::all())->links()}}
-        </div>
-      @elseif($notes->first() == Null and isset($search))
-        <div class="card">
-          <div class="card-body">
-            <button type="close" name="button" class="close"></button>
-            <h5 class="font-title-blue text-center">No se encontraron resultados para la busqueda</h5>
+        @elseif($notes->first() == Null)
+          <div class="card my-3">
+            <div class="card-body">
+              <h5 class="font-title-blue text-center">No ahi registro de Expedientes</h5>
+            </div>
           </div>
-        </div>
-      @elseif($notes->first() == Null)
-        <div class="card">
-          <div class="card-body">
-            <h5 class="font-title-blue text-center">No ahi registro de Notas</h5>
-          </div>
-        </div>
-      @endif
+        @endif
       {{-- //////////centro de menu////////////centro de menu////////////centro de menu////////////centro de menu// --}}
     </div>
 
