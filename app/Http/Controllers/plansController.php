@@ -91,7 +91,16 @@ class plansController extends Controller
 
      public function plan_platino_contract($id){
 
-       return view('plans.select_suscription');
+       $medico = medico::find($id);
+       $specialty = specialty::where('name', $medico->specialty)->first();
+
+        if($specialty->specialty_category->name != 'Medicos y Especialistas'){
+          $plan = plan::where('name','Plan Platino')->where('applicable','!=','Medicos y Especialistas' )->where('applicable','!=','Nucleos Medicos')->first();
+        }else{
+          $plan = plan::where('name','Plan Platino')->where('applicable','Medicos y Especialistas' )->first();
+        }
+        
+       return view('plans.select_subscription',compact('medico','plan'));
      }
 
      public function contract_basic($id){

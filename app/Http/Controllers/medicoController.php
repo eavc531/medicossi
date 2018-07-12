@@ -223,8 +223,8 @@ class medicoController extends Controller
 
        Mail::send('mails.medico_register_new_patient',['patient'=>$patient,'medico'=>$medico,'user'=>$user],function($msj) use($patient){
           $msj->subject('Médicos Si');
-          //$msj->to($patient->email);
-          $msj->to('eavc53189@gmail.com');
+          $msj->to($patient->email);
+          // $msj->to('eavc53189@gmail.com');
 
         });
 
@@ -947,8 +947,8 @@ class medicoController extends Controller
 
         Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           // $msj->to($medico->email);
-           $msj->to('eavc53189@gmail.com');
+           $msj->to($medico->email);
+           // $msj->to('eavc53189@gmail.com');
 
       });
 
@@ -974,8 +974,8 @@ class medicoController extends Controller
 
          Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
             $msj->subject('Médicos Si');
-            //$msj->to($medico->email);
-            $msj->to('eavc53189@gmail.com');
+            $msj->to($medico->email);
+            // $msj->to('eavc53189@gmail.com');
         });
 
         return redirect()->route('successRegMedico',$medico->id)->with('success', 'Se ha reenviado el mensaje de confirmación al correo electronico asociado a tu cuenta MédicosSi')->with('user', $user);

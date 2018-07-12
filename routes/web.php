@@ -66,6 +66,8 @@ Route::post('medico/plan/set','plansController@set_plan')->name('set_plan');
 
 Route::get('medico/{id}/plan/agenda/contract','plansController@plan_agenda_contract')->name('plan_agenda_contract');
 
+Route::get('medico/{id}/plan/platino/contract','plansController@plan_platino_contract')->name('plan_platino_contract');
+
 Route::get('medico/{id}/plan/profesional/contract','plansController@plan_profesional_contract')->name('plan_profesional_contract');
 
 Route::get('medico/{id}/plans/contract_basic','plansController@contract_basic')->name('contract_basic');

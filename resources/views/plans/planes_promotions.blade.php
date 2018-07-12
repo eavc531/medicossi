@@ -154,7 +154,7 @@
            </div>
          </div>
          <div class="card-body card-height">
-           <h5>Arreglar</h5>
+
            <p class="card-text">-Todo lo del plan profesional+</p>
 
            <p class="card-text">-Registro de consulta ilimitados</p>
@@ -173,10 +173,10 @@
         <div class="my-2">
           <div class="col-12 text-center">
             @if($plan_actual == Null)
-              <a href="" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a>
+              <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a>
             @else
-              <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal22">
-                Contratar
+              <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal33">
+                Contratarx
               </button>
             @endif
 
@@ -216,7 +216,7 @@
 </div>
 
 </div>
-{{-- @include('plans.modals') --}}
+@include('plans.modals')
 <!-- Button trigger modal -->
 @endsection
 
