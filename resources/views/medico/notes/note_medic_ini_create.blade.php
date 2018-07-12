@@ -205,21 +205,21 @@
 
     <div class="form-group">
 
-      @if($note->Tratamiento_y_o_receta_show == 'si')
-        <h5 class="font-title-blue float-left">Tratamiento y o receta:</h5>
+      @if($note->Tratamiento_y_o_recetas_show == 'si')
+        <h5 class="font-title-blue float-left">Tratamiento y o recetas:</h5>
        <label class="switch" style="display:block;margin-left:auto;">
-          {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_receta_show'])}}
+          {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
        </label>
      @else
-       <h5 class="float-left font-title" style="color:grey">Tratamiento y o receta:</h5>
+       <h5 class="float-left font-title" style="color:grey">Tratamiento y o recetas:</h5>
        <label class="switch" style="display:block;margin-left:auto;">
-         {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_receta_show'])}}
+         {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
        </label>
      @endif
 
-     @if($note->Pronostico_show == 'si')
+     @if($note->Tratamiento_y_o_recetas_show == 'si')
        {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control',"id"=>"Tratamiento_y_o_recetas"])}}
      @else
        {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control',"id"=>"Tratamiento_y_o_recetas",'style'=>'display:none'])}}

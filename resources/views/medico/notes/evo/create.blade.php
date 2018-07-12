@@ -124,32 +124,6 @@
        @endif
       </div>
 
-
-
-      <div class="form-group">
-        @if($note->Pruebas_de_laboratorio_show == 'si')
-          <h5 class="font-title-blue float-left">Pruebas de laboratorio:</h5>
-         <label class="switch" style="display:block;margin-left:auto;">
-            {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
-            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
-         </label>
-       @else
-         <h5 class="float-left font-title" style="color:grey">Pruebas de laboratorio</h5>
-         <label class="switch" style="display:block;margin-left:auto;">
-           {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
-            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
-         </label>
-       @endif
-
-       @if($note->Pruebas_de_laboratorio_show == 'si')
-
-         {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control',"id"=>"Pruebas_de_laboratorio"])}}
-       @else
-
-         {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control',"id"=>"Pruebas_de_laboratorio",'style'=>'display:none'])}}
-       @endif
-      </div>
-
       <div class="form-group">
         @if($note->Diagnostico_show == 'si')
           <h5 class="font-title-blue float-left">Diagnostico:</h5>

@@ -195,27 +195,29 @@
 
   <div class="form-group">
 
-    @if($note->Tratamiento_y_o_receta_show == 'si')
-      <h5 class="font-title-blue float-left">Tratamiento y o receta:</h5>
-     <label class="switch" style="display:block;margin-left:auto;">
-        {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
-        <span class="slider round text-white"><span class="ml-1">on</span> of</span>
-     </label>
-   @else
-     <h5 class="float-left font-title" style="color:grey">Tratamiento y o receta:</h5>
-     <label class="switch" style="display:block;margin-left:auto;">
-       {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
-        <span class="slider round text-white"><span class="ml-1">on</span> of</span>
-     </label>
-   @endif
+    <div class="form-group">
 
-   @if($note->Pronostico_show == 'si')
-     {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control',"id"=>"Tratamiento_y_o_recetas"])}}
-   @else
-     {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control',"id"=>"Tratamiento_y_o_recetas",'style'=>'display:none'])}}
-   @endif
+      @if($note->Tratamiento_y_o_recetas_show == 'si')
+        <h5 class="font-title-blue float-left">Tratamiento y o recetas:</h5>
+       <label class="switch" style="display:block;margin-left:auto;">
+          {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
+          <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+       </label>
+     @else
+       <h5 class="float-left font-title" style="color:grey">Tratamiento y o recetas:</h5>
+       <label class="switch" style="display:block;margin-left:auto;">
+         {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Tratamiento_y_o_recetas_show'])}}
+          <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+       </label>
+     @endif
 
-  </div>
+     @if($note->Tratamiento_y_o_recetas_show == 'si')
+       {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control',"id"=>"Tratamiento_y_o_recetas"])}}
+     @else
+       {{Form::textarea('Tratamiento_y_o_recetas',null,['class'=>'form-control',"id"=>"Tratamiento_y_o_recetas",'style'=>'display:none'])}}
+     @endif
+
+    </div>
   <div class="form-group">
     @if($note->Indicaciones_terapeuticas_show == 'si')
       <h5 class="font-title-blue float-left">Indicaciones terapeuticas:</h5>

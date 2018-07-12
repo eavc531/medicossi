@@ -399,7 +399,7 @@ class notesController extends Controller
 
     public function note_search(Request $request)
     {
-
+      $notes_pre = note::where('type', 'default')->get();
       if($request->select == 'Tipo de Nota'){
         $request->validate([
           'type'=>'required'
@@ -409,10 +409,11 @@ class notesController extends Controller
           return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id]);
         }
         $notes = note::where('patient_id', $request->patient_id)->where('medico_id',$request->medico_id)->where('title',$request->type)->orderBy('created_at','desc')->paginate(10);
+        
         $patient = patient::find($request->patient_id);
         $medico = medico::find($request->medico_id);
         $search = 'search_note';
-        return view('medico.notes.notes_patient',compact('notes','patient','medico','search'));
+        return view('medico.notes.notes_patient',compact('notes','patient','medico','search','notes_pre'));
       }else{
         $request->validate([
           'type'=>'required',
@@ -425,7 +426,7 @@ class notesController extends Controller
             $medico = medico::find($request->medico_id);
             $search = 'search_note';
 
-            return view('medico.notes.notes_patient',compact('notes','patient','medico','search'));
+            return view('medico.notes.notes_patient',compact('notes','patient','medico','search','notes_pre'));
         }
 
         $notes = note::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->where('title', $request->type)->where('created_at','LIKE',"%$request->date%")->orderBy('created_at','desc')->paginate(10);
@@ -433,7 +434,7 @@ class notesController extends Controller
         $medico = medico::find($request->medico_id);
         $search = 'search_note';
 
-        return view('medico.notes.notes_patient',compact('notes','patient','medico','search'));
+        return view('medico.notes.notes_patient',compact('notes','patient','medico','search','notes_pre'));
       }
 
     }
@@ -489,7 +490,7 @@ class notesController extends Controller
         'Afeccion_principal_o_motivo_de_consulta'=>'max:255',
         'Afeccion_secundaria'=>'max:255',
         'Pronostico'=>'max:255',
-        'Tratamiento_y_o_recetas'=>'max:255',
+        'Tratamiento_y_o_receta'=>'max:255',
         'Indicaciones_terapeuticas'=>'max:255',
         'Evolucion_y_actualizacion_del_cuadro_clinico'=>'max:255',
         'Sugerencias_y_tratamiento'=>'max:255',
@@ -567,7 +568,7 @@ class notesController extends Controller
     }
 
     public function check_input_notes(Request $request){
-
+      // return response()->json($request->all());
       $note = note::find($request->note_id);
 
       if($request->variable == 'Signos_vitales_show'){
