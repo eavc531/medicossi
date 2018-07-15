@@ -521,7 +521,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="alert alert-warning" role="alert" id="alert" style="display:none;margin:10px; ">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+          <button type="button" class="close" onclick="$(this).parent().hide()"><span aria-hidden="true">&times;</span></button>
           <div id="text-alert">
           </div>
         </div>
@@ -532,7 +533,7 @@
             <p id="text-success-confirm"></p>
           </div>
         </div>
-        <div class="modal-header">
+        <div class="modal-header text-white" style="background:rgb(93, 152, 230)">
 
           <h5 class="modal-title" id="exampleModalLongTitle">Ingresar</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -578,7 +579,7 @@
               <button class="btn btn-config-blue btn-block" onclick="login()">Iniciar sesión</button>
             </div>
             <div class="col-12">
-              <a href="#" class=" btn btn-config-green btn-block mt-2">Olvido su contraseña</a>
+              <a href="{{route('restore_pass')}}" class=" btn btn-config-green btn-block mt-2">Olvido su contraseña</a>
             </div>
           </div>
         </div>
@@ -656,7 +657,10 @@
 
   <script type="text/javascript">
 
+  function cerrar_a(result){
+    $(result).parent().hide();
 
+  }
 
   $(function()
   {
@@ -740,6 +744,7 @@
                   window.location.href = '{{route("loginRedirect")}}';
                 }else{
                   $('#text-alert').html('Email o Contraseña Invalida');
+                  $('#alert').fadeOut();
                   $('#alert').fadeIn();
                 }
               },
@@ -749,7 +754,7 @@
                   errores += '<li>'+value+'</li>';
                 });
                 console.log(errores);
-                $('#text-alert').html(errores);
+                $('#text-alert').html('<ul>'+errores+'</ul>');
                 $('#alert').fadeIn();
               // $error += '<li>result.message</li>';
               //  console.log(result.message);

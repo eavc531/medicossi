@@ -33,39 +33,16 @@
           @include('medico.includes.main_medico_patients')
 
         </div>
-        {{-- ////////////////////////////////////////////centro de menu////////////centro de menu// --}}
 
-        {{-- {!!Form::model(request()->all(),['route'=>'note_search','method'=>'GET'])!!}
-        <div class="form-inline p-2 my-3" style="border:solid 1px rgb(115, 115, 115)">
-          <label for="">Buscar Por:</label>
-          <input type="hidden" name="medico_id" value="{{$medico->id}}">
-          <input type="hidden" name="patient_id" value="{{$patient->id}}">
-
-          {!!Form::select('select',['Tipo de Nota'=>'Tipo de Nota','Tipo y Fecha'=>'Tipo y Fecha'],null,['class'=>'form-control ml-1','id'=>'select_input'])!!}
-
-          {!!Form::select('type',['Nota Médica Inicial'=>'Nota Médica Inicial','Nota de Referencia o traslado'=>'Nota de Referencia o traslado','Nota médica de Egreso'=>'Nota médica de Egreso','Nota médica de Urgencias'=>'Nota médica de Urgencias','Nota de Interconsulta'=>'Nota de Interconsulta','Nota Médica de Evolucion'=>'Nota Médica de Evolucion','Todas'=>'Todas'],null,['class'=>'form-control ml-1','placeholder'=>'Opciones de notas','id'=>'type'])!!}
-
-          @if(request()->date != Null)
-            {!!Form::date('date',null,['class'=>'form-control ml-1','placeholder'=>'Fecha','id'=>'date1'])!!}
-          @elseif(request()->select == 'Tipo y Fecha')
-            {!!Form::date('date',null,['class'=>'form-control ml-1','placeholder'=>'Fecha','id'=>'date1','style'=>''])!!}
-          @else
-            {!!Form::date('date',null,['class'=>'form-control ml-1','placeholder'=>'Fecha','id'=>'date1','style'=>'display:none'])!!}
-          @endif
-
-          <button class="btn btn-primary ml-1" type="submit" name="button"><i class="fas fa-search"></i></button>
-          <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-info ml-1">Todas</a>
-        </div>
-        {!!Form::close()!!} --}}
 
     @include('medico.expedients_patient.main_notes_create_config')
 
     <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id,'expedient'=>$expedient->id])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
 
-
+    <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary float-right ml-1">atras</a>
 
 @if($expedient_notes->first() != Null and !isset($search))
-  <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary float-right ml-1">atras</a>
+
 
   <div class="my-5 text-center">
     <h5 class="font-title-blue">Notas expediente: {{$expedient->name}}</h5>
@@ -75,6 +52,7 @@
   <div class="" style="background:red">
     <a href="{{route('download_expedient_pdf',$expedient->id)}}" class="btn btn-info float-right mb-2 ml-1">Descargar Expediente pdf</a>
     <a href="{{route('expedient_preview',$expedient->id)}}" class="btn btn-secondary float-right mb-2">Vista previa Expediente</a>
+
   </div>
 
   <table class="table table-bordered mt-2">
@@ -185,7 +163,7 @@
 @elseif($expedient_notes->first() == Null)
   <div class="card my-3">
     <div class="card-body">
-      <h5 class="font-title-blue text-center">No ahi registro de Expedientes</h5>
+      <h5 class="font-title-blue text-center">No ahi registro de Notas para este expediente</h5>
     </div>
   </div>
 @endif

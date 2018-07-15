@@ -135,6 +135,7 @@ class medicoController extends Controller
          $patient = patient::find($request->patient_id)->toArray();
 
          $data_patient = new data_patient;
+         // dd($patient);
          $data_patient->fill($patient);
          $data_patient->nameComplete = $patient['name']." ".$patient['lastName'];
          $data_patient->save();
@@ -947,8 +948,8 @@ class medicoController extends Controller
 
         Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           $msj->to($medico->email);
-           // $msj->to('eavc53189@gmail.com');
+           // $msj->to($medico->email);
+           $msj->to('eavc53189@gmail.com');
 
       });
 

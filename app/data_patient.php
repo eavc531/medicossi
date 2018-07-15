@@ -26,7 +26,7 @@ class data_patient extends Model
     'street',
     'number_ext',
     'number_int',
-    'photo_profile',
+    // 'photo_profile',
     'status',
     'medico_id',
     'patient_id'

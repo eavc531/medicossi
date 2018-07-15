@@ -173,10 +173,10 @@
         <div class="my-2">
           <div class="col-12 text-center">
             @if($plan_actual == Null)
-              <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a>
+              <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
             @else
               <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal33">
-                Contratarx
+                ContratarXX
               </button>
             @endif
 

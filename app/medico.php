@@ -39,6 +39,8 @@ class medico extends Model
       return $query->where('name','LIKE','%'.$search.'%')->orWhere('lastName','%'.$search.'%');
    }
 
-
+     public function user(){
+       return $this->belongsTo('App\user');
+    }
 
 }

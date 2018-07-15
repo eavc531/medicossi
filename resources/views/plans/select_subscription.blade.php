@@ -12,8 +12,14 @@
     <div class="text-right">
       <a href="{{route('planes_medic',$medico->id)}}" class="btn btn-secondary">Vovler</a>
     </div>
+    @if($plan->name == 'Plan Platino')
+      <div class="col-lg-8 m-lg-auto">
+          <p>Agradecemos y respetamos mucho tu preferencia hacia con nosotros y es por eso que en este paquete <b>PLATINO PLUS</b> queremos pedirte que nos des la oportunidad de promoverte como minimo 6 meses de forma completa como lo señala el paquete, esto para integrarte a nuestras campañas de marqueting y de una forma profesional puedas ver los resultados.</p>
+      </div>
+    @endif
     <div class="row my">
       <div class="col-12 col-lg-10 m-lg-auto">
+
         <div class="radio-tile-group">
           <div class="input-container">
             <input class="radio-button" type="radio" name="radio" value="{{$plan->price3}}" onclick="selec_price(this)" id="anual"/>
@@ -35,6 +41,8 @@
               <p class="radio-tile-label2"><b>{{$plan->price2}} MXN</b></p>
             </div>
           </div>
+          @if($plan->name != 'Plan Platino')
+
           <div class="input-container">
               <input class="radio-button" type="radio" name="radio" value="{{$plan->price1}}" onclick="selec_price(this)" id="mensual"/>
             <div class="radio-tile" >
@@ -45,6 +53,7 @@
               <p class="radio-tile-label2"><b>{{$plan->price1}} MXN</b></p>
             </div>
           </div>
+          @endif
         </div>
       </div>
     </div>

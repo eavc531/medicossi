@@ -18,6 +18,23 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
       class HomeController extends Controller
       {
+        public function restore_pass_email(Request $request){
+          $request->validate([
+            'email'=>'required'
+          ]);
+
+          $user = user::where('email',$request->email)->first();
+          if($user == NUll){
+            return back()->with('danger', 'La cuenta MedicosSí correspondiente al correo: "'.$request->email.'" no existe, asegurate de escribir tu correo de forma correcta e intenta nuevamente.');
+          }
+
+          $code = str_random(8);
+          
+        }
+
+        public function restore_pass(){
+          return view('restore_pass');
+        }
 
         public function autocomplete_specialty(){
           $specialtyName = request()->input('term');

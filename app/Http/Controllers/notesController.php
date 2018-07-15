@@ -122,7 +122,7 @@ class notesController extends Controller
 //validacion personalizada
 
       $validator = Validator::make($request->all(), [
-        'name'=>'required|unique:expedients',
+        'name'=>'required',
         'date_start'=>'required'
       ]);
 
@@ -363,7 +363,7 @@ class notesController extends Controller
       $note->type = 'customized';
       $note->save();
     }else{
-      $note = note::find($request->note_id);
+      $note = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->first();
       $note->Signos_vitales = $request->Signos_vitales;
       $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;
       $note->save();
@@ -409,7 +409,7 @@ class notesController extends Controller
           return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id]);
         }
         $notes = note::where('patient_id', $request->patient_id)->where('medico_id',$request->medico_id)->where('title',$request->type)->orderBy('created_at','desc')->paginate(10);
-        
+
         $patient = patient::find($request->patient_id);
         $medico = medico::find($request->medico_id);
         $search = 'search_note';

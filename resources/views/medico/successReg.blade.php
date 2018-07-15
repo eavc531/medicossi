@@ -23,7 +23,7 @@
             <div class="col-12">
 
               <p><b>Ya eres un miembre de la mejor red de médicos y profesionales de la salud</b>.</p>
-              <p>Solo falta que ingreses a tu cuenta de correo para que actives tu cuenta.</p><a href="{{route('home')}}">Ir a Inicio</a>
+              <p>Solo falta que ingreses a tu correo electronico donde recibiras un emai que te permitira verificar tu cuenta.</p><a href="{{route('home')}}">Ir a Inicio</a>
               <div class="row">
                 <div class="col-lg-12 col-12 mt-1">
                   <button class="btn btn-secondary" data-toggle="collapse" data-target="#demo">Ver Datos otorgados</button>

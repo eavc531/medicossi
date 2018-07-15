@@ -10,6 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('restore_password','homeController@restore_pass')->name('restore_pass');
+Route::post('restore_password_email','homeController@restore_pass_email')->name('restore_pass_email');
+
 Route::resource('medico','medicoController');
 Route::get('/', function(){
     return redirect()->route('home');

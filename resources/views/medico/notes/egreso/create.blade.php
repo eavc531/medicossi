@@ -300,8 +300,11 @@
 
           <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
             <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar Nota en Expediente">
+
+        @else
+          <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota">
+
         @endif
-        <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota">
 
 
 
