@@ -10,6 +10,12 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//patient
+Route::get('patients/register','patientController@patient_register_view')->name('patient_register_view');
+Route::get('confirm/patient/{id}/{code}','patientController@confirmPatient')->name('confirmPatient');
+Route::post('patient/register/store','patientController@patient_register')->name('patient_register');
+//
+
 Route::get('restore_password','homeController@restore_pass')->name('restore_pass');
 Route::post('restore_password_email','homeController@restore_pass_email')->name('restore_pass_email');
 
@@ -25,7 +31,7 @@ Route::get('send_mail/medicalCenter/{id}/code_confirmded','medicalCenterControll
 Route::get('confirm/patient/{id}','patientController@successRegPatient')->name('successRegPatient');
 Route::get('confirm/medico/{id}','medicoController@successRegMedico')->name('successRegMedico');
 Route::get('confirm/MedicalCenter/{id}','medicalCenterController@successRegMedicalCenter')->name('successRegMedicalCenter');
-Route::get('patients/register','patientController@patient_register_view')->name('patient_register_view');
+
 Route::post('medico/add_patient_registered','medicoController@add_patient_registered')->name('add_patient_registered');
 
 Route::post('video_store', 'medicoController@video_store')->name('video_store');
@@ -54,10 +60,13 @@ Route::get('home','HomeController@home')->name('home');
 
 Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
 
-Route::group(['middleware' => ['authenticate']], function (){
 
+
+// middlaware authentica
+  Route::group(['middleware' => ['authenticate']], function (){
 
 Route::resource('patient','patientController');
+
 Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
 //plans
 ////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
@@ -300,8 +309,8 @@ Route::get('patient/{id}/appoitment/unrated','patientController@patient_appointm
 
 
 
-Route::post('patient/register/store','patientController@patient_register')->name('patient_register');
-Route::get('confirm/patient/{id}/{code}','patientController@confirmPatient')->name('confirmPatient');
+
+
 Route::resource('medicalCenter','medicalCenterController');
 
 Route::post('medicalCenter/select/insurrances','medicalCenterController@select_insurrances')->name('select_insurrances');

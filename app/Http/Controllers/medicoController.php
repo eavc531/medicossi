@@ -948,8 +948,8 @@ class medicoController extends Controller
 
         Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           // $msj->to($medico->email);
-           $msj->to('eavc53189@gmail.com');
+           $msj->to($medico->email);
+           // $msj->to('eavc53189@gmail.com');
 
       });
 
@@ -967,9 +967,10 @@ class medicoController extends Controller
 
     public function resendMailMedicoConfirm($id){
 
-        $medico = medico::find($id);
+
          $code = str_random(25);
-         $user = User::where('medico_id',$id)->first();
+         $user = User::find($id);
+         $medico = medico::find($user->medico_id);
          $user->confirmation_code = $code;
          $user->save();
 

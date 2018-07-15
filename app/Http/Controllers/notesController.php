@@ -320,12 +320,27 @@ class notesController extends Controller
     // dd($request->medico_id);
     $notedefault = note::find($request->note_id);
     $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+
     if($noteCount == 0){
-      $note = $notedefault;
+      $note = new note;
+      $note->title = $request->title;
+      $note->medico_id = $request->medico_id;
+      $note->Signos_vitales = $request->Signos_vitales;
+      $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;
+      $note->type = 'customized';
+      $note->save();
     }else{
-      $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-      $note = $noteb;
+      $note = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->first();
+      $note->Signos_vitales = $request->Signos_vitales;
+      $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;
+      $note->save();
     }
+    // if($noteCount == 0){
+    //   $note = $notedefault;
+    // }else{
+    //   $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
+    //   $note = $noteb;
+    // }
     if($request->expedient_id == Null){
       $expedient = Null;
     }else{
@@ -353,21 +368,12 @@ class notesController extends Controller
   public function note_config_store(Request $request){
 
     $noteCount = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->count();
-
-    if($noteCount == 0){
-      $note = new note;
-      $note->title = $request->title;
-      $note->medico_id = $request->medico_id;
-      $note->Signos_vitales = $request->Signos_vitales;
-      $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;
-      $note->type = 'customized';
-      $note->save();
-    }else{
+    
       $note = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->first();
       $note->Signos_vitales = $request->Signos_vitales;
       $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;
       $note->save();
-    }
+
     // dd($request->all());
     if($request->boton_submit == 'Guardar'){
       return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id])->with('success', 'Nueva Configuracion guardada para: '.$note->title);

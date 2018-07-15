@@ -31,6 +31,11 @@ class patientController extends Controller
      //  {
      //     $this->middleware('authenticate', ['except' => ['patient_register_view','patient_register']]);
      //  }
+     public function __construct()
+      {
+         // $this->middleware('authenticate', ['except' => ['patient_register','successRegPatient','patient_register_view']]);
+      }
+
 
      public function calification_medic_show_patient(Request $request){
        $rate_medicCount = rate_medic::where('medico_id', $request->medico_id)->count();//marcar
@@ -213,7 +218,7 @@ class patientController extends Controller
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
           $msj->to($patient->email);
-          //$msj->to('eavc53189@gmail.com');
+          // $msj->to('eavc53189@gmail.com');
 
         });
 
@@ -340,6 +345,7 @@ class patientController extends Controller
      public function patient_register_view(Request $request){
        return view('patient.patient_register');
      }
+
      public function patient_register(Request $request){
 
 
@@ -360,7 +366,7 @@ class patientController extends Controller
        $patient = new patient;
        $patient->fill($request->all());
        $patient->age = $age;
-
+       $patient->nameComplete = $patient->name." ".$patient->lastName;
        // $patient->birthdate =
        $patient->confirmation_code = $code;
        $patient->save();

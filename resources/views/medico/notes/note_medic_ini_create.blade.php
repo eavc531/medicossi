@@ -197,9 +197,9 @@
      @endif
 
      @if($note->Pronostico_show == 'si')
-       {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Pronostico"])}}
+       {{Form::textarea('Pronostico',null,['class'=>'form-control',"id"=>"Pronostico"])}}
      @else
-       {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Pronostico",'style'=>'display:none'])}}
+       {{Form::textarea('Pronostico',null,['class'=>'form-control',"id"=>"Pronostico",'style'=>'display:none'])}}
      @endif
     </div>
 
@@ -257,7 +257,7 @@
 
     @else
       <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota">
-      
+
     @endif
 
 

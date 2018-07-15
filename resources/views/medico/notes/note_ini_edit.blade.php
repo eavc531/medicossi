@@ -162,9 +162,9 @@
    @endif
 
    @if($note->Afeccion_secundaria_show == 'si')
-     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Afeccion_secundaria"])}}
+     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Afeccion_principal_o_motivo_de_consulta"])}}
    @else
-     {{Form::textarea('Afeccion_secundaria','este',['class'=>'form-control',"id"=>"Afeccion_secundaria",'style'=>'display:none'])}}
+     {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control',"id"=>"Afeccion_principal_o_motivo_de_consulta",'style'=>'display:none'])}}
    @endif
 
   </div>
@@ -189,7 +189,7 @@
    @if($note->Pronostico_show == 'si')
      {{Form::textarea('Pronostico',null,['class'=>'form-control',"id"=>"Pronostico"])}}
    @else
-     {{Form::textarea('Pronostico','nullsd',['class'=>'form-control',"id"=>"Pronostico",'style'=>'display:none'])}}
+     {{Form::textarea('Pronostico',null,['class'=>'form-control',"id"=>"Pronostico",'style'=>'display:none'])}}
    @endif
   </div>
 
