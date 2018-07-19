@@ -15,7 +15,7 @@ class CreateExpedientNotesTable extends Migration
     {
         Schema::create('expedient_notes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->date('date_start')->nullable();
             $table->date('date_edit')->nullable();
             $table->integer('expedient_id')->unsigned()->nullable();

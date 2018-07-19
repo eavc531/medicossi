@@ -79,14 +79,27 @@
       @endif
     </div>
     @else
-    <div class="col-lg-6">
+    <div class="col-lg-6 text-center">
       <h3>Calificación:</h3>
       <span class="">@include('home.star_rate')</span>
       <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
       <div class="">
         <h4>
-          <button class="btn btn-success" type="button" name="button" onclick="calification_medic_show_patient()">Calificaciones y Comentarios</button>
+          <button class="btn btn-success btn-block" type="button" name="button" onclick="calification_medic_show_patient()">Calificaciones y Comentarios</button>
         </h4>
+      </div>
+
+      <div class="form-group mt-5">
+      @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
+
+        <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-block btn-lg" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
+      @else
+        @if(Auth::check() and Auth::user()->role == 'Paciente')
+        <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+        @else
+        <button onclick="verifySession()" class="btn btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
+        @endif
+      @endif
       </div>
     </div>
     @endif
@@ -536,29 +549,51 @@
       {{-- {{Form::radio('type_patient_service','Solo pacientes privados',['class'=>'custom-control-input','id'=>'radio'])}} --}}
 
       @if($medico->type_patient_service == "Solo pacientes privados")
-      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo medicos privados" checked="checked" id="radio" onclick="hide_aseguradoras()">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo medicos privados" checked="checked" id="radio" onclick="select_insurrances('Solo pacientes privados')">
       @else
-      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Solo pacientes privados" id="radio" onclick="hide_aseguradoras()">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Solo pacientes privados" id="radio" onclick="select_insurrances('Solo pacientes privados')">
       @endif
       <label class="" for="show-question1" id="radio"  >Solo pacientes privados</label>
     </div>
+
+    <div class="custom-control custom-radio">
+
+      @if($medico->type_patient_service == "solo pacientes de aseguradoras")
+
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo pacientes de aseguradora" checked="checked" id="radio2" onclick="select_insurrances('solo pacientes de aseguradoras')">
+      @else
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo pacientes de aseguradora" id="radio2" onclick="select_insurrances('solo pacientes de aseguradoras')">
+      @endif
+      <label class="" for="show-question1" id="radioxxx" >solo pacientes de aseguradoras</label>
+      <label class="" for="show-question2"></label>
+    </div>
+
     <div class="custom-control custom-radio">
 
       @if($medico->type_patient_service == "Pacientes por aseguradoras, convenios y privados")
 
-      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" checked="checked" id="radio2" onclick="show_aseguradoras()">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" checked="checked" id="radio2" onclick="select_insurrances('Pacientes por aseguradoras, convenios y privados')">
       @else
-      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" id="radio2" onclick="show_aseguradoras()">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" id="radio2" onclick="select_insurrances('Pacientes por aseguradoras, convenios y privados')">
       @endif
-      <label class="" for="show-question1" id="radioxxx"  >Pacientes por aseguradoras, convenios y privados</label>
+      <label class="" for="show-question1" id="radio">Pacientes por aseguradoras, convenios y privados</label>
       <label class="" for="show-question2"></label>
     </div>
-    <div class= "p-3 mt-3" id="panel-insurance" style="display:none;">
+
+    {{-- <div class= "p-3 mt-3" id="panel-insurance" style="display:none;">
       <a href="{{route('create_add_insurrances',$medico->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
-    </div>
-    <div class="aseguradoras" id="aseguradoras" style="display:none">
+    </div> --}}
+    @if($medico->type_patient_service == "Solo pacientes privados")
+        <div class="aseguradoras" id="aseguradoras" style="display:none">
+    @else
+        <div class="aseguradoras" id="aseguradoras">
+    @endif
+
       <div class="card">
         <div class="card-body">
+            <div class="text-center my-3">
+                <h5 class="font-title-blue">Aseguradoras</h5>
+            </div>
           <div class="row">
             @foreach ($insurance_carrier as $key => $value)
             <div class="col-6">
@@ -700,6 +735,37 @@
   </div>
 </div>
 
+{{-- MODAL vierify session --}}
+
+<div class="modal fade" id="modal_verify_patient" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title" id="text_modal"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6">
+            <p>Crear una cuenta para Pacientes</p>
+            <a href="{{route('patient_register_view')}}" class="btn btn-success">Crear Cuenta</a>
+          </div>
+          <div class="col-6">
+            <p>¿Ya tienes cuenta de Pacientes?</p>
+            <a href="{{route('inicar_home')}}" class="btn btn-primary">Iniciar Session</a>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{-- FIN MODAL vierify session --}}
 @endsection
 
 @section('scriptJS')
@@ -882,7 +948,7 @@ $(document).ready(function() {
   list_service();
   list_experience();
   list_videos();
-  comprueba_checkbox();
+
   show_map();
   });
 
@@ -972,9 +1038,12 @@ $(document).ready(function() {
   }
  //fin document ready
 
-function hide_aseguradoras(){
-  type_patient_service = $('#radio').val();
+
+
+function select_insurrances(result){
+  // type_patient_service = $('#radio2').val();
   medico_id = "{{$medico->id}}"
+  type_patient_service = result;
   route = "{{route('select_insurrances2')}}"
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -984,34 +1053,14 @@ function hide_aseguradoras(){
    error:function(error){
    },
    success:function(result){
-
+       if(result == 'Solo pacientes privados'){
+           $('#aseguradoras').hide();
+       }else{
+           $('#aseguradoras').show();
+       }
   }
 });
-  $('#aseguradoras').hide();
-}
 
-function show_aseguradoras(){
-  type_patient_service = $('#radio2').val();
-  medico_id = "{{$medico->id}}"
-  route = "{{route('select_insurrances2')}}"
-  $.ajax({
-   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-   type:'POST',
-   url:route,
-   data:{type_patient_service:type_patient_service,medico_id:medico_id},
-   error:function(error){
-   },
-   success:function(result){
-
-  }
-});
-  $('#aseguradoras').show();
-}
-
-function comprueba_checkbox(){
-  if($("#radio2").is(':checked')) {
-    $('#aseguradoras').show();
-  }
 }
 
 
@@ -1371,6 +1420,60 @@ function store_coordinates(){
 }
 function cerrar_alert(){
   $('#alert_error_s').hide();
+}
+
+function verifySession(){
+
+  route = "{{route('verifySession')}}";
+
+  $.ajax({
+    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    type:'post',
+    url: route,
+    // data:{verifySession:verifySession},
+    success:function(result){
+      if(result == 'session_of'){
+        $("#text_modal").html('Debes Iniciar Session como paciente para poder agendar Citas');
+        $('#modal_verify_patient').modal('show');
+        return;
+        // $('#text-alert').html('Debes Iniciar session como Paciente para poder agendar cita.');
+        // $('#alert').fadeIn();
+      }else if(result == 'no_patient'){
+        $("#text_modal").html('Debes Iniciar Session como paciente para poder agendar Citas');
+        $('#modal_verify_patient').modal('show');
+        return;
+      }
+    },
+    error:function(result){
+      console.log(result);
+    }
+  });
+}
+
+function verifySession2(){
+  route = "{{route('verifySession')}}";
+
+  $.ajax({
+    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    type:'post',
+    url: route,
+    // data:{verifySession:verifySession},
+    success:function(result){
+      if(result == 'session_of'){
+        $("#text_modal").html('Debes Iniciar Session como paciente para poder agregar médicos a tu cuenta.');
+        $('#modal_verify_patient').modal('show');
+        return;
+        // $('#text-alert').html('Debes Iniciar session como Paciente para poder agendar cita.');
+        // $('#alert').fadeIn();
+      }else if(result == 'no_patient'){
+        $('#modal_verify_patient').modal('show');
+        return;
+      }
+    },
+    error:function(result){
+      console.log(result);
+    }
+  });
 }
 
 </script>

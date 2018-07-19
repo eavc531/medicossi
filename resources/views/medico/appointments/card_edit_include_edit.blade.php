@@ -1,7 +1,6 @@
-<div class="card p-2 mb-2" id="card_edit" style="display:none">
+<div class="card p-2 mb-2" id="card_edit">
   <div class="row">
     <div class="col-12">
-      <button type="button" class="close" onclick="cerrar_edit()"><span >&times;</span></button>
 
       {{-- &times; --}}
     </button>
@@ -58,6 +57,8 @@
   <div class="col-lg-3 col-12">
     <div class="form-group">
       <label for="" class="font-title">Fecha de inicio</label>
+
+
       {!!Form::date('date_start',null,['class'=>'form-control','id'=>'dateStart9'])!!}
 
     </div>
@@ -131,10 +132,15 @@
       <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block" id="button_confirmed_complete" style="display:none">Finalizar/completada</button>
     </div>
   <div class="col-3">
-    <button onclick="cerrar_edit()" type="button" name="button" class="btn btn-secondary btn-block" id="">Cerrar</button>
+      @if (Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+        @if(Auth::user()->medico->plan == 'plan_agenda')
+          <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas   </span></a>
+        @else
+          <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas  </span></a>
+        @endif
+      @endif
+
   </div>
-
-
 
 </div>
 {!!Form::close()!!}

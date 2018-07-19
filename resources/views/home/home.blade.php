@@ -648,6 +648,17 @@
   </script>
   @endif
 
+  @if(Session::Has('iniciar'))
+      INICIARRRRRRR
+  <script type="text/javascript">
+
+    $(document).ready(function(){
+      $('#modal-login').modal('show');
+
+    });
+  </script>
+  @endif
+
   {{-- <script src="https://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY&callback=initMap"></script> --}}
   <script src="https://maps.google.com/maps/api/js?key=AIzaSyBAwMPmNsRoHB8CG4NLVIa_WRig9EupxNY"></script>
   <script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>

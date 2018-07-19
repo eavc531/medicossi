@@ -8,14 +8,16 @@
 </head>
 <body>
 
+  <h2>"Notificación Creacion de Su Cuenta MédicosSi Asistente"</h2>
 
-      
-      <h2>"Verificación por correo electrónico de MédicosSi"</h2>
+    <p>Un Cordial saludo: {{$assistant->nameComplete}}, un usario de la plataforma Médicossi, el Profesional Médico: {{$medico->name}} {{$medico->lastName}}, cuyo numero de identificaion es:{{$medico->identification}} le a asignado una cuenta como asistente en Médicossi , este tipo de cuenta le permitira gestionar cuentas de médicos que soliciten su servicio.
 
-      <p>Un Cordial saludo: {{$assistant->name}} {{$assistant->lastName}}, Para Confirmar su registro en MedicosSi debe Ingresar a la Ruta: </p><a href="{{route('confirmAssistant',['id'=>$user->id,'code'=>$code])}}">{{route('confirmAssistant',['id'=>$user->id,'code'=>$code])}}</a>
+    <p><strong>Sus Datos de Usuario para poder ingresar a su cuenta como asistente son los Siguientes:</strong></p>
+    <p><strong>Correo: </strong>{{$user->email}}</p>
+    <p><strong>Contraseña:</strong>{{$pass}}</p>
 
-      <p>Si usted no Solicito una cuenta en MédicosSi, Simplemente omita el mensaje; de este modo la cuenta no sera verificada.</p>
+    <p>Cuenta Creada en la fecha: {{\Carbon\Carbon::now()}}</p>
 
-
+    <p>Feliz Dia</p>
 </body>
 </html>

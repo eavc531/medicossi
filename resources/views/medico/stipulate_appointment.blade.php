@@ -137,21 +137,29 @@
     <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
     <p id="text_success" style="font-size:12px"></p>
   </div>
-
-  <div class="col-12 text-center mt-2 row">
-    <div class="col-lg-6">
+  <div class="col-12 mt-2">
       @if($countEventSchedule != 0)
-      <button onclick="store_event()"type="button" class="btn btn-config-blue" id="btn_agendar">agendar</button>
+      <button onclick="store_event('enviar')"type="button" class="btn btn-info btn-block" id="btn_agendar">agendar y enviar email</button>
       @else
-      <button onclick=""type="button" class="btn btn-config-blue" disabled>Agendar</button>
+    <button type="button" class="btn btn-info btn-block" id="btn_agendar" disabled>agendar y enviar email</button>
+
+      @endif
+  </div>
+  <div class="col-12 text-center mt-2 row">
+    <div class="col-lg-8">
+      @if($countEventSchedule != 0)
+      <button onclick="store_event('no_enviar')"type="button" class="btn btn-config-blue" id="btn_agendar">solo Agendar</button>
+      @else
+      <button onclick=""type="button" class="btn btn-config-blue" disabled>solo Agendar</button>
       @endif
       {{-- <button type="submit" class="btn btn-config-blue">Guardar</button> --}}
     </div>
-    <div class="col-lg-6">
-      <button onclick="vaciar()" type="button"class="btn btn-config-secondary">Cancelar</button>
+    <div class="col-lg-4">
+      <button onclick="vaciar()" type="button" class="btn btn-secondary" style="display:block">  vaciar</button>
     </div>
     {!!Form::close()!!}
   </div>
+
 </div>
 </div>
 </div>
@@ -416,8 +424,10 @@
     }
 
 
-    function store_event(){
+    function store_event(result){
+
       loader();
+      send = result;
       $('#btn_agendar').attr("disabled", true);
       $('#alert_carga').fadeIn();
       title = $('#eventType2').val();
@@ -439,7 +449,7 @@
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
        type:'post',
        url:route,
-       data:{title:title,payment_method:payment_method,date_start:date_start,hourStart:hourStart,minsStart:minsStart,dateEnd:dateEnd,hourEnd:hourEnd,minsEnd:minsEnd,medico_id:medico_id,patient_id:patient_id,price:price,description:description},
+       data:{title:title,payment_method:payment_method,date_start:date_start,hourStart:hourStart,minsStart:minsStart,dateEnd:dateEnd,hourEnd:hourEnd,minsEnd:minsEnd,medico_id:medico_id,patient_id:patient_id,price:price,description:description,send:send},
        error:function(error){
          stop_loader();
           console.log(error);
@@ -456,24 +466,30 @@
 
        },
        success:function(result){
+
          $('#alert_carga').fadeOut();
          $('#btn_agendar').attr("disabled", false);
-        vaciar();
-        console.log(result);
-        if(result == 'fuera de horario'){
+
+
+        if(result == 'fuera del horario'){
+            $('#alert_success').fadeOut();
           $('#text_error').html('Imposible crear evento fuera del horario establecido,  por favor compruebe la fecha en el calendario e intente nuevamente');
           $('#alert_error').fadeIn();
+      }else if(result == 'end menor start'){
           $('#alert_success').fadeOut();
+          $('#text_error').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
+          $('#alert_error').fadeIn();
         }else if(result == 'error_prepagada'){
+            $('#alert_success').fadeOut();
           $('#text_error').html('Error. Para agendar cita prepagada, añada el monto del pago');
           $('#alert_error').fadeIn();
-          $('#alert_success').fadeOut();
         }else if(result == 'ya existe'){
+            $('#alert_success').fadeOut();
           $('#text_error').html('Imposible crear evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
           $('#alert_error').fadeIn();
-          $('#alert_success').fadeOut();
         }else{
-          console.log(result);
+
+          vaciar();
           $('#text_success').html('Guardado con Exito');
           $('#alert_success').fadeIn();
           $('#alert_error').fadeOut();

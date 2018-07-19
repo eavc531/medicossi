@@ -18,6 +18,38 @@ use Validator;
 class notesController extends Controller
 {
 
+    public function note_move($id){
+        $note = note::find($id);
+        $patient = patient::find($note->patient_id);
+        // $medico = medico::find($note->medico_id);
+        $expedients = expedient::where('medico_id',$note->medico_id)->where('patient_id',$note->patient_id)->paginate(10);
+
+        return view('medico.notes.note_move',compact('expedients','note','patient'));
+    }
+
+    public function note_move_store($n_id,$ex_id){
+    
+        $note = note::find($n_id);
+        $expedient = expedient::find($ex_id);
+        $verify = expedient_note::where('note_id',$n_id)->where('expedient_id',$ex_id)->first();
+
+        if($verify != Null){
+            return back()->with('warning2', 'Ya existe una copia de: '.$note->title.' '.\Carbon\Carbon::parse($note->date_start)->format('d-m-Y').' dentro del expediente: '.$expedient->name)->with('exp',$expedient->name)->with('exp_id', $expedient->id);
+        }else{
+            $expedient_note = new expedient_note;
+            $expedient_note->medico_id = $note->medico_id;
+            $expedient_note->patient_id = $note->pateint_id;
+            $expedient_note->note_id = $n_id;
+            $expedient_note->expedient_id = $ex_id;
+            $expedient_note->save();
+
+            return back()->with('success2', 'Se a creado una copia de "'.$note->title.' '.\Carbon\Carbon::parse($note->date_start)->format('d-m-Y').'" en el expediente: '.$expedient->name)->with('exp',$expedient->name)->with('exp_id', $expedient->id);
+
+        }
+
+
+
+    }
 
     public function expedient_search(Request $request){
       $medico = medico::find($request->medico_id);
@@ -321,26 +353,47 @@ class notesController extends Controller
     $notedefault = note::find($request->note_id);
     $noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
 
+
     if($noteCount == 0){
       $note = new note;
-      $note->title = $request->title;
+      $note->title = $notedefault->title;
       $note->medico_id = $request->medico_id;
-      $note->Signos_vitales = $request->Signos_vitales;
-      $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;
+      $note->Signos_vitales = $notedefault->Signos_vitales;
+      $note->Pruebas_de_laboratorio = $notedefault->Pruebas_de_laboratorio;
       $note->type = 'customized';
+      $note->Signos_vitales_show = 'si';
+      $note->Motivo_de_atencion_show = 'si';
+      $note->Exploracion_fisica_show = 'si';
+      $note->Pruebas_de_laboratorio_show = 'si';
+      $note->Diagnostico_show = 'si';
+      $note->Afeccion_principal_o_motivo_de_consulta_show = 'si';
+      $note->Afeccion_secundaria_show = 'si';
+      $note->Pronostico_show = 'si';
+      $note->Tratamiento_y_o_recetas_show = 'si';
+      $note->Indicaciones_terapeuticas_show = 'si';
+      $note->Estado_mental_show = 'si';
+      $note->Resultados_relevantes_show = 'si';
+      $note->Manejo_durante_la_estancia_hospitalaria_show = 'si';
+      $note->Recomendaciones_para_vigilancia_ambulatoira_show = 'si';
+      $note->Otros_datos_show = 'si';
+      $note->Motivo_de_envio_show = 'si';
+      $note->Evolucion_y_actualizacion_del_cuadro_clinico_show = 'si';
+      $note->Motivo_del_egreso_show = 'si';
+      $note->Diagnosticos_finales_show = 'si';
+      $note->Resumen_de_evolucion_y_estado_actual_show = 'si';
+      $note->Problemas_clinicos_pendientes_show = 'si';
+      $note->Plan_de_manejo_y_tratamiento_show = 'si';
+      $note->Establecimiento_que_envia_show = 'si';
+      $note->Sugerencias_y_tratamiento_show = 'si';
       $note->save();
     }else{
-      $note = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->first();
-      $note->Signos_vitales = $request->Signos_vitales;
-      $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;
-      $note->save();
+        // dd('sd');
+      $note = note::where('medico_id',$request->medico_id)->where('title', $notedefault->title)->where('type', 'customized')->first();
+      // $note->Signos_vitales = $notedefault->Signos_vitales;
+      // $note->Pruebas_de_laboratorio = $notedefault->Pruebas_de_laboratorio;
+      // $note->save();
     }
-    // if($noteCount == 0){
-    //   $note = $notedefault;
-    // }else{
-    //   $noteb = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
-    //   $note = $noteb;
-    // }
+
     if($request->expedient_id == Null){
       $expedient = Null;
     }else{
@@ -368,7 +421,7 @@ class notesController extends Controller
   public function note_config_store(Request $request){
 
     $noteCount = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->count();
-    
+
       $note = note::where('medico_id',$request->medico_id)->where('title', $request->title)->where('type', 'customized')->first();
       $note->Signos_vitales = $request->Signos_vitales;
       $note->Pruebas_de_laboratorio = $request->Pruebas_de_laboratorio;

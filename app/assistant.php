@@ -11,7 +11,7 @@ class assistant extends Model
     'identification',
     'name',
     'lastName',
-    'medico_id',
+
     'status',
     'phone1',
     'phone2',

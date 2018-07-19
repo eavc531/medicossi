@@ -10,7 +10,7 @@
 
   <h2>"Notificación Su Cuenta MédicosSi Creada"</h2>
 
-    <p>Un Cordial saludo: {{$patient->nameComplete}}, un usario de la plataforma Médicossi, el Profesional Médico: {{$medico->name}} {{$medico->lastName}}, cuyo numero de identificaion es:{{$medico->identification}} le a asignado una cuenta Médicossi, plataforma que le permite ubicar Profesionales médicos por categorias, agendar citas con estos de forma eficiente,y estar al tanto de sus citas pendientes.
+    <p>Un Cordial saludo: {{$patient->nameComplete}}, un usario de la plataforma Médicossi, el Profesional Médico: {{$medico->name}} {{$medico->lastName}}, cuyo numero de identificaion es:{{$medico->identification}} le a asignado una cuenta Médicossi, plataforma que le permite ubicar Profesionales médicos por categorias, agendar citas con estos en linea, y estar al tanto de sus citas pendientes.
 
     <p><strong>Sus Datos de Usuario para poder ingresar a su cuenta son los Siguientes:</strong></p>
     <p><strong>Correo: </strong>{{$patient->email}}</p>

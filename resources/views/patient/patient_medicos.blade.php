@@ -30,7 +30,7 @@
        </div>
        <div class="col-12 col-sm-5 col-lg-5">
         <div class="card-body p-2">
-         <h5 class="card-title title-edit">{{$medico['name']}}</h5>
+         <h5 class="card-title title-edit">{{$medico['name']}} {{$medico['lastName']}}</h5>
          <p>Cédula: {{$medico['identification']}}</p>
          <span>Especialidad:</span> <a href="#" class="outstanding mr-2"> {{$medico['specialty']}}</a>
          <div class="star-profile">

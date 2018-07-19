@@ -18,6 +18,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
       class HomeController extends Controller
       {
+
+
+          public function inicar_home(){
+            return redirect()->route('home')->with('iniciar', 'iniciar');
+          }
+
         public function restore_pass_email(Request $request){
           $request->validate([
             'email'=>'required'
@@ -29,7 +35,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
           }
 
           $code = str_random(8);
-          
+
         }
 
         public function restore_pass(){

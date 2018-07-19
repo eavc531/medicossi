@@ -7,6 +7,10 @@
 .fc-event {
     border-width: 1px;
 }
+
+.fc-toolbar{
+  background: rgb(231, 174, 98);
+}
 </style>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -23,7 +27,7 @@
       <div class="col-lg-9 col-12">
           <div class="row">
             <div class="col-12">
-              <h2 class="text-center font-title">Mi Agenda</h2>
+               <h3 class="text-center font-title">Editar Cita: {{$event_edit->title}} {{\Carbon\Carbon::parse($event_edit->date_start)->format('d-m-Y')}}, Paciente: {{ $event_edit->namePatient}}</h3>
             </div>
           </div>
           <div class="row">
@@ -37,17 +41,11 @@
           <hr>
           {{-- //busqueda --}}
           @if($countEventSchedule != 0)
-            <label for="" class="mt-2">Agendar con:</label>
-            <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search">
-            <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()">Buscar</button>
-            <button type="button" name="button" class="btn btn-secondary btn-sm" onclick="vaciar_search()">vaciar</button>
-            <div class="" id="result_search">
 
-            </div>
 
           @endif
           @include('medico.includes.alert_calendar')
-          @include('medico.includes.card_edit')
+          @include('medico.appointments.card_edit_include_edit')
           @include('medico.includes.modals_diary')
           {{-- // --}}
 
@@ -57,181 +55,7 @@
 
           <div id='calendar' style=""></div>
           {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
-            <div class="row text-center mt-2">
-              <div class="col">
-                <div class="" style="width:15px;height:15px;background:">
-                </div>
-                  <input type="radio" value="Disponible" name="opcion" onclick="filtro_todas()"/><br />
-                <label for="" class="mx-2" style="background:rgb(230, 230, 230)">Todas</label>
-              </div>
-              <div class="col">
-              <input type="radio" value="A" name="opcion" onclick="filtro_title('Cita por Internet')"/><br />
-                <label for="" style="background:rgb(35, 44, 173);color:white">Cita por internet</label>
-              </div>
-              <div class="col">
 
-                  <input type="radio" value="A" name="opcion" onclick="filtro_state('Pagada y Pendiente')"/><br />
-                  <label for="" style="background:rgb(233, 21, 21)">Pagada y Pendiente</label>
-
-              </div>
-              {{-- <div class="col">
-                  <input type="radio" value="A" name="opcion" onclick="filtrar('Cita por internet')"/><br />
-                <label for="">Paciente valorado</label>
-              </div> --}}
-              <div class="col">
-                <input type="radio" value="A" name="opcion" onclick="filtro_state('Pagada y Completada')"/><br/>
-                <label for="" style="border:solid 1px black">Pagada y Completada</label>
-              </div>
-              <div class="col">
-                  <input type="radio" value="A" name="opcion" onclick="filtro_state('Pendiente')"/><br />
-                <label for=""  style="background:rgba(179, 193, 173, 0.75)">Pendiente y por Cobrar</label>
-              </div>
-              <div class="col">
-                  <input type="radio" value="A" name="opcion" onclick="filtro_state('Pasada y por Cobrar')"/><br />
-                <label for="" style="background:rgb(190, 61, 13)">Pasada y por Cobrar</label>
-              </div>
-              <div class="col">
-                  <input type="radio" value="A" name="opcion" onclick="filtro_payment_method('Aseguradora')"/><br />
-                <label for="">Aseguradora</label>
-              </div>
-              {{-- <div class="col">
-                  <input type="radio" value="A" name="opcion" onclick="PendientePorCobrar()"/><br />
-                <label for="">Confirmada con Paciente</label>
-              </div> --}}
-            </div>
-
-
-          @include('medico.panel.config_reminder')
-
-          <div class="card mt-5 mb-5" >
-          <div class="row">
-            <div class="col-12 text-center">
-              <h4 class="font-title-blue text-center mt-3">Horario de trabajo</h4>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead>
-                      <tr>
-                        <th>Lunes</th>
-                        <th>Martes</th>
-                        <th>Miercoles</th>
-                        <th>Jueves</th>
-                        <th>Viernes</th>
-                        <th>Sabado</th>
-                        <th>Domingo</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        @foreach ($lunes as $day)
-                          <ul>
-                            <li>
-                              {{$day->start}}
-                                      a
-                              {{$day->end}}
-                            </li>
-                              <hr>
-                          </ul>
-                        @endforeach
-                      </td>
-                      <td>
-                        @foreach ($martes as $day)
-                          <ul>
-                            <li>
-                              {{$day->start}}
-                                      a
-                              {{$day->end}}
-
-                            </li>
-
-                              <hr>
-                          </ul>
-                        @endforeach
-                      </td>
-                      <td>
-                        @foreach ($miercoles as $day)
-                          <ul>
-                            <li>
-                              {{$day->start}}
-                                      a
-                              {{$day->end}}
-
-
-                              <hr>
-                          </ul>
-                        @endforeach
-                      </td>
-                      <td>
-                        @foreach ($jueves as $day)
-                          <ul>
-                            <li>
-                              {{$day->start}}
-                                      a
-                              {{$day->end}}
-
-
-                              <hr>
-                          </ul>
-                        @endforeach
-                      </td>
-                      <td>
-                        @foreach ($viernes as $day)
-                          <ul>
-                            <li>
-                              {{$day->start}}
-                                      a
-                              {{$day->end}}
-
-                            </li>
-
-                              <hr>
-                          </ul>
-                        @endforeach
-                      </td>
-                      <td>
-                        @foreach ($sabado as $day)
-                          <ul>
-                            <li>
-                              {{$day->start}}
-                                      a
-                              {{$day->end}}
-
-                            </li>
-
-                              <hr>
-                          </ul>
-                        @endforeach
-                      </td>
-                      <td>
-                        @foreach ($domingo as $day)
-                          <ul>
-                            <li>
-                              {{$day->start}}
-                                      a
-                              {{$day->end}}
-
-                            </li>
-                              <hr>
-                          </ul>
-                        @endforeach
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tfoot>
-
-                  </tfoot>
-                </table>
-                <div class="card-footer text-right">
-                  <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-success ">Editar</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
         @else
           <div class="card mt-5 mb-5">
             <div class="card-header">
@@ -247,100 +71,7 @@
     </div>
           {{-- </div> --}}
         <div class="col-12 col-lg-3">
-          <div id="dashboard">
-            <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
-            <div class="col-12 border-head-panel text-center">
-              <span>Usuario firmado:</span>
-              <span>{{$medico->email}}</span>
-            </div>
-            <div class="col-12 border-panel-green text-center my-1">
-              <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
-                Otorgar horario de consulta
-              </a>
-            </div>
-            <div class="border-panel-blue my-1">
-              <div class="form-group text-center">
-                <button type="button" class="btn-info btn" data-toggle="modal" data-target="#info1"><i class="fas fa-info mr-2"></i>Ayuda</button>
-                <div class="form-group" style="margin-top:35px">
-                  <label for="" class="label-title ">Agendar Evento Personal</label>
-                </div>
 
-                  {!!Form::open(['route'=>'event_personal_store','method'=>'POST','id'=>'form_event','name'=>'form_event'])!!}
-                  {!!Form::hidden('medico_id',$medico->id)!!}
-                {!!Form::select('title',['Ausente'=>'Ausente'],null,['class'=>'form-control','id'=>'title6','Tipo de Evento'=>'Tipo de Cita'])!!}
-
-                <input class="form-control my-2" type="text" placeholder="Descripción (Opcional)" id="description6" name="descripti9oon">
-                <label for="" class="mt-2 font-title">Datos de Inicio</label>
-                <div class="row">
-
-                  <div class="col-4 font-title">
-                    Fecha
-                  </div>
-                    <div class="col-8">
-                      {!!Form::date('date_start',null,['class'=>'form-control','id'=>'date_start2'])!!}
-                    </div>
-                </div>
-                <div class="row mt-1">
-                  <div class="col-3 font-title">
-                    Hora
-
-                  </div>
-                  <div class="form-inline">
-                    {!!Form::select('hourStart',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourStart2','placeholder'=>'--'])!!}
-
-                      {!!Form::select('minsStart',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsStart2','placeholder'=>'--'])!!}
-
-                      {{-- {!!Form::select('startFormatHour',['am'=>'am','pm'=>'pm'],null,['id'=>'startFormatHour3','class'=>'form-control  mb-1'])!!} --}}
-                  </div>
-
-                </div>
-                <label for="" class="mt-2 font-title">Datos de Culminacion</label>
-
-                <div class="row mt-1">
-
-                  <div class="col-4 font-title">
-                    Hora
-                  </div>
-                  <div class="form-inline">
-                    {!!Form::select('hourEnd',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourEnd2','placeholder'=>'--'])!!}
-
-                      {!!Form::select('minsEnd',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsEnd2','placeholder'=>'--'])!!}
-
-                  </div>
-
-                </div>
-
-                <div id="alert_error" class="alert alert-warning alert-dismissible fade show text-left" role="alert" style="display:none">
-                  <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
-                  <p id="text_error" style="font-size:12px"></p>
-                </div>
-
-                <div id="alert_success" class="alert alert-success alert-dismissible fade show text-left" role="alert" style="display:none">
-                  <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
-                  <p id="text_success" style="font-size:12px"></p>
-                </div>
-
-                <div class="col-12 text-center mt-2 row">
-
-
-
-                  <div class="col-lg-6">
-                    @if($countEventSchedule != 0)
-                      <button type="submit" name="button" class="btn btn-config-blue">Guardar</button>
-                    {{-- <button onclick="store_event()"type="button" class="btn btn-config-blue">Guardar</button> --}}
-                    @else
-                    <button onclick=""type="button" class="btn btn-config-blue" disabled>Guardar</button>
-                    @endif
-                    {{-- <button type="submit" class="btn btn-config-blue">Guardar</button> --}}
-                  </div>
-                  <div class="col-lg-6">
-                    <button onclick="vaciar()" type="button"class="btn btn-config-secondary">Cancelar</button>
-                  </div>
-                  {!!Form::close()!!}
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -541,48 +272,6 @@
   }
 
 
-    function reminder_time_confirmed(request){
-      medico_id = "{{$medico->id}}";
-      time = request;
-      route = "{{route('reminder_time_confirmed')}}";
-      $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        url: route,
-        data:{medico_id:medico_id,time:time},
-        // Mostramos un mensaje con la respuesta de PHP
-        success:function(result){
-          console.log(result);
-        },
-        error:function(error){
-         console.log(error);
-       },
-    });
-    }
-
-    function switch_reminder1(request){
-      if(request == 'No'){
-        $('.open-check').fadeIn();
-
-      }
-      medico_id = "{{$medico->id}}";
-      options = request;
-      route = "{{route('reminder_switch_confirmed')}}";
-      $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        url: route,
-        data:{medico_id:medico_id,options:options},
-        // Mostramos un mensaje con la respuesta de PHP
-        success:function(result){
-          console.log(result);
-        },
-        error:function(error){
-         console.log(error);
-       },
-    });
-    }
-
     function switch_payment_and_past(result){
 
       medico_id = "{{$medico->id}}";
@@ -605,7 +294,11 @@
 
     $(document).ready(function(){
 
+        ajax_data_edit_event();
+
+
       $('#form, #fo3').submit(function(){
+
           if($('#dateStart99').val() != $('#dateStart9').val() || $('#hourStart99').val() != $('#hourStart9').val() || $('#minsStart99').val() != $('#minsStart9').val() || $('#hourEnd99').val() != $('#hourEnd9').val() || $('#minsEnd99').val() != $('#minsEnd9').val()){
               question = confirm('Se ha modificado la fecha de la consulta, al guardar cambio se enviara un correo al paciente para notificarle, ¿desea continuar?');
               if(question == false){
@@ -652,15 +345,15 @@
                  if(result == 'fuera del horario'){
                    $('#text_error_up1').html('imposible guardar evento, fuera del horario establecido');
                    $('#alert_error_up1').fadeIn();
-
-               }else if(result == 'end menor start'){
-                     $('#text_error_up1').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
-                     $('#alert_error_up1').fadeIn();
-
                  }else if(result == 'fecha_editada'){
                    $('#text_success_up1').html('Se ha cambiado la "Hora/Fecha" de la consulta con Exito. Se ha enviado un correo al Paciente para notificarle del cambio de la consulta.');
                    $('#alert_success_up1').fadeIn();
-                   $('#card_edit').fadeOut();
+                   $('#calendar').fullCalendar('removeEvents');
+                   $('#calendar').fullCalendar('refetchEvents');
+                   // $('#card_edit').fadeOut();
+               }else if(result == 'end menor start'){
+                     $('#text_error_up1').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
+                     $('#alert_error_up1').fadeIn();
                  }else if(result == 'ya existe'){
                    $('#text_error_up1').html('Imposible actualizar evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
                    $('#alert_error_up1').fadeIn();
@@ -668,13 +361,18 @@
 
                  }else {
                    console.log(result);
-                   $('#card_edit').fadeOut();
+                   // $('#card_edit').fadeOut();
                    $('#text_success_up1').html('Guardado con Exito');
                    $('#alert_success_up1').fadeIn();
                    $('#alert_error_up1').fadeOut();
                    $('#calendar').fullCalendar('removeEvents');
                    $('#calendar').fullCalendar('refetchEvents');
-
+                   var1 = $('#dateStart9').val();
+                   var2 = $('#hourStart9').val();
+                   var3 = $('#minsStart9').val();
+                   $('#dateStart99').val(var1);
+                   $('#hourStart99').val(var2);
+                   $('#minsStart99').val(var3);
                  }
 
                }
@@ -788,144 +486,14 @@
         events:"{{route('medico_diary_events',$medico->id)}}",
 
         eventClick: function(event, jsEvent, view){
-            var start = $.fullCalendar.moment(event.start).format('YYYY-MM-DD');
-            var end = $.fullCalendar.moment(event.end).format('YYYY-MM-DD');
-            hour_start = $.fullCalendar.moment(event.start).format('HH');
-            mins_start = $.fullCalendar.moment(event.start).format('mm');
-            hour_end = $.fullCalendar.moment(event.end).format('HH');
-            mins_end = $.fullCalendar.moment(event.end).format('mm');
-
-            $('#confirmed_patient9').val(event.confirmed_patient);
-            $('#confirmed_medico9').val(event.confirmed_medico);
-            $('#price9').val(event.price);
-            $('#title9').val(event.title);
-            $('#state9').val(event.state);
-            $('#description9').val(event.description);
-            $('#eventType9').val(event.eventType);
-            $('#payment_method9').val(event.payment_method);
-            //
-            $('#dateStart9').val(start);
-            $('#hourStart9').val(hour_start);
-            $('#minsStart9').val(mins_start);
-            //clones
-            $('#dateStart99').val(start);
-            $('#hourStart99').val(hour_start);
-            $('#minsStart99').val(mins_start);
-            ///
-            $('#dateEndU9').val(end);
-            //
-            $('#hourEnd9').val(hour_end);
-            $('#minsEnd9').val(mins_end);
-            $('#hourEnd99').val(hour_end);
-            $('#minsEnd99').val(mins_end);
-            //
-            $('#event_id9').val(event.id);
-            $('#event_id9').val(event.id);
-            $('#event_id_destroy9').val(event.id);
-            $('#namePatient9').val(event.namePatient);
-            $('#payment_state9').val(event.payment_state);
-            $('#card_edit').fadeOut();
-            $('#card_edit').fadeIn();
-
-            $('#alert_success_up1').fadeOut();
-            vaciar();
-            if(event.confirmed_medico == 'Si'){
-              $('#but_save').attr('value','Guardar Cambios');
-            }else{
-              $('#but_save').attr('value','Guardar y Confirmar');
-            }
-
-            if(event.state == 'Pagada y Completada'){
-              $('#rechazar').hide();
-              $('#button_confirmed_payment').hide();
-              $('#button_confirmed_complete').hide();
-              $('#but_save').hide();
-            }else if(event.payment_state == 'Si'){
-              $('#price9').attr('readonly',true);
-              $('#rechazar').hide();
-              $('#button_confirmed_payment').hide();
-              $('#button_confirmed_complete').show();
-              $('#but_save').show();
-            }else{
-              $('#rechazar').show();
-              $('#price9').attr('readonly',false);
-              $('#button_confirmed_payment').show();
-              $('#button_confirmed_complete').hide();
-              $('#but_save').show();
-            }
-
-            if(event.state == 'Pagada y Completada'){
-              $('#confirmed_patient9').attr('disabled',true);
-              $('#confirmed_medico9').attr('disabled',true);
-              $('#price9').attr('disabled',true);
-              $('#title9').attr('disabled',true);
-              $('#state9').attr('disabled',true);
-              $('#description9').attr('disabled',true);
-              $('#eventType9').attr('disabled',true);
-              $('#payment_method9').attr('disabled',true);
-              $('#dateStart9').attr('disabled',true);
-              $('#hourStart9').attr('disabled',true);
-              $('#minsStart9').attr('disabled',true);
-              $('#dateEndU9').attr('disabled',true);
-              $('#hourEnd9').attr('disabled',true);
-              $('#minsEnd9').attr('disabled',true);
-              $('#event_id9').attr('disabled',true);
-              $('#event_id9').attr('disabled',true);
-              $('#event_id_destroy9').attr('disabled',true);
-              $('#namePatient9').attr('disabled',true);
-              $('#payment_state9').attr('disabled',true);
-
-            }else{
-              $('#confirmed_patient9').attr('disabled',false);
-              $('#confirmed_medico9').attr('disabled',false);
-              $('#price9').attr('disabled',false);
-              $('#title9').attr('disabled',false);
-              $('#state9').attr('disabled',false);
-              $('#description9').attr('disabled',false);
-              $('#eventType9').attr('disabled',false);
-              $('#payment_method9').attr('disabled',false);
-              $('#dateStart9').attr('disabled',false);
-              $('#hourStart9').attr('disabled',false);
-              $('#minsStart9').attr('disabled',false);
-              $('#dateEndU9').attr('disabled',false);
-              $('#hourEnd9').attr('disabled',false);
-              $('#minsEnd9').attr('disabled',false);
-              $('#event_id9').attr('disabled',false);
-              $('#event_id9').attr('disabled',false);
-              $('#event_id_destroy9').attr('disabled',false);
-              $('#namePatient9').attr('disabled',false);
-              $('#payment_state9').attr('disabled',false);
-
-            }
+            alert('Este panel es exclusivo solo para editar citas pre-seleccionadas, para editar todas las citas de modo libre acceda al panel "Mi Agenda"');
         },
 
         eventRender: function (event, element, view) {
 
-          if($('#filtro_state').val() != 'Ninguno'){
 
-
-              if(event.state != $('#filtro_state').val() &&  event.rendering != 'background'){
-                return false;
-              }
-            }
-
-
-          if($('#filtro_title').val() != 'Ninguno'){
-
-            if(event.title != $('#filtro_title').val() &&  event.rendering != 'background'){
-              return false;
-            }
-          }
-
-          if($('#filtro_payment_method').val() != 'Ninguno'){
-
-            if(event.payment_method != $('#filtro_payment_method').val() &&  event.rendering != 'background'){
-              return false;
-            }
-          }
-
-          if(event.title == 'Ausente'){
-            element.find('.fc-title').append('<div class="hr-line-solid-no-margin"></div><span style="font-size: 10px">'+event.description+'</span>');
+          if(event.id == "{{$event_edit->id}}"){
+            element.find('.fc-title').html('<div class="hr-line-solid-no-margin text-center" style="background:red;border-radius:2px;color:white;">Editando</div>');
           }else{
             element.find('.fc-title').append('<div class="hr-line-solid-no-margin"></div><span style="font-size: 10px">'+event.namePatient+'</span><span style="font-size: 10px"><p style="font-size: 10px">'+event.description+'</p></span>');
           }
@@ -1055,18 +623,18 @@
 
       },
       success:function(result){
+          alert(result);
         if(result == 'fuera del horario'){
           $('#text_error').html('Imposible crear evento fuera del horario establecido');
           $('#alert_error').fadeIn();
           $('#alert_success').fadeOut();
-        }else if(result == 'end menor start'){
-            $('#text_error').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
-            $('#alert_error').fadeIn();
-            $('#alert_success').fadeOut();
         }else if(result == 'ya existe'){
           $('#text_error').html('Imposible crear evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
           $('#alert_error').fadeIn();
           $('#alert_success').fadeOut();
+      }else if(result == 'end menor start'){
+            $('#text_error_up1').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
+            $('#alert_error_up1').fadeIn();
         }else{
           console.log(result);
           $('#text_success').html('Guardado con Exito');
@@ -1154,7 +722,7 @@
         $('#alert_error_up1').fadeOut();
         $('#calendar').fullCalendar('removeEvents');
         $('#calendar').fullCalendar('refetchEvents');
-        $('#card_edit').fadeOut();
+        // $('#card_edit').fadeOut();
       }
     });
 
@@ -1246,6 +814,136 @@
 
     function mail_cancel(){
         $('#mail_cancel').modal('show');
+    }
+
+    function ajax_data_edit_event(){
+        event_edit = "{{$event_edit->id}}"
+        route = "{{route('ajax_data_edit_event')}}"
+        $.ajax({
+         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+         type:'post',
+         url:route,
+         data:{event_edit:event_edit},
+         error:function(error){
+           console.log(error);
+        },
+        success:function(event){
+            console.log(event);
+
+            var start = $.fullCalendar.moment(event.start).format('YYYY-MM-DD');
+            var end = $.fullCalendar.moment(event.end).format('YYYY-MM-DD');
+            hour_start = $.fullCalendar.moment(event.start).format('HH');
+            mins_start = $.fullCalendar.moment(event.start).format('mm');
+            hour_end = $.fullCalendar.moment(event.end).format('HH');
+            mins_end = $.fullCalendar.moment(event.end).format('mm');
+
+            $('#confirmed_patient9').val(event.confirmed_patient);
+            $('#confirmed_medico9').val(event.confirmed_medico);
+            $('#price9').val(event.price);
+            $('#title9').val(event.title);
+            $('#state9').val(event.state);
+            $('#description9').val(event.description);
+            $('#eventType9').val(event.eventType);
+            $('#payment_method9').val(event.payment_method);
+            //
+            $('#dateStart9').val(start);
+            $('#hourStart9').val(hour_start);
+            $('#minsStart9').val(mins_start);
+            //clones
+            $('#dateStart99').val(start);
+            $('#hourStart99').val(hour_start);
+            $('#minsStart99').val(mins_start);
+            ///
+            $('#dateEndU9').val(end);
+            //
+            $('#hourEnd9').val(hour_end);
+            $('#minsEnd9').val(mins_end);
+            $('#hourEnd99').val(hour_end);
+            $('#minsEnd99').val(mins_end);
+            //
+            $('#event_id9').val(event.id);
+            $('#event_id9').val(event.id);
+            $('#event_id_destroy9').val(event.id);
+            $('#namePatient9').val(event.namePatient);
+            $('#payment_state9').val(event.payment_state);
+
+
+
+            $('#alert_success_up1').fadeOut();
+            vaciar();
+            if(event.confirmed_medico == 'Si'){
+              $('#but_save').attr('value','Guardar Cambios');
+            }else{
+              $('#but_save').attr('value','Guardar y Confirmar');
+            }
+
+            if(event.state == 'Pagada y Completada'){
+              $('#rechazar').hide();
+              $('#button_confirmed_payment').hide();
+              $('#button_confirmed_complete').hide();
+              $('#but_save').hide();
+            }else if(event.payment_state == 'Si'){
+              $('#price9').attr('readonly',true);
+              $('#rechazar').hide();
+              $('#button_confirmed_payment').hide();
+              $('#button_confirmed_complete').show();
+              $('#but_save').show();
+            }else{
+              $('#rechazar').show();
+              $('#price9').attr('readonly',false);
+              $('#button_confirmed_payment').show();
+              $('#button_confirmed_complete').hide();
+              $('#but_save').show();
+            }
+
+            if(event.state == 'Pagada y Completada'){
+              $('#confirmed_patient9').attr('disabled',true);
+              $('#confirmed_medico9').attr('disabled',true);
+              $('#price9').attr('disabled',true);
+              $('#title9').attr('disabled',true);
+              $('#state9').attr('disabled',true);
+              $('#description9').attr('disabled',true);
+              $('#eventType9').attr('disabled',true);
+              $('#payment_method9').attr('disabled',true);
+              $('#dateStart9').attr('disabled',true);
+              $('#hourStart9').attr('disabled',true);
+              $('#minsStart9').attr('disabled',true);
+              $('#dateEndU9').attr('disabled',true);
+              $('#hourEnd9').attr('disabled',true);
+              $('#minsEnd9').attr('disabled',true);
+              $('#event_id9').attr('disabled',true);
+              $('#event_id9').attr('disabled',true);
+              $('#event_id_destroy9').attr('disabled',true);
+              $('#namePatient9').attr('disabled',true);
+              $('#payment_state9').attr('disabled',true);
+
+            }else{
+              $('#confirmed_patient9').attr('disabled',false);
+              $('#confirmed_medico9').attr('disabled',false);
+              $('#price9').attr('disabled',false);
+              $('#title9').attr('disabled',false);
+              $('#state9').attr('disabled',false);
+              $('#description9').attr('disabled',false);
+              $('#eventType9').attr('disabled',false);
+              $('#payment_method9').attr('disabled',false);
+              $('#dateStart9').attr('disabled',false);
+              $('#hourStart9').attr('disabled',false);
+              $('#minsStart9').attr('disabled',false);
+              $('#dateEndU9').attr('disabled',false);
+              $('#hourEnd9').attr('disabled',false);
+              $('#minsEnd9').attr('disabled',false);
+              $('#event_id9').attr('disabled',false);
+              $('#event_id9').attr('disabled',false);
+              $('#event_id_destroy9').attr('disabled',false);
+              $('#namePatient9').attr('disabled',false);
+              $('#payment_state9').attr('disabled',false);
+
+            }
+
+          cerrar();
+
+        }
+      });
     }
   </script>
 

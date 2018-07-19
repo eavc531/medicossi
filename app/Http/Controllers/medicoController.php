@@ -92,8 +92,6 @@ class medicoController extends Controller
           'street'=>'required',
         ]);
 
-
-
         if($request->city == 'opciones'){
           return back()->with('warning', 'El campo ciudad es requerido')->withInput();
         }
@@ -194,7 +192,8 @@ class medicoController extends Controller
        $user = new User;
        $user->name = $request->name;
        $user->email = $request->email;
-       $password = '1234';
+
+       $password = str_random(8);
        $user->password = bcrypt($password);
        $user->password_send = $password;
        $user->patient_id = $patient->id;
@@ -224,12 +223,12 @@ class medicoController extends Controller
 
        Mail::send('mails.medico_register_new_patient',['patient'=>$patient,'medico'=>$medico,'user'=>$user],function($msj) use($patient){
           $msj->subject('Médicos Si');
-          $msj->to($patient->email);
-          // $msj->to('eavc53189@gmail.com');
+          // $msj->to($patient->email);
+          $msj->to('eavc53189@gmail.com');
 
         });
 
-       return redirect()->route('medico_patients',$request->medico_id)->with('success','Se a registrado el paciente '.$patient->nameComplete.' de forma satisfactoria. Se ha enviado un mensaje al correo electronico asociado,con los datos necesarios para que el paciente pueda acceder a su ceunta creada, en caso de que lo desee, asi poder calificarle, agendar, estar al tanto de las citas entre otras opciones.');
+       return redirect()->route('medico_patients',$request->medico_id)->with('success','Se a registrado el paciente '.$patient->nameComplete.' de forma satisfactoria. Se ha enviado un mensaje al correo electronico asociado,con los datos necesarios para que el paciente pueda acceder a la cuenta creada, si asi lo desea, en donde podra ver el estado de sus citas, calificarle como médico en el sistema, agendar citas y mas.');
      }
 
      public function medico_register_new_patient($id)
@@ -443,7 +442,7 @@ class medicoController extends Controller
        $medico = medico::find($request->medico_id);
        $medico->type_patient_service = $request->type_patient_service;
        $medico->save();
-       return response()->json($request->all());
+       return response()->json($request->type_patient_service);
 
      }
 
@@ -451,7 +450,7 @@ class medicoController extends Controller
        $appointments = event::where('medico_id',$id)->whereNull('rendering')->where('title','!=', 'Ausente')->paginate(4);
        $type = 'todas';
        $medico = medico::find($id);
-       return view('medico.appointments',compact('appointments','type','medico'));
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
@@ -463,7 +462,7 @@ class medicoController extends Controller
 
        $appointments = event::where('medico_id',$id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
        $type = 'sin confirmar';
-       return view('medico.appointments',compact('appointments','type','medico'));
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
@@ -472,7 +471,7 @@ class medicoController extends Controller
        $appointments = event::where('medico_id',$id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->paginate(4);
 
        $type = 'Pasada y por Cobrar';
-       return view('medico.appointments',compact('appointments','type','medico'));
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
@@ -480,7 +479,7 @@ class medicoController extends Controller
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->where('state','Pagada y Pendiente')->paginate(4);
        $type = 'Pagadas y Pendientes';
-       return view('medico.appointments',compact('appointments','type','medico'));
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
@@ -488,7 +487,7 @@ class medicoController extends Controller
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
        $type = 'confirmadas';
-       return view('medico.appointments',compact('appointments','type','medico'));
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
@@ -496,7 +495,7 @@ class medicoController extends Controller
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
        $type = 'canceladas';
-       return view('medico.appointments',compact('appointments','type','medico'));
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
@@ -504,7 +503,7 @@ class medicoController extends Controller
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->where('state','Pagada y Completada')->paginate(4);
        $type = 'Pagadas y Completadas';
-       return view('medico.appointments',compact('appointments','type','medico'));
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
@@ -948,8 +947,8 @@ class medicoController extends Controller
 
         Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           $msj->to($medico->email);
-           // $msj->to('eavc53189@gmail.com');
+           // $msj->to($medico->email);
+           $msj->to('eavc53189@gmail.com');
 
       });
 
@@ -976,8 +975,8 @@ class medicoController extends Controller
 
          Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
             $msj->subject('Médicos Si');
-            $msj->to($medico->email);
-            // $msj->to('eavc53189@gmail.com');
+            // $msj->to($medico->email);
+            $msj->to('eavc53189@gmail.com');
         });
 
         return redirect()->route('successRegMedico',$medico->id)->with('success', 'Se ha reenviado el mensaje de confirmación al correo electronico asociado a tu cuenta MédicosSi')->with('user', $user);

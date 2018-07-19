@@ -31,6 +31,8 @@ class CreateReminderAlarmsTable extends Migration
             $table->foreign('medico_id')->references('id')->on('medicos');
             $table->integer('patient_id')->unsigned()->nullable();
             $table->foreign('patient_id')->references('id')->on('patients');
+            $table->integer('event_id')->unsigned()->nullable();
+            $table->foreign('event_id')->references('id')->on('events');
             $table->timestamps();
         });
     }

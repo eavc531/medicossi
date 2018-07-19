@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\assistant;
 use App\medico;
 use App\User;
+use App\medico_assistant;
+
 use Mail;
 use Illuminate\Http\Request;
 
@@ -14,163 +16,65 @@ class assistantController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
+   public function medico_assistants($id){
+       $medico = medico::find($id);
+       $medico_asistants = medico_assistant::where('medico_id', $id)->paginate(3);
 
-
-
-   public function successRegAssistant($id)
-   {
-     $user = User::find($id);
-     $assistant = assistant::find($user->assistant_id);
-     return view('assistant.successReg')->with('assistant', $assistant);
+       return view('assistant.index',compact('medico_asistants','medico'));
    }
 
-   public function AvisoConfirmAccountAssistant($id)
+   public function medico_assistant_create($id)
    {
-     $user = User::find($id);
-     $assistant = assistant::find($user->assistant_id);
-     return view('assistant.AvisoConfirmAccountAssistant')->with('assistant', $assistant)->with('user', $user);
+       $medico = medico::find($id);
+      return view('assistant.create',compact('medico'));
    }
 
-  public function index()
-  {
-    $assistants = assistant::orderBy('id','desc')->paginate(10);
-
-    return view('assistant.assistantList')->with('assistants', $assistants);
-  }
-
-  /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function create()
-  {
-    $medico = medico::orderBy('name','asc')->pluck('name','id');
-      return view('assistant.create')->with('medico', $medico);
-  }
-
-  public function confirmAssistant($id,$code){
-   $user = User::find($id);
-
-   if($user->confirmation_code == $code){
-
-       $user->confirmation_code = null;
-       $user->confirmed = 'medium';
-       $user->save();
-       $assistant = assistant::where('user_id',$user->id);
-
-       return redirect()->route('AvisoConfirmAccountAssistant',$user->id);
-     }else{
-       return redirect()->route('successRegAssistant',$user->id)->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
-
-     }
-
-  }
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-  public function store(Request $request)
-  {
-
+   public function store(Request $request)
+   {
 
         $request->validate([
-          'identification'=>'required',
+          'identification'=>'required|unique:assistants',
           'name'=>'required',
           'lastName'=>'required',
-          'medico_id'=>'required',
           'phone1'=>'required',
           'phone2'=>'nullable',
           'email'=>'required|unique:users|unique:assistants',
-          'password'=>'required',
+
         ]);
 
         $assistant = new assistant;
         $assistant->fill($request->all());
+
+        $assistant->nameComplete = $request->name.' '.$request->lastName;
         $assistant->save();
 
-        $code = str_random(25);
+        $pass = str_random(8);
+        // $code = str_random(25);
         $user = new User;
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->assistant_id = $assistant->id;
-        $user->confirmation_code = $code;
+        $user->password = bcrypt($pass);
         $user->role = 'Asistente';
         $user->save();
 
-      //   Mail::send('mails.ActivationAssistent',['assistant'=>$assistant,'user'=>$user,'code'=>$code],function($msj){
+        $medico_asistants = new medico_assistant;
+        $medico_asistants->medico_id = $request->medico_id;
+        $medico_asistants->assistant_id = $assistant->id;
+        $medico_asistants->save();
+
+        $medico = medico::find($request->medico_id);
+
+      //   Mail::send('mails.ActivationAssistent',['assistant'=>$assistant,'user'=>$user,'pass'=>$pass,'medico'=>$medico],function($msj) use($user){
       //      $msj->subject('Médicos Si');
+      //      // $msj->to($user->email);
       //      $msj->to('eavc53189@gmail.com');
       //
       // });
 
-      return redirect()->route('successRegAssistant',$user->id)->with('success', 'Se ha enviado un mensaje de confirmación a tu Correo Electronico.')->with('user', $user);
+      return redirect()->route('medico_assistants',$medico->id)->with('success', 'Se ha agregado un nuevo asistente, antes de que pueda asistirle debera asignarle los permisos necesarios.
+      Se a enviado un mensaje al correo asociado, con los datos necearios para ingresar a su cuenta de asistente Médicossi.');
 
 
 
-  }
-
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function show($id)
-  {
-      //
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function edit($id)
-  {
-      $category = specialtyCategories::find($id);
-      return view('specialty.specialtyCategories.edit')->with('category', $category);
-  }
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function update(Request $request, $id)
-  {
-    $category = specialtyCategories::find($id);
-
-    if($request->name != $category->name){
-      $request->validate([
-        'name'=>'required|unique:specialty_categories',
-        'description'=>'nullable',
-      ]);
-    }
-      $category->fill($request->all());
-
-      $category->save();
-
-
-      return redirect()->route('specialty_categories.index')->with('success','La Categoria: '.$request->name. ' ha sido actualizada.' );
-
-
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function destroy($id)
-  {
-      //
-  }
+   }
 }

@@ -97,8 +97,8 @@ class medico_diaryController extends Controller
 
        Mail::send('mails.cancel_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
           $msj->subject('Notificación Cancelacion de Cita, MédicosSi');
-          $msj->to($patient->email);
-        //  $msj->to('eavc53189@gmail.com');
+          // $msj->to($patient->email);
+         $msj->to('eavc53189@gmail.com');
         });
 
         return response()->json(['danger'=>'Se a Rechazado/Cancelado la cita con el paciente: '.$event->patient->name.' '.$event->patient->lastName.' para la Fecha: '.$event->start]);
@@ -116,16 +116,21 @@ class medico_diaryController extends Controller
        $medico = medico::find($event->medico_id);
        $patient = patient::find($event->patient_id);
 
+       if($event->namePatient == Null){
+         return response()->json('Se ha Rechazado/Cancelado el evento estipulado para la fecha: '.$event->start );
+       }
+
+       if($request->send == 'enviar'){
        Mail::send('mails.cancel_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
           $msj->subject('Notificación Cancelacion de Cita, MédicosSi');
           //$msj->to($patient->email);
           $msj->to('eavc53189@gmail.com');
         });
 
-         if($event->namePatient == Null){
-           return response()->json('Se ha Rechazado/Cancelado el evento estipulado para la fecha: '.$event->start );
-         }
-         return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.'. Las citas canceladas no se muestran en el calendario, es posible acceder a estas a travez de la opcion: pacientes/citas/citas canceladas.');
+        return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.' y se le a enviado una notificacion a su correo, Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
+        }
+        return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start. '. Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
+
      }
 
      public function appointment_confirm($id)
@@ -172,6 +177,7 @@ class medico_diaryController extends Controller
 
      public function update_event(Request $request)
      {
+
        //return response()->json($request->all());
        $hour_start1 = $request->hourStart.':'.$request->minsStart;
 
@@ -201,6 +207,9 @@ class medico_diaryController extends Controller
        $hourEnd = $request->hourEnd.':'.$request->minsEnd.':'.'00';
      }
 
+     if($start > $end){
+         return response()->json('end menor start');
+     }
 
      $day1 = \Carbon\Carbon::parse($start)->dayOfWeek;
 
@@ -351,6 +360,9 @@ class medico_diaryController extends Controller
          $hourEnd = $request->hourEnd.':'.$request->minsEnd.':'.'00';
        }
 
+       if($start > $end){
+           return response()->json('end menor start');
+       }
        $day1 = \Carbon\Carbon::parse($start)->dayOfWeek;
 
        $hour_start2 = \Carbon\Carbon::parse($start)->format('H:i');
@@ -412,8 +424,15 @@ class medico_diaryController extends Controller
        return view('medico.patient.medico_app_details',compact('app'));
      }
 
+     public function ajax_data_edit_event(Request $request){
+         $event = event::find($request->event_edit);
+
+         return response()->json($event);
+     }
+
      public function edit_appointment($id,$p_id,$app_id)
     {
+        $event_edit = event::find($app_id);
       $app = event::find($app_id);
       $medico = medico::find($id);
       $patient =  patient::find($p_id);
@@ -500,10 +519,10 @@ class medico_diaryController extends Controller
         $days_hide = ['lunes'=>$lunes3,'martes'=>$martes3,'miercoles'=>$miercoles3,'jueves'=>$jueves3,'viernes'=>$viernes3,'sabado'=>$sabado3,'domingo'=>$domingo3];
         ///////igual
 
-        return view('medico.patient.edit_appointment')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule)->with('patient', $patient)->with('app', $app)->with('mode', 'edition');
+        return view('medico.appointments.edit')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule)->with('patient', $patient)->with('app', $app)->with('mode', 'edition')->with('event_edit',$event_edit);
 
       }
-      return view('medico.patient.edit_appointment')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule)->with('patient',$patient)->with('app', $app)->with('mode', 'edition');
+      return view('medico.appointments.edit')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule)->with('patient',$patient)->with('app', $app)->with('mode', 'edition')->with('event_edit',$event_edit);
       // ->with($months, 'months');
     }
 
@@ -615,6 +634,8 @@ class medico_diaryController extends Controller
          'payment_method'=>'required',
        ]);
 
+       // $verifyevent = event::where('patient_id', $request->patient_id)->where('medico_id', $request->medico_id)->where('state','!=', 'Rechazada/Cancelada')->where('state','!=','Pagada y Completada');
+
        $hour_start1 = $request->hourStart.':'.$request->minsStart;
        $hour_end1 = $request->hourEnd.':'.$request->minsEnd;
 
@@ -635,6 +656,10 @@ class medico_diaryController extends Controller
        }else{
          $end = $date_End.' '.$request->hourEnd.':'.$request->minsEnd.':'.'00';
          $hourEnd = $request->hourEnd.':'.$request->minsEnd.':'.'00';
+       }
+
+       if($start > $end){
+           return response()->json('end menor start');
        }
 
        $day1 = \Carbon\Carbon::parse($start)->dayOfWeek;
@@ -701,19 +726,13 @@ class medico_diaryController extends Controller
        $event->dateEnd = $date_End;
        $event->description = $request->description;
        $event->price = $request->price;
-       // if($request->title == 'Ambulatoria'){
-       //   $event->color = 'rgb(40, 130, 55)';
-       // }elseif($request->title == 'Externa o a Domicilio'){
-       //   $event->color = 'rgb(241, 80, 0)';
-       // }elseif($request->title == 'Urgencias'){
-       //   $event->color = 'rgb(0, 190, 241)';
+
 
        if($request->title == 'Cita por Internet'){
          $event->color = 'rgb(35, 44, 173)';
        }else{
          $event->color = 'rgb(69, 189, 39)';
        }
-
        if(Auth::check() and Auth::user()->role == 'Paciente'){
            $event->namePatient = Auth::user()->patient->name.' '.Auth::user()->patient->lastName;
            $event->patient_id = Auth::user()->patient->id;
@@ -746,36 +765,43 @@ class medico_diaryController extends Controller
        $medico = medico::find($request->medico_id);
        $patient = patient::find($request->patient_id);
 
+
+       //////////////////registro por medico
        if(Auth::check() and Auth::user()->role == 'medico'){
+
          $event->confirmed_medico = 'Si';
+
+         if($request->send == 'enviar'){
 
          Mail::send('mails.med_notification_patient_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($patient){
             $msj->subject('Médicos Si');
-            $msj->to($patient->email);
-            //$msj->to('eavc53189@gmail.com');
+            // $msj->to($patient->email);
+            $msj->to('eavc53189@gmail.com');
           });
+      }
 
-         Mail::send('mails.med_notification_medico_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
-            $msj->subject('Médicos Si');
-            // $msj->to('testprogramas531@gmail.com');
-            $msj->to($medico->email);
-          });
 
           $event->save();
-         return response()->json('Se ha agendado Una Cita "'.$request->title.'" con el Paciente: '.$patient->name.' '.$patient->lastName.' para la fecha: '.$request->date_start.' y hora: '.$hourStart.'.');
+          if($request->send == 'enviar'){
+               return response()->json('Se ha agendado Una Cita "'.$request->title.'" con el Paciente: '.$patient->name.' '.$patient->lastName.' para la fecha: '.$request->date_start.' y hora: '.$hourStart.'. y se le a enviado una notificacion a su correo.');
+         }else{
+             return response()->json('Se ha agendado Una Cita "'.$request->title.'" con el Paciente: '.$patient->name.' '.$patient->lastName.' para la fecha: '.$request->date_start.' y hora: '.$hourStart.'.');
+         }
+
        }
-
-       Mail::send('mails.notification_patient_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($patient){
-          $msj->subject('Médicos Si');
-          $msj->to($patient->email);
-          //$msj->to('eavc53189@gmail.com');
-        });
-
-       Mail::send('mails.notification_medico_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
-          $msj->subject('Médicos Si');
-          $msj->to($medico->email);
-          //$msj->to('testprogramas531@gmail.com');
-        });
+        $event->save();
+       //////////////////finn  registro por medico
+       // Mail::send('mails.notification_patient_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($patient){
+       //    $msj->subject('Médicos Si');
+       //    // $msj->to($patient->email);
+       //    $msj->to('eavc53189@gmail.com');
+       //  });
+       //
+       // Mail::send('mails.notification_medico_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
+       //    $msj->subject('Médicos Si');
+       //    // $msj->to($medico->email);
+       //    $msj->to('testprogramas531@gmail.com');
+       //  });
 
         $count_notifications = event::where('medico_id',$request->medico_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->count();
         $medico->notification_number = $count_notifications;
@@ -1028,6 +1054,21 @@ class medico_diaryController extends Controller
        }
 
      }
+     public function patient_medico_diary_events($id){
+          $datas = event::where('medico_id',$id)->where('state','!=','Rechazada/Cancelada')->get();
+
+          $data = [];
+          //ordenar array
+          foreach ($datas as $dat){
+                $data[] = ['title'=>$dat->title,'start'=>$dat->start,'end'=>$dat->end,'rendering'=>$dat->rendering,'dow'=>$dat->dow];
+
+            }
+
+
+
+          return Response()->json($data);
+
+     }
 
      public function medico_diary_events($id)
      {
@@ -1083,6 +1124,13 @@ class medico_diaryController extends Controller
            'day'=>'required',
          ]);
 
+         $start_verify = $request->hour_start.':'.$request->mins_start;
+         $end_verify = $request->hour_end.':'.$request->mins_end;
+
+         if($start_verify > $end_verify){
+             return back()->with('warning','imposible guardar horas, la hora de incio debe ser menor a la hora de culminacion.');
+         }
+
          if($request->day == 'lunes a viernes'){
            $data = array('lunes','martes','miercoles','jueves','viernes');
            $dow = 0;
@@ -1098,6 +1146,7 @@ class medico_diaryController extends Controller
              $schedule->title = $value;
              $schedule->start = $request->hour_start.':'.$request->mins_start;
              $schedule->end = $request->hour_end.':'.$request->mins_end;
+
              $schedule->state = 'horario';
              $schedule->save();
 
@@ -1257,6 +1306,8 @@ class medico_diaryController extends Controller
            'hourStart'=>'required',
            'minsStart'=>'required',
          ]);
+
+
 
          $hour_start1 = $request->hourStart.':'.$request->minsStart;
 

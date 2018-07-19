@@ -79,19 +79,26 @@
           <label for="" class="label-title ">Agendar Cita con: {{$medico->name}} {{$medico->lastName}}</label>
         </div>
 
-        <label for="" class="mt-2 font-title">Tipo de Evento</label>
-        {!!Form::select('title',['Cita por Internet'=>'Cita por internet'],null,['class'=>'form-control','id'=>'eventType2','placeholder'=>'seleccionar'])!!}
+        {{-- <label for="" class="mt-2 font-title">Tipo de Evento</label>
+        {!!Form::select('title',['Cita por Internet'=>'Cita por internet'],null,['class'=>'form-control','id'=>'eventType2'])!!} --}}
+        <input type="hidden" name="title" value="Cita por Internet" id="eventType2">
         <label for="" class="mt-2 font-title">Metodo de Pago</label>
-        {!!Form::select('payment_method',['Normal'=>'Normal','Aseguradora'=>'Aseguradora'],null,['class'=>'form-control','id'=>'payment_method6'])!!}
+         @if($medico->type_patient_service == "Solo pacientes privados")
+        {!!Form::select('payment_method',['Normal'=>'Normal'],null,['class'=>'form-control','id'=>'payment_method6'])!!}
+        @elseif($medico->type_patient_service == "solo pacientes de aseguradoras")
+        {!!Form::select('payment_method',['Aseguradora'=>'Aseguradora'],null,['class'=>'form-control','id'=>'payment_method6'])!!}
+        @else
+        {!!Form::select('payment_method',['Normal'=>'Normal','Aseguradora'=>'Aseguradora'],null,['class'=>'form-control','id'=>'payment_method6','placeholder'=>'seleccionar'])!!}
+        @endif
         {{-- <input class="form-control my-2" type="text" placeholder="Titulo" id="title2"> --}}
 
 
         {{-- <input class="form-control my-2" type="text" placeholder="precio (Opcional)" id="price2"> --}}
         <div class="row">
           <div class="col-lg-4 col-sm-12 font-title">
-           <label for="" class="col-form-label font-title-grey"> Inicio</label>
+           <label for="" class="col-form-label font-title-grey mt-1"> Inicio</label>
          </div>
-         <div class="col-lg-8 col-sm-12">
+         <div class="col-lg-8 col-sm-12 mt-1">
            {!!Form::date('date_start',null,['class'=>'form-control','id'=>'date_start2'])!!}
          </div>
        </div>
@@ -281,7 +288,7 @@
 
         slotDuration: '00:15:00',
         slotLabelInterval: 15,
-        slotLabelFormat: 'h(:mm)a',
+        // slotLabelFormat: 'h(:mm)a',
 
         select:function(start,end){
          start = moment(start);
@@ -319,8 +326,13 @@
          //alert(start.format('YYYY-MM-DD'));
        },
 
-       events:"{{route('medico_diary_events',$medico->id)}}",
+       events:"{{route('patient_medico_diary_events',$medico->id)}}",
 
+       eventRender: function (event, element, view) {
+
+           element.find('.fc-title').html('<div class="hr-line-solid-no-margin">Reservado</div>');
+
+       },
 
 
      });
@@ -336,31 +348,6 @@
     $('#ModalCreate').modal('show');
   }
 
-    // desactivar botones
-    // ,
-    //          viewRender: function(currentView){
-    //          var minDate = moment(),
-    //          maxDate = moment().add(6,'days');
-    //          // Past
-    //          if (minDate >= currentView.start && minDate <= currentView.end) {
-    //             $(".fc-prev-button").hide();
-    //            // $(".fc-prev-button").prop('disabled', true);
-    //            // $(".fc-prev-button").addClass('fc-state-disabled');
-    //          }
-    //          else {
-    //            $(".fc-prev-button").removeClass('fc-state-disabled');
-    //            $(".fc-prev-button").prop('disabled', false);
-    //          }
-    //          // Future
-    //          if (maxDate >= currentView.start && maxDate <= currentView.end) {
-    //               $(".fc-next-button").hide();
-    //            // $(".fc-next-button").prop('disabled', true);
-    //            // $(".fc-next-button").addClass('fc-state-disabled');
-    //          } else {
-    //            $(".fc-next-button").removeClass('fc-state-disabled');
-    //            $(".fc-next-button").prop('disabled', false);
-    //          }
-    //        }
 
 
 
@@ -435,6 +422,7 @@
        url:route,
        data:{title:title,payment_method:payment_method,date_start:date_start,hourStart:hourStart,minsStart:minsStart,dateEnd:dateEnd,hourEnd:hourEnd,minsEnd:minsEnd,medico_id:medico_id,patient_id:patient_id},
        error:function(error){
+
           $('#btn_agendar').attr("disabled", false);
           $('#btn_cancelar').attr("disabled", false);
           $('#alert_carga').fadeOut();
@@ -449,14 +437,19 @@
          console.log(error);
        },
        success:function(result){
+
          $('#btn_agendar').attr("disabled", false);
          $('#btn_cancelar').attr("disabled", false);
          $('#alert_carga').fadeOut();
         vaciar();
         console.log(result);
         if(result == 'fuera del horario'){
-          $('#text_error').html('Imposible crear evento fuera del horario establecido');
-          $('#alert_error').fadeIn();
+          $('#text_error_up1').html('Imposible crear evento fuera del horario establecido');
+          $('#alert_error_ip1').fadeIn();
+          $('#alert_success').fadeOut();
+      }else if(result == 'end menor start'){
+          $('#text_error_up1').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
+          $('#alert_error_up1').fadeIn();
           $('#alert_success').fadeOut();
         }else if(result == 'ya existe'){
           $('#text_error').html('Imposible crear evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
@@ -531,6 +524,7 @@
         if(result == 'fuera del horario'){
           $('#text_error_up1').html('imposible guardar evento, fuera del horario establecido');
           $('#alert_error_up1').fadeIn();
+          
         }else {
           console.log(result);
           $('#text_success_up1').html('Guardado con Exito');

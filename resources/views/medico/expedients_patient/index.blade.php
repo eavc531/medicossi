@@ -140,7 +140,7 @@
           <thead>
               <td>Nombre</td>
               <td>Creación</td>
-              <td>ultima Edicion</td>
+
               <td>Acciones</td>
           </thead>
           <tbody>
@@ -162,7 +162,7 @@
 
                </td>
               <td>{{\Carbon\Carbon::parse($expedient->created_at)->format('d-m-Y')}}</td>
-              <td>{{$expedient->date_edit}}</td>
+              {{-- <td>{{$expedient->date_edit}}</td> --}}
               <td>
                 <div class="form-inline">
 

@@ -67,11 +67,7 @@
 
         </div>
 
-
-
         @if($notes->first() != Null and !isset($search))
-
-
 
           <table class="table table-bordered mt-2">
             <thead>
@@ -158,6 +154,7 @@
 
                     @endif
                     <a href="{{route('download_pdf',$note->id)}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
+                    <a href="{{route('note_move',$note->id)}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
                       {{-- <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota Médica del expediente?, la nota seguira exisitiendo en el panel ´Notas del Paciente´ despues de realizar esta acción.');" href="{{route('expedient_note_delete',$note->id)}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a> --}}
                   </td>
 
@@ -186,7 +183,6 @@
                   <td>{{\Carbon\Carbon::parse($note->date_start)->format('d-m-Y')}}</td>
                   <td>{{\Carbon\Carbon::parse($note->date_edit)->format('d-m-Y')}}</td>
                   <td>
-
 
                     <form class="line" action="{{route('view_preview')}}" method="post">
                       {{ csrf_field() }}
@@ -317,9 +313,5 @@
       });
 
     </script>
-
-
-
-
 
     @endsection
