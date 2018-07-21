@@ -155,10 +155,14 @@
               <span>Usuario firmado:</span>
               <span>{{$medico->name}} {{$medico->lastName}}</span>
             </div>
-
+            <div class="col-12 border-panel-green text-center my-1">
+              <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
+                Editar horario de consulta
+              </a>
+            </div>
             <div class="border-panel-blue my-1">
               <div class="form-group text-center">
-              
+
                 <div class="form-group" style="margin-top:35px">
                   <label for="" class="label-title ">Crear Nuevo Recordatorio </label>
                 </div>

@@ -231,21 +231,21 @@ class DatabaseSeeder extends Seeder
        'price3'=>0,
        ]);
 
-        DB::table('permissions')->insert([
-       'name'=>'edit',
-       'display_name'=>'Edit Users',
-       'description'=>'edit existing users'
-       ]);
-
-      DB::table('permissions')->insert([
-     'name'=>'Editar',
-     'description'=>'Editar usuarios y planes',
-     ]);
-
-     DB::table('permissions')->insert([
-    'name'=>'Eliminar',
-    'description'=>'Eliminar usuarios y planes',
-  ]);
+  //       DB::table('permissions')->insert([
+  //      'name'=>'edit',
+  //      'display_name'=>'Edit Users',
+  //      'description'=>'edit existing users'
+  //      ]);
+  //
+  //     DB::table('permissions')->insert([
+  //    'name'=>'Editar',
+  //    'description'=>'Editar usuarios y planes',
+  //    ]);
+  //
+  //    DB::table('permissions')->insert([
+  //   'name'=>'Eliminar',
+  //   'description'=>'Eliminar usuarios y planes',
+  // ]);
 
     }
 }

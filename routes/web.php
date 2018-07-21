@@ -10,8 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//HOME
+Route::get('medico/{id}/map/show','HomeController@detail_medic_map')->name('detail_medic_map');
+Route::get('autocomplete_specialty','HomeController@autocomplete_specialty')->name('autocomplete_specialty');
 //perfil medico
-
 Route::get('iniciar/home','HomeController@inicar_home')->name('inicar_home');
 Route::post('verify/Session', 'Auth\LoginController@verifySession')->name('verifySession');
 Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
@@ -87,7 +89,7 @@ Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_re
 ////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
 
 //////////
-Route::get('autocomplete_specialty','HomeController@autocomplete_specialty')->name('autocomplete_specialty');
+
 
 Route::post('medico/plan/set','plansController@set_plan')->name('set_plan');
 
@@ -132,6 +134,9 @@ Route::group(['middleware' => ['medic_plan_basic']], function (){
 });
 //PLAN AGENDA
 Route::group(['middleware' => ['medic_plan_agenda']], function (){
+    Route::get('medico/{id}/panel/diary', 'medico_diaryController@medico_diary')->name('medico_diary');
+    Route::get('medico/{id}/patients','medicoController@medico_patients')->name('medico_patients');
+
   //REMINDER
     Route::post('reminder_delete','reminderController@reminder_delete')->name('reminder_delete');
     Route::post('reminder_alarm_update','reminderController@reminder_alarm_update')->name('reminder_alarm_update');
@@ -160,7 +165,7 @@ Route::group(['middleware' => ['medic_plan_agenda']], function (){
     Route::post('medico/business/hours/edit','medico_diaryController@medico_business_hours_update')->name('medico_business_hours_update');
     Route::post('delete/event','medico_diaryController@delete_event')->name('delete_event');
     Route::get('delete/{id}/event2','medico_diaryController@delete_event2')->name('delete_event2');
-    Route::get('medico/{id}/panel/diary', 'medico_diaryController@medico_diary')->name('medico_diary');
+
     Route::get('medico/{id}/panel/schedule', 'medico_diaryController@medico_schedule')->name('medico_schedule');
     Route::post('medico/{id}/schedule/store','medico_diaryController@medico_schedule_store')->name('medico_schedule_store');
 
@@ -171,8 +176,7 @@ Route::group(['middleware' => ['medic_plan_agenda']], function (){
 Route::group(['middleware' => ['medic_plan_profesional']], function (){
 //calification_medic//b
 
-    Route::get('medico/{id}/asistants/create','assistantController@medico_assistant_create')->name('medico_assistant_create');
-    Route::get('medico/{id}/asistants','assistantController@medico_assistants')->name('medico_assistants');
+
 
     Route::get('medico/{m_id}/stipulate/appointment/patient/{p_id}','medico_diaryController@medico_stipulate_appointment')->name('medico_stipulate_appointment');
 
@@ -321,7 +325,7 @@ Route::post('patient/{id}/store/address','patientController@patient_store_addres
 Route::get('patient/delete/{id}/medico','patientController@delete_patient_doctors')->name('delete_patient_doctors');
 
 //
-Route::get('medico/{id}/patients','medicoController@medico_patients')->name('medico_patients');
+
 
 Route::get('medico/{m_id}/patient/{p_id}/appointments','medicoController@medico_appointments_patient')->name('medico_appointments_patient');
 
@@ -351,7 +355,7 @@ Route::get('medical_center/{id}/panel','medicalCenterController@medical_center_p
 
 Route::resource('photo','photoController');
 
-Route::get('medico/{id}/map/show','HomeController@detail_medic_map')->name('detail_medic_map');
+
 
 Route::get('medicalCenter/image/delete/{id}','photoController@photo_medical_delete')->name('photo_medical_delete');
 Route::get('medico/photo/delete/{id}','photoController@photo_delete')->name('photo_delete');
@@ -374,7 +378,7 @@ Route::post('inner/cities/select3','medicoController@inner_cities_select3')->nam
 Route::get('confirm/MedicalCenter/{id}/{code}','medicalCenterController@confirmMedicalCenter')->name('confirmMedicalCenter');
 
 Route::get('confirm/MedicalCenter/{id}/{code}','medicalCenterController@confirmMedicalCenter')->name('confirmMedicalCenter');
-// Route::get('confirm/assistant/{id}','assistantController@successRegAssistant')->name('successRegAssistant');
+//
 
 Route::post('medicalCenter/{id}/description','medicalCenterController@medicalCenter_description_show')->name('medicalCenter_description_show');
 
@@ -461,12 +465,25 @@ Route::post('cities/administrator/store','administratorsController@citiesAdminSt
 Route::get('delete/city/{id}/administrator','administratorsController@deleteCityAdmin')->name('deleteCityAdmin');
 Route::get('delete/city/{id}/plan','plansController@deleteCityPlan')->name('deleteCityPlan');
 
+///////ASSISTANT
+
+Route::get('medico/search/assistant/registered','assistantController@search_assistants_registered')->name('search_assistants_registered');
+Route::post('medico/assistant/add/store','assistantController@add_assistant_store')->name('add_assistant_store');
+
+Route::get('medico/{id}/assistant/add','assistantController@add_assistant')->name('add_assistant');
+Route::post('assistant/assist/medico','assistantController@assist_medico')->name('assist_medico');
+Route::get('assistant/{id}/medicos','assistantController@assistant_medicos')->name('assistant_medicos');
+Route::get('medico/{id}/asistants/create','assistantController@medico_assistant_create')->name('medico_assistant_create');
+Route::get('medico/{id}/asistants','assistantController@medico_assistants')->name('medico_assistants');
+Route::post('assistant_permissions_store','assistantController@assistant_permissions_store')->name('assistant_permissions_store');
+
+Route::get('assistant/{id}/permission','assistantController@assistant_permissions')->name('assistant_permissions');
 
 Route::get('confirm/assistant/{id}/{code}','assistantController@confirmAssistant')->name('confirmAssistant');
 
-Route::get('confirm/assistant/{id}/{code}','assistantController@confirmAssistant')->name('confirmAssistant');
+
 Route::get('register/assistant/{id}/step4','assistantController@AvisoConfirmAccountAssistant')->name('AvisoConfirmAccountAssistant');
-
+/////////////
 Route::resource('permissionSet','permissionSetController');
 Route::get('permission/admin/{id}','permissionSetController@listPermissionSet')->name('listPermissionSet');
 Route::get('permission/{id}/set/admin/','permissionSetController@PermissionSet')->name('PermissionSet');

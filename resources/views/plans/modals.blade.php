@@ -43,8 +43,16 @@
         @endif
       </div>
       <div class="modal-footer">
-        <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary">Aceptar</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          @if(Auth::user()->role == 'medico')
+
+                <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+
+         @else
+
+               <a href="{{route('plan_agenda_contract',Auth::user()->assistant->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+
+         @endif
+
 
       </div>
     </div>
@@ -68,8 +76,14 @@
           @endif
       </div>
       <div class="modal-footer">
-        <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary">Contratar</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          @if(Auth::user()->role == 'medico')
+              <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary">Contratar</a>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+         @else
+             <a href="{{route('plan_profesional_contract',Auth::user()->assistant->medico_id)}}" class="btn btn-primary">Contratar</a>
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+         @endif
+
 
       </div>
     </div>
@@ -95,8 +109,14 @@
       </div>
 
       <div class="modal-footer">
-        <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary">Aceptar</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          @if(Auth::user()->role == 'medico')
+              <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary">Aceptar</a>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+         @else
+             <a href="{{route('plan_platino_contract',Auth::user()->assistant->medico_id)}}" class="btn btn-primary">Aceptar</a>
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+         @endif
+
 
       </div>
     </div>

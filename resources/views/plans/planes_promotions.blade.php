@@ -76,12 +76,22 @@
             </div>
             <div class="my-2">
               <div class="col-12 text-center">
-                @if($plan_actual == Null)
-                  <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                 @if(Auth::user()->role == 'medico')
+                     @if($plan_actual == Null)
+                       <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                     @else
+                       <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
+                         Contratar
+                       </button>
+                     @endif
                 @else
-                  <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
-                    Contratar
-                  </button>
+                    @if($plan_actual == Null)
+                      <a href="{{route('plan_agenda_contract',Auth::user()->assistant->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                    @else
+                      <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
+                        Contratar
+                      </button>
+                    @endif
                 @endif
 
 
@@ -127,13 +137,26 @@
           </div>
           <div class="my-2">
             <div class="col-12 text-center">
-              @if($plan_actual == Null)
-                <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
-              @else
-                <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal11">
-                  Contratar
-                </button>
-              @endif
+
+                @if(Auth::user()->role == 'medico')
+                    @if($plan_actual == Null)
+                      <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                    @else
+                      <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal11">
+                        Contratar
+                      </button>
+                    @endif
+               @else
+                   @if($plan_actual == Null)
+                     <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                   @else
+                     <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal11">
+                       Contratar
+                     </button>
+                   @endif
+               @endif
+
+
 
 
             </div>
@@ -172,13 +195,26 @@
         </div>
         <div class="my-2">
           <div class="col-12 text-center">
-            @if($plan_actual == Null)
-              <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
-            @else
-              <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal33">
-                ContratarXX
-              </button>
-            @endif
+
+              @if(Auth::user()->role == 'medico')
+                  @if($plan_actual == Null)
+                    <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                  @else
+                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal33">
+                      Contratar
+                    </button>
+                  @endif
+             @else
+                 @if($plan_actual == Null)
+                   <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                 @else
+                   <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal33">
+                     Contratar
+                   </button>
+                 @endif
+             @endif
+
+
 
           </div>
         </div>
@@ -204,8 +240,11 @@
       <div class="my-2">
         <div class="col-12 text-center">
           {{-- <a href="" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a> --}}
-
+          @if(Auth::user()->role == 'medico')
           <a class="btn btn-primary btn-block" href="{{route('contract_basic',Auth::user()->medico_id)}}">Contratar</a>
+      @elseif(Auth::user()->role == 'Asistente')
+          <a class="btn btn-primary btn-block" href="{{route('contract_basic',Auth::user()->assistant->medico_id)}}">Contratar</a>
+      @endif
         </div>
       </div>
     </div>

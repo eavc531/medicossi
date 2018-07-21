@@ -17,7 +17,18 @@
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 
 @section('content')
+{{-- //ALGUNOS PERMISOS PARA LAS CITAS  --}}
 
+<input type="hidden" name="" value="{{Auth::user()->role}}" id="auth_role">
+    @if(Auth::user()->role == 'Asistente')
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_edit}}" id="cita_edit">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_change_date}}" id="cita_change_date">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_payment}}" id="cita_confirm_payment">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_completed}}" id="cita_confirm_completed">
+
+
+    @endif
+{{-- // --}}
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-9 col-12">
@@ -37,15 +48,23 @@
           <hr>
           {{-- //busqueda --}}
           @if($countEventSchedule != 0)
-            <label for="" class="mt-2">Agendar con:</label>
-            <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search">
-            <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()">Buscar</button>
-            <button type="button" name="button" class="btn btn-secondary btn-sm" onclick="vaciar_search()">vaciar</button>
-            <div class="" id="result_search">
+             @cita_create
+                <label for="" class="mt-2">Agendar con:</label>
+                <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search">
+                <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()">Buscar</button>
+                <button type="button" name="button" class="btn btn-secondary btn-sm" onclick="vaciar_search()">vaciar</button>
+                <div class="" id="result_search">
+            @else
+                <label for="" class="mt-2">Agendar con:</label>
+                <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search" readOnly>
+                <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()" readOnly>Buscar</button>
+                <button type="button" name="button" class="btn btn-secondary btn-sm text-secondary" onclick="vaciar_search()" readOnly>vaciar</button>
+                <div class="" id="result_search">
 
-            </div>
+            @endcita_create
 
           @endif
+          </div>
           @include('medico.includes.alert_calendar')
           @include('medico.includes.card_edit')
           @include('medico.includes.modals_diary')
@@ -239,7 +258,9 @@
             </div>
             <div class="card-body">
               <h5>Para poder ver el Calendario de agenda y todas sus fucniones debe Otorgar un Horario de Trabajo</h5>
-              <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
+                  @plan_agenda
+                   <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
+                  @endplan_agenda
             </div>
           </div>
         @endif
@@ -247,6 +268,8 @@
     </div>
           {{-- </div> --}}
         <div class="col-12 col-lg-3">
+            @cita_person_create
+
           <div id="dashboard">
             <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
             <div class="col-12 border-head-panel text-center">
@@ -255,7 +278,7 @@
             </div>
             <div class="col-12 border-panel-green text-center my-1">
               <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
-                Otorgar horario de consulta
+                Editar horario de consulta
               </a>
             </div>
             <div class="border-panel-blue my-1">
@@ -329,7 +352,7 @@
                       <button type="submit" name="button" class="btn btn-config-blue">Guardar</button>
                     {{-- <button onclick="store_event()"type="button" class="btn btn-config-blue">Guardar</button> --}}
                     @else
-                    <button onclick=""type="button" class="btn btn-config-blue" disabled>Guardar</button>
+                    <button onclick=""type="button" class="btn btn-config-blue" readOnly>Guardar</button>
                     @endif
                     {{-- <button type="submit" class="btn btn-config-blue">Guardar</button> --}}
                   </div>
@@ -341,6 +364,7 @@
               </div>
             </div>
           </div>
+          @endcita_person_create
         </div>
       </div>
     </div>
@@ -420,7 +444,17 @@
 
           </div>
           <div class="col-6">
-            <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block">Pagada y Completada</button>
+              @if(Auth::check() and Auth::user()->role == 'medico')
+                 <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block">Pagada y Completada</button>
+
+              @else
+                  @if(Auth::user()->assistant->permission->cita_confirm_completed != Null){
+                     <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block">Pagada y Completada</button>
+                @else
+                    <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block" disabled>Pagada y Completada</button>
+                @endif
+            @endif
+
 
           </div>
         </div>
@@ -477,25 +511,25 @@
         $('#button_confirmed_complete').show();
         $('#calendar').fullCalendar('removeEvents');
         $('#calendar').fullCalendar('refetchEvents');
-        $('#confirmed_patient9').attr('disabled',true);
-        $('#confirmed_medico9').attr('disabled',true);
-        $('#price9').attr('disabled',true);
-        $('#title9').attr('disabled',true);
-        $('#state9').attr('disabled',true);
-        $('#description9').attr('disabled',true);
-        $('#eventType9').attr('disabled',true);
-        $('#payment_method9').attr('disabled',true);
-        $('#dateStart9').attr('disabled',true);
-        $('#hourStart9').attr('disabled',true);
-        $('#minsStart9').attr('disabled',true);
-        $('#dateEndU9').attr('disabled',true);
-        $('#hourEnd9').attr('disabled',true);
-        $('#minsEnd9').attr('disabled',true);
-        $('#event_id9').attr('disabled',true);
-        $('#event_id9').attr('disabled',true);
-        $('#event_id_destroy9').attr('disabled',true);
-        $('#namePatient9').attr('disabled',true);
-        $('#payment_state9').attr('disabled',true);
+        $('#confirmed_patient9').attr('readOnly',true);
+        $('#confirmed_medico9').attr('readOnly',true);
+        $('#price9').attr('readOnly',true);
+        $('#title9').attr('readOnly',true);
+        $('#state9').attr('readOnly',true);
+        $('#description9').attr('readOnly',true);
+        $('#eventType9').attr('readOnly',true);
+        $('#payment_method9').attr('readOnly',true);
+        $('#dateStart9').attr('readOnly',true);
+        $('#hourStart9').attr('readOnly',true);
+        $('#minsStart9').attr('readOnly',true);
+        $('#dateEndU9').attr('readOnly',true);
+        $('#hourEnd9').attr('readOnly',true);
+        $('#minsEnd9').attr('readOnly',true);
+        $('#event_id9').attr('readOnly',true);
+        $('#event_id9').attr('readOnly',true);
+        $('#event_id_destroy9').attr('readOnly',true);
+        $('#namePatient9').attr('readOnly',true);
+        $('#payment_state9').attr('readOnly',true);
         $('#confirmed_payment').modal('hide');
         $('#rechazar').hide();
         $('#button_confirmed_payment').hide();
@@ -615,9 +649,9 @@
         loader();
         cerrar();
         $('#alert_carga5').fadeIn();
-        $('#guardar5').attr("disabled", true);
-        $('#delete5').attr("disabled", true);
-        $('#cancelar5').attr("disabled", true);
+        $('#guardar5').attr("readOnly", true);
+        $('#delete5').attr("readOnly", true);
+        $('#cancelar5').attr("readOnly", true);
         errormsj = '';
              $.ajax({
                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -628,9 +662,9 @@
                error:function(error){
                  stop_loader();
                  $('#alert_carga5').fadeOut();
-                 $('#guardar5').attr("disabled", false);
-                 $('#delete5').attr("disabled", false);
-                 $('#cancelar5').attr("disabled", false);
+                 $('#guardar5').attr("readOnly", false);
+                 $('#delete5').attr("readOnly", false);
+                 $('#cancelar5').attr("readOnly", false);
                  console.log(error);
                 $.each(error.responseJSON.errors, function(index, val){
                   errormsj+='<li>'+val+'</li>';
@@ -639,15 +673,15 @@
                 $('#alert_error_up1').fadeIn();
                 $('#alert_success_up1').fadeOut();
 
-                console.log(errormsj);
+                console.log(error);
               },
                success:function(result){
                  stop_loader();
                  console.log(result);
                  $('#alert_carga5').fadeOut();
-                 $('#guardar5').attr("disabled", false);
-                 $('#delete5').attr("disabled", false);
-                 $('#cancelar5').attr("disabled", false);
+                 $('#guardar5').attr("readOnly", false);
+                 $('#delete5').attr("readOnly", false);
+                 $('#cancelar5').attr("readOnly", false);
 
                  if(result == 'fuera del horario'){
                    $('#text_error_up1').html('imposible guardar evento, fuera del horario establecido');
@@ -855,46 +889,83 @@
             }
 
             if(event.state == 'Pagada y Completada'){
-              $('#confirmed_patient9').attr('disabled',true);
-              $('#confirmed_medico9').attr('disabled',true);
-              $('#price9').attr('disabled',true);
-              $('#title9').attr('disabled',true);
-              $('#state9').attr('disabled',true);
-              $('#description9').attr('disabled',true);
-              $('#eventType9').attr('disabled',true);
-              $('#payment_method9').attr('disabled',true);
-              $('#dateStart9').attr('disabled',true);
-              $('#hourStart9').attr('disabled',true);
-              $('#minsStart9').attr('disabled',true);
-              $('#dateEndU9').attr('disabled',true);
-              $('#hourEnd9').attr('disabled',true);
-              $('#minsEnd9').attr('disabled',true);
-              $('#event_id9').attr('disabled',true);
-              $('#event_id9').attr('disabled',true);
-              $('#event_id_destroy9').attr('disabled',true);
-              $('#namePatient9').attr('disabled',true);
-              $('#payment_state9').attr('disabled',true);
+              $('#confirmed_patient9').attr('readOnly',true);
+              $('#confirmed_medico9').attr('readOnly',true);
+              $('#price9').attr('readOnly',true);
+              $('#title9').attr('readOnly',true);
+              $('#state9').attr('readOnly',true);
+              $('#description9').attr('readOnly',true);
+              $('#eventType9').attr('readOnly',true);
+              $('#payment_method9').attr('readOnly',true);
+              $('#dateStart9').attr('readOnly',true);
+              $('#hourStart9').attr('readOnly',true);
+              $('#minsStart9').attr('readOnly',true);
+              $('#dateEndU9').attr('readOnly',true);
+              $('#hourEnd9').attr('readOnly',true);
+              $('#minsEnd9').attr('readOnly',true);
+              $('#event_id9').attr('readOnly',true);
+              $('#event_id9').attr('readOnly',true);
+              $('#event_id_destroy9').attr('readOnly',true);
+              $('#namePatient9').attr('readOnly',true);
+              $('#payment_state9').attr('readOnly',true);
 
             }else{
-              $('#confirmed_patient9').attr('disabled',false);
-              $('#confirmed_medico9').attr('disabled',false);
-              $('#price9').attr('disabled',false);
-              $('#title9').attr('disabled',false);
-              $('#state9').attr('disabled',false);
-              $('#description9').attr('disabled',false);
-              $('#eventType9').attr('disabled',false);
-              $('#payment_method9').attr('disabled',false);
-              $('#dateStart9').attr('disabled',false);
-              $('#hourStart9').attr('disabled',false);
-              $('#minsStart9').attr('disabled',false);
-              $('#dateEndU9').attr('disabled',false);
-              $('#hourEnd9').attr('disabled',false);
-              $('#minsEnd9').attr('disabled',false);
-              $('#event_id9').attr('disabled',false);
-              $('#event_id9').attr('disabled',false);
-              $('#event_id_destroy9').attr('disabled',false);
-              $('#namePatient9').attr('disabled',false);
-              $('#payment_state9').attr('disabled',false);
+              $('#confirmed_patient9').attr('readOnly',false);
+              $('#confirmed_medico9').attr('readOnly',true);
+              $('#price9').attr('readOnly',false);
+              $('#title9').attr('readOnly',false);
+              $('#state9').attr('readOnly',false);
+              $('#description9').attr('readOnly',false);
+              $('#eventType9').attr('readOnly',false);
+              $('#payment_method9').attr('readOnly',false);
+              $('#dateStart9').attr('readOnly',false);
+              $('#hourStart9').attr('readOnly',false);
+              $('#minsStart9').attr('readOnly',false);
+              $('#dateEndU9').attr('readOnly',false);
+              $('#hourEnd9').attr('readOnly',false);
+              $('#minsEnd9').attr('readOnly',false);
+              $('#event_id9').attr('readOnly',false);
+              $('#event_id9').attr('readOnly',false);
+              $('#event_id_destroy9').attr('readOnly',false);
+              $('#namePatient9').attr('readOnly',false);
+              $('#payment_state9').attr('readOnly',false);
+
+            }
+
+            //verifica permisos de asistente
+            if($('#auth_role').val() == 'Asistente'){
+                if($('#cita_edit').val() != 1){
+                     $('#eventType9').attr('readOnly',true);
+                      $('#price9').attr('readOnly',true);
+                      $('#description9').attr('readOnly',true);
+                       $('#payment_method9').attr('readOnly',true);
+                       $('#confirmed_patient9').attr('readOnly',true);
+
+                       $('#title9').attr('readOnly',true);
+
+                }
+
+                if($('#cita_change_date').val() != 1){
+                    $('#dateStart9').attr('readOnly',true);
+                    $('#hourStart9').attr('readOnly',true);
+                    $('#minsStart9').attr('readOnly',true);
+
+                    $('#hourEnd9').attr('readOnly',true);
+                    $('#minsEnd9').attr('readOnly',true);
+
+                }
+
+                if($('#cita_confirm_payment').val() != 1){
+                    $('#button_confirmed_payment').attr('disabled',true);
+                    $('#confirmed_payment_app').attr('disabled',true);
+                }
+
+                if($('#cita_confirm_completed').val() != 1){
+                    $('#confirmed_completed').attr('disabled',true);
+                    $('#button_confirmed_complete').attr('disabled',true);
+
+                }
+
 
             }
         },
@@ -1051,7 +1122,6 @@
         $('#alert_error').fadeIn();
         $('#alert_success').fadeOut();
 
-        console.log(errormsj);
 
       },
       success:function(result){
@@ -1091,9 +1161,9 @@
      // }
      send = result;
      $('#alert_carga5').fadeIn();
-     $('#guardar5').attr("disabled", true);
-     $('#delete5').attr("disabled", true);
-     $('#cancelar5').attr("disabled", true);
+     $('#guardar5').attr("readOnly", true);
+     $('#delete5').attr("readOnly", true);
+     $('#cancelar5').attr("readOnly", true);
       event_id = $('#event_id9').val();
 
       route = "{{route('cancel_appointment')}}";
@@ -1110,9 +1180,9 @@
            stop_loader();
         console.log(result);
         $('#alert_carga5').fadeOut();
-         $('#guardar5').attr("disabled", false);
-         $('#delete5').attr("disabled", false);
-         $('#cancelar5').attr("disabled", false);
+         $('#guardar5').attr("readOnly", false);
+         $('#delete5').attr("readOnly", false);
+         $('#cancelar5').attr("readOnly", false);
         $('#text_danger_up1').html(result);
         $('#alert_danger_up1').fadeIn();
         $('#alert_error_up1').fadeOut();
@@ -1128,9 +1198,9 @@
 
       cerrar();
       $('#alert_carga5').fadeIn();
-      $('#guardar5').attr("disabled", true);
-      $('#delete5').attr("disabled", true);
-      $('#cancelar5').attr("disabled", true);
+      $('#guardar5').attr("readOnly", true);
+      $('#delete5').attr("readOnly", true);
+      $('#cancelar5').attr("readOnly", true);
       event_id = $('#event_id9').val();
 
       route = "{{route('appointment_confirm_ajax')}}";
@@ -1144,9 +1214,9 @@
       },
       success:function(result){
         $('#alert_carga5').fadeOut();
-         $('#guardar5').attr("disabled", false);
-         $('#delete5').attr("disabled", false);
-         $('#cancelar5').attr("disabled", false);
+         $('#guardar5').attr("readOnly", false);
+         $('#delete5').attr("readOnly", false);
+         $('#cancelar5').attr("readOnly", false);
         console.log(result);
         cerrar();
         $('#text_success_up1').html(result);

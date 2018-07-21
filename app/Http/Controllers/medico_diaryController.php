@@ -213,9 +213,9 @@ class medico_diaryController extends Controller
 
      $day1 = \Carbon\Carbon::parse($start)->dayOfWeek;
 
+    // / return response()->json('aqui');
      $hour_start2 = \Carbon\Carbon::parse($start)->format('H:i');
      $hour_end2 = \Carbon\Carbon::parse($end)->format('H:i');
-
      if($day1 == 1){
        $day = 'lunes';
      }

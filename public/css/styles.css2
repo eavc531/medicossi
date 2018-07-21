@@ -126,6 +126,16 @@ a:hover, a:active, a:focus{
 	color: #000;
 }
 
+.color-assistant{
+background-color: #44c9ce;
+border-color: #44c9ce;
+}
+
+.color-assistant:hover{
+	background-color: #1fa3a3;
+	border-color: #1fa3a3;
+	color: #000;
+}
 /*.form-control{
 	border: .5px solid #0060df;
 	}*/
@@ -554,7 +564,7 @@ a:hover, a:active, a:focus{
 }
 
 /* Add Animation */
-.modal-content, #caption {    
+.modal-content, #caption {
     -webkit-animation-name: zoom;
     -webkit-animation-duration: 0.6s;
     animation-name: zoom;
@@ -562,12 +572,12 @@ a:hover, a:active, a:focus{
 }
 
 @-webkit-keyframes zoom {
-    from {-webkit-transform:scale(0)} 
+    from {-webkit-transform:scale(0)}
     to {-webkit-transform:scale(1)}
 }
 
 @keyframes zoom {
-    from {transform:scale(0)} 
+    from {transform:scale(0)}
     to {transform:scale(1)}
 }
 

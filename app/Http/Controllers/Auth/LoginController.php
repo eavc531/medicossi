@@ -6,6 +6,9 @@ use App\medico;
 use App\User;
 use App\medicalCenter;
 use App\patient;
+use App\medico_assistant;
+use App\assistant;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Request;
@@ -22,9 +25,9 @@ class LoginController extends Controller
         }elseif($medico->stateConfirm == 'complete'){
           return redirect()->route('medico_diary',$medico->id);
         }else{
-            
+
           Auth::logout();
-          return redirect()->route('successRegMedico',$medico->id)->with('warning', 'Su Cuenta no esta "Verificada", debes confirmar el mensaje de confirmacion, enviado a tu email asociado a tu cuenta MédicosSi, si no ha llegado el mesaje solicita reenvio de email con el boton "Reenviar Correo de Confirmacion". en la aprte de abajo de este panel.');
+          return redirect()->route('successRegMedico',$medico->id)->with('warning', 'Su Cuenta no esta "Verificada", debes confirmar el mensaje de confirmacion, enviado a tu email asociado a tu cuenta MédicosSi, si no ha llegado el mesaje solicita reenvio de email con el boton "Reenviar Correo de Confirmacion", que se muestra debajo.');
         }
 
       }elseif(Auth::user()->hasRole('medical_center')){
@@ -53,10 +56,26 @@ class LoginController extends Controller
           return redirect()->route('successRegPatient',$patient->id)->with('warning', 'Aun no has confirmado tu cuenta, para ello debes ingresar al correo  asociado a tu cuenta MédicosSi, y aceptar el mensaje de confirmación, si aun no recibes el correo reintenta el envio del mismo a travez del boton "Reenviar correo de confirmacion", mostrado a continuacion.   ');
         }
 
+      }elseif(Auth::user()->role == 'Asistente'){
+
+         $medico_assistant_count = medico_assistant::where('assistant_id',Auth::user()->assistant->id)->count();
+         if($medico_assistant_count == 0){
+             return view('assistant.medicos');
+         }elseif($medico_assistant_count == 1){
+              $medico_assistant = medico_assistant::where('assistant_id',Auth::user()->assistant->id)->first();
+
+              $assistant = assistant::find(Auth::user()->assistant->id);
+              $assistant->medico_id = $medico_assistant->medico_id;
+              $assistant->permission_id = $medico_assistant->permission_id;
+              $assistant->save();
+              return redirect()->route('home');
+         }elseif($medico_assistant_count > 1){
+             return redirect()->route('assistant_medicos',Auth::user()->assistant->id);
+         }
       }else{
         Auth::logout();
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('warning', 'No se reconoce su usuario');
       }
 
     }
@@ -68,6 +87,13 @@ class LoginController extends Controller
       ]);
 
      if(Auth::attempt($credentials)){
+         if(Auth::user()->role == 'Asistente'){
+             $assistant = assistant::find(Auth::user()->assistant_id);
+             $assistant->medico_id = Null;
+             $assistant->permission_id = Null;
+             $assistant->save();
+             return response()->json('true');
+         }
        return response()->json('true');
      }
      return response()->json('false');

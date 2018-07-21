@@ -1,349 +1,169 @@
-@foreach ($expedient_notes as $expedient_n)
-  <div class="text-center" style="margin-bottom:80px;margin-top:80px">
-    <h4 style="text-decoration: underline;">{{$expedient_n->note->title}} {{\Carbon\Carbon::parse($expedient_n->note->date_start)->format('d-m-Y')}}</h4>
-  </div>
+@elseif(Auth::check() and Auth::user()->hasRole('medico') and Auth::user()->medico->plan == Null)
 
-  @if($expedient_n->note->title == 'Nota Médica Inicial')
-    <div class="" style="margin-top:90px">
+    <!-- Copia desde aqui abajo -->
+    <div class="box-dashboard" id="dashboard">
+      <div class="row">
 
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Exploracion fisica</h5>
-      <p>{{$expedient_n->note->Exploracion_fisica}}</p>
-    </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Signos_vitales_show == 'si')
-    <div class="">
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
-      <p>{!!$expedient_n->note->Signos_vitales!!}</p>
-    </div>
-    <hr>
-@endif
-    @if($expedient_n->note->Pruebas_de_laboratorio_show == 'si')
-    <div class="form-group">
-      <h5 class="font-title-blue">Pruebas de laboratorio</h5>
-      <p>{!!$expedient_n->note->Pruebas_de_laboratorio!!}</p>
-    </div>
-    <hr>
-@endif
-    @if($expedient_n->note->Diagnostico_show == 'si')
-    <div class="">
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnostico</h5>
-      <p>{!!$expedient_n->note->Diagnostico!!}</p>
-    </div>
-    <hr>
-@endif
-    @if($expedient_n->note->Afeccion_principal_o_motivo_de_consulta_show == 'si')
-    <div class="">
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Afección principal o motivo de consulta</h5>
-      <p>{!!$expedient_n->note->Afeccion_principal_o_motivo_de_consulta!!}</p>
-    </div>
-    <hr>
-@endif
-    @if($expedient_n->note->Afeccion_secundaria_show == 'si')
-    <div class="">
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Afeccion secundaria</h5>
-      <p>{!!$expedient_n->note->Afeccion_secundaria!!}</p>
-    </div>
-    <hr>
-@endif
-    @if($expedient_n->note->Pronostico_show == 'si')
-    <div class="">
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Pronostico</h5>
-      <p>{!!$expedient_n->note->Pronostico!!}</p>
-    </div>
-    <hr>
-@endif
-    @if($expedient_n->note->Tratamiento_y_o_recetas_show == 'si')
-    <div class="">
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Tratamiento y o receta</h5>
-      <p>{!!$expedient_n->note->Tratamiento_y_o_recetas!!}</p>
-    </div>
-    <hr>
-@endif
-    @if($expedient_n->note->Indicaciones_terapeuticas_show == 'si')
-    <div class="">
-      <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Indicaciones terapeuticas</h5>
-      <p>{!!$expedient_n->note->Indicaciones_terapeuticas!!}</p>
-    </div>
-    <hr>
-@endif
-
-
-  @elseif($expedient_n->note->title == 'Nota Médica de Evolucion')
-
-    @if($expedient_n->note->Exploracion_fisica_show == 'si')
-      <div class="form-group" style="margin-top:90px">
-
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Exploracion fisica</h5>
-        <p>{!!$expedient_n->note->Exploracion_fisica!!}</p>
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Signos_vitales_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
-        <p>{!!$expedient_n->note->Signos_vitales!!}</p>
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Pruebas_de_laboratorio_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de laboratorio</h5>
-        <p>{!!$expedient_n->note->Pruebas_de_laboratorio!!}</p>
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Evolucion y actualizacion del cuadro clinico</h5>
-        <p>{!!$expedient_n->note->Evolucion_y_actualizacion_del_cuadro_clinico!!}</p>
+        <div class="col-12">
+          <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
+        </div>
 
       </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Diagnostico_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnostico</h5>
-        <p>{!!$expedient_n->note->Diagnostico!!}</p>
+      <div class="row">
+
+        <div class="col-12">
+          <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-home fa-2"></i><span>Inicio</a>
+          </div>
+        <div class="col-12">
+          <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-thumbs-up"></i><span>Me gusta</span></a>
+        </div>
+        <div class="col-12">
+          <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-gift"></i><span>Compartir</span></a>
+        </div>
       </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Afeccion_principal_o_motivo_de_consulta_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Afección principal o motivo de consulta</h5>
-        <p>{!!$expedient_n->note->Afeccion_principal_o_motivo_de_consulta!!}</p>
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Afeccion_secundaria_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Afeccion secundaria</h5>
-        <p>{!!$expedient_n->note->Afeccion_secundaria!!}</p>
+      <div class="row py-1">
+        <div class="col-12">
 
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Pronostico_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pronostico</h5>
-        <p>{!!$expedient_n->note->Pronostico!!}</p>
-
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Tratamiento_y_o_recetas_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Tratamiento y o receta</h5>
-        <p>{!!$expedient_n->note->Tratamiento_y_o_recetas!!}</p>
-
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Indicaciones_terapeuticas == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Indicaciones terapeuticas</h5>
-        <p>{!!$expedient_n->note->Indicaciones_terapeuticas!!}</p>
-      </div>
-    @endif
-
-  @elseif($expedient_n->note->title == 'Nota de Interconsulta')
-    @if($expedient_n->note->Afeccion_principal_o_motivo_de_consulta_show == 'si')
-      <h4 style="font-size: 1rem; color: #0060df;font-weight: 700;">Afección principal o motivo de consulta</h4>
-      <p>{{$expedient_n->note->Afeccion_principal_o_motivo_de_consulta}}</p>
-    </div>
-    <hr>
-  @endif
-  @if($expedient_n->note->Afeccion_secundaria_show == 'si')
-    <div class="form-group">
-      <h4 style="font-size: 1rem; color: #0060df;font-weight: 700;">Afeccion secundaria</h4>
-      <p>{{$expedient_n->note->Afeccion_secundaria}}</p>
-
-    </div>
-    <hr>
-  @endif
-  @if($expedient_n->note->Pronostico_show == 'si')
-    <div class="form-group">
-      <h4 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pronostico</h4>
-      <p>{{$expedient_n->note->Pronostico}}</p>
-
-    </div>
-    <hr>
-  @endif
-  @if($expedient_n->note->Pruebas_de_laboratorio_show == 'si')
-    <div class="form-group">
-      <h4 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de laboratorio</h4>
-      <p>{!!$expedient_n->note->Pruebas_de_laboratorio!!}</p>
-
-    </div>
-    <hr>
-  @endif
-  @if($expedient_n->note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
-    <div class="form-group">
-      <h4 style="font-size: 1rem; color: #0060df;font-weight: 700;">Evolucion y actualizacion del cuadro clinico</h4>
-      <p>{{$expedient_n->note->Evolucion_y_actualizacion_del_cuadro_clinico}}</p>
-
-    </div>
-    <hr>
-  @endif
-  @if($expedient_n->note->Sugerencias_y_tratamiento_show == 'si')
-    <div class="form-group">
-      <h4 style="font-size: 1rem; color: #0060df;font-weight: 700;">Sugerencias y tratamiento</h4>
-      <p>{{$expedient_n->note->Sugerencias_y_tratamiento}}</p>
-
-    </div>
-    <hr>
-  @endif
-
-  @elseif($expedient_n->note->title == 'Nota médica de Urgencias')
-    @if($expedient_n->note->Signos_vitales_show == 'si')
-        <div class="form-group" style="margin-top:90px">
-
-          <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
-          <p>{!!$expedient_n->note->Signos_vitales!!}</p>
+            <a href="{{route('medico_diary', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
 
         </div>
-        <hr>
-    @endif
-      @if($expedient_n->note->Motivo_de_atencion_show == 'si')
-        <div class="form-group">
-          <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Motivo_de_atencion</h5>
-          <p>{{$expedient_n->note->Motivo_de_atencion}}</p>
+        <div class="col-12">
+          <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
         </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Estado_mental_show == 'si')
-        <div class="form-group">
-          <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Estado mental</h5>
-          <p>{{$expedient_n->note->Estado_mental}}</p>
-        </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Resultados_relevantes_show == 'si')
-        <div class="form-group">
-          <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Resultados relevantes de los servicios auxiliares de diagnostico</h5>
-          <p>{{$expedient_n->note->Resultados_relevantes_de_los_servicios_auxiliares_de_diagnostico}}</p>
-        </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Diagnostico_show == 'si')
-        <div class="form-group">
-          <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnostico</h5>
-          <p>{{$expedient_n->note->Diagnostico}}</p>
-        </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Pronostico_show == 'si')
-        <div class="form-group">
-          <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pronostico</h5>
-          <p>{{$expedient_n->note->Pronostico}}</p>
-        </div>
-    <hr>
-    @endif
+        {{-- <div class="col-12">
+          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-cogs"></i><span>Panel de control</span></a>
+        </div> --}}
 
+          <div class="col-12">
 
-  @elseif($expedient_n->note->title == 'Nota médica de Egreso')
+          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+        </div>
+
+        <div class="col-12">
+          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-12">
+          <a href="{{route('medico_diary',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
+        </div>
+
+        <div class="col-12">
+          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+        </div>
+
+        <div class="col-12">
+          <a href="{{route('planes_medic',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
+        </div>
+
+        <div class="col-12">
+          <a href="{{route('medico_diary',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
+        </div>
+
+        {{-- <div class="col-12">
+          <a href="{{route('reminders_medico',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+        </div> --}}
+        <div class="col-12">
+          <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Descarga tu app</span></a>
+        </div>
+
+      </div>
+    </div>
+    <!-- Hasta aqui -->
+  @elseif(Auth::check() and Auth::user()->hasRole('medico'))
+  <!-- Copia desde aqui abajo -->
+  <div class="box-dashboard" id="dashboard">
     <div class="row">
-      <div class="col-lg-6 col-sm-6 col-12">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Fecha de ingreso:</h5>
 
-        <input type="hidden" name="" value="{{$fecha_egreso = \Carbon\Carbon::parse($expedient_n->note->fecha_ingreso)->format('d-m-Y')}}">
-        {{$fecha_egreso}}
+      <div class="col-12">
+        <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
       </div>
-      <div class="col-lg-6 col-sm-6 col-12">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Fecha de egreso:</h5>
-        <input type="hidden" name="" value="{{$fecha_egreso = \Carbon\Carbon::parse($expedient_n->note->fecha_egreso)->format('d-m-Y')}}">
-        {{$fecha_egreso}}
-      </div>
-    </div>
-    <hr>
-    @if($expedient_n->note->Motivo_del_egreso_show == 'si')
 
-      <div class="form-group mt-3">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Motivo del egreso</h5>
-        {{$expedient_n->note->Motivo_del_egreso}}
+    </div>
+    <div class="row">
+      @if(Auth::user()->medico->plan != Null)
+        <div class="col-12">
+          <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic" style="border-bottom:solid 1px white"><strong><span style="font-size:14px;color:white;" class="p-2 m-1"> @if(Auth::user()->medico->plan == 'plan_profesional') Plan: Plan Profesional @elseif(Auth::user()->medico->plan == 'plan_agenda') Plan: Plan Mi Agenda @elseif(Auth::user()->medico->plan == 'plan_platino') Plan: Plan Platino
+          @elseif(Auth::user()->medico->plan == 'plan_basico') Plan: Plan Basico
+          @else @endif</span></strong></a>
+        </div>
+      @endif
+      <div class="col-12">
+        <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-home fa-2"></i><span>Inicio</a>
+        </div>
+      <div class="col-12">
+        <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-thumbs-up"></i><span>Me gusta</span></a>
       </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Diagnosticos_finales_show == 'si')
-    <div class="form-group">
-      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnosticos finales</h5>
-      {{$expedient_n->note->Diagnosticos_finales}}
+      <div class="col-12">
+        <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-gift"></i><span>Compartir</span></a>
+      </div>
     </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Resumen_de_evolucion_y_estado_actual_show == 'si')
-    <div class="form-group">
-      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Resumen de evolucion y estado actual</h5>
-      {{$expedient_n->note->Resumen_de_evolucion_y_estado_actual}}
-    </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Manejo_durante_la_estancia_hospitalaria_show == 'si')
-    <div class="form-group">
-      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Manejo durante la estancia hospitalaria</h5>
-      {{$expedient_n->note->Manejo_durante_la_estancia_hospitalaria}}
-    </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Problemas_clinicos_pendientes_show == 'si')
-    <div class="form-group">
-      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Problemas clinicos pendientes</h5>
-      {{$expedient_n->note->Problemas_clinicos_pendientes}}
-    </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Plan_de_manejo_y_tratamiento_show == 'si')
-    <div class="form-group">
-      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Plan de manejo y tratamiento</h5>
-      {{$expedient_n->note->Plan_de_manejo_y_tratamiento}}
-    </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Recomendaciones_para_vigilancia_ambulatoira_show == 'si')
-    <div class="form-group">
-      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Recomendaciones para vigilancia ambulatoira</h5>
-      {{$expedient_n->note->Recomendaciones_para_vigilancia_ambulatoira}}
-    </div>
-    <hr>
-    @endif
-    @if($expedient_n->note->Otros_datos_show == 'si')
-    <div class="form-group">
-      <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Otros datos</h5>
-      {{$expedient_n->note->Otros_datos}}
-    </div>
-    <hr>
-    @endif
+    <div class="row py-1">
 
-  @elseif($expedient_n->note->title == 'Nota de Referencia o traslado')
-    @if($expedient_n->note->Motivo_de_envio_show == 'si')
-        <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Motivo de envio</h5>
-        <p>{{$expedient_n->note->Motivo_de_envio}}</p>
-      </div>
-      <hr>
-    @endif
-       @if($expedient_n->note->Establecimiento_que_envia_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Establecimiento que envia</h5>
-          <p>{{$expedient_n->note->Establecimiento_que_envia}}</p>
-      </div>
-      <hr>
-    @endif
-      @if($expedient_n->note->Establecimiento_receptor_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Establecimiento receptor</h5>
-          <p>{{$expedient_n->note->Establecimiento_receptor}}</p>
-      </div>
-      <hr>
-    @endif
-    @if($expedient_n->note->Diagnostico_show == 'si')
-      <div class="form-group">
-        <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Diagnostico</h5>
-          <p>{{$expedient_n->note->Diagnostico}}</p>
-      </div>
-      <hr>
-    @endif
+      <div class="col-12">
 
-  @endif
+        @if (Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+          @if(Auth::user()->medico->plan == 'plan_agenda')
+            <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+          @else
+            <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+          @endif
+        @endif
 
-@endforeach
+      </div>
+      <div class="col-12">
+        <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
+      </div>
+      {{-- <div class="col-12">
+        <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-cogs"></i><span>Panel de control</span></a>
+      </div> --}}
+
+
+    <div class="col-12">
+
+        <a href="{{route('medico_patients',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+      </div>
+
+      <div class="col-12">
+        <a href="{{route('calification_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+      </div>
+
+    </div >
+
+    <div class="row">
+
+
+      <div class="col-12">
+        <a href="{{route('medico_diary',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
+      </div>
+
+      <div class="col-12">
+        <a href="{{route('medico_schedule',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+      </div>
+
+      <div class="col-12">
+        <a href="{{route('planes_medic',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
+      </div>
+      @if (Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+      <div class="col-12">
+        <a href="{{route('income_medic',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
+      </div>
+      <div class="col-12">
+        <a href="{{route('medico_reminders',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+      </div>
+      @endif
+      @if ( Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+      <div class="col-12">
+        <a href="{{route('medico_assistants',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+      </div>
+    @endif
+      <div class="col-12">
+        <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Descarga tu app</span></a>
+      </div>
+
+    </div>
+  </div>
+  <!-- Hasta aqui -->

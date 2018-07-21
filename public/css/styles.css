@@ -1,3 +1,8 @@
+/* //EDWAR desde AQUI */
+
+
+/* //EDWAR HASTA AQUI */
+
 .checked {
 	color:orange;
 }
@@ -125,6 +130,9 @@ a:hover, a:active, a:focus{
 	border-color: #1fa3a3;
 	color: #000;
 }
+
+
+
 
 /*.form-control{
 	border: .5px solid #0060df;

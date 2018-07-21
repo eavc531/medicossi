@@ -70,20 +70,32 @@
       <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>$medico->id,'patient_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Lista de citas con paciente</em>"><i class="fas fa-bars"></i></a>
       </div>
-      @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+      @plan_platino
         <div class="col-lg-2 col-2  col-sm-4 text-center">
           <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary"><i class="fas fa-folder"></i></a>
         </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
       </div>
-    @endif
+  @else
+
+      <div class="col-lg-2 col-2  col-sm-4 text-center">
+        <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary disabled text-secondary"><i class="fas fa-folder"></i></a>
+      </div>
+    <div class="col-lg-2 col-2  col-sm-3 text-center">
+      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary disabled text-secondary"><i class="fas fa-notes-medical"></i></a>
+    </div>
+    @endplan_platino
 
 
     </div>
     <div class="row">
       <div class="col-10 text-center mt-2">
+          @cita_create
         <a href="{{route('medico_stipulate_appointment',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" class="btn btn-primary btn-block">Agendar Cita</a>
+    @else
+        <a href="{{route('medico_stipulate_appointment',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" class="btn btn-primary btn-block disabled" disabled>Agendar Cita</a>
+        @endcita_create
       </div>
     </div>
 

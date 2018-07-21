@@ -24,7 +24,10 @@ class CreateAssistantsTable extends Migration
             $table->string('email');
             $table->string('options')->nullable();
             $table->string('state')->nullable();
-            $table->integer('id_use')->nullable();
+            $table->integer('medico_id')->unsigned()->nullable();
+            $table->foreign('medico_id')->references('id')->on('medicos');
+            $table->integer('permission_id')->unsigned()->nullable();
+            $table->foreign('permission_id')->references('id')->on('permissions');
             $table->timestamps();
         });
     }

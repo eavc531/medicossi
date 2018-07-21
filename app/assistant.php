@@ -19,12 +19,11 @@ class assistant extends Model
     'dateActivation',
   ];
 
-
-
-
-
   public function medico(){
      return $this->belongsTo('App\medico');
   }
 
+  public function permission(){
+     return $this->belongsTo('App\permission');
+  }
 }

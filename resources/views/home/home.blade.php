@@ -649,7 +649,7 @@
   @endif
 
   @if(Session::Has('iniciar'))
-      INICIARRRRRRR
+
   <script type="text/javascript">
 
     $(document).ready(function(){
@@ -764,7 +764,7 @@
                 $.each(result.responseJSON.errors, function( index, value ) {
                   errores += '<li>'+value+'</li>';
                 });
-                console.log(errores);
+                console.log(result);
                 $('#text-alert').html('<ul>'+errores+'</ul>');
                 $('#alert').fadeIn();
               // $error += '<li>result.message</li>';

@@ -1,117 +1,145 @@
-public function successRegAssistant($id)
-{
-  $user = User::find($id);
-  $assistant = assistant::find($user->assistant_id);
-  return view('assistant.successReg')->with('assistant', $assistant);
-}
 
-public function AvisoConfirmAccountAssistant($id)
-{
-  $user = User::find($id);
-  $assistant = assistant::find($user->assistant_id);
-  return view('assistant.AvisoConfirmAccountAssistant')->with('assistant', $assistant)->with('user', $user);
-}
+               <!-- Copia desde aqui abajo -->
+               <div class="box-dashboard" id="dashboard">
+                 <div class="row">
 
-public function index()
-{
- $assistants = assistant::orderBy('id','desc')->paginate(10);
+                   <div class="col-12">
+                     <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
+                   </div>
 
- return view('assistant.assistantList')->with('assistants', $assistants);
-}
+                 </div>
+                 <div class="row">
+                   @if(Auth::user()->medico->plan != Null)
+                     <div class="col-12">
+                       <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic" style="border-bottom:solid 1px white"><strong><span style="font-size:14px;color:white;" class="p-2 m-1">
+                           @if(Auth::user()->medico->plan == 'plan_profesional') Plan: Plan Profesional @elseif(Auth::user()->medico->plan == 'plan_agenda') Plan: Plan Mi Agenda @elseif(Auth::user()->medico->plan == 'plan_platino') Plan: Plan Platino
+                       @elseif(Auth::user()->medico->plan == 'plan_basico') Plan: Plan Basico
+                       @else @endif</span></strong></a>
+                     </div>
+                   @endif
+                   <div class="col-12">
+                     <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-home fa-2"></i><span>Inicio</a>
+                     </div>
+                   <div class="col-12">
+                     <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-thumbs-up"></i><span>Me gusta</span></a>
+                   </div>
+                   <div class="col-12">
+                     <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-gift"></i><span>Compartir</span></a>
+                   </div>
+                 </div>
+                 <div class="row py-1">
+                     @plan_agenda
+                     <div class="col-12">
+                     <a href="{{route('medico_patients',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+                   </div>
+                   @endplan_agenda
 
-/**
-* Show the form for creating a new resource.
-*
-* @return \Illuminate\Http\Response
-*/
-public function create()
-{
- $medico = medico::orderBy('name','asc')->pluck('name','id');
-   return view('assistant.create')->with('medico', $medico);
-}
+                   <div class="col-12">
 
-public function confirmAssistant($id,$code){
-$user = User::find($id);
+                     <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
+                   </div>
+                   @plan_agenda
+                   <div class="col-12">
+                             <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                     </div>
 
-if($user->confirmation_code == $code){
+                   <div class="col-12">
+                     <a href="{{route('medico_reminders',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+                   </div>
 
-    $user->confirmation_code = null;
-    $user->confirmed = 'medium';
-    $user->save();
-    $assistant = assistant::where('user_id',$user->id);
+                   <div class="col-12">
+                     <a href="{{route('medico_schedule',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+                   </div>
+                   @endplan_agenda
+                 </div >
 
-    return redirect()->route('AvisoConfirmAccountAssistant',$user->id);
-  }else{
-    return redirect()->route('successRegAssistant',$user->id)->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
+                 <div class="row">
+                     @assistant
 
-  }
+                     <div class="col-12">
+                       <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Ver Perfil</span></a>
+                     </div>
+                 @else
+                     <div class="col-12">
+                       <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
+                     </div>
+                     @endassistant
 
-}
-/**
-* Store a newly created resource in storage.
-*
-* @param  \Illuminate\Http\Request  $request
-* @return \Illuminate\Http\Response
-*/
+                  @plan_profesional
+                      @assistant
 
+                  @else
+                         <div class="col-12">
+                           <a href="{{route('medico_assistants',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+                         </div>
+                     @endassistant
+                 @endplan_profesional
+                 @plan_profesional
+                     <div class="col-12">
+                       <a href="{{route('calification_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+                     </div>
+                 @endplan_profesional
+                   <div class="col-12">
+                     <a href="{{route('planes_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
+                   </div>
+                   @plan_agenda
+                   <div class="col-12">
+                     <a href="{{route('income_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
+                   </div>
+                   @endplan_agenda
 
-/**
-* Display the specified resource.
-*
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function show($id)
-{
-   //
-}
+                   @if ( Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
 
-/**
-* Show the form for editing the specified resource.
-*
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function edit($id)
-{
-   $category = specialtyCategories::find($id);
-   return view('specialty.specialtyCategories.edit')->with('category', $category);
-}
+                 @endif
+                   <div class="col-12">
+                     <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Descarga tu app</span></a>
+                   </div>
 
-/**
-* Update the specified resource in storage.
-*
-* @param  \Illuminate\Http\Request  $request
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function update(Request $request, $id)
-{
- $category = specialtyCategories::find($id);
+                 </div>
 
- if($request->name != $category->name){
-   $request->validate([
-     'name'=>'required|unique:specialty_categories',
-     'description'=>'nullable',
-   ]);
- }
-   $category->fill($request->all());
+               </div>
+               <div class="row mt-1">
+                   <div class="col-12">
+                     <a href="{{route('assistant_permissions',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Permisos otorgados</span></a>
 
-   $category->save();
+                   </div>
+                   <div class="col-12">
+                     <a href="{{route('assistant_medicos',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Médicos que asisto</span></a>
+
+                   </div>
 
 
-   return redirect()->route('specialty_categories.index')->with('success','La Categoria: '.$request->name. ' ha sido actualizada.' );
+               </div>
+               <div class="row mt-1">
 
+                   <div class="col-12">
 
-}
+                       <div class="dropup">
+                           <button class="btn btn-block btn-config-dashboard color-medic dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Desabilitados
+                           </button>
+                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width:210px">
+                               <span class="ml-2 text-secondary">Desabilitado</span>
+                         <div class="dropdown-divider"></div>
+                     @plan_agenda_no
+                         <a href="{{route('medico_patients',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+                         <a href="{{route('medico_diary',7)}}" class="dropdown-item "><i class="fas fa-book"></i><span>Mi Agenda</span></a>
 
-/**
-* Remove the specified resource from storage.
-*
-* @param  int  $id
-* @return \Illuminate\Http\Response
-*/
-public function destroy($id)
-{
-   //
-}
+                         <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="dropdown-item"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+
+                         <a href="{{route('medico_reminders',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+                         <a href="{{route('medico_schedule',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+                         <a href="{{route('medico_assistants',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+                           @endplan_agenda_no
+                           @plan_profesional_no
+                           <a href="{{route('medico_assistants',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+                         <a href="{{route('calification_medic',Auth::user()->medico_id)}}" class="dropdown-item"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+                         @endplan_profesional_no
+                             {{-- <a class="dropdown-item" href="#">Something else here</a> --}}
+                           </div>
+                         </div>
+
+                   </div>
+
+               </div>
+               <!-- Hasta aqui -->

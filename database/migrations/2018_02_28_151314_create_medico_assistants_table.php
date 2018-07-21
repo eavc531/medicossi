@@ -19,7 +19,8 @@ class CreateMedicoAssistantsTable extends Migration
             $table->foreign('medico_id')->references('id')->on('medicos');
             $table->integer('assistant_id')->unsigned()->nullable();
             $table->foreign('assistant_id')->references('id')->on('assistants');
-            $table->string('state')->nullable();
+            $table->integer('permission_id')->unsigned()->nullable();
+            $table->foreign('permission_id')->references('id')->on('permissions');
             $table->string('options')->nullable();
             $table->timestamps();
         });

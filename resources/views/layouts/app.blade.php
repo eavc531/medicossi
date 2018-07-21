@@ -13,7 +13,16 @@
 
 	@yield('css')
 	<style media="screen">
+		.color-assistant{
+			background-color: rgb(230, 130, 103);
+			border-color: rgb(230, 130, 103);
+		}
 
+		.color-assistant:hover{
+			background-color: rgb(226, 78, 37);
+			border-color:rgb(226, 78, 37);
+			color: #000;
+		}
 	#loaderx {
 		position: fixed;
 		left: 50%;
@@ -118,17 +127,21 @@
 			<ul class="navbar-nav">
 				<li class="nav-item dropdown">
 					@if(Auth::check())
-						<a class="nav-link dropdown-toggle font-navbar" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+						<a class="nav-link dropdown-toggle font-navbar" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" style="font-size:18px">
 							@if(Auth::user()->role == 'Administrador')
-								<strong>Administrador:</strong> {{Auth::user()->administrator->name}} {{Auth::user()->administrator->lastName}}
+								<strong class="text-primary">Administrador:</strong> {{Auth::user()->administrator->name}} {{Auth::user()->administrator->lastName}}
 							@elseif (Auth::user()->role == 'Paciente')
-								<strong>Paciente:</strong> {{Auth::user()->patient->name}} {{Auth::user()->patient->lastName}}
+								<strong class="text-primary">Paciente:</strong> {{Auth::user()->patient->name}} {{Auth::user()->patient->lastName}}
 							@elseif (Auth::user()->role == 'medico')
-								<strong>Medico:</strong> {{Auth::user()->medico->name}} {{Auth::user()->medico->lastName}}
-							@elseif (Auth::user()->role == 'Asistente')
-								<strong>Asistente:</strong> {{Auth::user()->asistant->name}} {{Auth::user()->asistant->lastName}}
+								<strong class="text-primary">Medico:</strong> {{Auth::user()->medico->name}} {{Auth::user()->medico->lastName}}
+							@elseif (Auth::check() and Auth::user()->role == 'Asistente' and Auth::user()->assistant->medico_id != Null and Auth::user()->assistant->permission_id != Null)
+								<strong class="text-primary">Asistente:</strong> {{Auth::user()->assistant->nameComplete}}
+							<span class="text-primary"> asistiendo a:</span>
+								{{Auth::user()->assistant->medico->nameComplete}}
+							@elseif (Auth::check() and Auth::user()->role == 'Asistente')
+								<strong class="text-primary">Asistente:</strong> {{Auth::user()->assistant->nameComplete}}
 							@elseif (Auth::user()->role == 'Promotor')
-								<strong>Promotor:</strong> {{Auth::user()->promoter->name}} {{Auth::user()->promoter->lastName}}
+								<strong class="text-primary">Promotor:</strong> {{Auth::user()->promoter->name}} {{Auth::user()->promoter->lastName}}
 							@endif
 
 						</a>
