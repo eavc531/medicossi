@@ -176,8 +176,8 @@ class assistantController extends Controller
 
         Mail::send('mails.ActivationAssistent',['assistant'=>$assistant,'user'=>$user,'pass'=>$pass,'medico'=>$medico],function($msj) use($user){
            $msj->subject('Médicos Si');
-           // $msj->to($user->email);
-           $msj->to('eavc53189@gmail.com');
+           $msj->to($user->email);
+           // $msj->to('eavc53189@gmail.com');
 
       });
 

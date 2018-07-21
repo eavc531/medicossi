@@ -19,12 +19,25 @@
 @section('content')
 {{-- //ALGUNOS PERMISOS PARA LAS CITAS  --}}
 
-<input type="hidden" name="" value="{{Auth::user()->role}}" id="auth_role">
     @if(Auth::user()->role == 'Asistente')
+
+        edit:
+        {{Auth::user()->assistant->permission->cita_edit}}
+        cambiar:
+        {{Auth::user()->assistant->permission->cita_change_date}}
+        confirm pago:
+        {{Auth::user()->assistant->permission->cita_confirm_payment}}
+        confirm compelted:
+        {{Auth::user()->assistant->permission->cita_confirm_completed}}
+        cancel:
+        {{Auth::user()->assistant->permission->cita_cancel}}
+        create:
+        {{Auth::user()->assistant->permission->cita_create}}
     <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_edit}}" id="cita_edit">
     <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_change_date}}" id="cita_change_date">
     <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_payment}}" id="cita_confirm_payment">
     <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_completed}}" id="cita_confirm_completed">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_cancel}}" id="cita_cancel">
 
 
     @endif
@@ -56,9 +69,9 @@
                 <div class="" id="result_search">
             @else
                 <label for="" class="mt-2">Agendar con:</label>
-                <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search" readOnly>
-                <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()" readOnly>Buscar</button>
-                <button type="button" name="button" class="btn btn-secondary btn-sm text-secondary" onclick="vaciar_search()" readOnly>vaciar</button>
+                <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search" disabled>
+                <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()" disabled>Buscar</button>
+                <button type="button" name="button" class="btn btn-secondary btn-sm text-secondary" onclick="vaciar_search()" disabled>vaciar</button>
                 <div class="" id="result_search">
 
             @endcita_create
@@ -966,6 +979,11 @@
 
                 }
 
+                if($('#cita_cancel').val() != 1){
+                    $('#rechazar').attr('disabled',true);
+
+
+                }
 
             }
         },

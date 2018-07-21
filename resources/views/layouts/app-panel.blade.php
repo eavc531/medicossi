@@ -2,8 +2,11 @@
 <html>
 <head>
 	<title>Medicossi</title>
+	<link rel="stylesheet" href="{{asset('tether/css/tether.min.css')}}">
 	<link rel="stylesheet" href="{{asset('bootstrap/css/bootstrap.css')}}">
 	<link rel="stylesheet" href="{{asset('bootstrap/css/bootstrap_alpha_6.min.css')}}">
+	<link rel="stylesheet" href="{{asset('fontawesome/css/fontawesome.css')}}">
+
 	<link rel="stylesheet" type="text/css" href="{{asset('css/styles.css')}}">
 	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
@@ -213,13 +216,16 @@
 
 	</body>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.3/js/tether.min.js"></script>
+	<script src="{{asset('jquery/jquery.js')}}"></script>
 
-	<script src="https://use.fontawesome.com/7886bdfbdc.js"></script>
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="{{asset('tether/js/tether.min.js')}}"></script>
+	{{-- <script src="{{asset('popper/js/popper.js')}}"></script> --}}
 
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	{{-- <script src="{{asset('bootstrap/js/bootstrap.min.js')}}"></script> --}}
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	<script src="{{asset('fontawesome/js/fontawesome.js')}}"></script>
+
+	<script type="text/javascript" src="{{asset('js/main.js')}}"></script>
 
 
 	{{-- <script type="text/javascript" src="{{asset('jquery\jquery.js')}}"></script> --}}

@@ -97,8 +97,8 @@ class medico_diaryController extends Controller
 
        Mail::send('mails.cancel_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
           $msj->subject('Notificación Cancelacion de Cita, MédicosSi');
-          // $msj->to($patient->email);
-         $msj->to('eavc53189@gmail.com');
+          $msj->to($patient->email);
+         // $msj->to('eavc53189@gmail.com');
         });
 
         return response()->json(['danger'=>'Se a Rechazado/Cancelado la cita con el paciente: '.$event->patient->name.' '.$event->patient->lastName.' para la Fecha: '.$event->start]);
@@ -742,7 +742,7 @@ class medico_diaryController extends Controller
            $event->stipulated = "Paciente";
            $event->notification = "not_see";
            $event->confirmed_patient = 'Si';
-        }elseif (Auth::check() and Auth::user()->role == 'medico') {
+       }elseif (Auth::check() and Auth::user()->role == 'medico' or Auth::check() and Auth::user()->role == 'Asistente') {
             $event->confirmed_medico = 'No';
            $event->patient_id = $request->patient_id;
            $event->medico_id = $request->medico_id;
@@ -767,7 +767,7 @@ class medico_diaryController extends Controller
 
 
        //////////////////registro por medico
-       if(Auth::check() and Auth::user()->role == 'medico'){
+       if(Auth::check() and Auth::user()->role == 'medico' or Auth::check() and Auth::user()->role == 'Asistente'){
 
          $event->confirmed_medico = 'Si';
 

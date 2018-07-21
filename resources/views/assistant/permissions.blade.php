@@ -49,7 +49,7 @@
 									<th class="">Agendar Citas con pacientes</th>
 									<td class="text-justify">El asistente puede agendar citas dentro de el horario preestablecido por el Médico</td>
 									<td class="text-justify">
-
+										{{$permissions->cita_patient_create}}
 										@if(Auth::user()->role == 'Asistente')
 											@if($permissions->cita_patient_create == Null)
 												<i class="fas fa-times text-secondary"></i>

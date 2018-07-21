@@ -26,7 +26,7 @@
     {{-- // --}}
     <div class="form-group">
       <label for="" class="font-title">Paciente</label>
-      {{Form::text('namePatient',null,['id'=>'namePatient9','class'=>'form-control','readonly'])}}
+      {{Form::text('namePatient',null,['id'=>'namePatient9','class'=>'form-control','disabled'])}}
     </div>
   </div>
   <div class="col-lg-3 col-12">
@@ -93,7 +93,7 @@
   </div>
   <div class="col-3">
     <label for="Estado" class="font-title">Estado:</label>
-    {{Form::text('state',null,['class'=>'form-control','id'=>'state9','readonly'])}}
+    {{Form::text('state',null,['class'=>'form-control','id'=>'state9','disabled'])}}
   </div>
   <div class="col-6 row">
     <div class="col-12 text-center">
