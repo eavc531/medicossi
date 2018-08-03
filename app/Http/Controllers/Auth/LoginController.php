@@ -17,7 +17,7 @@ class LoginController extends Controller
 
     public function loginRedirect(){
 
-      if(Auth::user()->hasRole('medico')){
+      if(Auth::user()->role == 'medico'){
 
         $medico = medico::find(Auth::user()->medico_id);
         if($medico->stateConfirm == 'medium'){
@@ -30,7 +30,7 @@ class LoginController extends Controller
           return redirect()->route('successRegMedico',$medico->id)->with('warning', 'Su Cuenta no esta "Verificada", debes confirmar el mensaje de confirmacion, enviado a tu email asociado a tu cuenta MédicosSi, si no ha llegado el mesaje solicita reenvio de email con el boton "Reenviar Correo de Confirmacion", que se muestra debajo.');
         }
 
-      }elseif(Auth::user()->hasRole('medical_center')){
+    }elseif(Auth::user()->role == 'medical_center'){
         $medical_center = medicalCenter::find(Auth::user()->medical_center_id);
 
         if($medical_center->statuss == 'mailConfirmed'){
@@ -101,6 +101,7 @@ class LoginController extends Controller
     }
 
     public function logout(){
+
       Auth::logout();
       return redirect()->route('home');
     }

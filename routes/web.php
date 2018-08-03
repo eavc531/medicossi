@@ -10,10 +10,17 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//SELECT estadosciudades
+Route::post('inner/cities/select','medicoController@inner_cities_select')->name('inner_cities_select');
+Route::post('inner/cities/select2','medicoController@inner_cities_select2')->name('inner_cities_select2');
+Route::post('inner/cities/select3','medicoController@inner_cities_select3')->name('inner_cities_select3');
 //HOME
 Route::get('medico/{id}/map/show','HomeController@detail_medic_map')->name('detail_medic_map');
 Route::get('autocomplete_specialty','HomeController@autocomplete_specialty')->name('autocomplete_specialty');
 //perfil medico
+Route::get('medico/{id}/data/primordial/','medicoController@data_primordial_medico')->name('data_primordial_medico');
+Route::get('medico/{id}/edit/address','medicoController@medico_edit_address')->name('medico_edit_address');
+
 Route::get('iniciar/home','HomeController@inicar_home')->name('inicar_home');
 Route::post('verify/Session', 'Auth\LoginController@verifySession')->name('verifySession');
 Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
@@ -77,19 +84,16 @@ Route::get('home','HomeController@home')->name('home');
 
 Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
 
-
-
 // middlaware authentica
-  Route::group(['middleware' => ['authenticate']], function (){
+Route::group(['middleware' => ['authenticate']], function (){
+
+Route::get('administrator/control_panel','administratorsController@panel_control_administrator')->name('panel_control_administrator');
 
 Route::resource('patient','patientController');
 
 Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
 //plans
 ////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
-
-//////////
-
 
 Route::post('medico/plan/set','plansController@set_plan')->name('set_plan');
 
@@ -175,8 +179,6 @@ Route::group(['middleware' => ['medic_plan_agenda']], function (){
 //PLAN Profesional
 Route::group(['middleware' => ['medic_plan_profesional']], function (){
 //calification_medic//b
-
-
 
     Route::get('medico/{m_id}/stipulate/appointment/patient/{p_id}','medico_diaryController@medico_stipulate_appointment')->name('medico_stipulate_appointment');
 
@@ -295,7 +297,7 @@ Route::get('medico/{id}/appointments/canceled', 'medicoController@appointments_c
 Route::post('medicalCenter/social/store','medicalCenterController@medicalCenter_social_store')->name('medicalCenter_social_store');
 Route::post('borrar_social','medicoController@borrar_social')->name('borrar_social');
 
-Route::get('medico/{id}/data/primordial/','medicoController@data_primordial_medico')->name('data_primordial_medico');
+
 
 Route::get('medic/{id}/consulting_room/create','consulting_roomController@consulting_room_create')->name('consulting_room_create');
 Route::post('medic/{id}/consulting_room/store','consulting_roomController@consulting_room_store')->name('consulting_room_store');
@@ -326,7 +328,6 @@ Route::get('patient/delete/{id}/medico','patientController@delete_patient_doctor
 
 //
 
-
 Route::get('medico/{m_id}/patient/{p_id}/appointments','medicoController@medico_appointments_patient')->name('medico_appointments_patient');
 
 Route::get('medico/delete/{id}/patient','patientController@delete_medico_patients')->name('delete_medico_patients');
@@ -355,8 +356,6 @@ Route::get('medical_center/{id}/panel','medicalCenterController@medical_center_p
 
 Route::resource('photo','photoController');
 
-
-
 Route::get('medicalCenter/image/delete/{id}','photoController@photo_medical_delete')->name('photo_medical_delete');
 Route::get('medico/photo/delete/{id}','photoController@photo_delete')->name('photo_delete');
 
@@ -370,10 +369,6 @@ Route::get('medico/{id}/info/edit','medicoController@medico_specialty_edit')->na
 Route::post('medico/specialty/store','medicoController@medico_specialty_store')->name('medico_specialty_store');
 Route::post('medico/specialty{id}/update','medicoController@medico_specialty_update')->name('medico_specialty_update');
 Route::get('medico/specialty{id}/delete','medicoController@medico_specialty_delete')->name('medico_specialty_delete');
-
-Route::post('inner/cities/select','medicoController@inner_cities_select')->name('inner_cities_select');
-Route::post('inner/cities/select2','medicoController@inner_cities_select2')->name('inner_cities_select2');
-Route::post('inner/cities/select3','medicoController@inner_cities_select3')->name('inner_cities_select3');
 
 Route::get('confirm/MedicalCenter/{id}/{code}','medicalCenterController@confirmMedicalCenter')->name('confirmMedicalCenter');
 
@@ -393,7 +388,6 @@ Route::post('medicalCenter/add/medico','medicalCenterController@medical_center_a
 
 Route::get('medicalCenter/{id}/edit/address','medicalCenterController@medical_center_edit_address')->name('medical_center_edit_address');
 
-Route::get('medico/{id}/edit/address','medicoController@medico_edit_address')->name('medico_edit_address');
 
 Route::post('medicalCenter/{id}/update/address','medicalCenterController@medical_center_update_address')->name('medical_center_update_address');
 Route::post('medico/{id}/update/address','medicoController@medico_update_address')->name('medico_update_address');
@@ -402,10 +396,7 @@ Route::get('medicalCenter/{id}/edit/schedule','medicalCenterController@medical_c
 
 Route::post('medicalCenter/{id}/store/schedule','medicalCenterController@medical_center_store_schedule')->name('medical_center_store_schedule');
 
-
-
 Route::get('medicalCenter/{id}/delete/schedule','medicalCenterController@medical_center_schedule_delete')->name('medical_center_schedule_delete');
-
 
 Route::get('medicalCenter/{id}/profile','medicalCenterController@medicalCenter_profile')->name('medicalCenter_profile');
 
@@ -431,13 +422,30 @@ Route::resource('assistant','assistantController');
 Route::resource('administrators','administratorsController');
 //plans
 Route::resource('plans','plansController');
+
+Route::post('admin/porcentage/store','plansController@porcentage_store')->name('porcentage_store');
+Route::get('admin/plans/porcentages','plansController@plans_porcentages')->name('plans_porcentages');
 Route::get('planes','plansController@planes')->name('planes');
 Route::get('medico/{id}/contract/plan','plansController@contract')->name('contract');
 
 Route::get('planes/medic/{id}','plansController@planes_medic')->name('planes_medic');
+
+Route::get('plans/medic/specialties','plansController@planes_medic_specialties')->name('planes_medic_specialties');
+Route::get('plans/alterativa/psicologos/Terapeutas','plansController@planes_alt_psicologos')->name('planes_alt_psicologos');
+
 //
 Route::resource('promoters','promotersController');
+
+Route::post('account_number_store','promotersController@account_number_store')->name('account_number_store');
+Route::get('account_number/{id}/edit','promotersController@account_number_edit')->name('account_number_edit');
+Route::get('account_number/{id}/delete','promotersController@account_number_delete')->name('account_number_delete');
+Route::post('account_number/update','promotersController@account_number_update')->name('account_number_update');
+
+
+Route::get('promoter/{id}/accounts/number','promotersController@accounts_number')->name('accounts_number');
+
 Route::resource('specialty_category','specialty_categoryController');
+Route::get('promoter/medico/{id}/comisions','promotersController@promoter_medico_comisions')->name('promoter_medico_comisions');
 
 
 Route::get('promoters/{id}/add/medic/invited','promotersController@add_medic')->name('add_medic');
@@ -447,6 +455,21 @@ Route::post('promoters/store/medic','promotersController@store_medic')->name('st
 Route::get('promoters/{id}/add/medical_center/invited','promotersController@add_medical_center')->name('add_medical_center');
 
 Route::get('promoter/{id}/list_medical_center_invited','promotersController@list_medical_center_invited')->name('list_medical_center_invited');
+
+
+Route::get('promoter/{id}/deposits','promotersController@promoter_deposits')->name('promoter_deposits');
+
+
+Route::get('promoter/deposit/{id}/details','promotersController@deposit_details')->name('deposit_details');
+
+Route::post('deposit_establish_payment_store','promotersController@deposit_establish_payment_store')->name('deposit_establish_payment_store');
+
+Route::get('admin/promoters/deposits/{id}/establish_payment','promotersController@deposit_establish_payment')->name('deposit_establish_payment');
+
+Route::get('promoter/{id}/deposits/pending','promotersController@promoter_deposits_pending')->name('promoter_deposits_pending');
+Route::get('promoter/{id}/deposits/paid_out','promotersController@promoter_deposits_paid_out')->name('promoter_deposits_paid_out');
+
+
 
 Route::get('promoter/{id}/list_client','promotersController@list_client')->name('list_client');
 Route::post('promoter/{id}/list_client_activated','promotersController@list_client_activated')->name('list_client_activated');

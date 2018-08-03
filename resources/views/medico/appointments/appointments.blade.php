@@ -75,7 +75,7 @@
         <a href="{{route('appointments_completed',request()->id)}}" class="btn btn-secondary text-black mt-2" style="color:black"> Completadas</a>
         <a href="{{route('appointments_canceled',request()->id)}}" class="btn btn-danger mt-2"> Canceladas</a>
       @elseif($type == 'Pasada y por Cobrar')
-        <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success disabled mt-2">Todas</a>
+        <a href="{{route('appointments_all',request()->id)}}" class="btn btn-success mt-2">Todas</a>
         {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
           <a href="{{route('appointments',request()->id)}}" class="btn btn-warning mt-2"> Nuevas / sin confirmar</a>
           <a href="{{route('appointments_confirmed',request()->id)}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
@@ -105,6 +105,7 @@
 </div>
 
 @endif
+
   @if($appointments->first() != Null)
     <div class="row">
       @foreach ($appointments as $app)
@@ -112,8 +113,8 @@
           <div class="card date-card my-2">
             <div class="row">
               <div class="col-lg-4 col-sm-4 col-12">
-                <div class="p-2">
-                  <label for="" class="font-title-grey"> Paciente: </label>{{$app->patient->name}} {{$app->patient->lastName}} <p><a href="{{route('medico.edit',$app->medico->id)}}"><strong></strong></a></p>
+                <div class="mt-2">
+                  <label for="" class="font-title-grey mt-1"> Paciente: </label>{{$app->patient->name}} {{$app->patient->lastName}} <p><a href="{{route('medico.edit',$app->medico->id)}}"><strong></strong></a></p>
                   <label for="" class="font-title-grey">Tipo de Cita:</label> <p>{{$app->title}}</p>
                   {{-- <label for="" class="font-title-grey">Especialidad del Medico:</label> <p>{{$app->medico->scpecialty}}</p> --}}
                   @isset($app->descriptión)
@@ -125,14 +126,14 @@
                 </div>
               </div>
               <div class="col-lg-4 col-sm-4 col-12">
-                <div class="p-2">
+                <div class="mt-2">
                   <label for="" class="font-title-grey">Fecha:</label> <p>{{\Carbon\Carbon::parse($app->hour_start)->format('d-m-Y')}}</p>
                   <label for="" class="font-title-grey">Hora:</label> <p>{{\Carbon\Carbon::parse($app->hour_start)->format('H:i')}}</p>
                   <label for="" class="font-title-grey">Estado:</label> <p>{{$app->state}}</p>
                 </div>
               </div>
               <div class="col-lg-4 col-sm-4 col-12">
-                <div class="p-2">
+                <div class="mt-2">
                   <label for="" class="font-title-grey">Fecha de Creacion:</label> <p>{{\Carbon\Carbon::parse($app->created_at)->format('d-m-Y')}}</p>
 
                   <label for="" class="font-title-grey">Solicitada Por:</label> <p>@if($app->stipulated == 'Paciente') Paciente: {{$app->patient->name}} {{$app->patient->lastName}}@else Medico: {{$app->medico->name}} {{$app->medico->lastName}}
@@ -145,10 +146,13 @@
 
                 </p>
                 <div class="form-inline">
-                  @if($type == 'sin confirmar')
+                  @if($app->confirmed_medico == 'No')
                     <a href="{{route('edit_appointment',['m_id'=>$app->medico_id,'p_id'=>$app->patient_id,'app_id'=>$app->id])}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Editar Cita"><i class="far fa-edit"></i></a>
-
+                    @cita_confirm
                     <a href="{{route('appointment_confirm',$app->id)}}" class="btn btn-success ml-2" data-toggle="tooltip" data-placement="top" title="Confirmar Cita"><i class="fas fa-check"></i></a>
+                    @else
+                    <a href="{{route('appointment_confirm',$app->id)}}" class="btn btn-success ml-2 disabled" data-toggle="tooltip" data-placement="top" title="Confirmar Cita"><i class="fas fa-check"></i></a>
+                    @endcita_confirm
                 @elseif($app->state == 'Rechazada/Cancelada' or $app->state == 'Pagada y Completada')
 
                 @elseif($app->stipulated == 'Medico' or $app->confirmed_medico == 'Si')
@@ -157,6 +161,10 @@
 
 
                   @endif
+
+                     <strong class="ml-1" >Confirmada:</strong><span>{{$app->confirmed_medico}}</span>
+
+
 
 
 

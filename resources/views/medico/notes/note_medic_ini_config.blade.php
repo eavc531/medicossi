@@ -13,7 +13,7 @@
 {{-- MENU DE PACIENTES --}}
 {{-- @include('medico.includes.main_medico_patients') --}}
 <div class="text-right">
-  <a class="btn btn-secondary my-2" href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id,])}}">Atras</a>
+  {{-- <a class="btn btn-secondary my-2" href="{{route('type_notes',['m_id'=>$medico->id,'p_id'=>$patient->id,])}}">Atras</a> --}}
 </div>
 
 <div class="my-2">

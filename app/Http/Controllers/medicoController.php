@@ -195,7 +195,7 @@ class medicoController extends Controller
 
        $password = str_random(8);
        $user->password = bcrypt($password);
-       $user->password_send = $password;
+       $user->password_send = bcrypt($password);
        $user->patient_id = $patient->id;
        $user->role = 'Paciente';
        $user->save();
@@ -565,6 +565,8 @@ class medicoController extends Controller
      }
 
      public function medico_update_address(Request $request,$id){
+
+
          $request->validate([
            'country'=>'required',
            'state'=>'required',
@@ -747,6 +749,22 @@ class medicoController extends Controller
 
      }
      public function data_primordial_medico($id){
+         if(Auth::check() or Auth::user()->role == 'medico'){
+             if(Auth::user()->medico_id == $id){
+
+             }else{
+                 return home()->with('warning', 'No tienes permisos, o se cerrado su sesión');
+             }
+         }elseif(Auth::user()->role == 'Asistente') {
+             if(Auth::user()->assistant->medico_id == $id){
+
+             }else{
+                 return home()->with('warning', 'No tienes permisos, o se cerrado su sesión');
+             }
+         }else{
+             return home()->with('warning', 'No tienes permisos, o se cerrado su sesión');
+         }
+
 
        $medico = medico::find($id);
        $cities = city::orderBy('name','asc')->pluck('name','id');
@@ -929,6 +947,8 @@ class medicoController extends Controller
         $medico->nameComplete = $medico->name.' '.$medico->lastName;
         $medico->password = bcrypt($request->password);
         $medico->stateConfirm = 'porConfirmar';
+        $specialty = specialty::where('name', $request->specialty)->first();
+        $medico->specialty_category = $specialty->specialty_category->name;
         $medico->save();
 
         $code = str_random(25);
@@ -945,10 +965,10 @@ class medicoController extends Controller
 
         $user->attachRole($role);
 
-        Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
+         Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           $msj->to($medico->email);
-           // $msj->to('eavc53189@gmail.com');
+           // $msj->to($medico->email);
+           $msj->to('eavc53189@gmail.com');
 
       });
 
@@ -1053,6 +1073,9 @@ class medicoController extends Controller
         $images = photo::where('medico_id', $medico->id)->where('type','image')->get();
         $specialties = specialty::orderBy('name','asc')->pluck('name','name');
 
+        $back = redirect()->getUrlGenerator()->previous();
+        Session::flash('back',$back);
+
         return view('medico.edit')->with('medico', $medico)->with('photo', $photo)->with('consulting_rooms', $consulting_room)->with('consultingIsset', $consultingIsset)->with('cities', $cities)->with('medicalCenter', $medicalCenter)->with('medico_specialty', $medico_specialty)->with('social_networks', $social_networks)->with('images', $images)->with('insurance_carrier',$insurance_carrier)->with('states', $states)->with('specialties', $specialties)->with('consulting_room',$consulting_room);
     }
 
@@ -1065,6 +1088,7 @@ class medicoController extends Controller
      */
     public function update(Request $request, $id)
     {
+
       // /return $request;
       $request->validate([
          'name'=>'required',
@@ -1089,7 +1113,8 @@ class medicoController extends Controller
       // $medico->latitud = $city->latitud;
       // $medico->longitud = $medico->longitud;
       //$medico->state = 'complete';
-
+      $specialty = specialty::where('name', $request->specialty)->first();
+      $medico->specialty_category = $specialty->specialty_category->name;
 
 
       if($medico->stateConfirm == 'complete'){
@@ -1098,6 +1123,7 @@ class medicoController extends Controller
       }else{
         $medico->stateConfirm = 'data_primordial_complete';
         $medico->save();
+
           return redirect()->route('medico_edit_address',$id)->with('success', 'Sus datos han sido Guardados con exito, por Favor Agregue su dirección de trabajo.');
           // return redirect()->route('medico.edit',$id)->with('successComplete', 'valusse');
       }

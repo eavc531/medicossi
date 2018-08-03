@@ -74,6 +74,7 @@
           <div class="col-12 col-lg-6 align-self-center text-center">
             {!!Form::open(['route'=>'set_plan','method'=>'POST'])!!}
             {!!Form::hidden('medico_id',$medico->id,['id'=>'m_id'])!!}
+            {!!Form::hidden('plan_id',$plan->id,['id'=>'plan_id'])!!}
             {!!Form::hidden('namePlan',$plan->name,['id'=>'namePlan'])!!}
             {!!Form::hidden('pricePlan',null,['id'=>'pricePLan'])!!}
             {!!Form::hidden('period',null,['id'=>'period'])!!}

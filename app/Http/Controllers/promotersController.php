@@ -10,9 +10,14 @@ use App\medicalCenter;
 use App\medico;
 use App\specialty;
 use App\country;
+use App\records_of_plans_medico;
 use Mail;
+use Session;
+use App\account_number;
+use Validator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use DB;
 class promotersController extends Controller
 {
     /**
@@ -20,11 +25,385 @@ class promotersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     public function panel_control_promoters($id)
+
+     public function deposit_details($id)
      {
+         $record = records_of_plans_medico::find($id);
+         // $account_numbers = account_number::where('promoter_id', 1)->get();
+         // dd($account_numbers);
+         return view('promoters.deposit_details',compact('record'));
+
+     }
+     public function deposit_establish_payment_store(Request $request)
+     {
+         $request->validate([
+             'name_banco'=>'required',
+             'number_account'=>'required',
+            'name_titular'=>'required',
+            'identification'=>'required',
+            'email'=>'nullable',
+         ]);
+
+        $record = records_of_plans_medico::find($request->record_id);
+        $record->name_banco  =$request->name_banco;
+        $record->number_account = $request->number_account;
+        $record->name_titular = $request->name_titular;
+        $record->identification = $request->identification;
+        $record->email = $request->email;
+        $record->state_payment = 'si';
+        $record->date_payment = $request->date_payment;
+        $record->save();
+
+        return redirect()->route('promoter_deposits',$record->promoter_id)->with('success', 'se ha marcado el deposito como pagado, de forma satisfactoria.');
+
+     }
+
+     public function deposit_establish_payment($id)
+     {
+         $record = records_of_plans_medico::find($id);
+         $account_numbers = account_number::where('promoter_id', $record->promoter_id)->get();
+         // dd($account_numbers);
+         return view('promoters.deposit_establish_payment',compact('record','account_numbers'));
+
+     }
+
+     public function account_number_update(Request $request)
+     {
+         $request->validate([
+             'name_banco'=>'required',
+             'number_account'=>'required',
+            'name_titular'=>'required',
+            'identification'=>'required',
+            'email'=>'nullable',
+         ]);
+
+
+         $a_n = account_number::find($request->account_id);
+         $a_n->name_banco = $request->name_banco;
+         $a_n->number_account = $request->number_account;
+        $a_n->name_titular = $request->name_titular;
+        $a_n->identification = $request->identification;
+        $a_n->email = $request->email;
+
+        $a_n->save();
+
+        return redirect()->route('accounts_number',$a_n->promoter_id)->with('success', 'cambios guardados de forma satisfactoria');
+    }
+
+
+    public function account_number_delete($id)
+    {
+        $account = account_number::find($id);
+        $promoter_id = $account->promoter_id;
+        $account->delete();
+
+        return redirect()->route('accounts_number',$promoter_id)->with('danger', 'Se ha eliminado el numero de cuenta de forma satisfactoria');
+
+    }
+     public function account_number_edit($id)
+     {
+         $account = account_number::find($id);
+         return view('promoters.account_number_edit',compact('account'));
+
+     }
+
+     public function account_number_store(Request $request){
+         // dd($request->all());
+         $validator = Validator::make($request->all(), [
+           'name_banco'=>'required',
+           'number_account'=>'required',
+          'name_titular'=>'required',
+          'identification'=>'required',
+          'email'=>'nullable',
+         ]);
+
+         if ($validator->fails()) {
+              return back()->with('error_form', 'value')
+                           ->withErrors($validator)
+                           ->withInput();
+          }
+
+          $a_n = new account_number;
+          $a_n->name_banco = $request->name_banco;
+          $a_n->number_account = $request->number_account;
+         $a_n->name_titular = $request->name_titular;
+         $a_n->identification = $request->identification;
+         $a_n->email = $request->email;
+         $a_n->promoter_id = $request->promoter_id;
+         $a_n->save();
+
+         return back()->with('success', 'se a agregado el numero de cuenta de forma satisfactoria');
+     }
+
+     public function accounts_number($id){
+         $account_numbers = account_number::where('promoter_id',$id)->paginate(10);
+         $promoter = promoter::find($id);
+
+         return view('promoters.account_numbers',compact('account_numbers','promoter'));
+     }
+
+     public function promoter_deposits_pending($id){
+         $comisions_paid_out = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'si')->sum('comision');
+         $comisions_pending = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'no')->sum('comision');
+        $record_plans = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->where('state_payment','no')->paginate(10);
         $promoter = promoter::find($id);
 
-         return view('promoters.panel_control',compact('promoter'));
+       $total_comisiones = $record_plans->sum('comision');
+       $pendientes = 'sdsd';
+
+       return view('promoters.deposits',compact('record_plans','total_comisiones','pendientes','promoter','comisions_paid_out','comisions_pending'));
+     }
+
+     public function promoter_deposits_paid_out($id){
+         $comisions_paid_out = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'si')->sum('comision');
+         $comisions_pending = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'no')->sum('comision');
+        $record_plans = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->where('state_payment','si')->paginate(10);
+        $promoter = promoter::find($id);
+       $total_comisiones = $record_plans->sum('comision');
+
+       $realizados = 'sdssd';
+       return view('promoters.deposits',compact('record_plans','total_comisiones','realizados','promoter','comisions_paid_out','comisions_pending'));
+     }
+
+     public function promoter_deposits($id){
+         $promoter = promoter::find($id);
+
+        $record_plans = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->paginate(10);
+        $comisions_paid_out = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'si')->sum('comision');
+        $comisions_pending = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'no')->sum('comision');
+
+       $total_comisiones = $record_plans->sum('comision');
+
+
+
+       return view('promoters.deposits',compact('record_plans','total_comisiones','promoter','comisions_paid_out','comisions_pending'));
+     }
+
+
+     public function promoter_medico_comisions($id)
+     {
+
+        $record_plans = records_of_plans_medico::where('medico_id',$id)->paginate(10);
+        $medico = medico::find($id);
+
+        $back = redirect()->getUrlGenerator()->previous();
+        Session::flash('back',$back);
+
+         return view('promoters.medico_comisions',compact('record_plans','medico'));
+     }
+
+     public function panel_control_promoters($id)
+     {
+
+        $promoter = promoter::find($id);
+        $activaciones = medico::where('promoter_id', $id)->count();
+
+        $activaciones_mes = medico::where('promoter_id', $id)->count();
+
+        $month = \carbon\carbon::now()->endOfDay();
+
+        $start_month = $month->startOfMonth()->format('Y-m-d H:i:s');
+        $end_month = $month->endOfMonth()->format('Y-m-d H:i:s');
+
+          $activaciones_mes = DB::table('medicos')
+            ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+            ->select('records_of_plans_medicos.*')
+            ->where('records_of_plans_medicos.promoter_id', $id)
+             ->where('records_of_plans_medicos.created_at','>',$start_month)->where('records_of_plans_medicos.created_at','<',$end_month)
+            ->count();
+
+              $comisions_recibidas = DB::table('medicos')
+                ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+                ->select('records_of_plans_medicos.*')
+                ->where('records_of_plans_medicos.promoter_id', $id)
+                 ->where('records_of_plans_medicos.created_at','>',$start_month)->where('records_of_plans_medicos.created_at','<',$end_month)->where('state_payment', 'si')
+                ->sum('comision');
+
+                $comisions_pendientes = DB::table('medicos')
+                  ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+                  ->select('records_of_plans_medicos.*')
+                  ->where('records_of_plans_medicos.promoter_id', $id)
+                   ->where('records_of_plans_medicos.created_at','>',$start_month)->where('records_of_plans_medicos.created_at','<',$end_month)->where('state_payment','!=','si')
+                  ->sum('comision');
+
+                  $prospectos_visitados = medico::where('promoter_id',$id)->where('created_at','>',$start_month)->where('created_at','<', $end_month)->count();
+
+                  $comisions_total = DB::table('medicos')
+                    ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+                    ->select('records_of_plans_medicos.*')
+                    ->where('records_of_plans_medicos.promoter_id', $id)
+                    ->sum('comision');
+
+                    $comisions_totales_recibidas = DB::table('medicos')
+                      ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+                      ->select('records_of_plans_medicos.*')
+                      ->where('records_of_plans_medicos.promoter_id', $id)
+                      ->where('state_payment','si')
+                      ->sum('comision');
+
+                      $comisions_totales_pendientes = DB::table('medicos')
+                        ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+                        ->select('records_of_plans_medicos.*')
+                        ->where('records_of_plans_medicos.promoter_id', $id)
+                        ->where('state_payment','!=','si')
+                        ->sum('comision');
+
+                        $prospectos_visitados_totales = medico::where('promoter_id',$id)->count();
+
+                    //MEDICOS Y Especialistas
+                    $plan_mi_agenda_spcialties = medico::where('promoter_id', $id)
+                                            ->where('Plan','plan_agenda')
+                                            ->where('specialty_category','Medicos y Especialistas')
+                                            ->count();
+
+                    $plan_profesional_spcialties = medico::where('promoter_id', $id)
+                                            ->where('Plan','plan_profesional')
+                                            ->where('specialty_category','Medicos y Especialistas')
+                                            ->count();
+                    $plan_platino_spcialties = medico::where('promoter_id', $id)
+                                            ->where('Plan','plan_platino')
+                                            ->where('specialty_category','Medicos y Especialistas')
+                                            ->count();
+
+
+                    $plan_mi_agenda = medico::where('promoter_id', $id)
+                                            ->where('Plan','plan_agenda')
+                                            ->where('specialty_category','!=','Medicos y Especialistas')
+                                            ->count();
+
+                    $plan_profesional = medico::where('promoter_id', $id)
+                                            ->where('Plan','plan_profesional')
+                                            ->where('specialty_category','!=','Medicos y Especialistas')
+                                            ->count();
+                    $plan_platino = medico::where('promoter_id', $id)
+                                            ->where('Plan','plan_platino')
+                                            ->where('specialty_category','!=','Medicos y Especialistas')
+                                            ->count();
+                    //DATOS GRAFICAS
+                    function day($var){
+                        if($var == '01'){
+                            return 'Enero';
+                        }elseif ($var == '02') {
+                            return 'Febrero';
+                        }elseif ($var == '03') {
+                            return 'Marzo';
+                        }elseif ($var == '04') {
+                            return 'Abril';
+                        }elseif ($var == '05') {
+                            return 'Mayo';
+                        }elseif ($var == '06') {
+                            return 'Junio';
+                        }elseif ($var == '07') {
+                            return 'Julio';
+                        }elseif ($var == '08') {
+                            return 'Agosto';
+                        }elseif ($var == '09') {
+                            return 'Septiembre';
+                        }elseif ($var == '10') {
+                            return 'Octubre';
+                        }elseif ($var == '11') {
+                            return 'Noviembre';
+                        }else{
+                            return 'Diciembre';
+                            }
+                    }
+
+                    function calculate_comision($id,$start_month,$end_month){
+                        $mes =  DB::table('medicos')
+                           ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+                           ->select('records_of_plans_medicos.*')
+                           ->where('records_of_plans_medicos.promoter_id', $id)
+                          ->where('records_of_plans_medicos.created_at','>',$start_month)
+                          ->where('records_of_plans_medicos.created_at','<',$end_month)
+                          ->where('state_payment','=','si')
+                          ->sum('comision');
+
+                         return $mes;
+                    }
+
+                    function calculate_comision_total($id,$start_month,$end_month){
+                        $mes =  DB::table('medicos')
+                           ->join('records_of_plans_medicos', 'medicos.id', '=', 'records_of_plans_medicos.medico_id')
+                           ->select('records_of_plans_medicos.*')
+                           ->where('records_of_plans_medicos.promoter_id', $id)
+                          ->where('records_of_plans_medicos.created_at','>',$start_month)
+                          ->where('records_of_plans_medicos.created_at','<',$end_month)
+                          // ->where('state_payment','=','si')
+                          ->sum('comision');
+
+                         return $mes;
+                    }
+                    // GRAFICAS
+                    //
+
+
+                    $fecha_actual = \Carbon\Carbon::now();
+
+                    $start_month = $fecha_actual->startOfMonth()->format('Y-m-d H:i:s');
+                    $end_month = $fecha_actual->endOfMonth()->format('Y-m-d H:i:s');
+
+                    $name_mes6 = day($fecha_actual->format('m'));
+
+                     $mes6 = calculate_comision($id,$start_month,$end_month);
+                     $mes_t_6 = calculate_comision_total($id,$start_month,$end_month);
+
+                       $fecha_actual = \Carbon\Carbon::now()->subMonth();
+
+                       $start_month = $fecha_actual->startOfMonth()->format('Y-m-d H:i:s');
+                       $end_month = $fecha_actual->endOfMonth()->format('Y-m-d H:i:s');
+
+                       $name_mes5 = day($fecha_actual->format('m'));
+                        $mes5 = calculate_comision($id,$start_month,$end_month);
+                        $mes_t_5 = calculate_comision_total($id,$start_month,$end_month);
+
+
+
+                        $fecha_actual = \Carbon\Carbon::now()->subMonths(2);
+
+                        $start_month = $fecha_actual->startOfMonth()->format('Y-m-d H:i:s');
+                        $end_month = $fecha_actual->endOfMonth()->format('Y-m-d H:i:s');
+
+                        $name_mes4 = day($fecha_actual->format('m'));
+                         $mes4 = calculate_comision($id,$start_month,$end_month);
+                         $mes_t_4 = calculate_comision_total($id,$start_month,$end_month);
+
+
+                         $fecha_actual = \Carbon\Carbon::now()->subMonths(3);
+
+                         $start_month = $fecha_actual->startOfMonth()->format('Y-m-d H:i:s');
+                         $end_month = $fecha_actual->endOfMonth()->format('Y-m-d H:i:s');
+
+                         $name_mes3 = day($fecha_actual->format('m'));
+                         $mes3 = calculate_comision($id,$start_month,$end_month);
+                         $mes_t_3 = calculate_comision_total($id,$start_month,$end_month);
+
+                          $fecha_actual = \Carbon\Carbon::now()->subMonths(4);
+
+                          $start_month = $fecha_actual->startOfMonth()->format('Y-m-d H:i:s');
+                          $end_month = $fecha_actual->endOfMonth()->format('Y-m-d H:i:s');
+
+                          $name_mes2 = day($fecha_actual->format('m'));
+                           $mes2 = calculate_comision($id,$start_month,$end_month);
+                           $mes_t_2 = calculate_comision_total($id,$start_month,$end_month);
+
+                           $fecha_actual = \Carbon\Carbon::now()->subMonths(5);
+
+                           $start_month = $fecha_actual->startOfMonth()->format('Y-m-d H:i:s');
+                           $end_month = $fecha_actual->endOfMonth()->format('Y-m-d H:i:s');
+
+                           $name_mes1 = day($fecha_actual->format('m'));
+
+                           $mes1 = calculate_comision($id,$start_month,$end_month);
+                           $mes_t_1 = calculate_comision_total($id,$start_month,$end_month);
+
+
+                            $ingresosgrafica = ['mes1'=>['comision'=>$mes1,'name'=>$name_mes1,'comision_t'=>$mes_t_1],'mes2'=>['comision'=>$mes2,'name'=>$name_mes2,'comision_t'=>$mes_t_2],'mes3'=>['comision'=>$mes3,'name'=>$name_mes3,'comision_t'=>$mes_t_3],'mes4'=>['comision'=>$mes4,'name'=>$name_mes4,'comision_t'=>$mes_t_4],'mes5'=>['comision'=>$mes5,'name'=>$name_mes5,'comision_t'=>$mes_t_5],'mes6'=>['comision'=>$mes6,'name'=>$name_mes6,'comision_t'=>$mes_t_6]];
+
+
+
+
+
+         return      view('promoters.panel_control',compact('promoter','activaciones_mes','comisions_total','comisions_recibidas','comisions_pendientes','prospectos_visitados','comisions_totales_recibidas','comisions_totales_pendientes','prospectos_visitados_totales','plan_mi_agenda_spcialties','plan_profesional_spcialties','plan_platino_spcialties','plan_mi_agenda','plan_profesional','plan_platino','ingresosgrafica','p_ingresosgrafica'));
      }
 
      public function add_medical_center($id)
@@ -40,27 +419,31 @@ class promotersController extends Controller
        return view('promoters.medical_center_invited',compact('medicalCenters'));
      }
 
+
      public function list_client(Request $request,$id){
 
         $medicos = medico::where('promoter_id',$id)->get();
         $medicalCenters = medicalCenter::where('promoter_id',$id)->get();
         $client = $medicos->merge($medicalCenters);
-
+        $promoter = promoter::find($id);
        $col = new Collection($client);
        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-       $perPage = 2;
+       $perPage = 10;
        $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
        $client = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
        $client->setPath(route('list_client',$id));
+       $suma = 0;
 
+       foreach ($medicos as $medico) {
+           $suma = $suma + $medico->records_of_plans_medico->sum('comision');
+       }
 
-
-       return view('promoters.list_client',compact('client'));
+       return view('promoters.list_client',compact('client','suma','promoter'));
      }
 
      public function list_client_activated(Request $request,$id){
-       $medicos = medico::where('promoter_id',$id)->where('stateAccount', 'Activa')->get();
-
+       $medicos = medico::where('promoter_id',$id)->where('plan','!=','plan_basico')->whereNotNull('plan')->get();
+       $promoter = promoter::find($id);
        $medicalCenters = medicalCenter::where('promoter_id',$id)->where('stateAccount', 'Activa')->get();
        $client = $medicos->merge($medicalCenters);
 
@@ -70,13 +453,27 @@ class promotersController extends Controller
        $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
        $client = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
        $client->setPath(route('list_client',$id));
+        $suma = 0;
 
-        return view('promoters.list_client',compact('client'))->with('activated', 'value');
+         $medicos2 = medico::where('promoter_id',$id)->get();
+       foreach ($medicos2 as $medico) {
+           $suma = $suma + $medico->records_of_plans_medico->sum('comision');
+       }
+       $active = 'si';
+       return view('promoters.list_client',compact('client','suma','active','promoter'));
      }
 
      public function list_client_desactivated(Request $request,$id){
 
-       $medicos = medico::where('promoter_id',$id)->where('stateAccount', 'Desactivada')->get();
+         $promoter = promoter::find($id);
+       $medicos = medico::where('promoter_id',$id)
+                ->whereNull('plan')
+                ->orWhere(function ($query) use($id) {
+                    $query->where('promoter_id',$id)
+                    ->where('plan','==','plan_basico');
+
+                })->get();
+
 
        $medicalCenters = medicalCenter::where('promoter_id',$id)->where('stateAccount', 'Desactivada')->get();
        $client = $medicos->merge($medicalCenters);
@@ -88,7 +485,13 @@ class promotersController extends Controller
        $client = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
        $client->setPath(route('list_client',$id));
 
-        return view('promoters.list_client',compact('client'))->with('desactivated', 'value');
+       $medicos2 = medico::where('promoter_id',$id)->get();
+       $suma = 0;
+     foreach ($medicos2 as $medico) {
+         $suma = $suma + $medico->records_of_plans_medico->sum('comision');
+     }
+     $inactive = 'si';
+     return view('promoters.list_client',compact('client','suma','inactive','promoter'));
      }
 
 
@@ -155,14 +558,14 @@ class promotersController extends Controller
      {
        // dd($request->all());
          $request->validate([
-            //'identification'=>'required|unique:medicos',
+            'identification'=>'required|unique:medicos',
             'name'=>'required',
             'lastName'=>'required',
             'gender'=>'required',
             'specialty'=>'required',
             'country'=>'required',
             'email'=>'required|unique:medicos|unique:users',
-            'password'=>'required',
+            // 'password'=>'required',
             //'medicalCenter_id'=>'required',
 
             'phone'=>'required|numeric',
@@ -176,19 +579,22 @@ class promotersController extends Controller
 
          $medico = new medico;
          $medico->fill($request->all());
-         $medico->stateConfirm = 'porConfirmar';
+         $medico->stateConfirm = 'medium';
          $medico->promoter_id = $request->promoter_id;
          $medico->password = bcrypt($request->password);
+         $specialty = specialty::where('name', $request->specialty)->first();
+         $medico->specialty_category = $specialty->specialty_category->name;
          $medico->save();
 
-         $code = str_random(25);
+         $code = str_random(8);
          $user = new User;
          $user->medico_id = $medico->id;
          $user->name = $request->name;
          $user->email = $request->email;
-         $user->password = bcrypt($request->password);
+         $user->password = bcrypt($code);
+         $user->password_send = $code; //<<<<<<<<<<<<//BORRAR //BORRAR//BORRAR//BORRAR
          $user->medico_id = $medico->id;
-         $user->confirmation_code = $code;
+         $medico->stateConfirm = 'medium';
          $user->role = 'medico';
          $user->save();
 
@@ -197,26 +603,27 @@ class promotersController extends Controller
          $user->attachRole($role);
          $promoter = promoter::find($request->promoter_id);
 
-       //   Mail::send('mails.confirmMedicoInvited',['medico'=>$medico,'user'=>$user,'code'=>$code,'promoter'=>$promoter],function($msj){
-       //      $msj->subject('Médicos Si');
-       //      $msj->to($medico->email);
-       // });
+         Mail::send('mails.promoter_invited_medico',['medico'=>$medico,'code'=>$code,'promoter'=>$promoter],function($msj){
+           $msj->subject('Médicos Si');
+           // $msj->to($medico->email);
+        $msj->to('eavc53189@gmail.com');
+       });
 
-           return redirect()->route('list_client',$request->promoter_id)->with('success', 'Se ha Registrado un nuevo Médico como su invitado, solo falta que confirme su cuenta a travez de el correo asociado a su registro.');
+           return redirect()->route('list_client',$request->promoter_id)->with('success', 'Se ha Registrado un nuevo Médico como su invitado, de forma simultanea se a enviado un mensaje al correo del médico recien agregado, con la información necesaria para  que pueda acceder a su cuenta Médicossi.');
 
      }
 
-     public function clientsPromoter($id)
-     {
-
-       $promoter = promoter::find($id);
-
-       $medicalCenters = medicalCenter::where('id_promoter',$promoter->id_promoter)->orderBy('name','asc')->paginate(10);
-
-       $medicos = medico::where('id_promoter',$promoter->id_promoter)->orderBy('id','desc')->paginate(10);
-
-         return view('promoters.clientsPromoter')->with('medicalCenters', $medicalCenters)->with('medicos', $medicos)->with('promoter', $promoter);
-     }
+     // public function clientsPromoter($id)
+     // {
+     //
+     //   $promoter = promoter::find($id);
+     //
+     //   $medicalCenters = medicalCenter::where('id_promoter',$promoter->id_promoter)->orderBy('name','asc')->paginate(10);
+     //
+     //   $medicos = medico::where('id_promoter',$promoter->id_promoter)->orderBy('id','desc')->paginate(10);
+     //
+     //     return view('promoters.clientsPromoter')->with('medicalCenters', $medicalCenters)->with('medicos', $medicos)->with('promoter', $promoter);
+     // }
 
     public function index()
     {

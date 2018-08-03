@@ -217,8 +217,8 @@ class patientController extends Controller
 
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
-          $msj->to($patient->email);
-          // $msj->to('eavc53189@gmail.com');
+          // $msj->to($patient->email);
+          $msj->to('eavc53189@gmail.com');
 
         });
 
@@ -384,8 +384,8 @@ class patientController extends Controller
 
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
-          $msj->subject($patient->email);
-          //$msj->to('eavc53189@gmail.com');
+          // $msj->subject($patient->email);
+          $msj->to('eavc53189@gmail.com');
 
         });
 

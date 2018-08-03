@@ -60,6 +60,9 @@ class CreateMedicosTable extends Migration
             $table->string('votes')->default(0);
             $table->string('show_comentary')->default('No');
             $table->string('plan')->nullable();
+            $table->string('specialty_category')->nullable();
+            // $table->integer('plan_active_id')->unsigned()->nullable();
+            // $table->foreign('plan_active_id')->references('id')->on('plan_actives');
             $table->timestamps();
         });
     }

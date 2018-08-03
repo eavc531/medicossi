@@ -31,6 +31,19 @@ class medico extends Model
        'name_comercial'
     ];
 
+    public function promoter(){
+      return $this->belongsTo('App\promoter');
+
+   }
+
+    public function records_of_plans_medico(){
+       return $this->hasMany('App\records_of_plans_medico');
+    }
+
+    public function plan_active(){
+       return $this->hasOne('App\plan_active');
+    }
+
     public function medico_specialty(){
        return $this->hasMany('App\medico_specialty');
     }

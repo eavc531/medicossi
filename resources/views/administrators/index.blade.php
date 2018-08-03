@@ -48,11 +48,11 @@
 															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('administrators.edit',$admin->id)}}"><i class="fas fa-edit"></i>
 															</a>
 														</div>
-														<div class="col-4">
+														{{-- <div class="col-4">
 															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Ciudades que puede editar" role="button" href="{{route('citiesAdmin',$admin->id)}}"><i class="fas fa-bars"></i>
 															</a>
 
-														</div>
+														</div> --}}
 														<div class="col-4">
 															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Permisos" role="button" href="{{route('listPermissionSet',$admin->id)}}"><i class="fas fa-key"></i>
 															</a>

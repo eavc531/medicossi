@@ -12,6 +12,7 @@ use App\patients_doctor;
 use Mail;
 use App\reminder;
 use App\reminder_alarm;
+use App\data_patient;
 
 use DB;
 class medico_diaryController extends Controller
@@ -157,6 +158,9 @@ class medico_diaryController extends Controller
        return redirect()->route('appointments',$event->medico_id)->with('success', 'Se a confirmado la cita con el paciente: '.$event->patient->name.' '.$event->patient->lastName.' para la Fecha: '.\Carbon\Carbon::parse($event->start)->format('d-m-Y H:i'));
      }
 
+
+
+
      public function appointment_confirm_ajax(Request $request)
      {
        $event = event::find($request->event_id);
@@ -166,11 +170,16 @@ class medico_diaryController extends Controller
       $medico = medico::find($event->medico_id);
       $patient= patient::find($event->patient_id);
 
+
          Mail::send('mails.appointment_confirmed_by_medico',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($patient){
             $msj->subject('Notificación Cambio de Fecha de Cita, Médicos Si');
             //$msj->to($patient->email);
             $msj->to('eavc53189@gmail.com');
           });
+
+          $count_notifications = event::where('medico_id',$medico->id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->count();
+          $medico->notification_number = $count_notifications;
+          $medico->save();
 
        return response()->json('Se a confirmado la cita con el paciente: '.$event->patient->name.' '.$event->patient->lastName.' para la Fecha: '.$event->start);
      }
@@ -728,12 +737,9 @@ class medico_diaryController extends Controller
        $event->price = $request->price;
 
 
-       if($request->title == 'Cita por Internet'){
-         $event->color = 'rgb(35, 44, 173)';
-       }else{
-         $event->color = 'rgb(69, 189, 39)';
-       }
+
        if(Auth::check() and Auth::user()->role == 'Paciente'){
+           $event->color = 'rgb(226, 235, 55)';
            $event->namePatient = Auth::user()->patient->name.' '.Auth::user()->patient->lastName;
            $event->patient_id = Auth::user()->patient->id;
            $event->medico_id = $request->medico_id;
@@ -743,6 +749,7 @@ class medico_diaryController extends Controller
            $event->notification = "not_see";
            $event->confirmed_patient = 'Si';
        }elseif (Auth::check() and Auth::user()->role == 'medico' or Auth::check() and Auth::user()->role == 'Asistente') {
+            $event->color = 'rgb(69, 189, 39)';
             $event->confirmed_medico = 'No';
            $event->patient_id = $request->patient_id;
            $event->medico_id = $request->medico_id;
@@ -752,15 +759,6 @@ class medico_diaryController extends Controller
         }
        $event->hour_start = $hourStart;
        $event->hour_end = $hourEnd;
-
-       $patients_doctorsCount = patients_doctor::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->count();
-
-       if($patients_doctorsCount == 0){
-         $patients_doctors = new patients_doctor;
-         $patients_doctors->patient_id = $request->patient_id;
-         $patients_doctors->medico_id = $request->medico_id;
-         $patients_doctors->save();
-       }
 
        $medico = medico::find($request->medico_id);
        $patient = patient::find($request->patient_id);
@@ -790,23 +788,40 @@ class medico_diaryController extends Controller
 
        }
         $event->save();
-       //////////////////finn  registro por medico
-       // Mail::send('mails.notification_patient_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($patient){
-       //    $msj->subject('Médicos Si');
-       //    // $msj->to($patient->email);
-       //    $msj->to('eavc53189@gmail.com');
-       //  });
-       //
-       // Mail::send('mails.notification_medico_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
-       //    $msj->subject('Médicos Si');
-       //    // $msj->to($medico->email);
-       //    $msj->to('testprogramas531@gmail.com');
-       //  });
+
+        $patients_doctorsCount = patients_doctor::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->count();
+
+        if($patients_doctorsCount == 0){
+
+
+            $data_patient = new data_patient;
+            $data_patient->fill($patient->toArray());
+            $data_patient->medico_id = $medico->id;
+            $data_patient->patient_id = $patient->id;
+            $data_patient->nameComplete = $request->name.' '.$request->lastName;
+            $age =  \Carbon\Carbon::parse($request->birthdate)->diffInYears(\Carbon\Carbon::now());
+            $data_patient->age = $age;
+            $data_patient->save();
+
+          $patients_doctors = new patients_doctor;
+          $patients_doctors->patient_id = $request->patient_id;
+          $patients_doctors->medico_id = $request->medico_id;
+          $patients_doctors->data_patient_id = $data_patient->id;
+          $patients_doctors->save();
+        }
 
         $count_notifications = event::where('medico_id',$request->medico_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->count();
         $medico->notification_number = $count_notifications;
 
         $medico->save();
+
+        Mail::send('mails.app_stipulate_patient',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
+           $msj->subject('Médicos Si');
+           // $msj->to($medico->email);
+           $msj->to('eavc53189@gmail.com');
+         });
+
+
        return response()->json('Se ha agendado Una Cita "'.$request->title.'" con el Médico: '.$medico->name.' '.$medico->lastName.' para la fecha: '.$request->date_start.' y hora: '.$hourStart.'.');
      }
 
@@ -1060,7 +1075,14 @@ class medico_diaryController extends Controller
           $data = [];
           //ordenar array
           foreach ($datas as $dat){
-                $data[] = ['title'=>$dat->title,'start'=>$dat->start,'end'=>$dat->end,'rendering'=>$dat->rendering,'dow'=>$dat->dow];
+              if($dat->rendering == 'background'){
+                  $data[] = ['title'=>$dat->title,'start'=>$dat->start,'end'=>$dat->end,'rendering'=>$dat->rendering,'dow'=>$dat->dow];
+              }else{
+                  $data[] =
+                  ['title'=>$dat->title,'start'=>$dat->start,'end'=>$dat->end,'rendering'=>$dat->rendering,'dow'=>$dat->dow,'color'=>'rgb(230, 109, 64)'];
+
+              }
+
 
             }
 

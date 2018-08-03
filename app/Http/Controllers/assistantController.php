@@ -57,7 +57,8 @@ class assistantController extends Controller
     public function assistant_permissions_store(Request $request){
 
         $permission = permission::find($request->permission_id);
-                $permission->cita_patient_create = $request->cita_patient_create;
+        
+        $permission->cita_patient_create = $request->cita_patient_create;
         $permission->cita_person_create = $request->cita_person_create;
         $permission->cita_edit = $request->cita_edit;
         $permission->cita_refuse = $request->cita_refuse;

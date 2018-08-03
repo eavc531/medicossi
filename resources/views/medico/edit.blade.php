@@ -2,13 +2,15 @@
 
 @section('content')
 
-  <div class="text-right">
-@if(Auth::check() and Auth::user()->role != 'medico')
-  <button onclick="volver()" type="button" name="button" class="btn btn-secondary">Volver</button>
-@else
+@if(Auth::check() and Auth::user()->role != 'medico' and Session::Has('back'))
 
+        <div class="text-right">
+            <a class="btn btn-secondary" href="{{Session::get('back')}}">Atras</a>
+        </div>
+    
 @endif
-</div>
+
+
 
 <div class="row">
   <div class="col-12">

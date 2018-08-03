@@ -43,7 +43,7 @@
   </div>
   <div class="col-2">
     <label for="" class="font-title">¿Pagó?</label>
-    {!!Form::text('payment_state',null,['class'=>'form-control','id'=>'payment_state9','readonly'])!!}
+    {!!Form::text('payment_state',null,['class'=>'form-control','id'=>'payment_state9','disabled'])!!}
   </div>
 </div>
 
@@ -107,10 +107,15 @@
 
     </div>
     <div class="col-6">
-      <div class="form-inline">
-        <label for="" class="font-title">Médico:</label>
-        {{Form::text('confirmed_medico',null,['class'=>'form-control','style'=>'width:70px','readonly','id'=>'confirmed_medico9'])}}
-      </div>
+        <div class="form-inline" id="confirmed_medico_div">
+          <label for="" class="font-title">Médico:</label>
+          {{Form::text('confirmed_medico',null,['class'=>'form-control','style'=>'width:70px','readonly','id'=>'confirmed_medico9'])}}
+
+        </div>
+        {{-- <div class="form-inline" id="button_confirm_app_div">
+          <button onclick="confirmar2()" type="button" name="button" class="btn btn-warning btn-block" id="button_confirm_app">Confirmar Cita</button>
+        </div> --}}
+
     </div>
   </div>
 
@@ -134,7 +139,10 @@
     <button onclick="cerrar_edit()" type="button" name="button" class="btn btn-secondary btn-block" id="">Cerrar</button>
   </div>
 
+<div id="text_confirm" class="col-12" style="display:none">
+    <p class="text-secondary">No tienes permisos para confirmar esta cita. antes de poder de ditar se debe confirmar.</p>
 
+</div>
 
 </div>
 {!!Form::close()!!}

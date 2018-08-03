@@ -20,19 +20,8 @@
 {{-- //ALGUNOS PERMISOS PARA LAS CITAS  --}}
 
     @if(Auth::user()->role == 'Asistente')
-
-        edit:
-        {{Auth::user()->assistant->permission->cita_edit}}
-        cambiar:
-        {{Auth::user()->assistant->permission->cita_change_date}}
-        confirm pago:
-        {{Auth::user()->assistant->permission->cita_confirm_payment}}
-        confirm compelted:
-        {{Auth::user()->assistant->permission->cita_confirm_completed}}
-        cancel:
-        {{Auth::user()->assistant->permission->cita_cancel}}
-        create:
-        {{Auth::user()->assistant->permission->cita_create}}
+    <input type="hidden" name="" value="{{Auth::user()->assistant->cita_confirm}}" id="cita_confirm">
+    <input type="hidden" name="" value="{{Auth::user()->role}}" id="auth_role">
     <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_edit}}" id="cita_edit">
     <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_change_date}}" id="cita_change_date">
     <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_payment}}" id="cita_confirm_payment">
@@ -126,10 +115,10 @@
                   <input type="radio" value="A" name="opcion" onclick="filtro_payment_method('Aseguradora')"/><br />
                 <label for="">Aseguradora</label>
               </div>
-              {{-- <div class="col">
+              <div class="col">
                   <input type="radio" value="A" name="opcion" onclick="PendientePorCobrar()"/><br />
-                <label for="">Confirmada con Paciente</label>
-              </div> --}}
+                <label for="">Sin Confirmar</label>
+              </div>
             </div>
 
 
@@ -286,14 +275,14 @@
           <div id="dashboard">
             <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
             <div class="col-12 border-head-panel text-center">
-              <span>Usuario firmado:</span>
-              <span>{{$medico->email}}</span>
+              <span>Médico:</span>
+              <span>{{$medico->nameComplete}}</span>
             </div>
-            <div class="col-12 border-panel-green text-center my-1">
+            {{-- <div class="col-12 border-panel-green text-center my-1">
               <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
                 Editar horario de consulta
               </a>
-            </div>
+            </div> --}}
             <div class="border-panel-blue my-1">
               <div class="form-group text-center">
                 <button type="button" class="btn-info btn" data-toggle="modal" data-target="#info1"><i class="fas fa-info mr-2"></i>Ayuda</button>
@@ -494,6 +483,7 @@
   <script src='{{asset('fullcalendar/locale/es.js')}}'></script>
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/js/bootstrap-material-datetimepicker.js"></script> --}}
   <script type="text/javascript">
+
 
 
 
@@ -835,6 +825,7 @@
         events:"{{route('medico_diary_events',$medico->id)}}",
 
         eventClick: function(event, jsEvent, view){
+
             var start = $.fullCalendar.moment(event.start).format('YYYY-MM-DD');
             var end = $.fullCalendar.moment(event.end).format('YYYY-MM-DD');
             hour_start = $.fullCalendar.moment(event.start).format('HH');
@@ -947,6 +938,7 @@
 
             //verifica permisos de asistente
             if($('#auth_role').val() == 'Asistente'){
+
                 if($('#cita_edit').val() != 1){
                      $('#eventType9').attr('readOnly',true);
                       $('#price9').attr('readOnly',true);
@@ -982,10 +974,29 @@
                 if($('#cita_cancel').val() != 1){
                     $('#rechazar').attr('disabled',true);
 
-
                 }
 
+                if($('#cita_confirm').val() != 1){
+
+                    if(event.confirmed_medico == 'No'){
+
+                        $('#button_confirmed_payment').hide();
+                        $('#rechazar').hide();
+                        $('#button_confirmed_payment').hide();
+                        $('#button_confirmed_complete').hide();
+                        $('#but_save').hide();
+                        $('#text_confirm').show();
+
+                    }else{
+                        $('#text_confirm').hide();
+                    }
+
+
+                }else{
+                    $('#text_confirm').hide();
+                }
             }
+
         },
 
         eventRender: function (event, element, view) {
@@ -1213,12 +1224,10 @@
     }
 
     function confirmar2(){
-
+        loader();
       cerrar();
-      $('#alert_carga5').fadeIn();
-      $('#guardar5').attr("readOnly", true);
-      $('#delete5').attr("readOnly", true);
-      $('#cancelar5').attr("readOnly", true);
+
+
       event_id = $('#event_id9').val();
 
       route = "{{route('appointment_confirm_ajax')}}";
@@ -1228,13 +1237,11 @@
        url:route,
        data:{event_id:event_id},
        error:function(error){
+           stop_loader();
          console.log(error);
       },
       success:function(result){
-        $('#alert_carga5').fadeOut();
-         $('#guardar5').attr("readOnly", false);
-         $('#delete5').attr("readOnly", false);
-         $('#cancelar5').attr("readOnly", false);
+          stop_loader();
         console.log(result);
         cerrar();
         $('#text_success_up1').html(result);
@@ -1242,7 +1249,13 @@
         $('#alert_error_up1').fadeOut();
         $('#calendar').fullCalendar('removeEvents');
         $('#calendar').fullCalendar('refetchEvents');
-        $('#card_edit').fadeOut();
+        $('#confirmed_medico9').fadeIn();
+        $('#button_confirm_app').fadeOut();
+
+
+
+
+        // $('#card_edit').fadeOut();
       }
     });
 

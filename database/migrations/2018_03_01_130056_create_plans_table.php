@@ -17,10 +17,15 @@ class CreatePlansTable extends Migration
             $table->increments('id');
             $table->string('name',100);
             $table->string('applicable');
+            $table->string('porcentage')->default(0);
+            $table->float('price1')->default(0);
+            $table->float('price2')->default(0);
+            $table->float('price3')->default(0);
+            $table->float('porcentage_price1')->default(0);
+            $table->float('porcentage_price2')->default(0);
+            $table->float('porcentage_price3')->default(0);
+            $table->string('options')->nullable();
             $table->string('modules',100)->nullable();
-            $table->float('price1')->nullable();
-            $table->float('price2')->nullable();
-            $table->float('price3')->nullable();
             $table->timestamps();
         });
     }

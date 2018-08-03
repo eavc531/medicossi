@@ -15,7 +15,7 @@
           <div class="row">
             <div class="col-lg-6 col-12">
               <div class="form-group">
-                    {!!Form::text('id_promoter',null,['class'=>'form-control','placeholder'=>'id Promotor'])!!}
+                    {!!Form::text('id_promoter',null,['class'=>'form-control','placeholder'=>'Cedula'])!!}
               </div>
             </div>
             <div class="col-lg-6 col-12">

@@ -39,7 +39,7 @@
         <div class="row">
           <div class="col-lg-4 col-sm-4 col-12">
            <div class="p-2">
-            <label for="" class="font-title-grey"> Medico:</label> <p><a href="{{route('medico.edit',$app->medico->id)}}"><strong>{{$app->medico->name}} {{$app->medico->lastName}}</strong></a></p>
+            <label for="" class="font-title-grey"> Medicox:</label> <p><a href="{{route('medico.edit',$app->medico->id)}}"><strong>{{$app->medico->name}} {{$app->medico->lastName}}</strong></a></p>
             <label for="" class="font-title-grey">Tipo de Cita:</label> <p>{{$app->title}}</p>
             <label for="" class="font-title-grey">Especialidad del Medico:</label> <p>{{$app->medico->specialty}}</p>
             @isset($app->descriptión)

@@ -25,15 +25,16 @@ class CreatePermissionsTable extends Migration
             $table->string('cita_refuse')->nullable();
             $table->string('cita_cancel')->nullable();
             $table->string('cita_change_date')->nullable();
-            $table->string('cita_confirm')->nullable();
             $table->string('cita_confirm_payment')->nullable();
             $table->string('cita_confirm_completed')->nullable();
+            $table->string('cita_confirm')->nullable();
+
+            $table->string('edit_schedule')->nullable();
             //recordatorios
             $table->string('reminder_create')->nullable();
             $table->string('reminder_delete')->nullable();
             $table->string('reminder_edit')->nullable();
             //horario
-            $table->string('edit_schedule')->nullable();
             //INGRESOS
             $table->string('see_income')->nullable();
             //notes

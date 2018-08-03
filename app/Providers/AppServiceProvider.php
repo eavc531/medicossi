@@ -14,11 +14,74 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //PERMISOS asistentes
+        \Carbon\Carbon::setLocale(config('app.locale'));
 
+        Blade::if('admin', function(){
+            if(Auth::check() and Auth::user()->role == 'Administrador'){
+                return app();
+            }
+        });
 
+        Blade::if('cita_confirm', function(){
+            if(Auth::check() and Auth::user()->role == 'medico'){
+                return app();
 
-    
+            }else{
+                if(Auth::user()->assistant->permission->cita_confirm != Null){
+                    return app();
+                }
+            }
+
+        });
+
+        Blade::if('edit_schedule', function(){
+            if(Auth::check() and Auth::user()->role == 'medico'){
+                return app();
+
+            }else{
+                if(Auth::user()->assistant->permission->edit_schedule != Null){
+                    return app();
+                }
+            }
+
+        });
+
+        Blade::if('reminder_create', function(){
+            if(Auth::check() and Auth::user()->role == 'medico'){
+                return app();
+
+            }else{
+                if(Auth::user()->assistant->permission->reminder_create != Null){
+                    return app();
+                }
+            }
+
+        });
+
+        Blade::if('reminder_edit', function(){
+            if(Auth::check() and Auth::user()->role == 'medico'){
+                return app();
+
+            }else{
+                if(Auth::user()->assistant->permission->reminder_edit != Null){
+                    return app();
+                }
+            }
+
+        });
+
+        Blade::if('reminder_delete', function(){
+            if(Auth::check() and Auth::user()->role == 'medico'){
+                return app();
+
+            }else{
+                if(Auth::user()->assistant->permission->reminder_delete != Null){
+                    return app();
+                }
+            }
+
+        });
+
         Blade::if('cita_create', function(){
             if(Auth::check() and Auth::user()->role == 'medico'){
                 return app();
@@ -31,7 +94,12 @@ class AppServiceProvider extends ServiceProvider
 
         });
         Blade::if('cita_person_create', function(){
-            if(Auth::check() and Auth::user()->role != 'medico' and Auth::user()->assistant->permission->endcita_person_create != Null){
+            if(Auth::check() and Auth::user()->role == 'Asistente'){
+                if(Auth::user()->assistant->permission->cita_person_create != Null){
+                    return app();
+                }
+
+            }elseif(Auth::check() and Auth::user()->role == 'medico'){
                 return app();
             }
         });

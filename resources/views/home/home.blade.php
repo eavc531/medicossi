@@ -382,10 +382,10 @@
                   <div class="form-group">
                   @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
-                    <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar citas</a>
+                    <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
                   @else
                     @if(Auth::check() and Auth::user()->role == 'Paciente')
-                    <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar citas</a>
+                    <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
                     @else
                     <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
                     @endif

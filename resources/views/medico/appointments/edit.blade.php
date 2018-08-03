@@ -21,6 +21,17 @@
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 
 @section('content')
+    @if(Auth::user()->role == 'Asistente')
+        <input type="hidden" name="" value="{{Auth::user()->role}}" id="auth_role">
+
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_edit}}" id="cita_edit">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_change_date}}" id="cita_change_date">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_payment}}" id="cita_confirm_payment">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_completed}}" id="cita_confirm_completed">
+    <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_cancel}}" id="cita_cancel">
+
+
+    @endif
 
   <div class="container-fluid">
     <div class="row">
@@ -33,6 +44,13 @@
           <div class="row">
             <div class="col-lg-6 col-12">
             </div>
+            </div>
+            <div class="text-right">
+                @isset(request()->back)
+                    <a href="{{route('medico_appointments_patient',['m_id'=>$event_edit->medico_id,'p_id'=>$event_edit->patient_id])}}" class="btn btn-secondary">atras</a>
+                @else
+                    <a href="{{route('appointments',['m_id'=>$event_edit->medico_id])}}" class="btn btn-secondary">atras</a>
+                @endisset
             </div>
           <div class="alert-info p-3 m-2" style="display:none" id="alert_carga5">
             Procesando...
@@ -493,7 +511,7 @@
 
 
           if(event.id == "{{$event_edit->id}}"){
-            element.find('.fc-title').html('<div class="hr-line-solid-no-margin text-center" style="background:red;border-radius:2px;color:white;">Editando</div>');
+            element.find('.fc-title').html('<div class="hr-line-solid-no-margin text-center" style="background:red;padding:2px;border-radius:7px;color:white;font-size:15px;">Editando</div>');
           }else{
             element.find('.fc-title').append('<div class="hr-line-solid-no-margin"></div><span style="font-size: 10px">'+event.namePatient+'</span><span style="font-size: 10px"><p style="font-size: 10px">'+event.description+'</p></span>');
           }
@@ -686,7 +704,17 @@
         $('#alert_error_up1').fadeOut();
         $('#calendar').fullCalendar('removeEvents');
         $('#calendar').fullCalendar('refetchEvents');
-        $('#card_edit').fadeOut();
+
+        $('#but_save').hide();
+        $('#rechazar').hide();
+        $('#button_confirmed_payment').hide();
+        $('#confirmed_completed').hide();
+
+
+
+
+
+        // $('#card_edit').fadeOut();
       }
     });
 
@@ -940,6 +968,80 @@
 
             }
 
+            //verifica permisos de asistente
+            if($('#auth_role').val() == 'Asistente'){
+                if($('#cita_edit').val() != 1){
+                     $('#eventType9').attr('readOnly',true);
+                      $('#price9').attr('readOnly',true);
+                      $('#description9').attr('readOnly',true);
+                       $('#payment_method9').attr('readOnly',true);
+                       $('#confirmed_patient9').attr('readOnly',true);
+
+                       $('#title9').attr('readOnly',true);
+
+                }
+
+                if($('#cita_change_date').val() != 1){
+                    $('#dateStart9').attr('readOnly',true);
+                    $('#hourStart9').attr('readOnly',true);
+                    $('#minsStart9').attr('readOnly',true);
+
+                    $('#hourEnd9').attr('readOnly',true);
+                    $('#minsEnd9').attr('readOnly',true);
+
+                }
+
+                if($('#cita_confirm_payment').val() != 1){
+                    $('#button_confirmed_payment').attr('disabled',true);
+                    $('#confirmed_payment_app').attr('disabled',true);
+                }
+
+                if($('#cita_confirm_completed').val() != 1){
+                    $('#confirmed_completed').attr('disabled',true);
+                    $('#button_confirmed_complete').attr('disabled',true);
+
+                }
+
+                if($('#cita_cancel').val() != 1){
+                    $('#rechazar').attr('disabled',true);
+
+                }
+
+                if($('#cita_confirm').val() != 1){
+
+                    if(event.confirmed_medico == 'No'){
+
+                        $('#button_confirmed_payment').hide();
+                        $('#rechazar').hide();
+                        $('#button_confirmed_payment').hide();
+                        $('#button_confirmed_complete').hide();
+                        $('#but_save').hide();
+                        $('#text_confirm').show();
+
+                    }else{
+                        $('#text_confirm').hide();
+                    }
+
+
+                }else{
+                    $('#text_confirm').hide();
+                }
+
+
+            }
+
+            // if(event.confirmed_medico == 'No'){
+            //
+            //
+            //     $('#confirmed_medico_div').fadeIn();
+            //     $('#button_confirm_app_div').fadeOut();
+            //
+            // }else{
+            //
+            //     $('#confirmed_medico_div').fadeOut();
+            //     $('#button_confirm_app_div').fadeIn();
+            //
+            // }
           cerrar();
 
         }

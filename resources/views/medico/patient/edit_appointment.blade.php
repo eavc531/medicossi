@@ -1,3 +1,43 @@
+
+
+
+
+
+
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+///////////////////////////////////NOOOOOOOOOOOOOOOO SIRVEEEEEEEEEEe//////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @extends('layouts.app-panel')
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
@@ -24,7 +64,7 @@
           <div class="row">
             <div class="col-12">
               <h1 class="text-center">//En Desarrollo//</h1>
-              <h2 class="text-center font-title">Editar Cita: {{$app->title}},Paciente: {{$patient->name}} {{$patient->lastName}}</h2>
+              <h2 class="text-center font-title">Editar Cita: {{$app->title}},Paciente: {{$patient->name}} {{$patient->lastName}}XXXXXXXXXXXXXXXXXXXXXXXXXXxxx</h2>
             </div>
           </div>
 

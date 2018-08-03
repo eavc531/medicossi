@@ -1,3 +1,4 @@
+
 <div class="card p-2 mb-2" id="card_edit">
   <div class="row">
     <div class="col-12">
@@ -108,40 +109,53 @@
 
     </div>
     <div class="col-6">
-      <div class="form-inline">
+      <div class="form-inline" id="confirmed_medico_div">
         <label for="" class="font-title">Médico:</label>
         {{Form::text('confirmed_medico',null,['class'=>'form-control','style'=>'width:70px','readonly','id'=>'confirmed_medico9'])}}
+
       </div>
+      {{-- <div class="form-inline" id="button_confirm_app_div">
+        <button onclick="confirmar2()" type="button" name="button" class="btn btn-warning btn-block" id="button_confirm_app">Confirmar Cita</button>
+      </div> --}}
     </div>
   </div>
 
 </div>
 <div class="row mt-3">
-  <div class="col-3">
+  <div class="col-4">
      <button onclick="mail_cancel()" type="button" name="button" class="btn btn-danger btn-block" id="rechazar">Rechazar/cancelar</button>
     {{-- <button onclick="cancel()" type="button" name="button" class="btn btn-danger btn-block" id="rechazar">Rechazar/cancelar</button> --}}
   </div>
-  <div class="col-3">
+  <div class="col-4">
 
     <input name="mysubmit" type="submit" value="Guardar y Confirmar" class="btn btn-success btn-block" id="but_save"/>
 
   </div>
-    <div class="col-3">
+    <div class="col-4">
       <button onclick="confirmed_payment_or_completed()" type="button" name="button" class="btn btn-info btn-block" id="button_confirmed_payment" value="55">Confirmar Pago</button>
 
       <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block" id="button_confirmed_complete" style="display:none">Finalizar/completada</button>
     </div>
-  <div class="col-3">
-      @if (Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-        @if(Auth::user()->medico->plan == 'plan_agenda')
-          <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas   </span></a>
-        @else
-          <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas  </span></a>
-        @endif
-      @endif
+  {{-- <div class="col-3">
+      @if(Auth::user()->role == 'medico')
+          @plan_agenda
+              <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas   </span></a>
+            @else
+              <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas  </span></a>
+          @endplan_agenda
+      @else
+          @plan_agenda
+              <a href="{{route('appointments_confirmed', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas   </span></a>
+            @else
+              <a href="{{route('appointments', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas  </span></a>
+          @endplan_agenda
+    @endif --}}
+
 
   </div>
+  <div id="text_confirm" class="col-12" style="display:none">
+      <p class="text-secondary">No tienes permisos para confirmar esta cita. antes de poder de ditar se debe confirmar.</p>
 
-</div>
-{!!Form::close()!!}
+  </div>
+  {!!Form::close()!!}
 </div>

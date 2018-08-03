@@ -65,7 +65,7 @@
      </div>
      <div class="row">
       <div class="col-lg-2 col-2  col-sm-3 text-center">
-        <a class="btn btn-secondary" href="{{route('patient_profile',$patient['id'])}}" data-toggle="tooltip" data-html="true" title="<em>Perfil</em>"><i class="fas fa-user"></i></a>
+        <a class="btn btn-secondary" href="{{route('patient_profile',['p_id'=>$patient['id'],'back'=>$medico->id])}}" data-toggle="tooltip" data-html="true" title="<em>Perfil</em>"><i class="fas fa-user"></i></a>
       </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>$medico->id,'patient_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Lista de citas con paciente</em>"><i class="fas fa-bars"></i></a>
@@ -80,10 +80,10 @@
   @else
 
       <div class="col-lg-2 col-2  col-sm-4 text-center">
-        <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary disabled text-secondary"><i class="fas fa-folder"></i></a>
+        <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary disabled"><i class="fas fa-folder"></i></a>
       </div>
     <div class="col-lg-2 col-2  col-sm-3 text-center">
-      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary disabled text-secondary"><i class="fas fa-notes-medical"></i></a>
+      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary disabled light"><i class="fas fa-notes-medical"></i></a>
     </div>
     @endplan_platino
 

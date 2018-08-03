@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="row">
   <div class="col-12">
 
@@ -12,7 +13,18 @@
 <div class="col-12">
   <h4 class="font-title-blue">Datos del Paciente: {{$patient->name}} {{$patient->lastName}}</h4>
 </div>
+<div class="">
 
+    @isset(request()->back)
+        <div class="text-right">
+            <a href="{{route('medico_patients',request()->back)}}" class="btn btn-secondary">atras</a>
+
+        </div>
+    @endisset
+
+
+
+</div>
 {{-- <p>La información que se registra en su cuenta,le permite ser ubicado con mayor facilidad por sus clientes a travez del sistema, ademas le permite brindar, una mejor descripción de su profesión.</p> --}}
 
 <section class="box-register">

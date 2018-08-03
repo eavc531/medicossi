@@ -156,9 +156,15 @@
               <span>{{$medico->name}} {{$medico->lastName}}</span>
             </div>
             <div class="col-12 border-panel-green text-center my-1">
+                @edit_schedule
               <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
                 Editar horario de consulta
               </a>
+          @else
+              <a class="btn btn-block btn-config-green disabled" href="{{route('medico_schedule',$medico->id)}}">
+                Editar horario de consulta
+              </a>
+              @endedit_schedule
             </div>
             <div class="border-panel-blue my-1">
               <div class="form-group text-center">
@@ -166,54 +172,105 @@
                 <div class="form-group" style="margin-top:35px">
                   <label for="" class="label-title ">Crear Nuevo Recordatorio </label>
                 </div>
+                @reminder_create
+                {!!Form::open(['route'=>'reminder_store','method'=>'POST','id'=>'form_reminder'])!!}
+                {!!Form::hidden('medico_id',$medico->id)!!}
+                <label for="" class="font-title">Nombre</label>
+              {!!Form::text('title',null,['class'=>'form-control','placeholder'=>'Recordatorio'])!!}
+              <label for="" class="font-title">Descripción (Opcional)</label>
+              {!!Form::text('description',null,['class'=>'form-control'])!!}
 
-                  {!!Form::open(['route'=>'reminder_store','method'=>'POST','id'=>'form_reminder'])!!}
-                  {!!Form::hidden('medico_id',$medico->id)!!}
-                  <label for="" class="font-title">Nombre</label>
-                {!!Form::text('title',null,['class'=>'form-control','placeholder'=>'Recordatorio'])!!}
-                <label for="" class="font-title">Descripción (Opcional)</label>
-                {!!Form::text('description',null,['class'=>'form-control'])!!}
 
+              <label for="" class="mt-2 font-title-blue">Datos de Inicio</label>
+              <div class="row">
 
-                <label for="" class="mt-2 font-title-blue">Datos de Inicio</label>
-                <div class="row">
-
-                  <div class="col-4 font-title">
-                    Fecha
-                  </div>
-                    <div class="col-8">
-                      {!!Form::date('date_start',null,['class'=>'form-control','id'=>'date_start2'])!!}
-                    </div>
+                <div class="col-4 font-title">
+                  Fecha
                 </div>
-                <div class="row mt-1">
-                  <div class="col-3 font-title">
-                    Hora
-
+                  <div class="col-8">
+                    {!!Form::date('date_start',null,['class'=>'form-control','id'=>'date_start2'])!!}
                   </div>
-                  <div class="form-inline">
-                    {!!Form::select('hourStart',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourStart2','placeholder'=>'--'])!!}
-
-                      {!!Form::select('minsStart',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsStart2','placeholder'=>'--'])!!}
-
-                      {{-- {!!Form::select('startFormatHour',['am'=>'am','pm'=>'pm'],null,['id'=>'startFormatHour3','class'=>'form-control  mb-1'])!!} --}}
-                  </div>
+              </div>
+              <div class="row mt-1">
+                <div class="col-3 font-title">
+                  Hora
 
                 </div>
-                <label for="" class="mt-2 font-title">Datos de Culminacion</label>
+                <div class="form-inline">
+                  {!!Form::select('hourStart',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourStart2','placeholder'=>'--'])!!}
 
-                <div class="row mt-1">
+                    {!!Form::select('minsStart',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsStart2','placeholder'=>'--'])!!}
 
-                  <div class="col-4 font-title">
-                    Hora
+                    {{-- {!!Form::select('startFormatHour',['am'=>'am','pm'=>'pm'],null,['id'=>'startFormatHour3','class'=>'form-control  mb-1'])!!} --}}
+                </div>
+            </div>
+            <label for="" class="mt-2 font-title">Datos de Culminacion</label>
+
+            <div class="row mt-1">
+
+              <div class="col-4 font-title">
+                Hora
+              </div>
+              <div class="form-inline">
+                {!!Form::select('hourEnd',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourEnd2','placeholder'=>'--'])!!}
+
+                  {!!Form::select('minsEnd',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsEnd2','placeholder'=>'--'])!!}
+
+              </div>
+
+            </div>
+            @else
+
+                {!!Form::open(['route'=>'reminder_store','method'=>'POST','id'=>'form_reminder'])!!}
+                {!!Form::hidden('medico_id',$medico->id)!!}
+                <label for="" class="font-title">Nombre</label>
+              {!!Form::text('title',null,['class'=>'form-control','placeholder'=>'Recordatorio','disabled'])!!}
+              <label for="" class="font-title">Descripción (Opcional)</label>
+              {!!Form::text('description',null,['class'=>'form-control','disabled'])!!}
+
+
+              <label for="" class="mt-2 font-title-blue">Datos de Inicio</label>
+              <div class="row">
+
+                <div class="col-4 font-title">
+                  Fecha
+                </div>
+                  <div class="col-8">
+                    {!!Form::date('date_start',null,['class'=>'form-control','id'=>'date_start2','disabled'])!!}
                   </div>
-                  <div class="form-inline">
-                    {!!Form::select('hourEnd',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourEnd2','placeholder'=>'--'])!!}
-
-                      {!!Form::select('minsEnd',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsEnd2','placeholder'=>'--'])!!}
-
-                  </div>
+              </div>
+              <div class="row mt-1">
+                <div class="col-3 font-title">
+                  Hora
 
                 </div>
+                <div class="form-inline">
+                  {!!Form::select('hourStart',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourStart2','placeholder'=>'--','disabled'])!!}
+
+                    {!!Form::select('minsStart',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsStart2','placeholder'=>'--','disabled'])!!}
+
+                    {{-- {!!Form::select('startFormatHour',['am'=>'am','pm'=>'pm'],null,['id'=>'startFormatHour3','class'=>'form-control  mb-1'])!!} --}}
+                </div>
+            </div>
+            <label for="" class="mt-2 font-title">Datos de Culminacion</label>
+
+            <div class="row mt-1">
+
+              <div class="col-4 font-title">
+                Hora
+              </div>
+              <div class="form-inline">
+                {!!Form::select('hourEnd',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control','id'=>'hourEnd2','placeholder'=>'--','disabled'])!!}
+
+                  {!!Form::select('minsEnd',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control','id'=>'minsEnd2','placeholder'=>'--','disabled'])!!}
+
+              </div>
+
+            </div>
+                @endreminder_create
+
+
+
 
                 <div id="alert_error" class="alert alert-warning alert-dismissible fade show text-left" role="alert" style="display:none">
                   <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
@@ -228,9 +285,14 @@
                 <div class="col-12 text-center mt-2 row">
                   <div class="col-lg-6">
                     @if($countEventSchedule != 0)
-                      <button type="submit" name="button" class="btn btn-config-blue">Guardar</button>
-                    {{-- <button onclick="store_event()"type="button" class="btn btn-config-blue">Guardar</button> --}}
+
+                      @reminder_create
+                  <button type="submit" name="button" class="btn btn-config-blue">Guardar</button>
+                      @else
+                          <button onclick=""type="button" class="btn btn-config-blue" disabled>Guardar</button>
+                      @endreminder_create
                     @else
+
                     <button onclick=""type="button" class="btn btn-config-blue" disabled>Guardar</button>
                     @endif
                     {{-- <button type="submit" class="btn btn-config-blue">Guardar</button> --}}

@@ -45,11 +45,11 @@
             {!!Form::text('phone',null,['class'=>'form-control','placeholder'=>'Teléfono'])!!}
           </div>
 				</div>
-				<div class="col-lg-6 col-12">
-					<div class="form-group">
-						{!!Form::select('country',$countries,'México',['class'=>'form-control','placeholder'=>'Pais'])!!}
-					</div>
+			<div class="col-lg-6 col-12">
+				<div class="form-group">
+					{!!Form::select('country',$countries,'México',['class'=>'form-control','placeholder'=>'Pais'])!!}
 				</div>
+			</div>
 			</div>
 			<div class="row">
 				<div class="col-lg-6 col-12">
@@ -60,7 +60,8 @@
 				</div>
 				<div class="col-lg-6 col-12">
 					<div class="form-group">
-						{!!Form::password('password',['class'=>'form-control','placeholder'=>'Contraseña'])!!}
+  						{!!Form::text('identification',null,['class'=>'form-control','placeholder'=>'Cedula'])!!}
+		  					</div>
 					</div>
 				</div>
 			</div>
@@ -86,7 +87,7 @@
 					<a href="" class="btn-config-blue btn btn-block">Limpiar</a>
 				</div>
 				<div class="col-lg-6 col-12 mt-2">
-					<button type="submit" class="btn-config-green btn btn-block">Registrar</button>
+					<button onclick="loader();this.form.submit()" type="submit" class="btn-config-green btn btn-block">Registrar</button>
 				</div>
 			</div>
 			<div class="row">

@@ -43,13 +43,13 @@
                             <input type="hidden" name="medico_id" value="{{$medico->id}}">
                             <input type="hidden" name="assistant_id" value="{{$assistant  ->id}}">
 							<tr>
-								<td colspan="4" class="bg-warning text-center text-white"><strong>Citas</strong></td>
+								<td colspan="4" class="bg-warning text-center text-white"><strong>Citas Médicas</strong></td>
 							</tr>
 								<tr>
 									<th class="">Agendar Citas con pacientes</th>
 									<td class="text-justify">El asistente puede agendar citas dentro de el horario preestablecido por el Médico</td>
 									<td class="text-justify">
-										{{$permissions->cita_patient_create}}
+
 										@if(Auth::user()->role == 'Asistente')
 											@if($permissions->cita_patient_create == Null)
 												<i class="fas fa-times text-secondary"></i>
@@ -221,8 +221,234 @@
 
 										</td>
 								</tr>
+								<tr>
+									<th class="">Confirmar Citas</th>
+									<td class="text-justify">El asistente puede confirmar las citas agendadas por los pasientes desde su cuenta de pasiente Médicossi, (opcion disponible para el plan profesional o platino.)</td>
+									<td class="text-justify">
 
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->cita_confirm == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('cita_confirm')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
 
+										</td>
+								</tr>
+								<tr>
+									<th class="">Editar Horario</th>
+									<td class="text-justify">El asistente puede editar el horario de trabajo del medico.</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->edit_schedule == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('edit_schedule')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+
+								<tr>
+									<td colspan="4" class="bg-warning text-center text-white"><strong>Recordatorios</strong></td>
+								</tr>
+
+								<tr>
+									<th class="">Crear recordatorios</th>
+									<td class="text-justify">El asistente puede crear recordatorios.</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->reminder_create == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('reminder_create')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<th class="">Editar recordatorios</th>
+									<td class="text-justify">El asistente puede editar los  recordatorios ya creados.</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->reminder_edit == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('reminder_edit')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<th class="">Borrar recordatorios</th>
+									<td class="text-justify">El asistente puede borrar recordatorios.</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->reminder_delete == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('reminder_delete')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<td colspan="4" class="bg-warning text-center text-white"><strong>Notas Médicas</strong></td>
+								</tr>
+								<tr>
+									<th class="">Crear Notas Médicas</th>
+									<td class="text-justify">El asistente puede Crear Notas Médicas</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->note_create == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('note_create')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<th class="">Editar Notas Médicas</th>
+									<td class="text-justify">El asistente puede Editar Notas Médicas creadas con anticipacion</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->note_edit == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('note_edit')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<th class="">Configurar Notas Médicas</th>
+									<td class="text-justify">El asistente puede Configurar las preguntas de las notas medicas.</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->note_config == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('note_config')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<th class="">Borrar Notas Médicas</th>
+									<td class="text-justify">El asistente puede Borrar las notas medicas.</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->note_delete == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('note_delete')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<th class="">Bajar Notas Médicas o Expedientes en pdf</th>
+									<td class="text-justify">El asistente puede descargar las Notas Médicas o expedientes completos en formato pdf</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->note_pdf == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('note_pdf')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
+								<tr>
+									<th class="">Mover Notas Médicas</th>
+									<td class="text-justify">El asistente puede mover notas médicas de un expediente a otro</td>
+									<td class="text-justify">
+
+										@if(Auth::user()->role == 'Asistente')
+											@if($permissions->note_move == Null)
+												<i class="fas fa-times text-secondary"></i>
+											@else
+												<i class="fas fa-check"></i>
+											@endif
+										@else
+											<label class="switch disabled" style="display:block;margin-left:auto;">
+											{{Form::checkbox('note_move')}}
+											   <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+											</label>
+										@endif
+
+										</td>
+								</tr>
 						</tbody>
 
 

@@ -36,12 +36,12 @@
     <hr>
     <div class="" id="example">
       {{-- //////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT//////////////ALERT --}}
-      <div id="alert_success_1" class="alert alert-success alert-dismissible fade show text-left" role="alert" style="display:none">
+      <div id="alert_success_1" class="alert alert-success" role="alert" style="display:none">
        <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
-       <p id="text_success_1" style="font-size:12px"></p>
+       <h5 id="text_success_1" style=""></h5>
 
        <a href="{{route('patient_appointments_pending',Auth::user()->patient->id)}}" class="btn btn-outline-primary">Ver mis Citas Pendienes</a>
-
+        <a href="{{route('home')}}" class="btn btn-outline-success">Ir a Inicio</a>
        {{--<a class="btn btn-outline-success" href="{{route('patient_appointments',Auth::user()->patient->id)}}">Tus Citas Pendientes</a>--}}
      </div>
      {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
@@ -79,9 +79,9 @@
           <label for="" class="label-title ">Agendar Cita con: {{$medico->name}} {{$medico->lastName}}</label>
         </div>
 
-        {{-- <label for="" class="mt-2 font-title">Tipo de Evento</label>
-        {!!Form::select('title',['Cita por Internet'=>'Cita por internet'],null,['class'=>'form-control','id'=>'eventType2'])!!} --}}
-        <input type="hidden" name="title" value="Cita por Internet" id="eventType2">
+
+        {!!Form::hidden('title','Cita por Internet',['class'=>'form-control','id'=>'eventType2'])!!}
+
         <label for="" class="mt-2 font-title">Metodo de Pago</label>
          @if($medico->type_patient_service == "Solo pacientes privados")
         {!!Form::select('payment_method',['Normal'=>'Normal'],null,['class'=>'form-control','id'=>'payment_method6'])!!}
@@ -366,8 +366,8 @@
     }
 
     function vaciar(){
-      title = $('#title2').val("");
-      eventType = $('#eventType2').val("");
+      // title = $('#title2').val("");
+      // eventType = $('#eventType2').val("");
       description = $('#description2').val("");
       price = $('#price2').val("");
       date_start = $('#date_start2').val("");
@@ -400,8 +400,7 @@
 
     function store_event(){
 
-      $('#btn_agendar').attr("disabled", true);
-      $('#btn_cancelar').attr("disabled", true);
+      loader();
       $('#alert_carga').fadeIn();
       close_edit();
       title = $('#eventType2').val();
@@ -416,13 +415,14 @@
       medico_id = "{{$medico->id}}";
       route = "{{route('appointment_store')}}";
       errormsj = '';
+
       $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
        type:'post',
        url:route,
        data:{title:title,payment_method:payment_method,date_start:date_start,hourStart:hourStart,minsStart:minsStart,dateEnd:dateEnd,hourEnd:hourEnd,minsEnd:minsEnd,medico_id:medico_id,patient_id:patient_id},
        error:function(error){
-
+           stop_loader();
           $('#btn_agendar').attr("disabled", false);
           $('#btn_cancelar').attr("disabled", false);
           $('#alert_carga').fadeOut();
@@ -437,7 +437,7 @@
          console.log(error);
        },
        success:function(result){
-
+           stop_loader();
          $('#btn_agendar').attr("disabled", false);
          $('#btn_cancelar').attr("disabled", false);
          $('#alert_carga').fadeOut();
@@ -524,7 +524,7 @@
         if(result == 'fuera del horario'){
           $('#text_error_up1').html('imposible guardar evento, fuera del horario establecido');
           $('#alert_error_up1').fadeIn();
-          
+
         }else {
           console.log(result);
           $('#text_success_up1').html('Guardado con Exito');
