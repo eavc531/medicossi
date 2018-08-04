@@ -22,11 +22,11 @@
 						<table class="table table-responsive table-config">
 						  <thead class="thead-color">
 						    <tr>
-						      <th class="text-center">#</th>
+
 						      <th class="text-center">Nombre</th>
 									 <th class="text-center">Otros Nombres</th>
 						      <th class="text-center">Descripción</th>
-									 <th class="text-center">Categoria</th>
+									 <th class="text-center">Especialidad</th>
 									<th class="text-center">Acciones</th>
 						    </tr>
 						  </thead>
@@ -34,7 +34,7 @@
 
 								@foreach ($specialties as $specialty)
 								<tr>
-									<th scope="row">{{$specialty->id}}</th>
+
 									<td class="text-center">{{$specialty->name}}</th>
 									<td >
 										<ul style="list-style:none">
@@ -51,7 +51,7 @@
 										 </ul>
 									</td>
 									<td class="text-center">{{$specialty->description}}</td>
-									<td class="text-center">{{$specialty->specialty_category->name}}</td>
+									<td class="text-center">{{$specialty->specialty->name}}</td>
 									<td><div class="btn-group" role="group" aria-label="...">
 										<div class="row">
 											<div class="col-12">
@@ -66,7 +66,7 @@
 						  </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="4">{{ $specialties->links() }}</td>
+                  <td colspan="5">{{ $specialties->links() }}</td>
                 </tr>
               </tfoot>
 						</table>

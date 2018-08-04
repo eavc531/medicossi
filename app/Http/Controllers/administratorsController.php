@@ -10,9 +10,15 @@ use App\Role;
 use App\role_user;
 use App\medico;
 use DB;
+use App\medicalCenter;
 use App\records_of_plans_medico;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use App\assistant;
+use App\patient;
+use App\specialty;
+use App\permissions_admin;
+
 
 class administratorsController extends Controller
 {
@@ -21,6 +27,51 @@ class administratorsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     public function permissions_admin($id){
+         $permissions = permissions_admin::find($id);
+         $administrator = administrator::where('permissions_admin_id',$id)->first();
+         // dd($administrator);
+         return view('administrators.permissions_admin',compact('permissions','administrator'));
+     }
+
+     public function llenar_especialidad(Request $request){
+         if($request->specialty_category_id == Null){
+             $specialty = specialty::orderby('name','asc')->pluck('name','id');
+         }else {
+              $specialty = specialty::where('specialty_category_id',$request->specialty_category_id)->orderby('name','asc')->pluck('name','id');
+         }
+
+         return response()->json($specialty);
+     }
+
+     public function admin_patient_list(){
+         $patients = patient::paginate(10);
+         return view('administrators.patient_list',compact('patients'));
+     }
+
+     public function assistant_list(){
+         $assistants  = assistant::paginate(10);
+
+         return view('administrators.assistant_list',compact('assistants'));
+     }
+
+     public function medicos_list(Request $request){
+         $medicosall = medico::all();
+        $medicos = medico::paginate(10);
+
+       $suma = 0;
+
+       foreach ($medicosall as $medico) {
+           $suma = $suma + $medico->records_of_plans_medico->sum('comision');
+       }
+
+       return view('administrators.medicos_list',compact('medicos','suma'));
+     }
+
+     public function medical_center_list(){
+       $medicalCenters = medicalCenter::orderBy('id','desc')->paginate(10);
+       return view('administrators.medicalCenterList')->with('medicalCenters',$medicalCenters);
+     }
 
      public function panel_control_administrator()
      {
@@ -311,8 +362,12 @@ class administratorsController extends Controller
            'password'=>'required',
         ]);
 
+        $permissions = new permissions_admin;
+        $permissions->save();
+
         $administrator = new administrator;
         $administrator->fill($request->all());
+        $administrator->permissions_admin_id = $permissions->id;
         $administrator->save();
 
         $user = new User;

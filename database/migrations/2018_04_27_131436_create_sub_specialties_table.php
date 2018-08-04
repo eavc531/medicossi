@@ -20,8 +20,8 @@ class CreateSubSpecialtiesTable extends Migration
             $table->string('synonymous1')->nullable();
             $table->string('synonymous2')->nullable();
             $table->string('synonymous3')->nullable();
-            $table->integer('specialty_category_id')->unsigned();
-            $table->foreign('specialty_category_id')->references('id')->on('specialty_categories');
+            $table->integer('specialty_id')->unsigned();
+            $table->foreign('specialty_id')->references('id')->on('specialties');
             $table->timestamps();
         });
     }

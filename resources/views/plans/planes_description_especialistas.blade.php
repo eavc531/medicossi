@@ -15,7 +15,7 @@
                   <a href="{{route('planes_medic_specialties')}}" class="btn btn-primary ">Planes Medicos y Especialistas</a>
                   <a href="{{route('planes_alt_psicologos')}}" class="btn btn-success ml-2 disabled">Planes Medicina Alternativa, Psicologos y Terapeutas</a>
               @endif
-
+              <a href="{{route('panel_control_administrator')}}" class="btn btn-secondary float-right">Atras</a>
           </div>
 
           <h4 class="my-5 text-primary">Planes {{$plan_mi_agenda->applicable}}</h4>

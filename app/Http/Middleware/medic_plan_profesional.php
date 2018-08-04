@@ -28,7 +28,8 @@ class medic_plan_profesional
         }else{
           return redirect()->route('planes_medic',Auth::user()->assistant->medico_id)->with('warning', 'Para Poder acceder a ciertos Paneles, debes adquirir uno de nuestros planes, cada uno de estos te permitira hacer acciones extras en el sistema, a continuacion se detallan nuestros planes, de acuerdo a tu especialidad');
         }
-
+    }elseif(Auth::user()->role == 'Administrador'){
+        return $next($request);    
     }else{
         return redirect()->route('home',Auth::user()->assistant->medico_id)->with('warning','no tienes permisos para realizar esa acción');
     }

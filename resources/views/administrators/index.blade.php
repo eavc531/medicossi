@@ -16,7 +16,7 @@
 							<a class="btn btn-config-green" href="{{route('administrators.create')}}">Agregar Administrador</a>
 						</div>
 						<div class="col-6 text-right">
-							<a class="btn btn-secondary" href="{{route('home')}}">Atras</a>
+							<a class="btn btn-secondary" href="{{route('panel_control_administrator')}}">Atras</a>
 						</div>
 					</div>
 				<div class="row">
@@ -54,7 +54,7 @@
 
 														</div> --}}
 														<div class="col-4">
-															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Permisos" role="button" href="{{route('listPermissionSet',$admin->id)}}"><i class="fas fa-key"></i>
+															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Permisos" role="button" href="{{route('permissions_admin',$admin->permissions_admin_id)}}"><i class="fas fa-key"></i>
 															</a>
 														</div>
 													</div>

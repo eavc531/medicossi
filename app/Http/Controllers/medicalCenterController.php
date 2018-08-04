@@ -365,10 +365,7 @@ class medicalCenterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     public function MedicalCenterList(){
-       $medicalCenters = medicalCenter::orderBy('id','desc')->paginate(10);
-       return view('medicalCenter.medicalCenterList')->with('medicalCenters',$medicalCenters);
-     }
+
 
     public function index()
     {

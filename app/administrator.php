@@ -15,5 +15,7 @@ class administrator extends Model
 
     ];
 
-  
+    public function permission(){
+       return $this->belongsTo('App\permissions_admin');
+    }
 }

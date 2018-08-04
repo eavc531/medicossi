@@ -23,6 +23,10 @@ class assistant extends Model
      return $this->belongsTo('App\medico');
   }
 
+  public function medico_assistant(){
+     return $this->hasMany('App\medico_assistant');
+  }
+
   public function permission(){
      return $this->belongsTo('App\permission');
   }

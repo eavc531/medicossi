@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\sub_specialty;
 use App\specialty_category;
+use App\specialty;
+use Validator;
 
 class sub_specialtyController extends Controller
 {
@@ -27,9 +29,11 @@ class sub_specialtyController extends Controller
    */
   public function create()
   {
-    $categories = specialty_category::orderBy('name','asc')->pluck('name','id');
 
-    return view('specialty.sub_specialty.create')->with('categories', $categories);
+    $categories = specialty_category::orderBy('name','asc')->pluck('name','id');
+    $specialty = specialty::orderBy('name','asc')->pluck('name','id');
+
+    return view('specialty.sub_specialty.create')->with('categories', $categories)->with('specialty', $specialty);
   }
 
   /**
@@ -40,13 +44,22 @@ class sub_specialtyController extends Controller
    */
   public function store(Request $request)
   {
-    $request->validate([
-      'name'=>'required|unique:specialty_categories',
-      'description'=>'nullable',
-      'specialty_category_id'=>'required',
-    ]);
+      // dd($request->all());
+      $validator = Validator::make($request->all(), [
+          'name'=>'required|unique:specialty_categories',
+          'description'=>'nullable',
+          'specialty_id'=>'required',
+      ]);
+
+      if ($validator->fails()) {
+           return back()->withErrors($validator)
+           ->withInput();
+
+       }
+
+
       $specialty = new sub_specialty;
-      $specialty->fill($request->all());
+      $specialty->fill(array_except($request->all(), ['specialty_category_id']));
       $specialty->save();
 
       return redirect()->route('sub_specialty.index')->with('success', 'Categoria creada de forma Satisfactoria');
@@ -72,9 +85,10 @@ class sub_specialtyController extends Controller
    */
   public function edit($id)
   {
+      $specialty = specialty::orderBy('name','asc')->pluck('name','id');
+      $sub_specialty = sub_specialty::find($id);
       $categories = specialty_category::orderBy('name','asc')->pluck('name','id');
-      $category = sub_specialty::find($id);
-      return view('specialty.sub_specialty.edit')->with('category', $category)->with('categories', $categories);
+      return view('specialty.sub_specialty.edit')->with('sub_specialty', $sub_specialty)->with('specialty', $specialty)->with('categories', $categories);
   }
 
   /**
@@ -89,10 +103,18 @@ class sub_specialtyController extends Controller
     $specialty = sub_specialty::find($id);
 
     if($request->name != $specialty->name){
-      $request->validate([
-        'name'=>'required|unique:specialty_categories',
-        'description'=>'nullable',
-      ]);
+        $validator = Validator::make($request->all(), [
+            'name'=>'required|unique:specialty_categories',
+            'description'=>'nullable',
+            'specialty_id'=>'required',
+        ]);
+
+        if ($validator->fails()) {
+             return back()->withErrors($validator)
+             ->withInput();
+
+         }
+
     }
 
       $specialty->fill($request->all());

@@ -422,19 +422,13 @@ class promotersController extends Controller
 
      public function list_client(Request $request,$id){
 
-        $medicos = medico::where('promoter_id',$id)->get();
-        $medicalCenters = medicalCenter::where('promoter_id',$id)->get();
-        $client = $medicos->merge($medicalCenters);
+        $client = medico::where('promoter_id',$id)->paginate(10);
         $promoter = promoter::find($id);
-       $col = new Collection($client);
-       $currentPage = LengthAwarePaginator::resolveCurrentPage();
-       $perPage = 10;
-       $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
-       $client = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
-       $client->setPath(route('list_client',$id));
-       $suma = 0;
 
-       foreach ($medicos as $medico) {
+
+       $suma = 0;
+       $medicosC = medico::where('promoter_id',$id)->get();
+       foreach ($medicosC as $medico) {
            $suma = $suma + $medico->records_of_plans_medico->sum('comision');
        }
 
@@ -442,23 +436,19 @@ class promotersController extends Controller
      }
 
      public function list_client_activated(Request $request,$id){
-       $medicos = medico::where('promoter_id',$id)->where('plan','!=','plan_basico')->whereNotNull('plan')->get();
+       $client = medico::where('promoter_id',$id)->where('plan','!=','plan_basico')->whereNotNull('plan')->paginate(10);
        $promoter = promoter::find($id);
        $medicalCenters = medicalCenter::where('promoter_id',$id)->where('stateAccount', 'Activa')->get();
-       $client = $medicos->merge($medicalCenters);
+       // $client = $medicos->merge($medicalCenters);
 
-       $col = new Collection($client);
-       $currentPage = LengthAwarePaginator::resolveCurrentPage();
-       $perPage = 2;
-       $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
-       $client = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
-       $client->setPath(route('list_client',$id));
+
         $suma = 0;
 
          $medicos2 = medico::where('promoter_id',$id)->get();
-       foreach ($medicos2 as $medico) {
-           $suma = $suma + $medico->records_of_plans_medico->sum('comision');
-       }
+         $medicosC = medico::where('promoter_id',$id)->get();
+         foreach ($medicosC as $medico) {
+             $suma = $suma + $medico->records_of_plans_medico->sum('comision');
+         }
        $active = 'si';
        return view('promoters.list_client',compact('client','suma','active','promoter'));
      }
@@ -466,30 +456,23 @@ class promotersController extends Controller
      public function list_client_desactivated(Request $request,$id){
 
          $promoter = promoter::find($id);
-       $medicos = medico::where('promoter_id',$id)
+       $client = medico::where('promoter_id',$id)
                 ->whereNull('plan')
                 ->orWhere(function ($query) use($id) {
                     $query->where('promoter_id',$id)
                     ->where('plan','==','plan_basico');
 
-                })->get();
+                })->paginate(10);
 
 
        $medicalCenters = medicalCenter::where('promoter_id',$id)->where('stateAccount', 'Desactivada')->get();
-       $client = $medicos->merge($medicalCenters);
-
-       $col = new Collection($client);
-       $currentPage = LengthAwarePaginator::resolveCurrentPage();
-       $perPage = 2;
-       $currentPageSearchResults = $col->slice(($currentPage - 1) * $perPage, $perPage)->all();
-       $client = new LengthAwarePaginator($currentPageSearchResults, count($col), $perPage);
-       $client->setPath(route('list_client',$id));
 
        $medicos2 = medico::where('promoter_id',$id)->get();
        $suma = 0;
-     foreach ($medicos2 as $medico) {
-         $suma = $suma + $medico->records_of_plans_medico->sum('comision');
-     }
+       $medicosC = medico::where('promoter_id',$id)->get();
+       foreach ($medicosC as $medico) {
+           $suma = $suma + $medico->records_of_plans_medico->sum('comision');
+       }
      $inactive = 'si';
      return view('promoters.list_client',compact('client','suma','inactive','promoter'));
      }

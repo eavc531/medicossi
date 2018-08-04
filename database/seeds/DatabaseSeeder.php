@@ -31,12 +31,16 @@ class DatabaseSeeder extends Seeder
      'name'=>'Chile',
      ]);
 
+     DB::table('permissions_admins')->insert([
+    'id'=>1,
+
+    ]);
          DB::table('administrators')->insert([
         'id'=>1,
         'name'=>'admin',
         'lastName'=>'',
         'email'=>'admin@admin.com',
-        // 'password'=>bcrypt('1234'),
+        'permissions_admin_id'=>1,
 
         ]);
 

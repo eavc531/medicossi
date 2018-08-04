@@ -15,7 +15,7 @@
 						<a class="btn btn-config-blue" href="{{route('promoters.create')}}">Agregar Nuevo Promotor</a>
 					</div>
 					<div class="col-6  text-right">
-						<a class="btn btn-secondary" href="{{route('home')}}">Atras</a>
+						<a class="btn btn-secondary" href="{{route('panel_control_administrator')}}">Atras</a>
 					</div>
 				</div>
 
@@ -31,7 +31,7 @@
 						      <th class="text-center">Nombre</th>
 						      <th class="text-center">Apellido</th>
 									<th class="text-center">Email</th>
-									<th class="text-center">id#Promotor</th>
+									<th class="text-center">Cédula</th>
 									<th class="text-center">Acciones</th>
 
 						  </thead>

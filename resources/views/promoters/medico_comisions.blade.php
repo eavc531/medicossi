@@ -8,7 +8,9 @@
 				<div class="row">
 					<div class="col-12 mb-3">
 						@admin
-						<h3 class="text-center font-title">Comisiones Generadas por Médico: {{$medico->nameComplete}} al Promotor: <span class="text-primary">{{$medico->promoter->name}} {{$medico->promoter->lastName}}</span></h3>
+						<h3 class="text-center font-title">Comisiones Generadas por Médico: {{$medico->name}} {{$medico->lastName}} @isset($medico->promoter->id) al Promotor: <span class="text-primary">{{$medico->promoter->name}} {{$medico->promoter->lastName}}</span></h3>
+						@endisset
+
 					@else
 						<h2 class="text-center font-title">Comisiones Generadas por Médico: {{$medico->nameComplete}} </h2>
 						@endadmin

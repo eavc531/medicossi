@@ -321,7 +321,7 @@
 <div class="row">
   <div class="col-12">
    <div class="form-group">
-     @include('medico.alert2.alert2')
+     {{-- @include('medico.alert2.alert2') --}}
      <div class="row" id="">
       @foreach ($images as $image)
       {{-- div que encierra cada imagen --}}

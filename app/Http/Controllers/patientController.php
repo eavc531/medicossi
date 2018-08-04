@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Auth;
 use App\rate_medic;
 use App\photo;
+
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 class patientController extends Controller
@@ -218,7 +219,7 @@ class patientController extends Controller
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
           // $msj->to($patient->email);
-          $msj->to('eavc53189@gmail.com');
+          // $msj->to('eavc53189@gmail.com');
 
         });
 
@@ -237,7 +238,7 @@ class patientController extends Controller
     public function index()
     {
         $patient = patient::orderBy('name','asc')->paginate(10);
-        return view('patient.index')->with('patients', $patient);
+        return view('patient.profile')->with('patients', $patient);
     }
 
     /**
@@ -384,8 +385,8 @@ class patientController extends Controller
 
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
-          // $msj->subject($patient->email);
-          $msj->to('eavc53189@gmail.com');
+          $msj->subject($patient->email);
+          // $msj->to('eavc53189@gmail.com');
 
         });
 

@@ -40,19 +40,19 @@
 
           </div>
           <div class="row py-1">
+            {{-- <div class="col-12">
+              <a href="{{route('medical_center_list')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-building"></i><span>Centros Medicos</span></a>
+            </div> --}}
             <div class="col-12">
-              <a href="{{route('MedicalCenterList')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-building"></i><span>Centros Medicos</span></a>
+              <a href="{{route('medicos_list')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-user-md"></i><span style="margin-left: 2%;">Profesionales  <br> de la salud</span></a>
             </div>
             <div class="col-12">
-              <a href="{{route('medicosList')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-user-md"></i><span style="margin-left: 2%;">Profesionales  <br> de la salud</span></a>
-            </div>
-            <div class="col-12">
-              <a href="{{route('assistant.index')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-user"></i><span>Asistentes</span></a>
+              <a href="{{route('assistant_list')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-user"></i><span>Asistentes</span></a>
             </div>
           </div>
           <div class="row">
             <div class="col-12">
-              <a href="{{route('patient.index')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fab fa-accessible-icon"></i><span>Pacientes</a>
+              <a href="{{route('admin_patient_list')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fab fa-accessible-icon"></i><span>Pacientes</a>
               </div>
             </div>
             <div class="row">

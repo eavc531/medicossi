@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::post('llenar_especialidad','administratorsController@llenar_especialidad')->name('llenar_especialidad');
+
 //SELECT estadosciudades
 Route::post('inner/cities/select','medicoController@inner_cities_select')->name('inner_cities_select');
 Route::post('inner/cities/select2','medicoController@inner_cities_select2')->name('inner_cities_select2');
@@ -248,6 +250,7 @@ Route::group(['middleware' => ['medic_plan_platino']], function (){
 
     Route::post('medico/patient/note/evo_create','notesController@note_evo_create')->name('note_evo_create');
 });
+Route::get('admin/patient_list', 'administratorsController@admin_patient_list')->name('admin_patient_list');
 
 Route::get('medico/{m_id}/patient/{p_id}/data', 'medicoController@data_patient')->name('data_patient');
 Route::post('medico/patient/data/store', 'medicoController@data_patient_store')->name('data_patient_store');
@@ -409,7 +412,7 @@ Route::post('map/medicalCenter','HomeController@map_medical_center_name')->name(
 
 
 
-Route::get('medical/centers/list','medicalCenterController@MedicalCenterList')->name('MedicalCenterList');
+Route::get('medical/centers/list','administratorsController@medical_center_list')->name('medical_center_list');
 
 Route::get('medicos/list','medicoController@medicosList')->name('medicosList');
 
@@ -420,6 +423,8 @@ Route::resource('sub_specialty','sub_specialtyController');
 
 Route::resource('assistant','assistantController');
 Route::resource('administrators','administratorsController');
+Route::get('medicos_list','administratorsController@medicos_list')->name('medicos_list');
+
 //plans
 Route::resource('plans','plansController');
 
@@ -490,6 +495,8 @@ Route::get('delete/city/{id}/plan','plansController@deleteCityPlan')->name('dele
 
 ///////ASSISTANT
 
+Route::get('admin/assistant/list','administratorsController@assistant_list')->name('assistant_list');
+
 Route::get('medico/search/assistant/registered','assistantController@search_assistants_registered')->name('search_assistants_registered');
 Route::post('medico/assistant/add/store','assistantController@add_assistant_store')->name('add_assistant_store');
 
@@ -508,7 +515,7 @@ Route::get('confirm/assistant/{id}/{code}','assistantController@confirmAssistant
 Route::get('register/assistant/{id}/step4','assistantController@AvisoConfirmAccountAssistant')->name('AvisoConfirmAccountAssistant');
 /////////////
 Route::resource('permissionSet','permissionSetController');
-Route::get('permission/admin/{id}','permissionSetController@listPermissionSet')->name('listPermissionSet');
+Route::get('admin/{id}/permissions','administratorsController@permissions_admin')->name('permissions_admin');
 Route::get('permission/{id}/set/admin/','permissionSetController@PermissionSet')->name('PermissionSet');
 
 Route::get('permissions/{id}/store/{id2}/','PermissionSetController@PermissionSetStore')->name('PermissionSetStore');

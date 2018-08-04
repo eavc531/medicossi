@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class sub_specialty extends Model
 {
   protected $fillable = [
-      'name', 'description','synonymous1','synonymous2','synonymous3','specialty_category_id',
+      'name', 'description','synonymous1','synonymous2','synonymous3','specialty_id',
   ];
 
-  public function specialty_category(){
-     return $this->belongsTo('App\specialty_category');
+  public function specialty(){
+     return $this->belongsTo('App\specialty');
   }
 }

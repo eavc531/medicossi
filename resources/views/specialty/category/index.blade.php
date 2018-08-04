@@ -33,7 +33,9 @@
 								<tr>
 									<td class="text-center">{{$category->name}}</th>
 									<td class="text-center">{{$category->description}}</td>
-									<td><div class="btn-group" role="group" aria-label="...">
+									<td class="text-center">
+										@if($category->name != 'Dentistas' and $category->name != 'Medicina Alternativa' and $category->name != 'Medicos y Especialistas' and $category->name != 'Terapeutas y Nutricion')
+										<div class="btn-group" role="group" aria-label="...">
 										<div class="row">
 											<div class="col-12">
 												<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('specialty_category.edit',$category->id)}}">Editar
@@ -43,6 +45,9 @@
 											</div>
 										</div>
 									</div>
+								@else
+											<span class="text-secondary">Categoria Indispensable</span>
+									@endif
 								</td>
 								@endforeach
 

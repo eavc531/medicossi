@@ -47,7 +47,7 @@ class plansController extends Controller
         $plan->porcentage_price3 = $request->porcentage_price3;
         $plan->save();
 
-        return back()->with('success', 'Se ha establecido el rpecio de comisiones para el '.$plan->name);
+        return back()->with('success', 'Se ha establecido el precio de comisiones para el '.$plan->name);
     }
 
      public function plans_porcentages()

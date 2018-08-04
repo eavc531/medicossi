@@ -18,6 +18,7 @@ class specialty_categoryController extends Controller
      */
     public function index()
     {
+
       $categories = specialty_category::orderby('name','asc')->paginate(10);
         return view('specialty.category.index')->with('categories', $categories);
     }
