@@ -61,7 +61,7 @@
                                             </ul>
                                         </td>
                                         <td>
-                                            <a href="{{route('assistant.edit',$assistant->id)}}" class="btn btn-primary btn-sm">Perfil</a>
+                                            <a href="{{route('assistant.edit',\Hashids::encode($assistant->id))}}" class="btn btn-primary btn-sm">Perfil</a>
                                         </td>
                                     @endforeach
                                 </tbody>
