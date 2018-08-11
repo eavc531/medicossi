@@ -11,7 +11,10 @@
   {{-- <link rel="stylesheet" type="text/css" href="{{asset('css/styles.css')}}"> --}}
   <title>Document</title>
   <style media="screen">
-
+        .font-title{
+            color:rgb(97, 210, 44);
+            font-weight: bold;
+        }
   </style>
 </head>
 <body>

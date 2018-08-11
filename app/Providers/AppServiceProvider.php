@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Blade;
 
 use Illuminate\Support\ServiceProvider;
 use Auth;
+use Vinkla\Hashids\Facades\Hashids;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -14,6 +15,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Blade::directive('h', function($expression) {
+                $variable = Hashids::encode($expression);
+               return $variable;
+           });
+
         \Carbon\Carbon::setLocale(config('app.locale'));
 
         Blade::if('admin', function(){

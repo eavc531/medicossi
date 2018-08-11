@@ -30,7 +30,7 @@
   </div>
 </div> --}}
 
-@include('medico.notes.include_data_consultorio')
+
 
 <div class="card-body">
   @include('medico.notes.include_data_consultorio')
@@ -50,14 +50,14 @@
 @if($note->Signos_vitales_show == 'si')
 <div class="form-group">
   <h5 class="font-title-blue">Signos vitales</h5>
-  <p>{!!$note->Signos_vitales!!}</p>
+   @include('medico.notes.view_preview.vital_signs')
 </div>
 <hr>
 @endif
 @if($note->Pruebas_de_laboratorio_show == 'si')
 <div class="form-group">
   <h5 class="font-title-blue">Pruebas de laboratorio</h5>
-  <p>{!!$note->Pruebas_de_laboratorio!!}</p>
+  @include('medico.notes.view_preview.test_labs')
 </div>
 <hr>
 @endif

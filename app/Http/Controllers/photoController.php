@@ -28,7 +28,7 @@ class photoController extends Controller
 
         $patient = patient::find($request->patient_id);
          $namePhoto = $patient->name.'.'.$extension;
-         $pathSave = 'img/users/'.$patient->identification.'/photos';
+         $pathSave = 'public/img/users/'.$patient->identification.'/photos';
          $photo = new photo;
          $photo->name = $patient->name;
          $photo->path = $pathSave.'/'.$namePhoto;

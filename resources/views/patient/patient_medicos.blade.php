@@ -8,7 +8,7 @@
 <section class="box-register">
   <div class="container">
    <div class="register">
-    <div class="row">
+    <div class="row mb-5">
      <div class="col-12">
 
       <h2 class="text-center font-title">Mis Médicos @if(isset($pending)){{$pending}}@elseif(isset($unrated)){{$unrated}}@endif</h2>
@@ -16,8 +16,9 @@
   </div>
   @if($medicos->first() != Null)
   <div class="">
-    @foreach ($medicos as $medico)
-    <div class="card mt-2 card-style">
+      @foreach ($medicos as $medico )
+        {{-- <input type="hidden" name="" value="{!!$position = $position + 1!!}"> --}}
+     <div class="card">
       <div class="row">
        <div class="col-8 m-auto col-sm-3 col-lg-3">
          <div class="cont-img">
@@ -34,55 +35,46 @@
          <p>Cédula: {{$medico['identification']}}</p>
          <span>Especialidad:</span> <a href="#" class="outstanding mr-2"> {{$medico['specialty']}}</a>
          <div class="star-profile">
-
-          <div class="form-inline">
-            Calificación:
-            <span class="ml-2 mr-2">@include('patient.star_rate_2')</span>
-              @if($medico['calification'] != Null)
-               <span> de "{{$medico['votes']}}" voto(s).</span>
-             @else
-               (Aun sin Calificar)
-             @endif
-          </div>
-
-         </div>
-         <div class="row align-self-end">
-           <div class="col-12">
-             <p class="card-text"><b>{{$medico['state']}},{{$medico['city']}}</b></p>
+           <div class="form-inline">
+             Calificación:
+             <span class="ml-2 mr-2">@include('home.star_rate')</span>
+                      @if($medico['calification'] != Null)
+                         <span> de "{{$medico['votes']}}" voto(s).</span>
+                     @endif
            </div>
+           {{-- <button onclick="show_calification(this)" type="button" name="{{$medico['id']}}">test</button>
+           <a href"{{route('list_calification_medico',['medico_id'=>$medico['id']])}}">Opiniones de los usuarios</a> --}}
+         </div>
+         <div class="row mt-3 align-self-end">
+           {{-- <div class="col-12">
+             <a href="{{route('detail_medic_map',$medico['id'])}}" class="btn btn-primary btn-sm text-white"><p class="card-text">({{$position}}) - <i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
+           </div> --}}
          </div>
        </div>
      </div>
-     <div class="col-12 col-sm-4 col-lg-4 p-2 align-self-center text-center">
-
+     <div class="col-12 col-sm-4 col-lg-4 p-4">
+       <div class="form-group">
          {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
-         <a class="btn btn-secondary mr-2" href="{{route('medico.edit',$medico['id'])}}" data-toggle="tooltip" data-html="true" title="<em>Ver Perfil</em>"><i class="fas fa-sign-in-alt"></i></a>
-         @if($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
-           <a class="btn mr-2" href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>" style="color:white;background:rgb(168, 168, 168)"><i class="fas fa-notes-medical mr-0"></i></a>
-         @else
-           @if(Auth::check() and Auth::user()->role == 'Paciente')
+         {{-- {{Route::currentRouteName()}} --}}
 
-           <a class="btn btn-primary mr-2" href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>"><i class="fas fa-notes-medical mr-0"></i></a>
-
-           @else
-           <button onclick="return verifySession()" class="btn btn-primary mr-2"  data-toggle="tooltip" data-html="true" title="<em>Agendar cita</em>"><i class="fas fa-notes-medical mr-0"></i></button>
-           @endif
-         @endif
-
-         <a href="{{route('delete_patient_doctors',$medico['patients_doctor_id'])}}" class="btn btn-danger mr-2" onclick="return confirm('¿Esta Segur@ de Querer Eliminar este Médico de su lista de Médicos?')" data-toggle="tooltip" data-html="true" title="<em>Eliminar</em>"><i class="fas fa-trash mr-0"></i></a>
-       {{-- <a class="btn btn-warning" href="{{route('calification_medic',$medico['id'])}}" data-toggle="tooltip" data-html="true" title="<em>Calificación</em>"><i class="fas fa-star"></i></a> --}}
-
-<!--        <div class="form-group">
-
+         <a class="btn btn-primary" href="{{route('medico.edit',[$medico['id'],'back'=>Request::fullUrl()])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
        </div>
        <div class="form-group">
+       @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
-         {{-- <a href="" class="btn-icon"><i class="fa fa-phone mr-0"></i>Ver Telefono</a> --}}
-       </div> -->
+         <a href="{{route('stipulate_appointment',['id'=>$medico['id'],'back'=>Request::fullUrl()])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i> cita</a>
+       @else
+         @if(Auth::check() and Auth::user()->role == 'Paciente')
+         <a href="{{route('stipulate_appointment',['id'=>$medico['id'],'back'=>Request::fullUrl()])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+         @else
+         <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
+         @endif
+       @endif
+       </div>
      </div>
    </div>
- </div>
- @endforeach
+   </div>
+   @endforeach
  <div class="card-heading">
   {{$medicos->appends(Request::all())->links()}}
 </div>

@@ -60,13 +60,13 @@
   </div>
   <hr>
 @endif
-@if($note->Pruebas_de_laboratorio_show == 'si')
-  <div class="form-group">
-    <h5 class="font-title-blue">Pruebas de laboratorio</h5>
-    <p>{!!$note->Pruebas_de_laboratorio!!}</p>
 
-  </div>
-  <hr>
+@if($note->Pruebas_de_laboratorio_show == 'si')
+<div class="form-group">
+  <h5 class="font-title-blue">Pruebas de laboratorio</h5>
+  @include('medico.notes.view_preview.test_labs')
+</div>
+<hr>
 @endif
 @if($note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
   <div class="form-group">

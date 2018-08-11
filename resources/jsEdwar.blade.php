@@ -1,3 +1,196 @@
+<?php
+$patient = patient::find($request->patient_id);
+$medico = medico::find($request->medico_id);
+// dd($request->medico_id);
+$notedefault = note::find($request->note_id);
+$noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
+
+
+if($noteCount == 0){
+  $note = new note;
+  $note->title = $notedefault->title;
+  $note->medico_id = $request->medico_id;
+  $note->Signos_vitales = $notedefault->Signos_vitales;
+  $note->Pruebas_de_laboratorio = $notedefault->Pruebas_de_laboratorio;
+  $note->type = 'customized';
+  $note->Signos_vitales_show = 'si';
+  $note->Motivo_de_atencion_show = 'si';
+  $note->Exploracion_fisica_show = 'si';
+  $note->Pruebas_de_laboratorio_show = 'si';
+  $note->Diagnostico_show = 'si';
+  $note->Afeccion_principal_o_motivo_de_consulta_show = 'si';
+  $note->Afeccion_secundaria_show = 'si';
+  $note->Pronostico_show = 'si';
+  $note->Tratamiento_y_o_recetas_show = 'si';
+  $note->Indicaciones_terapeuticas_show = 'si';
+  $note->Estado_mental_show = 'si';
+  $note->Resultados_relevantes_show = 'si';
+  $note->Manejo_durante_la_estancia_hospitalaria_show = 'si';
+  $note->Recomendaciones_para_vigilancia_ambulatoira_show = 'si';
+  $note->Otros_datos_show = 'si';
+  $note->Motivo_de_envio_show = 'si';
+  $note->Evolucion_y_actualizacion_del_cuadro_clinico_show = 'si';
+  $note->Motivo_del_egreso_show = 'si';
+  $note->Diagnosticos_finales_show = 'si';
+  $note->Resumen_de_evolucion_y_estado_actual_show = 'si';
+  $note->Problemas_clinicos_pendientes_show = 'si';
+  $note->Plan_de_manejo_y_tratamiento_show = 'si';
+  $note->Establecimiento_que_envia_show = 'si';
+  $note->Sugerencias_y_tratamiento_show = 'si';
+  $note->save();
+}else{
+    // dd('sd');
+  $note = note::where('medico_id',$request->medico_id)->where('title', $notedefault->title)->where('type', 'customized')->first();
+  // $note->Signos_vitales = $notedefault->Signos_vitales;
+  // $note->Pruebas_de_laboratorio = $notedefault->Pruebas_de_laboratorio;
+  // $note->save();
+}
+
+if($request->expedient_id == Null){
+  $expedient = Null;
+}else{
+  $expedient = expedient::find($request->expedient_id);
+}
+
+/////////////////////////////
+$vital_sign_config = vital_sign::find($request->vital_sign_config_id);
+
+if($request->Altura_show == Null){
+    $vital_sign_config->Altura_show = Null;
+}else{
+    $vital_sign_config->Altura_show = 'si';
+}
+if($request->Peso_show == Null){
+    $vital_sign_config->Peso_show = Null;
+}else{
+    $vital_sign_config->Peso_show = 'si';
+}
+if($request->Tensión_Arterial_show == Null){
+    $vital_sign_config->Tensión_Arterial_show = Null;
+}else{
+    $vital_sign_config->Tensión_Arterial_show = 'si';
+}
+if($request->Temperatura_Corporal_show == Null){
+    $vital_sign_config->Temperatura_Corporal_show = Null;
+}else{
+    $vital_sign_config->Temperatura_Corporal_show = 'si';
+}
+if($request->Frecuencia_Cardíaca_show == Null){
+    $vital_sign_config->Frecuencia_Cardíaca_show = Null;
+}else{
+    $vital_sign_config->Frecuencia_Cardíaca_show = 'si';
+}
+if($request->Frecuencia_Respiratoria_show == Null){
+    $vital_sign_config->Frecuencia_Respiratoria_show = Null;
+}else{
+    $vital_sign_config->Frecuencia_Respiratoria_show = 'si';
+}
+if($request->Oxigenación_show == Null){
+    $vital_sign_config->Oxigenación_show = Null;
+}else{
+    $vital_sign_config->Oxigenación_show = 'si';
+}
+if($request->Índice_de_Masa_Corporal_show == Null){
+    $vital_sign_config->Índice_de_Masa_Corporal_show = Null;
+}else{
+    $vital_sign_config->Índice_de_Masa_Corporal_show = 'si';
+}
+if($request->Porcentaje_de_Grasa_Corporal_show == Null){
+    $vital_sign_config->Porcentaje_de_Grasa_Corporal_show = Null;
+}else{
+    $vital_sign_config->Porcentaje_de_Grasa_Corporal_show = 'si';
+}
+if($request->Índice_de_Masa_Muscular_show == Null){
+    $vital_sign_config->Índice_de_Masa_Muscular_show = Null;
+}else{
+    $vital_sign_config->Índice_de_Masa_Muscular_show = 'si';
+}
+if($request->Cintura_show == Null){
+    $vital_sign_config->Cintura_show = Null;
+}else{
+    $vital_sign_config->Cintura_show = 'si';
+}
+if($request->Cadera_show == Null){
+    $vital_sign_config->Cadera_show = Null;
+}else{
+    $vital_sign_config->Cadera_show = 'si';
+}
+if($request->Perímetro_Cefálico_show == Null){
+    $vital_sign_config->Perímetro_Cefálico_show = Null;
+}else{
+    $vital_sign_config->Perímetro_Cefálico_show = 'si';
+}
+
+
+
+    $vital_sign_config->save();
+    return response()->json($request->all());
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateVitalSignsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('vital_signs', function (Blueprint $table) {
+            $table->increments('id');
+
+            $table->string('Altura')->nullable();
+            $table->string('Altura show')->nullable();
+            $table->string('Peso')->nullable();
+            $table->string('Peso show')->nullable();
+            $table->string('Tensión Arterial')->nullable();
+            $table->string('Tensión Arterial show')->nullable();
+            $table->string('Temperatura Corporal')->nullable();
+            $table->string('Temperatura Corporal show')->nullable();
+            $table->string('Frecuencia Cardíaca')->nullable();
+            $table->string('Frecuencia Cardíaca show')->nullable();
+            $table->string('Frecuencia Respiratoria')->nullable();
+            $table->string('Frecuencia Respiratoria show')->nullable();
+            $table->string('Oxigenación')->nullable();
+            $table->string('Oxigenación show')->nullable();
+            $table->string('Índice de Masa Corporal')->nullable();
+            $table->string('Índice de Masa Corporal show')->nullable();
+            $table->string('Porcentaje de Grasa Corporal')->nullable();
+            $table->string('Porcentaje de Grasa Corporal show')->nullable();
+            $table->string('Índice de Masa Muscular')->nullable();
+            $table->string('Índice de Masa Muscular show')->nullable();
+            $table->string('Cintura')->nullable();
+            $table->string('Cintura show')->nullable();
+            $table->string('Cadera')->nullable();
+            $table->string('Cadera show')->nullable();
+            $table->string('Perímetro Cefálico')->nullable();
+            $table->string('Perímetro Cefálico show')->nullable();
+            $table->integer('note_id')->unsigned()->nullable();
+            $table->foreign('note_id')->references('id')->on('notes');
+            $table->integer('medico_id')->unsigned()->nullable();
+            $table->foreign('medico_id')->references('id')->on('medicos');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('vital_signs');
+    }
+}
+
+//signos vitales
+
+
+
 @elseif(Auth::check() and Auth::user()->hasRole('medico') and Auth::user()->medico->plan == Null)
 
     <!-- Copia desde aqui abajo -->

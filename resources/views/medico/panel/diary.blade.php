@@ -48,25 +48,26 @@
           </div>
 
           <hr>
-          {{-- //busqueda --}}
           @if($countEventSchedule != 0)
+          {{-- //busqueda --}}
              @cita_create
                 <label for="" class="mt-2">Agendar con:</label>
                 <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search">
                 <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()">Buscar</button>
                 <button type="button" name="button" class="btn btn-secondary btn-sm" onclick="vaciar_search()">vaciar</button>
                 <div class="" id="result_search">
+                    </div>
             @else
                 <label for="" class="mt-2">Agendar con:</label>
                 <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search" disabled>
                 <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()" disabled>Buscar</button>
                 <button type="button" name="button" class="btn btn-secondary btn-sm text-secondary" onclick="vaciar_search()" disabled>vaciar</button>
                 <div class="" id="result_search">
-
+                    </div>
             @endcita_create
 
           @endif
-          </div>
+
           @include('medico.includes.alert_calendar')
           @include('medico.includes.card_edit')
           @include('medico.includes.modals_diary')
@@ -247,7 +248,7 @@
                   </tfoot>
                 </table>
                 <div class="card-footer text-right">
-                  <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-success ">Editar</a>
+                  <a href="{{route('medico_schedule',\Hashids::encode($medico->id))}}" class="btn btn-success ">Editar</a>
                 </div>
               </div>
             </div>
@@ -261,25 +262,25 @@
             <div class="card-body">
               <h5>Para poder ver el Calendario de agenda y todas sus fucniones debe Otorgar un Horario de Trabajo</h5>
                   @plan_agenda
-                   <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
+                   <a href="{{route('medico_schedule',\Hashids::encode($medico->id))}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
                   @endplan_agenda
             </div>
           </div>
-        @endif
         {{-- IF SHOW CALENDAR --}}
+    @endif
     </div>
           {{-- </div> --}}
         <div class="col-12 col-lg-3">
             @cita_person_create
 
-          <div id="dashboard">
+          <div id="dashboard mt-2" style="margin-top:60px">
             <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
             <div class="col-12 border-head-panel text-center">
               <span>Médico:</span>
               <span>{{$medico->nameComplete}}</span>
             </div>
             {{-- <div class="col-12 border-panel-green text-center my-1">
-              <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
+              <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',\Hashids::encode($medico->id))}}">
                 Editar horario de consulta
               </a>
             </div> --}}
@@ -291,7 +292,7 @@
                 </div>
 
                   {!!Form::open(['route'=>'event_personal_store','method'=>'POST','id'=>'form_event','name'=>'form_event'])!!}
-                  {!!Form::hidden('medico_id',$medico->id)!!}
+                  {!!Form::hidden('medico_id',\Hashids::encode($medico->id))!!}
                 {!!Form::select('title',['Ausente'=>'Ausente'],null,['class'=>'form-control','id'=>'title6','Tipo de Evento'=>'Tipo de Cita'])!!}
 
                 <input class="form-control my-2" type="text" placeholder="Descripción (Opcional)" id="description6" name="descripti9oon">
@@ -498,7 +499,7 @@
   function confirmed_completed(){
     price = $('#price9').val();
 
-    // medico_id = "{{$medico->id}}";
+    // medico_id = "{{\Hashids::encode($medico->id)}}";
     event_id = $('#event_id9').val();
     route = "{{route('confirmed_completed_app')}}";
     $.ajax({
@@ -551,7 +552,7 @@
   function confirmed_payment_app(){
 
     price = $('#price9').val();
-    // medico_id = "{{$medico->id}}";
+    // medico_id = "{{\Hashids::encode($medico->id)}}";
     event_id = $('#event_id9').val();
     route = "{{route('confirmed_payment_app')}}";
     $.ajax({
@@ -579,7 +580,7 @@
 
 
     function reminder_time_confirmed(request){
-      medico_id = "{{$medico->id}}";
+      medico_id = "{{\Hashids::encode($medico->id)}}";
       time = request;
       route = "{{route('reminder_time_confirmed')}}";
       $.ajax({
@@ -602,7 +603,7 @@
         $('.open-check').fadeIn();
 
       }
-      medico_id = "{{$medico->id}}";
+      medico_id = "{{\Hashids::encode($medico->id)}}";
       options = request;
       route = "{{route('reminder_switch_confirmed')}}";
       $.ajax({
@@ -622,7 +623,7 @@
 
     function switch_payment_and_past(result){
 
-      medico_id = "{{$medico->id}}";
+      medico_id = "{{\Hashids::encode($medico->id)}}";
       options = result;
       route = "{{route('switch_payment_and_past')}}";
       $.ajax({
@@ -792,7 +793,7 @@
          day = start.format('d');
          hour_start = start.format('HH:mm');
          hour_end = end.format('HH:mm');
-         route = "{{route('compare_hours',$medico->id)}}";
+         route = "{{route('compare_hours',\Hashids::encode($medico->id))}}";
 
          $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -822,7 +823,7 @@
          //alert(start.format('YYYY-MM-DD'));
         },
 
-        events:"{{route('medico_diary_events',$medico->id)}}",
+        events:"{{route('medico_diary_events',\Hashids::encode($medico->id))}}",
 
         eventClick: function(event, jsEvent, view){
 
@@ -1119,8 +1120,6 @@
       event_id = $('#event_id2').val("");
     }
 
-
-
       $('#form_event').submit(function() {
 
       title = $('#title2').val();
@@ -1135,7 +1134,7 @@
       hourEnd = $('#hourEnd2').val();
       minsEnd = $('#minsEnd2').val();
       endFormatHour = $('#endFormatHour2').val();
-      medico_id = "{{$medico->id}}";
+      medico_id = "{{\Hashids::encode($medico->id)}}";
       errormsj = '';
       $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1150,7 +1149,6 @@
         $('#text_error').html('<ul style="list-style:none;">'+errormsj+'</ul>');
         $('#alert_error').fadeIn();
         $('#alert_success').fadeOut();
-
 
       },
       success:function(result){
@@ -1288,7 +1286,7 @@
 
 
     $('#input_search').keyup(function(){
-      medico_id = "{{$medico->id}}";
+      medico_id = "{{\Hashids::encode($medico->id)}}";
       search = $('#input_search').val();
       route = "{{route('search_patients_diary')}}";
         $.ajax({
@@ -1314,7 +1312,7 @@
 
       function search_medic(){
 
-      medico_id = "{{$medico->id}}";
+      medico_id = "{{\Hashids::encode($medico->id)}}";
       search = $('#input_search').val();
       route = "{{route('search_patients_diary')}}";
         $.ajax({

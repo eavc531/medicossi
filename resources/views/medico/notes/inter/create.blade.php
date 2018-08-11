@@ -1,6 +1,19 @@
 @extends('layouts.app')
 @section('css')
+
 <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+<style media="screen">
+/* ///////////////////////// */
+.input-text{
+    height: 30px;
+}
+
+.area{
+    height: 100px;
+}
+/* //APLICAR ESTO en form-control area element area element */
+</style>
+{{-- ///////////////////////////// --}}
 @endsection
 @section('content')
 <div class="row">
@@ -45,9 +58,9 @@
       @endif
 
       @if($note->Afeccion_principal_o_motivo_de_consulta_show == 'si')
-        {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control','id'=>'Afeccion_principal_o_motivo_de_consulta','style'=>''])}}
+        {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control area element','id'=>'Afeccion_principal_o_motivo_de_consulta','style'=>''])}}
       @else
-        {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        {{Form::textarea('Afeccion_principal_o_motivo_de_consulta',null,['class'=>'form-control area element','id'=>'Exploracion Fisica','style'=>'display:none'])}}
       @endif
     </div>
 
@@ -67,9 +80,9 @@
       @endif
 
       @if($note->Afeccion_secundaria_show == 'si')
-        {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control','id'=>'Afeccion_secundaria','style'=>''])}}
+        {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control area element','id'=>'Afeccion_secundaria','style'=>''])}}
       @else
-        {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        {{Form::textarea('Afeccion_secundaria',null,['class'=>'form-control area element','id'=>'Exploracion Fisica','style'=>'display:none'])}}
       @endif
     </div>
 
@@ -91,32 +104,37 @@
       @endif
 
       @if($note->Pronostico_show == 'si')
-        {{Form::textarea('Pronostico',null,['class'=>'form-control','id'=>'Pronostico','style'=>''])}}
+        {{Form::textarea('Pronostico',null,['class'=>'form-control area element','id'=>'Pronostico','style'=>''])}}
       @else
-        {{Form::textarea('Pronostico',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        {{Form::textarea('Pronostico',null,['class'=>'form-control area element','id'=>'Exploracion Fisica','style'=>'display:none'])}}
       @endif
     </div>
 
     <div class="form-group">
-       @if($note->Pruebas_de_laboratorio_show == 'si')
-         <h5 class="font-title-blue float-left">Pruebas de laboratorio:</h5>
-        <label class="switch" style="display:block;margin-left:auto;">
-           {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
-           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
-        </label>
-      @else
-        <h5 class="float-left font-title" style="color:grey">Pruebas de laboratorio:</h5>
-        <label class="switch" style="display:block;margin-left:auto;">
-          {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
-           <span class="slider round text-white"><span class="ml-1">on</span> of</span>
-        </label>
-      @endif
+        @if($note->Pruebas_de_laboratorio_show == 'si')
+          <h5 class="font-title-blue float-left">Pruebas de laboratorio:</h5>
+         <label class="switch" style="display:block;margin-left:auto;">
+            {{Form::checkbox('name', 'value', true,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
+            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+         </label>
+       @else
+         <h5 class="float-left font-title" style="color:grey">Pruebas de laboratorio</h5>
+         <label class="switch" style="display:block;margin-left:auto;">
+           {{Form::checkbox('name', 'value', false,['onclick'=>'toogle(this)','id'=>'Pruebas_de_laboratorio_show'])}}
+            <span class="slider round text-white"><span class="ml-1">on</span> of</span>
+         </label>
+       @endif
 
-      @if($note->Pruebas_de_laboratorio_show == 'si')
-        {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control','id'=>'Pruebas_de_laboratorio','style'=>''])}}
-      @else
-        {{Form::textarea('Pruebas_de_laboratorio',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
-      @endif
+       @if($note->Pruebas_de_laboratorio_show == 'si')
+           <div class="element" id="div_test_labs">
+
+           </div>
+       @else
+
+           <div class="element" id="div_test_labs" style="display:none">
+
+           </div>
+       @endif
     </div>
 
 
@@ -136,9 +154,9 @@
       @endif
 
       @if($note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
-        {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control','id'=>'Evolucion_y_actualizacion_del_cuadro_clinico','style'=>''])}}
+        {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control area element','id'=>'Evolucion_y_actualizacion_del_cuadro_clinico','style'=>''])}}
       @else
-        {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        {{Form::textarea('Evolucion_y_actualizacion_del_cuadro_clinico',null,['class'=>'form-control area element','id'=>'Exploracion Fisica','style'=>'display:none'])}}
       @endif
     </div>
 
@@ -158,9 +176,9 @@
       @endif
 
       @if($note->Sugerencias_y_tratamiento_show == 'si')
-        {{Form::textarea('Sugerencias_y_tratamiento',null,['class'=>'form-control','id'=>'Sugerencias_y_tratamiento','style'=>''])}}
+        {{Form::textarea('Sugerencias_y_tratamiento',null,['class'=>'form-control area element','id'=>'Sugerencias_y_tratamiento','style'=>''])}}
       @else
-        {{Form::textarea('Sugerencias_y_tratamiento',null,['class'=>'form-control','id'=>'Exploracion Fisica','style'=>'display:none'])}}
+        {{Form::textarea('Sugerencias_y_tratamiento',null,['class'=>'form-control area element','id'=>'Exploracion Fisica','style'=>'display:none'])}}
       @endif
     </div>
 
@@ -185,76 +203,152 @@
   </div>
   </div>
 
-@endsection
+  @include('medico.notes.include_vital_labs.modal_vital_signs')
+  @include('medico.notes.include_vital_labs.modal_test_labs')
+  {{-- //////////////// --}}
+  @endsection
 
-@section('scriptJS')
-<script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
-<script type="text/javascript">
+  @section('scriptJS')
+  {{-- <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script> --}}
+  <script type="text/javascript">
 
-      $(document).ready(function(){
-        if($("#Signos_vitales").is(":visible")){
-            CKEDITOR.replace('Signos_vitales');
+          $(document).ready(function(){
+          vital_signs();
+          ajax_test_labs();
+          });
+        function toogle(result){
+          label = result.parentNode;
+          div = label;
+          note_id = "{{$note->id}}";
+          variable = result.id;
+
+          route = "{{route('check_input_notes')}}";
+          $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            type: 'POST',
+            url: route,
+            data:{variable:variable,note_id:note_id},
+
+            success:function(result){
+              console.log(result);
+
+              if(result.result == 'si'){
+                $(div).next('.element').show();
+                $(div).prev().css('color','#007bff');
+
+              }else{
+
+
+                $(div).next('.element').hide();
+                $(div).prev().css('color','grey');
+              }
+              // $(result).next('.form-control area element').css({"height":"1px"}).attr("disabled","true");
+            },
+            error:function(error){
+             console.log(error);
+           },
+        });
+
         }
 
-        if($("#Pruebas_de_laboratorio").is(":visible")){
-          CKEDITOR.replace('Pruebas_de_laboratorio');
+        function vital_signs(){
+            note_id = "{{$note->id}}";
+
+            route = "{{route('ajax_vital_sign_config')}}";
+            $.ajax({
+              headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+              type: 'POST',
+              url: route,
+              data:{note_id:note_id},
+
+              success:function(result){
+                console.log(result);
+                $('#div_vital_signs').html(result);
+            },
+            error:function(error){
+             console.log(error);
+             $('#vital_sign_div').html('Hubo un error al cargar este elemento, por favor recargue la pagina, si no funciona revise el estado de su internet.');
+           },
+        });
         }
 
-      });
+        ////AJAX_TEST_LABS
+        function ajax_test_labs(){
+            note_id = "{{$note->id}}";
 
-      function toogle(result){
-        label = result.parentNode;
-        div = label;
-        note_id = "{{$note->id}}";
-        variable = result.id;
+            route = "{{route('ajax_test_labs')}}";
+            $.ajax({
+              headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+              type: 'POST',
+              url: route,
+              data:{note_id:note_id},
 
-        route = "{{route('check_input_notes')}}";
-        $.ajax({
-          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-          type: 'POST',
-          url: route,
-          data:{variable:variable,note_id:note_id},
+              success:function(result){
+                console.log(result);
+                $('#div_test_labs').html(result);
+            },
+            error:function(error){
+             console.log(error);
+             $('#div_test_labs').html('Hubo un error al cargar este elemento, por favor recargue la pagina, si no funciona revise el estado de su internet.');
+           },
+        });
+        }
 
-          success:function(result){
-            console.log(result);
-            // alert(result.variable);
-            // CKEDITOR.instances['Signos_vitales'].setReadOnly(true);
 
-            if(result.result == 'si'){
-              $(div).next('.form-control').show();
-              $(div).prev().css('color','#007bff');
-              if(result.variable == 'Signos_vitales_show'){
-                CKEDITOR.replace('Signos_vitales');
-              }
-              if(result.variable == 'Pruebas_de_laboratorio_show'){
-                CKEDITOR.replace('Pruebas_de_laboratorio');
-              }
+        $('#test_labs_config').submit(function(){
 
-            }else{
-              if(result.variable == 'Pruebas_de_laboratorio_show'){
-                if(CKEDITOR.instances.Pruebas_de_laboratorio){
-                  CKEDITOR.instances.Pruebas_de_laboratorio.destroy(true);
-                }
-              }
+            $.ajax({
+              headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+              type: 'POST',
+              url: $(this).attr('action'),
+              data: $(this).serialize(),
+              success:function(result){
+                console.log(result);
+                ajax_test_labs();
+                $('#modal_test_labs').modal('hide');
+            },
+            error:function(error){
+             console.log(error);
+             $('modal_test_labs').modal('hide');
+           },
+        });
+        return false;
 
-              if(result.variable == 'Signos_vitales_show'){
-                if(CKEDITOR.instances.Signos_vitales){
-                  CKEDITOR.instances.Signos_vitales.destroy(true);
-                }
-              }
+         });
 
-              $(div).next('.form-control').hide();
-              $(div).prev().css('color','grey');
-            }
-            // $(result).next('.form-control').css({"height":"1px"}).attr("disabled","true");
+
+
+
+       $('#vital_sign_config_update').submit(function(){
+
+           $.ajax({
+             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+             type: 'POST',
+             url: $(this).attr('action'),
+             data: $(this).serialize(),
+             success:function(result){
+               console.log(result);
+               vital_signs();
+               $('#modal_vital_signs').modal('hide');
+           },
+           error:function(error){
+            console.log(error);
+            $('#modal_vital_signs').modal('hide');
           },
-          error:function(error){
-           console.log(error);
-         },
-      });
-      }
+       });
+       return false;
 
-</script>
+        });
 
+        function show_modal(){
+             $('#modal_test_labs').modal('show');
+        }
 
-      @endsection
+        function show_modal_vital(){
+            // alert('vvv');
+             $('#modal_vital_signs').modal('show');
+        }
+
+  </script>
+
+  @endsection

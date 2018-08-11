@@ -32,15 +32,14 @@
 
 
 
-@if($note->Signos_vitales_show == 'si')
+  @if($note->Signos_vitales_show == 'si')
   <div class="form-group">
-
-    <h5 class="font-title-blue">Signos vítales</h5>
-    <p>{!!$note->Signos_vitales!!}</p>
-
-    <hr>
+    <h5 class="font-title-blue">Signos vitales</h5>
+     @include('medico.notes.view_preview.vital_signs')
   </div>
-@endif
+  <hr>
+  @endif
+
 @if($note->Motivo_de_atencion_show == 'si')
   <div class="form-group">
     <h6 class="font-title-blue">Motivo de atención:</h6>

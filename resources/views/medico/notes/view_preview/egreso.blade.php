@@ -30,21 +30,21 @@ textarea.form-control{
     <h4 style="text-decoration: underline;">{{$note->title}}</h4>
   </div>
   @include('medico.notes.include_data_patient')
-
-  <div class="row">
-    <div class="col-lg-6 col-sm-6 col-12">
-      <h6 class="font-title-blue">Fecha de ingreso:</h6>
-
-      <input type="hidden" name="" value="{{$fecha_egreso = \Carbon\Carbon::parse($note->fecha_ingreso)->format('d-m-Y')}}">
-      {{$fecha_egreso}}
-    </div>
-    <div class="col-lg-6 col-sm-6 col-12">
-      <h6 class="font-title-blue">Fecha de egreso:</h6>
-      <input type="hidden" name="" value="{{$fecha_egreso = \Carbon\Carbon::parse($note->fecha_egreso)->format('d-m-Y')}}">
-      {{$fecha_egreso}}
-    </div>
-  </div>
-
+  <table>
+      <tr>
+           <td width="500px">
+              <h6 class="font-title-blue">Fecha de ingreso:</h6>
+              <input type="hidden" name="" value="{{$fecha_egreso = \Carbon\Carbon::parse($note->fecha_ingreso)->format('d-m-Y')}}">
+              {{$fecha_egreso}}
+          </td>
+           <td width="500px">
+              <h6 class="font-title-blue">Fecha de egreso:</h6>
+              <input type="hidden" name="" value="{{$fecha_egreso = \Carbon\Carbon::parse($note->fecha_egreso)->format('d-m-Y')}}">
+              {{$fecha_egreso}}
+          </td>
+      </tr>
+  </table>
+<hr>
   @if($note->Motivo_del_egreso_show == 'si')
 
   <div class="form-group mt-3">

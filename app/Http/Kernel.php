@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'medic_plan_agenda' => \App\Http\Middleware\medic_plan_agenda::class,
         'medic_plan_profesional' => \App\Http\Middleware\medic_plan_profesional::class,
         'medic_plan_platino'=> \App\Http\Middleware\medic_plan_platino::class,
-        'authenticate'=> \App\Http\Middleware\authenticate::class, 
+        'authenticate'=> \App\Http\Middleware\authenticate::class,
+        'patient_data_complete'=> \App\Http\Middleware\patient_data_complete::class, 
     ];
 }

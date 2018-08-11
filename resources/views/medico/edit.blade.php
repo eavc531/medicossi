@@ -2,13 +2,8 @@
 
 @section('content')
 
-@if(Auth::check() and Auth::user()->role != 'medico' and Session::Has('back'))
 
-        <div class="text-right">
-            <a class="btn btn-secondary" href="{{Session::get('back')}}">Atras</a>
-        </div>
-    
-@endif
+
 
 
 
@@ -17,6 +12,17 @@
     <h2 class="font-title text-center" id="title">Perfil Profesional Médico</h2>
   </div>
 </div>
+
+@if(request()->get('search') != Null)
+    <div class="text-right">
+        <a class="btn btn-secondary my-3" href="{{request()->get('search')}}"><i class="fas fa-arrow-left mr-1"></i>Volver a la busqueda de médicos</a>
+    </div>
+@endisset
+@if(request()->get('back') != Null)
+    <div class="text-right">
+        <a class="btn btn-secondary my-3" href="{{request()->get('back')}}"><i class="fas fa-arrow-left mr-1"></i>Volver a mis médicos</a>
+    </div>
+@endisset
 @if(Session::Has('successComplete'))
 <div class="div-alert" style="padding:20px; max-width: 100%;">
  <div class="alert alert-success alert-dismissible" role="alert">
@@ -94,10 +100,17 @@
       <div class="form-group mt-5">
       @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
-        <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-block btn-lg" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
+        <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-block btn-lg disabled" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
+
       @else
         @if(Auth::check() and Auth::user()->role == 'Paciente')
-        <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+            @if(request()->get('search') != Null)
+                <a href="{{route('stipulate_appointment',[$medico['id'],'search'=>Request::fullUrl()])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+
+            @else
+                <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+            @endisset
+
         @else
         <button onclick="verifySession()" class="btn btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
         @endif

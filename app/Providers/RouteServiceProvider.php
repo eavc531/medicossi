@@ -24,6 +24,25 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+            Route::bind('id', function($id, $route)
+                {
+                    return \Hashids::decode($id)[0];
+                });
+
+            Route::bind('m_id', function($m_id, $route)
+                {
+                    return \Hashids::decode($m_id)[0];
+                });
+
+            Route::bind('P_id', function($P_id, $route)
+                {
+                    return \Hashids::decode($P_id)[0];
+                });
+
+            Route::bind('n_id', function($n_id, $route)
+                {
+                    return \Hashids::decode($n_id)[0];
+                });
 
         parent::boot();
     }

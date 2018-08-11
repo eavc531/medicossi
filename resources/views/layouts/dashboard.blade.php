@@ -61,14 +61,15 @@
               </div>
               <div class="col-12">
                 <a href="{{route('sub_specialty.index')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-th-list"></i><span>Sub-Especialidad</span></a>
-                <div class="col-12">
-                  <a href="{{route('specialty_category.index')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-table"></i><span>Categorias</span></a>
-                </div>
+
+              </div>
+              <div class="col-12">
+                <a href="{{route('specialty_category.index')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-table"></i><span>Categorias</span></a>
               </div>
             </div>
           </div>
 
-      @elseif(Auth::check() and Auth::user()->role == 'Asistente' and Auth::user()->assistant->medico_id != Null and Auth::user()->assistant->permission_id != Null)
+      @elseif(Auth::check() and Auth::user()->role == 'Asistente' and \Hashids::encode(Auth::user()->assistant->medico_id) != Null and \Hashids::encode(Auth::user()->assistant->permission_id) != Null)
           <!-- Copia desde aqui abajo -->
           <div class="box-dashboard" id="dashboard">
             <div class="row">
@@ -99,32 +100,32 @@
             <div class="row py-1">
                 @plan_agenda
                 <div class="col-12">
-                <a href="{{route('medico_patients',Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+                <a href="{{route('medico_patients',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
               </div>
               @endplan_agenda
 
               <div class="col-12">
 
-                <a href="{{route('medico_diary',Auth::user()->assistant->medico->id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
+                <a href="{{route('medico_diary',\Hashids::encode(Auth::user()->assistant->medico->id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
               </div>
               @plan_agenda
               <div class="col-12">
                   @plan_profesional
-                      <a href="{{route('appointments', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->assistant->medico->notification_number}})</span> </span></a>
+                      <a href="{{route('appointments', \Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->assistant->medico->notification_number}})</span> </span></a>
 
                     @else
-                        <a href="{{route('appointments_confirmed', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->assistant->medico->notification_number}})</span> </span></a>
+                        <a href="{{route('appointments_confirmed', \Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->assistant->medico->notification_number}})</span> </span></a>
                  @endplan_profesional
 
                 </div>
 
               <div class="col-12">
-                <a href="{{route('medico_reminders',Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+                <a href="{{route('medico_reminders',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
               </div>
 
               <div class="col-12">
                   @edit_schedule
-                <a href="{{route('medico_schedule',Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+                <a href="{{route('medico_schedule',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
                 @endedit_schedule
               </div>
               @endplan_agenda
@@ -134,11 +135,11 @@
                 @assistant
 
                 <div class="col-12">
-                  <a href="{{route('medico.edit', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-user fa-2"></i><span>Ver Perfil</span></a>
+                  <a href="{{route('medico.edit', \Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-user fa-2"></i><span>Ver Perfil</span></a>
                 </div>
             @else
                 <div class="col-12">
-                  <a href="{{route('medico.edit', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
+                  <a href="{{route('medico.edit', \Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
                 </div>
                 @endassistant
 
@@ -147,21 +148,21 @@
 
              @else
                     <div class="col-12">
-                      <a href="{{route('medico_assistants',Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+                      <a href="{{route('medico_assistants',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
                     </div>
                 @endassistant
             @endplan_profesional
             @plan_profesional
                 <div class="col-12">
-                  <a href="{{route('calification_medic',Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+                  <a href="{{route('calification_medic',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-list-alt"></i><span>Calificación</span></a>
                 </div>
             @endplan_profesional
               <div class="col-12">
-                <a href="{{route('planes_medic',Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
+                <a href="{{route('planes_medic',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
               </div>
               @plan_agenda
               <div class="col-12">
-                <a href="{{route('income_medic',Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
+                <a href="{{route('income_medic',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
               </div>
               @endplan_agenda
 
@@ -179,11 +180,11 @@
 
 
               <div class="col-12">
-                <a href="{{route('assistant_permissions',Auth::user()->assistant->permission_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-mobile-alt"></i><span>Permisos otorgados</span></a>
+                <a href="{{route('assistant_permissions',\Hashids::encode(Auth::user()->assistant->permission_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-mobile-alt"></i><span>Permisos otorgados</span></a>
 
               </div>
               <div class="col-12">
-                <a href="{{route('assistant_medicos',Auth::user()->assistant->id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-mobile-alt"></i><span>Médicos que asisto</span></a>
+                <a href="{{route('assistant_medicos',\Hashids::encode(Auth::user()->assistant->id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="fas fa-mobile-alt"></i><span>Médicos que asisto</span></a>
 
               </div>
 
@@ -201,19 +202,19 @@
                           <span class="ml-2 text-secondary">Desabilitado</span>
                     <div class="dropdown-divider"></div>
                 @plan_agenda_no
-                    <a href="{{route('medico_patients',Auth::user()->assistant->medico_id)}}" class="dropdown-item"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+                    <a href="{{route('medico_patients',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
                     <a href="{{route('medico_diary',7)}}" class="dropdown-item "><i class="fas fa-book"></i><span>Mi Agenda</span></a>
 
-                    <a href="{{route('appointments_confirmed', Auth::user()->assistant->medico_id)}}" class="dropdown-item"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->assistant->medico->notification_number}})</span> </span></a>
+                    <a href="{{route('appointments_confirmed', \Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->assistant->medico->notification_number}})</span> </span></a>
 
-                    <a href="{{route('medico_reminders',Auth::user()->assistant->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
-                    <a href="{{route('medico_schedule',Auth::user()->assistant->medico_id)}}" class="dropdown-item"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
-                    <a href="{{route('medico_assistants',Auth::user()->assistant->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+                    <a href="{{route('medico_reminders',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+                    <a href="{{route('medico_schedule',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+                    <a href="{{route('medico_assistants',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
                       @endplan_agenda_no
                       @edit_schedule
 
                   @else
-                       <a href="{{route('medico_schedule',Auth::user()->assistant->medico_id)}}" class="dropdown-item"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+                       <a href="{{route('medico_schedule',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
                     @endedit_schedule
                         {{-- <a class="dropdown-item" href="#">Something else here</a> --}}
                       </div>
@@ -257,25 +258,25 @@
                                 <div class="row py-1">
                                     @plan_agenda
                                     <div class="col-12">
-                                    <a href="{{route('medico_patients',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+                                    <a href="{{route('medico_patients',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
                                   </div>
                                   @endplan_agenda
 
                                   <div class="col-12">
 
-                                    <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
+                                    <a href="{{route('medico_diary',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
                                   </div>
                                   @plan_agenda
                                   <div class="col-12">
-                                            <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                                            <a href="{{route('appointments_confirmed', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
                                     </div>
 
                                   <div class="col-12">
-                                    <a href="{{route('medico_reminders',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+                                    <a href="{{route('medico_reminders',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
                                   </div>
 
                                   <div class="col-12">
-                                    <a href="{{route('medico_schedule',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+                                    <a href="{{route('medico_schedule',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
                                   </div>
                                   @endplan_agenda
                                 </div >
@@ -284,11 +285,11 @@
                                     @assistant
 
                                     <div class="col-12">
-                                      <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Ver Perfil</span></a>
+                                      <a href="{{route('medico.edit', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Ver Perfil</span></a>
                                     </div>
                                 @else
                                     <div class="col-12">
-                                      <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
+                                      <a href="{{route('medico.edit', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
                                     </div>
                                     @endassistant
 
@@ -297,21 +298,21 @@
 
                                  @else
                                         <div class="col-12">
-                                          <a href="{{route('medico_assistants',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+                                          <a href="{{route('medico_assistants',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
                                         </div>
                                     @endassistant
                                 @endplan_profesional
                                 @plan_profesional
                                     <div class="col-12">
-                                      <a href="{{route('calification_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+                                      <a href="{{route('calification_medic',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
                                     </div>
                                 @endplan_profesional
                                   <div class="col-12">
-                                    <a href="{{route('planes_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
+                                    <a href="{{route('planes_medic',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
                                   </div>
                                   @plan_agenda
                                   <div class="col-12">
-                                    <a href="{{route('income_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
+                                    <a href="{{route('income_medic',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
                                   </div>
                                   @endplan_agenda
 
@@ -329,11 +330,11 @@
                                 @assistant
                               <div class="row mt-1">
                                   <div class="col-12">
-                                    <a href="{{route('assistant_permissions',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Permisos otorgados</span></a>
+                                    <a href="{{route('assistant_permissions',\Hashids::encode(Auth::user()->medico->id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Permisos otorgados</span></a>
 
                                   </div>
                                   <div class="col-12">
-                                    <a href="{{route('assistant_medicos',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Médicos que asisto</span></a>
+                                    <a href="{{route('assistant_medicos',\Hashids::encode(Auth::user()->medico->id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Médicos que asisto</span></a>
 
                                   </div>
 
@@ -352,25 +353,25 @@
                                               <span class="ml-2 text-secondary">Desabilitado</span>
                                         <div class="dropdown-divider"></div>
                                     @plan_agenda_no
-                                        <a href="{{route('medico_patients',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
-                                        <a href="{{route('medico_diary',7)}}" class="dropdown-item "><i class="fas fa-book"></i><span>Mi Agenda</span></a>
+                                        <a href="{{route('medico_patients',\Hashids::encode(Auth::user()->medico_id))}}" class="dropdown-item"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
+                                        <a href="{{route('medico_diary',\Hashids::encode(Auth::user()->medico_id))}}" class="dropdown-item "><i class="fas fa-book"></i><span>Mi Agenda</span></a>
 
                                         @plan_profesional
-                                            <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                                            <a href="{{route('appointments', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
 
                                           @else
-                                              <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                                              <a href="{{route('appointments_confirmed', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
                                        @endplan_profesional
 
-                                        <a href="{{route('medico_reminders',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
-                                        <a href="{{route('medico_schedule',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
-                                        <a href="{{route('medico_assistants',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
+                                        <a href="{{route('medico_reminders',\Hashids::encode(Auth::user()->medico_id))}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
+                                        <a href="{{route('medico_schedule',\Hashids::encode(Auth::user()->medico_id))}}" class="dropdown-item"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
+                                        <a href="{{route('medico_assistants',\Hashids::encode(Auth::user()->medico_id))}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
                                           @endplan_agenda_no
                                           @plan_profesional_no
 
-                                        <a href="{{route('calification_medic',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-list-alt"></i><span>Calificación</span></a>
+                                        <a href="{{route('calification_medic',\Hashids::encode(Auth::user()->medico_id))}}" class="dropdown-item"><i class="fas fa-list-alt"></i><span>Calificación</span></a>
 
-                                         <a href="{{route('medico_assistants',Auth::user()->medico_id)}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span> Asistentes</span></a>
+                                         <a href="{{route('medico_assistants',\Hashids::encode(Auth::user()->medico_id))}}" class="dropdown-item"><i class="fas fa-clipboard-list"></i><span> Asistentes</span></a>
 
 
                                         @endplan_profesional_no
@@ -395,7 +396,7 @@
               <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-home fa-2"></i><span>Inicio</a>
               </div>
               <div class="col-12">
-                <a href="{{route('panel_control_promoters',Auth::user()->promoter_id)}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-home fa-2"></i><span>Panel de Control</a>
+                <a href="{{route('panel_control_promoters',\Hashids::encode(Auth::user()->promoter_id))}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-home fa-2"></i><span>Panel de Control</a>
                 </div>
             <div class="col-12">
               <a href="#" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Me gusta</span></a>
@@ -405,34 +406,34 @@
 
             </div>
             <div class="col-12">
-              <a href="{{route('accounts_number',Auth::user()->promoter_id)}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-gift"></i><span>Mis Numeros de Cuenta</a>
+              <a href="{{route('accounts_number',\Hashids::encode(Auth::user()->promoter_id))}}" class="btn btn-block btn-config-dashboard color-admin"><i class="fas fa-gift"></i><span>Mis Numeros de Cuenta</a>
               </div>
             </div>
             <div class="row">
               <div class="col-12">
-                <a href="{{route('add_medic',Auth::user()->promoter_id)}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Hacer Invitacion </span></a>
+                <a href="{{route('add_medic',\Hashids::encode(Auth::user()->promoter_id))}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Hacer Invitacion </span></a>
               </div>
 
             </div>
             <div class="row">
               <div class="col-12">
-                <a href="{{route('promoter_deposits',Auth::user()->promoter_id)}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Depositos</span></a>
+                <a href="{{route('promoter_deposits',\Hashids::encode(Auth::user()->promoter_id))}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Depositos</span></a>
               </div>
               </div>
             {{-- <div class="row">
               <div class="col-12">
-                <a href="{{route('add_medical_center',Auth::user()->promoter_id)}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Invitar Centro Médico </span></a>
+                <a href="{{route('add_medical_center',\Hashids::encode(Auth::user()->promoter_id))}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Invitar Centro Médico </span></a>
               </div>
 
             </div> --}}
             {{-- <div class="row">
               <div class="col-12">
-                <a href="{{route('list_client',Auth::user()->promoter_id)}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Lista de Clientes</span></a>
+                <a href="{{route('list_client',\Hashids::encode(Auth::user()->promoter_id))}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Lista de Clientes</span></a>
               </div>
             </div> --}}
             <div class="row">
               <div class="col-12">
-                <a href="{{route('list_client',Auth::user()->promoter_id)}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Clientes</span></a>
+                <a href="{{route('list_client',\Hashids::encode(Auth::user()->promoter_id))}}" class="btn btn-block btn-config-dashboard color-admin"><i class="far fa-thumbs-up"></i><span>Clientes</span></a>
               </div>
             </div>
             <div class="row">
@@ -477,16 +478,16 @@
                   <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-home fa-2"></i><span>Inicio</a>
                   </div>
                   <div class="col-12">
-                    <a href="{{route('patient_profile',Auth::user()->patient_id)}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-user fa-2"></i><span>Perfil</a>
+                    <a href="{{route('patient_profile',\Hashids::encode(Auth::user()->patient_id))}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-user fa-2"></i><span>Perfil</a>
                     </div>
                     <div class="col-12">
-                      <a href="{{route('patient_medicos',Auth::user()->patient_id)}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-users"></i><span>Mis medicos</span></a>
+                      <a href="{{route('patient_medicos',\Hashids::encode(Auth::user()->patient_id))}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-users"></i><span>Mis medicos</span></a>
                     </div>
                     <div class="col-12">
                       <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-search"></i><span>Buscar Médicos</span></a>
                     </div>
                     <div class="col-12">
-                      <a href="{{route('patient_appointments',Auth::user()->patient_id)}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-notes-medical mr-1"></i><span>Citas Médicas</span></a>
+                      <a href="{{route('patient_appointments',\Hashids::encode(Auth::user()->patient_id))}}" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-notes-medical mr-1"></i><span>Citas Médicas</span></a>
                     </div>
                   </div>
                   <div class="row">

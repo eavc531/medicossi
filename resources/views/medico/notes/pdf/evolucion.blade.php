@@ -10,7 +10,10 @@
   {{-- <link rel="stylesheet" type="text/css" href="{{asset('css/styles.css')}}"> --}}
   <title>Document</title>
   <style media="screen">
-
+        .font-title{
+            color:rgb(97, 210, 44);
+            font-weight: bold;
+        }
   </style>
 </head>
 <body>
@@ -35,14 +38,14 @@
     @if($note->Signos_vitales_show == 'si')
       <div class="form-group">
         <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
-        <p>{!!$note->Signos_vitales!!}</p>
+        @include('medico.notes.pdf.vital_signs')
       </div>
       <hr>
     @endif
     @if($note->Pruebas_de_laboratorio_show == 'si')
       <div class="form-group">
         <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de laboratorio</h5>
-        <p>{!!$note->Pruebas_de_laboratorio!!}</p>
+        @include('medico.notes.pdf.test_labs')
       </div>
       <hr>
     @endif

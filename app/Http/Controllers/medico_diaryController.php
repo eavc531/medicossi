@@ -124,8 +124,8 @@ class medico_diaryController extends Controller
        if($request->send == 'enviar'){
        Mail::send('mails.cancel_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
           $msj->subject('Notificación Cancelacion de Cita, MédicosSi');
-          //$msj->to($patient->email);
-          $msj->to('eavc53189@gmail.com');
+          $msj->to($patient->email);
+          // $msj->to('eavc53189@gmail.com');
         });
 
         return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.' y se le a enviado una notificacion a su correo, Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
@@ -827,6 +827,7 @@ class medico_diaryController extends Controller
 
      public function stipulate_appointment($id)
      {
+         
        $medico = medico::find($id);
        if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
          return back()->with('warning','La opcion de agendar citas online con el médico: "'.$medico->name.' '.$medico->lastName.'" estas desabilitadas en este momento,por favor intente contactarlo por otro medio o intente con otro médico, para los Médicos que poseen esta opcion habilitida  se muestra el boton "Agendar Cita" en color "Azul Claro".');
@@ -1146,6 +1147,42 @@ class medico_diaryController extends Controller
            'day'=>'required',
          ]);
 
+         function add_schedule($data,$request){
+             $dow = 0;
+
+             foreach ($data as $i => $value){
+
+               $schedule = new event;
+               $dow = $dow + 1;
+               $schedule->dow = $dow;
+               $schedule->color = 'rgba(162, 231, 50, 0.64)';
+               $schedule->rendering = 'background';
+               $schedule->medico_id = $request->medico_id;
+               $schedule->eventType = 'horario';
+               $schedule->title = $value;
+               $schedule->start = $request->hour_start.':'.$request->mins_start;
+               $schedule->end = $request->hour_end.':'.$request->mins_end;
+
+               $schedule->state = 'horario';
+               $schedule->save();
+
+               $schedule2 = new reminder_alarm;
+
+               $schedule2->dow = $dow;
+               $schedule2->color = 'rgba(162, 231, 50, 0.64)';
+               $schedule2->rendering = 'background';
+               $schedule2->medico_id = $request->medico_id;
+               $schedule2->eventType = 'horario';
+               $schedule2->title = $value;
+               $schedule2->start = $request->hour_start.':'.$request->mins_start;
+               $schedule2->end = $request->hour_end.':'.$request->mins_end;
+               $schedule2->state = 'horario';
+               $schedule2->event_id = $schedule->id;
+               $schedule2->save();
+
+             }
+         }
+
          $start_verify = $request->hour_start.':'.$request->mins_start;
          $end_verify = $request->hour_end.':'.$request->mins_end;
 
@@ -1153,40 +1190,19 @@ class medico_diaryController extends Controller
              return back()->with('warning','imposible guardar horas, la hora de incio debe ser menor a la hora de culminacion.');
          }
 
+
+         if($request->day == 'lunes a jueves'){
+           $data = array('lunes','martes','miercoles','jueves');
+           add_schedule($data,$request);
+
+           $day = $request->day;
+           return back()->with('success', 'Se a han agregado nuevas horas a todos los dias desde:: '.$request->day)->with('day',$day);
+         }
+
          if($request->day == 'lunes a viernes'){
            $data = array('lunes','martes','miercoles','jueves','viernes');
-           $dow = 0;
-           foreach ($data as $i => $value) {
+           add_schedule($data,$request);
 
-             $schedule = new event;
-             $dow = $dow + 1;
-             $schedule->dow = $dow;
-             $schedule->color = 'rgba(162, 231, 50, 0.64)';
-             $schedule->rendering = 'background';
-             $schedule->medico_id = $id;
-             $schedule->eventType = 'horario';
-             $schedule->title = $value;
-             $schedule->start = $request->hour_start.':'.$request->mins_start;
-             $schedule->end = $request->hour_end.':'.$request->mins_end;
-
-             $schedule->state = 'horario';
-             $schedule->save();
-
-             $schedule2 = new reminder_alarm;
-
-             $schedule2->dow = $dow;
-             $schedule2->color = 'rgba(162, 231, 50, 0.64)';
-             $schedule2->rendering = 'background';
-             $schedule2->medico_id = $id;
-             $schedule2->eventType = 'horario';
-             $schedule2->title = $value;
-             $schedule2->start = $request->hour_start.':'.$request->mins_start;
-             $schedule2->end = $request->hour_end.':'.$request->mins_end;
-             $schedule2->state = 'horario';
-             $schedule2->event_id = $schedule->id;
-             $schedule2->save();
-
-           }
            $day = $request->day;
            return back()->with('success', 'Se a han agregado nuevas horas a todos los dias desde:: '.$request->day)->with('day',$day);
          }
@@ -1194,34 +1210,15 @@ class medico_diaryController extends Controller
          if($request->day == 'lunes a sabado'){
            $data = array('lunes','martes','miercoles','jueves','viernes','sabado');
            $dow = 0;
-           foreach ($data as $i => $value) {
-             echo $value;
-             $schedule = new event;
-             $dow = $dow + 1;
-             $schedule->dow = $dow;
-             $schedule->color = 'rgba(162, 231, 50, 0.64)';
-             $schedule->rendering = 'background';
-             $schedule->medico_id = $id;
-             $schedule->eventType = 'horario';
-             $schedule->title = $value;
-             $schedule->start = $request->hour_start.':'.$request->mins_start;
-             $schedule->end = $request->hour_end.':'.$request->mins_end;
-             $schedule->state = 'horario';
-             $schedule->save();
+           add_schedule($data,$request);
+           $day = $request->day;
+           return back()->with('success', 'Se a han agregado nuevas horas a todos los dias desde: '.$request->day)->with('day',$day);
+         }
 
-             $schedule2 = new reminder_alarm;
-             $schedule2->dow = $dow;
-             $schedule2->color = 'rgba(162, 231, 50, 0.64)';
-             $schedule2->rendering = 'background';
-             $schedule2->medico_id = $id;
-             $schedule2->eventType = 'horario';
-             $schedule2->title = $value;
-             $schedule2->start = $request->hour_start.':'.$request->mins_start;
-             $schedule2->end = $request->hour_end.':'.$request->mins_end;
-             $schedule2->state = 'horario';
-             $schedule2->event_id = $schedule->id;
-             $schedule2->save();
-           }
+         if($request->day == 'lunes a domingo'){
+           $data = array('lunes','martes','miercoles','jueves','viernes','sabado','domingo');
+           $dow = 0;
+           add_schedule($data,$request);
            $day = $request->day;
            return back()->with('success', 'Se a han agregado nuevas horas a todos los dias desde: '.$request->day)->with('day',$day);
          }

@@ -8,10 +8,6 @@
 @endsection
 @section('content')
 
-  {{-- {{ Form::open(['action' => ['HomeController@autocomplete_specialty'], 'method' => 'GET']) }}
-    {{ Form::text('q', '', ['id' =>  'q', 'placeholder' =>  'Enter name'])}}
-    {{ Form::submit('Search', array('class' => 'button expand')) }}
-{{ Form::close() }} --}}
 
   @if(!isset(Auth::user()->id))
   <div class="row">
@@ -201,7 +197,7 @@
                     <div class="col-12 col-sm-5 col-lg-5">
                      <div class="card-body p-2">
                       <h5 class="card-title title-edit">{{$mc['name']}}</h5>
-                      <a href="{{route('medicalCenter.edit',$mc['id'])}}" class="outstanding mr-2">Ver Perfil</a><span></span>
+                      <a href="{{route('medicalCenter.edit',\Hashids::encode($mc['id']))}}" class="outstanding mr-2">Ver Perfil</a><span></span>
                       <div class="star-profile">
                         <ul class="rating mt-1">
                           <li class="star container-franchise__star li-config">&starf;</li>
@@ -369,7 +365,7 @@
                     </div>
                     <div class="row mt-3 align-self-end">
                       <div class="col-12">
-                        <a href="{{route('detail_medic_map',$medico['id'])}}" class="btn btn-primary btn-sm text-white"><p class="card-text">({{$position}}) - <i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
+                        <a href="{{route('detail_medic_map',\Hashids::encode($medico['id']))}}" class="btn btn-primary btn-sm text-white"><p class="card-text">({{$position}}) - <i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
                       </div>
                     </div>
                   </div>
@@ -377,15 +373,17 @@
                 <div class="col-12 col-sm-4 col-lg-4 p-4">
                   <div class="form-group">
                     {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
-                    <a class="btn btn-primary" href="{{route('medico.edit',$medico['id'])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
+                    {{-- {{Route::currentRouteName()}} --}}
+
+                    <a class="btn btn-primary" href="{{route('medico.edit',[\Hashids::encode($medico['id']),'search'=>Request::fullUrl()])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
                   </div>
                   <div class="form-group">
                   @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
-                    <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
+                    <a href="" class="btn disabled" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
                   @else
                     @if(Auth::check() and Auth::user()->role == 'Paciente')
-                    <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+                    <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id'])])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
                     @else
                     <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
                     @endif
@@ -394,7 +392,7 @@
 
                   <div class="form-group">
                     @if(Auth::check() and Auth::user()->role == 'Paciente')
-                    <a onclick="return confirm('¿Esta Segur@ de añadir a este Médico a su lista?')" href="{{route('patient_add_medic',$medico['id'])}}" class="btn btn-secondary"><i class="fas fa-plus mr-2"></i>Agregar a mi Lista</a>
+                    <a onclick="return confirm('¿Esta Segur@ de añadir a este Médico a su lista?')" href="{{route('patient_add_medic',\Hashids::encode($medico['id']))}}" class="btn btn-secondary"><i class="fas fa-plus mr-2"></i>Agregar a mi Lista</a>
                     @else
                     <button onclick="return verifySession2()" class="btn btn-info"></i>Agregar a mi Lista</button>
                     @endif

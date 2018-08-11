@@ -18,7 +18,7 @@ use Carbon\Carbon;
 use Auth;
 use App\rate_medic;
 use App\photo;
-
+use App\data_patient;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 class patientController extends Controller
@@ -197,10 +197,21 @@ class patientController extends Controller
        $p_m_count = patients_doctor::where('medico_id',$id)->where('patient_id',Auth::user()->patient->id)->count();
        $medico = medico::find($id);
        if($p_m_count == 0){
-         $p_m = new patients_doctor;
-         $p_m->medico_id = $id;
-         $p_m->patient_id = Auth::user()->patient->id;
-         $p_m->save();
+           if($p_m_count == 0){
+               $patient = patient::find(Auth::user()->patient_id);
+               $data_patient = new data_patient;
+               $data_patient->fill($patient->toArray());
+               $data_patient->medico_id = $id;
+               $data_patient->patient_id = $patient->id;
+               $data_patient->nameComplete = $patient->name.' '.$patient->lastName;
+               $data_patient->save();
+
+             $patients_doctors = new patients_doctor;
+             $patients_doctors->patient_id = $patient->id;
+             $patients_doctors->medico_id = $id;
+             $patients_doctors->data_patient_id = $data_patient->id;
+             $patients_doctors->save();
+           }
 
          return back()->with('success', 'El médico: '.$medico->name.' '.$medico->lastName.' ha sido añadido a tu lista de Médicos.');
        }else{
@@ -218,7 +229,7 @@ class patientController extends Controller
 
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
-          // $msj->to($patient->email);
+          $msj->to($patient->email);
           // $msj->to('eavc53189@gmail.com');
 
         });
@@ -359,7 +370,7 @@ class patientController extends Controller
          'lastName'=>'required',
          'phone1'=>'required|numeric',
          'birthdate'=>'required',
-         'email'=>'required|email|unique:patients',
+         'email'=>'required|email|unique:patients|unique:users',
          'password'=>'required',
        ]);
 
@@ -382,11 +393,11 @@ class patientController extends Controller
        $role = Role::where('name','patient')->first();
 
        $user->attachRole($role);
-
+       // dd($patient->email);
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
-          $msj->subject($patient->email);
-          // $msj->to('eavc53189@gmail.com');
+          // $msj->subject($patient->email);
+          $msj->to('eavc53189@gmail.com');
 
         });
 

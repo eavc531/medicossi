@@ -71,6 +71,17 @@ class note extends Model
 
 
 
+public function vital_sign(){
+  return $this->hasMany('App\vital_sign');
+   //return $this->belongsTo('App\section_note');
+}
+
+public function test_lab(){
+  return $this->hasMany('App\test_lab');
+   //return $this->belongsTo('App\section_note');
+}
+
+
 
   public function element_note(){
     return $this->hasMany('App\element_note');

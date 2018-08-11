@@ -1,7 +1,7 @@
 <div class="mb-3">
   <div class="btn-group">
 
-    <button type="button" class="btn btn-primary">Agregar Nota a Expediente</button>
+    <button type="button" class="btn btn-primary">Agregar Nota</button>
     <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span class="sr-only">Toggle Dropdown</span>
     </button>
@@ -14,137 +14,15 @@
               <span class="mr-3">{{$note->title}}</span>
             </div>
 
-            @if($note->title == 'Nota Médica Inicial')
+
               <div class="col-4">
-
-                <form class="line" action="{{route('note_medic_ini_create')}}" method="post">
-                  {{ csrf_field() }}
-                  <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                  <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                  <input type="hidden" name="note_id" value="{{$note->id}}">
-                  <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                  <button type="submit" name="button" class="btn btn-primary mr-1 btn-sm "><i class="fas fa-plus"></i></button>
-                </form>
-                <form class="line" action="{{route('note_config')}}" method="post">
-                  {{ csrf_field() }}
-                  <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                  <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                  <input type="hidden" name="note_id" value="{{$note->id}}">
-                  <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                  <button type="submit" name="button" class="btn btn-secondary mr-1 btn-sm "><i class="fas fa-cog"></i></button>
-                </form>
-
+                  <a href="{{route('note_create',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id,'expedient_id'=>$expedient->id])}}" class="btn btn-primary mr-1 btn-sm "><i class="fas fa-plus"></i></a>
+                  <a href="{{route('note_config',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id,'expedient_id'=>$expedient->id])}}" class="btn btn-secondary mr-1 btn-sm "><i class="fas fa-cog"></i></a>
 
               </div>
             </div>
           </div>
-        @elseif($note->title == 'Nota Médica de Evolucion')
-          <div class="col-4">
-            <form class="line" action="{{route('note_evo_create')}}" method="post">
-              {{ csrf_field() }}
-              <input type="hidden" name="medico_id" value="{{$medico->id}}">
-              <input type="hidden" name="patient_id" value="{{$patient->id}}">
-              <input type="hidden" name="note_id" value="{{$note->id}}">
-              <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-              <button type="submit" name="button" class="btn btn-primary mr-1 btn-sm"><i class="fas fa-plus"></i></button>
-            </form>
 
-            <form class="line" action="{{route('note_config')}}" method="post">
-              {{ csrf_field() }}
-              <input type="hidden" name="medico_id" value="{{$medico->id}}">
-              <input type="hidden" name="patient_id" value="{{$patient->id}}">
-              <input type="hidden" name="note_id" value="{{$note->id}}">
-              <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-              <button type="submit" name="button" class="btn btn-secondary mr-1 btn-sm "><i class="fas fa-cog"></i></button>
-            </form>
-
-          </div>
-        </div>
-      </div>
-    @elseif($note->title == 'Nota de Interconsulta')
-      <div class="col-4">
-        <form class="line" action="{{route('note_inter_create')}}" method="post">
-          {{ csrf_field() }}
-          <input type="hidden" name="medico_id" value="{{$medico->id}}">
-          <input type="hidden" name="patient_id" value="{{$patient->id}}">
-          <input type="hidden" name="note_id" value="{{$note->id}}">
-          <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-          <button type="submit" name="button" class="btn btn-primary mr-1 btn-sm"><i class="fas fa-plus"></i></button>
-        </form>
-        <form class="line" action="{{route('note_config')}}" method="post">
-          {{ csrf_field() }}
-          <input type="hidden" name="medico_id" value="{{$medico->id}}">
-          <input type="hidden" name="patient_id" value="{{$patient->id}}">
-          <input type="hidden" name="note_id" value="{{$note->id}}">
-          <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-          <button type="submit" name="button" class="btn btn-secondary mr-1 btn-sm "><i class="fas fa-cog"></i></button>
-        </form>
-
-      </div>
-    </div>
-  </div>
-@elseif($note->title == 'Nota médica de Urgencias')
-  <div class="col-4">
-    <form class="line" action="{{route('note_urgencias_create')}}" method="post">
-      {{ csrf_field() }}
-      <input type="hidden" name="medico_id" value="{{$medico->id}}">
-      <input type="hidden" name="patient_id" value="{{$patient->id}}">
-      <input type="hidden" name="note_id" value="{{$note->id}}">
-      <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-      <button type="submit" name="button" class="btn btn-primary mr-1 btn-sm"><i class="fas fa-plus"></i></button>
-    </form>
-    <form class="line" action="{{route('note_config')}}" method="post">
-      {{ csrf_field() }}
-      <input type="hidden" name="medico_id" value="{{$medico->id}}">
-      <input type="hidden" name="patient_id" value="{{$patient->id}}">
-      <input type="hidden" name="note_id" value="{{$note->id}}">
-      <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-      <button type="submit" name="button" class="btn btn-secondary mr-1 btn-sm "><i class="fas fa-cog"></i></button>
-    </form>
-
-  </div>
-</div>
-</div>
-@elseif($note->title == 'Nota médica de Egreso')
-<div class="col-4">
-<a class="mr-1 btn btn-primary btn-sm line" href="{{route('note_egreso_create',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id,'expedient_id'=>$expedient->id])}}"><i class="fas fa-plus"></i></a>
-
-<form class="" action="{{route('note_config')}}" method="post">
-
-  {{ csrf_field() }}
-  <input type="hidden" name="medico_id" value="{{$medico->id}}">
-  <input type="hidden" name="patient_id" value="{{$patient->id}}">
-  <input type="hidden" name="note_id" value="{{$note->id}}">
-  <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-  <button type="submit" name="button" class="btn btn-secondary mr-1 btn-sm "><i class="fas fa-cog"></i></button>
-</form>
-
-</div>
-</div>
-</div>
-@elseif($note->title == 'Nota de Referencia o traslado')
-<div class="col-4">
-<form class="line" action="{{route('note_referencia_create')}}" method="post">
-{{ csrf_field() }}
-<input type="hidden" name="medico_id" value="{{$medico->id}}">
-<input type="hidden" name="patient_id" value="{{$patient->id}}">
-<input type="hidden" name="note_id" value="{{$note->id}}">
-<input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-<button type="submit" name="button" class="btn btn-primary mr-1 btn-sm"><i class="fas fa-plus"></i></button>
-</form>
-<form class="line" action="{{route('note_config')}}" method="post">
-{{ csrf_field() }}
-<input type="hidden" name="medico_id" value="{{$medico->id}}">
-<input type="hidden" name="patient_id" value="{{$patient->id}}">
-<input type="hidden" name="note_id" value="{{$note->id}}">
-<input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-<button type="submit" name="button" class="btn btn-secondary mr-1 btn-sm "><i class="fas fa-cog"></i></button>
-</form>
-
-</div>
-</div>
-</div>
-@endif
 
 @endforeach
 </div>

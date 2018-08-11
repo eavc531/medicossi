@@ -17,7 +17,8 @@
         "spatie/geocoder": "^3.2",
         "spatie/laravel-google-calendar": "^2.2",
         "stevebauman/location": "^3.0",
-        "unisharp/laravel-ckeditor": "^4.7"
+        "unisharp/laravel-ckeditor": "^4.7",
+        "vinkla/hashids": "^5.0"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

@@ -143,12 +143,14 @@ class promotersController extends Controller
      }
 
      public function promoter_deposits_pending($id){
+
          $comisions_paid_out = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'si')->sum('comision');
          $comisions_pending = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'no')->sum('comision');
+
         $record_plans = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->where('state_payment','no')->paginate(10);
         $promoter = promoter::find($id);
 
-       $total_comisiones = $record_plans->sum('comision');
+       $total_comisiones = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->sum('comision');
        $pendientes = 'sdsd';
 
        return view('promoters.deposits',compact('record_plans','total_comisiones','pendientes','promoter','comisions_paid_out','comisions_pending'));
@@ -159,7 +161,7 @@ class promotersController extends Controller
          $comisions_pending = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'no')->sum('comision');
         $record_plans = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->where('state_payment','si')->paginate(10);
         $promoter = promoter::find($id);
-       $total_comisiones = $record_plans->sum('comision');
+       $total_comisiones = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->sum('comision');
 
        $realizados = 'sdssd';
        return view('promoters.deposits',compact('record_plans','total_comisiones','realizados','promoter','comisions_paid_out','comisions_pending'));
@@ -172,7 +174,7 @@ class promotersController extends Controller
         $comisions_paid_out = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'si')->sum('comision');
         $comisions_pending = records_of_plans_medico::where('promoter_id',$id)->where('state_payment', 'no')->sum('comision');
 
-       $total_comisiones = $record_plans->sum('comision');
+       $total_comisiones = records_of_plans_medico::where('promoter_id',$id)->whereNotNull('comision')->where('comision','!=',0)->sum('comision');
 
 
 
@@ -588,8 +590,8 @@ class promotersController extends Controller
 
          Mail::send('mails.promoter_invited_medico',['medico'=>$medico,'code'=>$code,'promoter'=>$promoter],function($msj){
            $msj->subject('Médicos Si');
-           // $msj->to($medico->email);
-        $msj->to('eavc53189@gmail.com');
+           $msj->to($medico->email);
+        // $msj->to('eavc53189@gmail.com');
        });
 
            return redirect()->route('list_client',$request->promoter_id)->with('success', 'Se ha Registrado un nuevo Médico como su invitado, de forma simultanea se a enviado un mensaje al correo del médico recien agregado, con la información necesaria para  que pueda acceder a su cuenta Médicossi.');

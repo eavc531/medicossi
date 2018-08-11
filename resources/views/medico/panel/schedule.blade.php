@@ -19,6 +19,9 @@
           <a class="btn btn-secondary ml-2" href="{{route('medico_reminders',$medico->id)}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Recordatorios</a>
       </div>
     </div>
+    <div class="col-12 text-center text-secondary my-2">
+        Selecciona el dia o los dias al que deseas otorgar horario de trabajo, luego selecciona las primeras horas de trabajo del dia(s), presiona guardar y leugo podras agregar mas horas para un segundo, tecer o mas turnos de trabajo diario.
+    </div>
     <div class="my-4 card p-3">
       @if(Session::Has('day'))
           <input type="hidden" name="" value="{!!$day = Session::get('day')!!}">
@@ -26,6 +29,7 @@
         <input type="hidden" name="" value="{!!$day = Null!!}">
       @endif
       {!!Form::open(['route'=>['medico_schedule_store',$medico->id],'method'=>'post'])!!}
+      <input type="hidden" name="medico_id" value="{{$medico->id}}">
       <div class="row">
         <label for="" class="col-form-label col-sm-3 font-title">Agregar Horas a dia:</label>
         <div class="col-sm-3 text-center">{{Form::select('day',['lunes'=>'lunes',
@@ -34,7 +38,7 @@
           'jueves'=>'jueves',
           'viernes'=>'viernes',
           'sabado'=>'sabado',
-          'domingo'=>'domingo','lunes a viernes'=>'lunes a viernes','lunes a sabado'=>'lunes a sabado'],$day,['placeholder'=>'opciones', 'class' => 'form-control'])}}</div>
+          'domingo'=>'domingo','lunes a jueves'=>'lunes a jueves','lunes a viernes'=>'lunes a viernes','lunes a sabado'=>'lunes a sabado','lunes a domingo'=>'lunes a domingo',],$day,['placeholder'=>'opciones', 'class' => 'form-control'])}}</div>
         </div>
         <div class="row my-4">
           <div class="col-lg-8 m-auto">
@@ -72,7 +76,7 @@
     </div>
   </div>
   <div class=" mt-3">
-    <table class="table table-responsive table-config">
+    <table class="table table-responsive table-config table-bordered">
       <thead class="thead-color">
         <tr>
           <th class="text-center">Lunes</th>
@@ -86,99 +90,68 @@
       </thead>
       <tbody>
         <tr>
-          <td>
+          <td class="text-right">
             @foreach ($lunes as $day)
-            <ul>
-              <li>
-                {{$day->start}}
-                a
-                {{$day->end}}
-                <a href="{{route('medico_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
-              </li>
-              <hr>
-            </ul>
+            <p>{{$day->start}}
+            a
+            {{$day->end}}
+        <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+        <hr>
+
             @endforeach
           </td>
           <td>
             @foreach ($martes as $day)
-            <ul>
-              <li>
-                {{$day->start}}
+                <p>{{$day->start}}
                 a
                 {{$day->end}}
-                <a href="{{route('medico_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
-              </li>
-              <hr>
-            </ul>
+            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <hr>
             @endforeach
           </td>
           <td>
             @foreach ($miercoles as $day)
-            <ul>
-              <li>
-                {{$day->start}}
+                <p>{{$day->start}}
                 a
                 {{$day->end}}
-                <a href="{{route('medico_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
-              </li>
-
-              <hr>
-            </ul>
+            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <hr>
             @endforeach
           </td>
           <td>
             @foreach ($jueves as $day)
-            <ul>
-              <li>
-                {{$day->start}}
+                <p>{{$day->start}}
                 a
                 {{$day->end}}
-                <a href="{{route('medico_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
-              </li>
-
-              <hr>
-            </ul>
+            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <hr>
             @endforeach
           </td>
           <td>
             @foreach ($viernes as $day)
-            <ul>
-              <li>
-                {{$day->start}}
+                <p>{{$day->start}}
                 a
                 {{$day->end}}
-                <a href="{{route('medico_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
-              </li>
-
-              <hr>
-            </ul>
+            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <hr>
             @endforeach
           </td>
           <td>
             @foreach ($sabado as $day)
-            <ul>
-              <li>
-                {{$day->start}}
+                <p>{{$day->start}}
                 a
                 {{$day->end}}
-                <a href="{{route('medico_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
-              </li>
-
-              <hr>
-            </ul>
+            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <hr>
             @endforeach
           </td>
           <td>
             @foreach ($domingo as $day)
-            <ul>
-              <li>
-                {{$day->start}}
-                a
-                {{$day->end}}
-                <a href="{{route('medico_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
-              </li>
-              <hr>
-            </ul>
+            <p>{{$day->start}}
+            a
+            {{$day->end}}
+        <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+        <hr>
             @endforeach
           </td>
         </tr>

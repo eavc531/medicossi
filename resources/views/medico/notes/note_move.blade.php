@@ -52,8 +52,8 @@
 
       @endif
       <div class="text-right">
-          @isset(request()->ex)
-              <a class="btn btn-secondary" href="{{route('expedient_open',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id,'ex_id'=>request()->ex])}}">atras</a>
+          @isset(request()->expedient_id)
+              <a class="btn btn-secondary" href="{{route('expedient_open',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id,'ex_id'=>request()->expedient_id])}}">atras</a>
 
           @else
             <a class="btn btn-secondary" href="{{route('notes_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id])}}">atras</a>

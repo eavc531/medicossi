@@ -221,7 +221,9 @@ return [
         'Geocoder' => Spatie\Geocoder\Facades\Geocoder::class,
         'Location' => Stevebauman\Location\Facades\Location::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
-        // 'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Hashids' => Vinkla\Hashids\Facades\Hashids::class
+        
+
         //'GeoLocation' => Midnite81\Geolocation\Facades\GeoLocation::class,
         //revisar est ult
     ],

@@ -10,6 +10,11 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+// Route::bind('id', function($id, $route)
+//     {
+//         return \Hashids::decode($id)[0];
+//     });
+
 Route::post('llenar_especialidad','administratorsController@llenar_especialidad')->name('llenar_especialidad');
 
 //SELECT estadosciudades
@@ -84,16 +89,43 @@ Route::get('medicalCenter/{id}/search/medico/belongs','medicalCenterController@s
 Route::post('patient/photo_profile/store','photoController@patient_image_profile')->name('patient_image_profile');
 Route::get('home','HomeController@home')->name('home');
 
-Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
 
-// middlaware authentica
-Route::group(['middleware' => ['authenticate']], function (){
 
-Route::get('administrator/control_panel','administratorsController@panel_control_administrator')->name('panel_control_administrator');
 
-Route::resource('patient','patientController');
 
-Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
+    // middlaware authentica
+    Route::group(['middleware' => ['authenticate']], function (){
+        Route::get('patient/{id}/edit/address','patientController@address_patient')->name('address_patient');
+        Route::post('patient/{id}/store/address','patientController@patient_store_address')->name('patient_store_address');
+        //MIDLEWARE PATIENT
+            Route::group(['middleware' => ['patient_data_complete']], function (){
+                Route::resource('patient','patientController');
+                Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
+                Route::get('patient/add/medic/{id}','patientController@patient_add_medic')->name('patient_add_medic');
+                Route::get('patient/{id}/edit','patientController@patient_edit_data')->name('patient_edit_data');
+                Route::post('patient/{id}/updates','patientController@patient_update')->name('patient_update');
+                Route::get('patient/{id}/profile','patientController@patient_profile')->name('patient_profile');
+
+                Route::post('store_rate_comentary','patientController@store_rate_comentary')->name('store_rate_comentary');
+
+                Route::get('patient/{id}/medicos','patientController@patient_medicos')->name('patient_medicos');
+                Route::get('patient/{id}/appoitment/rate','patientController@rate_appointment')->name('rate_appointment');
+
+                Route::get('patient/{id}/appoitment','patientController@patient_appointments')->name('patient_appointments');
+                Route::get('patient/{id}/appoitment/pending','patientController@patient_appointments_pending')->name('patient_appointments_pending');
+                Route::get('patient/{id}/appoitment/unrated','patientController@patient_appointments_unrated')->name('patient_appointments_unrated');
+
+
+
+
+                Route::get('patient/delete/{id}/medico','patientController@delete_patient_doctors')->name('delete_patient_doctors');
+                Route::get('medico/delete/{id}/patient','patientController@delete_medico_patients')->name('delete_medico_patients');
+            });//END -MIDLEWARE PATIENT
+
+        Route::get('medico/{id}/medico_register_new_patient','medicoController@medico_register_new_patient')->name('medico_register_new_patient');
+        Route::get('administrator/control_panel','administratorsController@panel_control_administrator')->name('panel_control_administrator');
+
+
 //plans
 ////////////////////////////////////Bloquear los botones para configurar a losq  no tienen plan
 
@@ -203,6 +235,19 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
 //PLAN PLATINO corregir plan profesional a platino
 Route::group(['middleware' => ['medic_plan_platino']], function (){
 
+    Route::post('medico_vital_sign_store','notesController@medico_vital_sign_store')->name('medico_vital_sign_store');
+    Route::post('medico_test_labs_store','notesController@medico_test_labs_store')->name('medico_test_labs_store');
+
+    Route::post('test_lab_delete','notesController@test_lab_delete')->name('test_lab_delete');
+    Route::post('vital_sign_delete','notesController@vital_sign_delete')->name('vital_sign_delete');
+
+    Route::get('medico/{m_id}/patient/{p_id}notes/{n_id}/test_labs','notesController@medico_test_labs')->name('medico_test_labs');
+
+    Route::get('medico/{m_id}/patient/{p_id}notes/{n_id}/vital_signs','notesController@medico_vital_signs')->name('medico_vital_signs');
+    Route::post('ajax_test_labs','notesController@ajax_test_labs')->name('ajax_test_labs');
+    Route::post('test_labs_config','notesController@test_labs_config')->name('test_labs_config');
+    Route::post('ajax_vital_sign_config','notesController@ajax_vital_sign_config')->name('ajax_vital_sign_config');
+    Route::post('vital_sign_config_update','notesController@vital_sign_config_update')->name('vital_sign_config_update');
     Route::get('medico/patient/note/{id}/move','notesController@note_move')->name('note_move');
     Route::get('medico/patient/note/{n_id}/move/expedient/{ex_id}/store','notesController@note_move_store')->name('note_move_store');
     Route::post('medico/patient/expedient/{ex_id}/update','notesController@expedient_update')->name('expedient_update');
@@ -222,33 +267,26 @@ Route::group(['middleware' => ['medic_plan_platino']], function (){
 
     Route::get('medico/patient/expedient/search','notesController@expedient_search')->name('expedient_search');
     Route::get('medico/patient/notes/search','notesController@note_search')->name('note_search');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/edit','medicoController@medico_note_edit')->name('medico_note_edit');
+    // Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/edit','medicoController@medico_note_edit')->name('medico_note_edit');
     Route::post('medico/patient/note/config/store','notesController@note_config_store')->name('note_config_store');
     Route::get('medico/{m_id}/patient/{p_id}/edit/appointment/{app_id}','medico_diaryController@edit_appointment')->name('edit_appointment');
     ///////////////NOTES
-    Route::post('medico/patient/note/view_preview','notesController@view_preview')->name('view_preview');
+    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/view_preview','notesController@view_preview')->name('view_preview');
     Route::get('medico/{m_id}/patient/{p_id}/type_notes','notesController@type_notes')->name('type_notes');
 
-    Route::post('medico/patient/note/config','notesController@note_config')->name('note_config');
+    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/config','notesController@note_config')->name('note_config');
 
-    Route::post('medico/patient/note/ini_edit','notesController@note_ini_edit')->name('note_ini_edit');
-    Route::post('medico/patient/note/evo_edit','notesController@note_evo_edit')->name('note_evo_edit');
-    Route::post('medico/patient/note/inter_edit','notesController@note_inter_edit')->name('note_inter_edit');
-    Route::post('medico/patient/note/urgencias_edit','notesController@note_urgencias_edit')->name('note_urgencias_edit');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/egreso_edit','notesController@note_egreso_edit')->name('note_egreso_edit');
-    Route::post('medico/patient/note/referencia_edit','notesController@note_referencia_edit')->name('note_referencia_edit');
+
+    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/edit','notesController@note_edit')->name('note_edit');
 
     Route::get('medico/{m_id}/patient/{p_id}/notes/','notesController@notes_patient')->name('notes_patient');
     Route::post('medico/patient/note/store','notesController@note_store')->name('note_store');
-    Route::post('medico/patient/note/update/{id}','notesController@note_update')->name('note_update');
+    Route::post('medico/patient/note/update/','notesController@note_update')->name('note_update');
 
-    Route::post('medico/patient/note/ini_create','notesController@note_medic_ini_create')->name('note_medic_ini_create');
-    Route::post('medico/patient/note/referencia/create','notesController@note_referencia_create')->name('note_referencia_create');
-    Route::post('medico/patient/note/interconsulta_create','notesController@note_inter_create')->name('note_inter_create');
-    Route::post('medico/patient/note/urg_create','notesController@note_urgencias_create')->name('note_urgencias_create');
-    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/egreso_create','notesController@note_egreso_create')->name('note_egreso_create');
+    ///
 
-    Route::post('medico/patient/note/evo_create','notesController@note_evo_create')->name('note_evo_create');
+    Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/create','notesController@note_create')->name('note_create');
+
 });
 Route::get('admin/patient_list', 'administratorsController@admin_patient_list')->name('admin_patient_list');
 
@@ -261,9 +299,7 @@ Route::get('medico/{id}/income','medicoController@income_medic')->name('income_m
 Route::get('medico/{id}/income/without_pay','medicoController@income_medic_without_pay')->name('income_medic_without_pay');
 //
 
-Route::get('patient/add/medic/{id}','patientController@patient_add_medic')->name('patient_add_medic');
-Route::get('patient/{id}/edit','patientController@patient_edit_data')->name('patient_edit_data');
-Route::post('patient/{id}/updates','patientController@patient_update')->name('patient_update');
+
 
 //event appoitment diary
 
@@ -271,7 +307,7 @@ Route::post('patient/{id}/updates','patientController@patient_update')->name('pa
 Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}','medicoController@create_note_patient')->name('create_note_patient');
 
 Route::get('medico/{m_id}/admin/data/{p_id}/patient','medicoController@admin_data_patient')->name('admin_data_patient');
-// Route::get('medico/{m_id}/admin/data/{p_id}/patient','patientController@admin_data_patient')->name('admin_data_patient');
+
 Route::resource('city','cityController');
 Route::resource('user','userController');
 
@@ -307,33 +343,20 @@ Route::post('medic/{id}/consulting_room/store','consulting_roomController@consul
 Route::get('medic/{id}/consulting_room/edit','consulting_roomController@consulting_room_edit')->name('consulting_room_edit');
 Route::post('medic/{id}/consulting_room/update','consulting_roomController@consulting_room_update')->name('consulting_room_update');
 
-Route::get('patient/{id}/profile','patientController@patient_profile')->name('patient_profile');
 
-Route::post('store_rate_comentary','patientController@store_rate_comentary')->name('store_rate_comentary');
-
-Route::get('patient/{id}/medicos','patientController@patient_medicos')->name('patient_medicos');
-Route::get('patient/{id}/appoitment/rate','patientController@rate_appointment')->name('rate_appointment');
-
-Route::get('patient/{id}/appoitment','patientController@patient_appointments')->name('patient_appointments');
-Route::get('patient/{id}/appoitment/pending','patientController@patient_appointments_pending')->name('patient_appointments_pending');
-Route::get('patient/{id}/appoitment/unrated','patientController@patient_appointments_unrated')->name('patient_appointments_unrated');
 
 Route::resource('medicalCenter','medicalCenterController');
 
 Route::post('medicalCenter/select/insurrances','medicalCenterController@select_insurrances')->name('select_insurrances');
 Route::post('medicalCenter/select/insurrances/medico','medicoController@select_insurrances2')->name('select_insurrances2');
 
-Route::get('patient/{id}/edit/address','patientController@address_patient')->name('address_patient');
 
-Route::post('patient/{id}/store/address','patientController@patient_store_address')->name('patient_store_address');
-
-Route::get('patient/delete/{id}/medico','patientController@delete_patient_doctors')->name('delete_patient_doctors');
 
 //
 
 Route::get('medico/{m_id}/patient/{p_id}/appointments','medicoController@medico_appointments_patient')->name('medico_appointments_patient');
 
-Route::get('medico/delete/{id}/patient','patientController@delete_medico_patients')->name('delete_medico_patients');
+
 //
 Route::post('medicalCenter/{id}/store/experience','medicalCenterController@medical_center_experience_store')->name('medical_center_experience_store');
 Route::post('medicalCenter/{id}/store/specialty','medicalCenterController@medical_center_specialty_store')->name('medical_center_specialty_store');

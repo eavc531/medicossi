@@ -70,78 +70,14 @@
           <td>{{$expedient_n->note->title}}</td>
           <td>{{\Carbon\Carbon::parse($expedient_n->note->date_start)->format('d-m-Y')}}</td>
           <td>{{\Carbon\Carbon::parse($expedient_n->note->date_edit)->format('d-m-Y')}}</td>
+
           <td>
 
+              <a class="mr-2 btn btn-secondary" href="{{route('view_preview',['m_id'=>$expedient_n->medico_id,'p_id'=>$expedient_n->note->patient_id,'n_id'=>$expedient_n->note->id,'expedient_id'=>$expedient->id])}}"><i class="fas fa-eye"></i></a>
 
-            <form class="line" action="{{route('view_preview')}}" method="post">
-              {{ csrf_field() }}
-              <input type="hidden" name="medico_id" value="{{$medico->id}}">
-              <input type="hidden" name="patient_id" value="{{$patient->id}}">
-              <input type="hidden" name="note_id" value="{{$expedient_n->note->id}}">
-              <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-              <button type="submit" name="button" class="mr-2 btn btn-secondary"><i class="fas fa-eye"></i></button>
-            </form>
-            @if($expedient_n->note->title == 'Nota Médica Inicial')
-
-              <form class="line" action="{{route('note_ini_edit')}}" method="post">
-                {{ csrf_field() }}
-                <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                <input type="hidden" name="note_id" value="{{$expedient_n->note->id}}">
-                <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
-              </form>
-
-
-            @elseif($expedient_n->note->title == 'Nota Médica de Evolucion')
-              <form class="line" action="{{route('note_evo_edit')}}" method="post">
-                {{ csrf_field() }}
-                <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                <input type="hidden" name="note_id" value="{{$expedient_n->note->id}}">
-                <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
-              </form>
-
-            @elseif($expedient_n->note->title == 'Nota de Interconsulta')
-              <form class="line" action="{{route('note_inter_edit')}}" method="post">
-                {{ csrf_field() }}
-                <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                <input type="hidden" name="note_id" value="{{$expedient_n->note->id}}">
-                <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
-              </form>
-
-
-            @elseif($expedient_n->note->title == 'Nota médica de Urgencias')
-              <form class="line" action="{{route('note_urgencias_edit')}}" method="post">
-                {{ csrf_field() }}
-                <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                <input type="hidden" name="note_id" value="{{$expedient_n->note->id}}">
-                <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
-              </form>
-
-            @elseif($expedient_n->note->title == 'Nota médica de Egreso')
-              <a class="mr-2 btn btn-primary" href="{{route('note_egreso_edit',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$expedient_n->note->id,'expedient_id'=>$expedient->id])}}"><i class="fas fa-pencil-alt"></i></a>
-
-
-            @elseif($expedient_n->note->title == 'Nota de Referencia o traslado')
-              <form class="line" action="{{route('note_referencia_edit')}}" method="post">
-                {{ csrf_field() }}
-                <input type="hidden" name="medico_id" value="{{$medico->id}}">
-                <input type="hidden" name="patient_id" value="{{$patient->id}}">
-                <input type="hidden" name="note_id" value="{{$expedient_n->note->id}}">
-                <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-                <button type="submit" name="button" class="mr-2 btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
-              </form>
-
-            @endif
-            <a href="{{route('download_pdf',$expedient_n->note->id)}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
-              <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota Médica del expediente?, la nota seguira exisitiendo en el panel ´Notas del Paciente´ despues de realizar esta acción.');" href="{{route('expedient_note_delete',$expedient_n->id)}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
-              <a href="{{route('note_move',[$expedient_n->note->id,'ex'=>$expedient_n->expedient->id])}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
+              <a class="mr-2 btn btn-primary" href="{{route('note_edit',['m_id'=>$expedient_n->medico_id,'p_id'=>$expedient_n->note->patient_id,'n_id'=>$expedient_n->note->id,'expedient_id'=>$expedient->id])}}"><i class="fas fa-edit"></i></a>
+              <a href="{{route('download_pdf',[$expedient_n->note_id,'expedient_id'=>$expedient->id])}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
+              <a href="{{route('note_move',[$expedient_n->note_id,'expedient_id'=>$expedient->id])}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
           </td>
 
         </tr>

@@ -31,7 +31,7 @@
 						<div class="col-lg-6 col-12">
               <label for="" class="font-title">Genero</label>
 							<div class="form-group">
-							    {!!Form::select('gender',['Masculino'=>'Masculino','Femenino'=>'Femenino'],null,['class'=>'form-control'])!!}
+							    {!!Form::select('gender',['Masculino'=>'Masculino','Femenino'=>'Femenino'],null,['class'=>'form-control','placeholder'=>''])!!}
 							 </div>
 						</div>
 						<div class="col-lg-6 col-12">

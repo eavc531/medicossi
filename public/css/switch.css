@@ -1,4 +1,19 @@
 
+.input-text{
+    height: 30px;
+}
+
+.input-text{
+    height: 30px;
+}
+
+
+.line{
+  display: inline-block;
+  float:left;
+  /* border:solid 1px black; */
+}
+
 
 /* The switch - the box around the slider */
 .switch {
@@ -57,17 +72,4 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
-}
-
-
-/* fuera de la configuracion swithc ///////////////////////*/
-
-.form-control{
-  height: 100px;
-
-}
-.line{
-  display: inline-block;
-  float:left;
-  /* border:solid 1px black; */
 }

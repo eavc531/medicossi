@@ -39,20 +39,19 @@
   </div>
   <hr>
 @endif
-  @if($note->Signos_vitales_show == 'si')
-  <div class="form-group">
-    <h6 class="font-title-blue">Signos vitales</h6>
-    <p>{!!$note->Signos_vitales!!}</p>
-  </div>
-  <hr>
+@if($note->Signos_vitales_show == 'si')
+<div class="form-group">
+  <h5 class="font-title-blue">Signos vitales</h5>
+   @include('medico.notes.view_preview.vital_signs')
+</div>
+<hr>
 @endif
-  @if($note->Pruebas_de_laboratorio_show == 'si')
-  <div class="form-group">
-    <h6 class="font-title-blue">Pruebas de laboratorio</h6>
-    <p>{!!$note->Pruebas_de_laboratorio!!}</p>
-
-  </div>
-  <hr>
+@if($note->Pruebas_de_laboratorio_show == 'si')
+<div class="form-group">
+  <h5 class="font-title-blue">Pruebas de laboratorio</h5>
+  @include('medico.notes.view_preview.test_labs')
+</div>
+<hr>
 @endif
 @if($note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
   <div class="form-group">

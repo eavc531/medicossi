@@ -38,6 +38,7 @@
    <div class="col-lg-7 col-12">
 
     @isset($photo->path)
+
     <div class="cont-img my-2">
       <img src="{{asset($photo->path)}}" class="prof-img" alt="" id="img">
     </div>
@@ -83,8 +84,8 @@
     <div class="col-6">
       <ul>
         <li><b>Telefono 1:</b>{{$patient->phone1}}</li>
-        <li><b>Telefono 2:</b>{{$patient->phone2}}</li>
-        <li><b>Edad:</b>{{$patient->birthdate}}</li>
+        <li><b>Telefono 2:</b>@isset($patient->phone2){{$patient->phone2}}@else <span class="text-secondary">No especifica @endisset</span></li>
+        <li><b>Fecha de Nacimiento:</b>@isset($patient->birthdate) {{\Carbon\Carbon::parse($patient->birthdate)->format('m-d-Y')}}@else <span class="text-secondary">No especifica @endisset</li>
         <li><b>Edad:</b>{{$patient->age}}</li>
       </ul>
         <a href="{{route('patient_edit_data',$patient->id)}}" class="btn btn-block btn-success">Editar</a>
@@ -100,20 +101,20 @@
 <div class="row text-left">
   <div class="col-6">
     <ul>
-      <li><strong>Pais:</strong> {{$patient->country}}</li>
-      <li><strong>Estado:</strong> {{$patient->state}}</li>
-      <li><strong>Ciudad:</strong> {{$patient->city}}</li>
-      <li><strong>Codigo Postal:</strong> {{$patient->postal_code}}</li>
+      <li><strong>Pais:</strong> @isset($patient->country){{$patient->country}}@else <span class="text-secondary">No especifica @endisset</li>
+      <li><strong>Estado:</strong> @isset($patient->state){{$patient->state}}@else <span class="text-secondary">No especifica @endisset</li>
+      <li><strong>Ciudad:</strong> @isset($patient->city){{$patient->city}}@else <span class="text-secondary">No especifica @endisset</li>
+      <li><strong>Codigo Postal:</strong> @isset($patient->postal_code){{$patient->postal_code}}@else <span class="text-secondary">No especifica @endisset</li>
     </ul>
   </div>
   <div class="col-6">
     <ul>
       <li><strong>Colonia:</strong>
-        {{$patient->colony}}
+        @isset($patient->colony){{$patient->colony}}@else <span class="text-secondary">No especifica @endisset
       </li>
-      <li><strong>Calle/av:</strong>{{$patient->street}}</li>
-      <li><strong>Numero Externo:</strong> {{$patient->number_ext}}</li>
-      <li><strong>Numero Interno:</strong> {{$patient->number_int}}</li>
+      <li><strong>Calle/av:</strong>@isset($patient->street){{$patient->street}}@else <span class="text-secondary">No especifica @endisset</li>
+      <li><strong>Numero Externo:</strong> @isset($patient->number_ext){{$patient->number_ext}}@else <span class="text-secondary">No especifica @endisset</li>
+      <li><strong>Numero Interno:</strong> @isset($patient->number_int){{$patient->number_int}}@else <span class="text-secondary">No especifica @endisset</li>
     </ul>
 
     <a href="{{route('address_patient',$patient->id)}}" class="btn btn-block btn-success">Editar</a>

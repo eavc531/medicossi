@@ -13,13 +13,12 @@ use App\city;
 use App\consulting_room;
 use App\photo;
 use Input;
+use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
       class HomeController extends Controller
       {
-
-
           public function inicar_home(){
             return redirect()->route('home')->with('iniciar', 'iniciar');
           }
@@ -62,7 +61,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
         }
 
         public function home(){
-
+            $hash = Hashids::encode(4815162342);
+            
           $medicos_json = '';
           if(auth::check()){
             $user = user::find(Auth::user()->id);

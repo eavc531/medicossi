@@ -46,6 +46,16 @@
      </div>
      {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
      {{-- IF SHOW CALENDAR --}}
+     <div class="text-right">
+         <a href="{{route('home')}}" class="btn btn-secondary">Ir Inicio</a>
+         @if(request()->get('search') != Null)
+            <a class="btn btn-secondary my-3" href="{{request()->get('search')}}"><i class="fas fa-arrow-left mr-1"></i>volver a Perfil {{$medico->nameComplete}}</a>
+        @elseif(request()->get('back'))
+            <a class="btn btn-secondary my-3" href="{{request()->get('back')}}"><i class="fas fa-arrow-left mr-1"></i>volver a mis médicos</a>
+         @endisset
+            {{-- <a href="{{route('medico.edit',$medico->id)}}" class="btn btn-secondary">volver a Perfil {{$medico->nameComplete}}</a> --}}
+     </div>
+
      @if($countEventSchedule != 0)
      <div id='calendar' style=""></div>
      @else

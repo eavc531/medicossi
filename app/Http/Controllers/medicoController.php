@@ -45,7 +45,6 @@ class medicoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
      public function __construct()
       {
          // $this->middleware('authenticate', ['except' => ['edit','create','store']]);
@@ -1056,13 +1055,13 @@ class medicoController extends Controller
         $states = state::orderBy('name','asc')->pluck('name','id');
         $medico = medico::find($id);
 
-        // if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
-        //
-        //   $medico->showNumber
-        //   $medico->showNumber = 'no';
-        //   $medico->showNumberOffice = 'no';
-        //   $medico->save();
-        // }
+            // if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
+            //
+            //   $medico->showNumber
+            //   $medico->showNumber = 'no';
+            //   $medico->showNumberOffice = 'no';
+            //   $medico->save();
+            // }
 
 
         $consulting_room = consulting_room::where('medico_id',$medico->id)->get();
@@ -1073,8 +1072,8 @@ class medicoController extends Controller
         $images = photo::where('medico_id', $medico->id)->where('type','image')->get();
         $specialties = specialty::orderBy('name','asc')->pluck('name','name');
 
-        $back = redirect()->getUrlGenerator()->previous();
-        Session::flash('back',$back);
+
+
 
         return view('medico.edit')->with('medico', $medico)->with('photo', $photo)->with('consulting_rooms', $consulting_room)->with('consultingIsset', $consultingIsset)->with('cities', $cities)->with('medicalCenter', $medicalCenter)->with('medico_specialty', $medico_specialty)->with('social_networks', $social_networks)->with('images', $images)->with('insurance_carrier',$insurance_carrier)->with('states', $states)->with('specialties', $specialties)->with('consulting_room',$consulting_room);
     }
