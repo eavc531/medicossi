@@ -13,7 +13,7 @@
 
 					<div class="col-12 mb-5">
 						{{-- <button type="button" name="button" class="btn btn-primary" id="mostrar">Agregar Numero de Cuenta</button> --}}
-						<a class="btn btn-secondary float-right" href="{{route('accounts_number',$account->promoter_id)}}">Atras</a>
+						<a class="btn btn-secondary float-right" href="{{route('accounts_number',\Hashids::encode($account->promoter_id))}}">Atras</a>
 					</div>
 
 
@@ -54,7 +54,7 @@
 							<button type="submit" name="button" class="btn btn-block btn-success">Guardar Cambios</button>
 						</div>
 						<div class="col-6">
-							<a class="btn btn-secondary btn-block" href="{{route('accounts_number',$account->promoter_id)}}">Cancelar</a>
+							<a class="btn btn-secondary btn-block" href="{{route('accounts_number',\Hashids::encode($account->promoter_id))}}">Cancelar</a>
 						</div>
 					</div>
 				</div>

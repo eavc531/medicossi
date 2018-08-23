@@ -34,7 +34,8 @@
           {{-- ////////////////////////////////////////////centro de menu////////////centro de menu// --}}
           <strong>Modelos de Notas Médicas</strong>
           <ul>
-              <li>{{$noteMedicIni->title}} <a href="{{route('create_note_patient',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$noteMedicIni->id])}}" class="btn">Crear Nueva</a><a href="{{route('note_replace_config',['medico_id'=>$medico->id,'note_id'=>$noteMedicIni->id,'p_id'=>$patient->id])}}">Configurar</a></li>
+              <li>{{$noteMedicIni->title}} <a href="{{route('create_note_patient',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($noteMedicIni->id)])}}" class="btn">Crear Nueva</a>
+                  <a href="{{route('note_replace_config',['medico_id'=>\Hashids::encode($medico->id),'note_id'=>\Hashids::encode($noteMedicIni->id),'p_id'=>\Hashids::encode($patient->id)])}}">Configurar</a></li>
           </ul>
 
 

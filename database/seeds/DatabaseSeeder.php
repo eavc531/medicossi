@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call('statesAndCities');
         $this->call('insurrance_show');
         $this->call('note_seeder');
+        $this->call('disease_list');
 
 
         DB::table('countries')->insert([

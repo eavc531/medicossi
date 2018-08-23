@@ -23,9 +23,9 @@
       {!!Form::close()!!}
         </div>
     <div class="mb-2">
-      <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-primary ml-2">Mostrar Todos</a>
-      <a href="{{route('patients_registered',$medico->id)}}" class="btn btn-warning ml-2">Buscar Paciente Registrado</a>
-      <a href="{{route('medico_register_new_patient',$medico->id)}}" class="btn btn-info ml-2">Registrar nuevo Paciente</a>
+      <a href="{{route('medico_patients',\Hashids::encode($medico->id))}}" class="btn btn-primary ml-2">Mostrar Todos</a>
+      <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-warning ml-2">Buscar Paciente Registrado</a>
+      <a href="{{route('medico_register_new_patient',\Hashids::encode($medico->id))}}" class="btn btn-info ml-2">Registrar nuevo Paciente</a>
 
     </div>
 
@@ -47,7 +47,7 @@
      <div class="col-12 col-sm-5 col-lg-5">
       <div class="card-body p-2">
        <h5 class="card-title font-title">
-         <a href="{{route('patient_profile',$patient['id'])}}">{{$patient['name']}} {{$patient['lastName']}}</h5></a>
+         <a href="{{route('patient_profile',\Hashids::encode($patient['id']))}}">{{$patient['name']}} {{$patient['lastName']}}</h5></a>
        <div class="form-inline">
          <label for="" class="font-title-grey">Cédula:</label> <span class="">{{$patient['identification']}}</span>
        </div>
@@ -64,26 +64,29 @@
        {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
      </div>
      <div class="row">
+         <div class="col-lg-2 col-2  col-sm-3 text-center">
+           <a class="btn btn-secondary" href="{{route('manage_patient',['medico_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Panel Paciente</em>"><i class="fas fa-tasks"></i></a>
+         </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
-        <a class="btn btn-secondary" href="{{route('patient_profile',['p_id'=>$patient['id'],'back'=>$medico->id])}}" data-toggle="tooltip" data-html="true" title="<em>Perfil</em>"><i class="fas fa-user"></i></a>
+        <a class="btn btn-secondary" href="{{route('patient_profile',['p_id'=>\Hashids::encode($patient['id']),'back'=>\Hashids::encode($medico->id)])}}" data-toggle="tooltip" data-html="true" title="<em>Perfil</em>"><i class="fas fa-user"></i></a>
       </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
-        <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>$medico->id,'patient_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Lista de citas con paciente</em>"><i class="fas fa-bars"></i></a>
+        <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>citas con paciente</em>"><i class="far fa-calendar-alt"><span style="font-size:11"></span></i></a>
       </div>
       @plan_platino
         <div class="col-lg-2 col-2  col-sm-4 text-center">
-          <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary"><i class="fas fa-folder"></i></a>
+          <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary"><i class="fas fa-folder"></i></a>
         </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
-        <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
+        <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
       </div>
   @else
 
       <div class="col-lg-2 col-2  col-sm-4 text-center">
-        <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary disabled"><i class="fas fa-folder"></i></a>
+        <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary disabled"><i class="fas fa-folder"></i></a>
       </div>
     <div class="col-lg-2 col-2  col-sm-3 text-center">
-      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary disabled light"><i class="fas fa-notes-medical"></i></a>
+      <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary disabled light"><i class="fas fa-notes-medical"></i></a>
     </div>
     @endplan_platino
 
@@ -92,9 +95,9 @@
     <div class="row">
       <div class="col-10 text-center mt-2">
           @cita_create
-        <a href="{{route('medico_stipulate_appointment',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" class="btn btn-primary btn-block">Agendar Cita</a>
+        <a href="{{route('medico_stipulate_appointment',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" class="btn btn-primary btn-block">Agendar Cita</a>
     @else
-        <a href="{{route('medico_stipulate_appointment',['m_id'=>$medico->id,'p_id'=>$patient['id']])}}" class="btn btn-primary btn-block disabled" disabled>Agendar Cita</a>
+        <a href="{{route('medico_stipulate_appointment',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" class="btn btn-primary btn-block disabled" disabled>Agendar Cita</a>
         @endcita_create
       </div>
     </div>

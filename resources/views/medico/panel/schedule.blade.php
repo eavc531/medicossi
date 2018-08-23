@@ -11,12 +11,12 @@
     </div>
     <div class="row">
       <div class="col-6 ">
-          <a class="btn btn-secondary" href="{{route('medico_diary',$medico->id)}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Mi Agenda</a>
+          <a class="btn btn-secondary" href="{{route('medico_diary',\Hashids::encode($medico->id))}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Mi Agenda</a>
 
 
       </div>
       <div class="col-6 text-right">
-          <a class="btn btn-secondary ml-2" href="{{route('medico_reminders',$medico->id)}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Recordatorios</a>
+          <a class="btn btn-secondary ml-2" href="{{route('medico_reminders',\Hashids::encode($medico->id))}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Recordatorios</a>
       </div>
     </div>
     <div class="col-12 text-center text-secondary my-2">
@@ -28,7 +28,7 @@
       @else
         <input type="hidden" name="" value="{!!$day = Null!!}">
       @endif
-      {!!Form::open(['route'=>['medico_schedule_store',$medico->id],'method'=>'post'])!!}
+      {!!Form::open(['route'=>['medico_schedule_store',\Hashids::encode($medico->id)],'method'=>'post'])!!}
       <input type="hidden" name="medico_id" value="{{$medico->id}}">
       <div class="row">
         <label for="" class="col-form-label col-sm-3 font-title">Agregar Horas a dia:</label>
@@ -64,7 +64,7 @@
           </div>
           <div class="row mt-3" >
             <div class="col-6 text-center">
-              <a href="{{route('medico_diary',$medico->id)}}" class="btn-block btn btn-secondary">Cancelar</a>
+              <a href="{{route('medico_diary',\Hashids::encode($medico->id))}}" class="btn-block btn btn-secondary">Cancelar</a>
             </div>
             <div class="col-6 text-center">
               <input type="submit" name="" value="Guardar" class="btn-block btn btn-primary">
@@ -95,7 +95,7 @@
             <p>{{$day->start}}
             a
             {{$day->end}}
-        <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+        <a href="{{route('medico_schedule_delete',\Hashids::encode($day->id))}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
         <hr>
 
             @endforeach
@@ -105,7 +105,7 @@
                 <p>{{$day->start}}
                 a
                 {{$day->end}}
-            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <a href="{{route('medico_schedule_delete',\Hashids::encode($day->id))}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
             <hr>
             @endforeach
           </td>
@@ -114,7 +114,7 @@
                 <p>{{$day->start}}
                 a
                 {{$day->end}}
-            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <a href="{{route('medico_schedule_delete',\Hashids::encode($day->id))}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
             <hr>
             @endforeach
           </td>
@@ -123,7 +123,7 @@
                 <p>{{$day->start}}
                 a
                 {{$day->end}}
-            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <a href="{{route('medico_schedule_delete',\Hashids::encode($day->id))}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
             <hr>
             @endforeach
           </td>
@@ -132,7 +132,7 @@
                 <p>{{$day->start}}
                 a
                 {{$day->end}}
-            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <a href="{{route('medico_schedule_delete',\Hashids::encode($day->id))}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
             <hr>
             @endforeach
           </td>
@@ -141,7 +141,7 @@
                 <p>{{$day->start}}
                 a
                 {{$day->end}}
-            <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+            <a href="{{route('medico_schedule_delete',\Hashids::encode($day->id))}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
             <hr>
             @endforeach
           </td>
@@ -150,7 +150,7 @@
             <p>{{$day->start}}
             a
             {{$day->end}}
-        <a href="{{route('medico_schedule_delete',$day->id)}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
+        <a href="{{route('medico_schedule_delete',\Hashids::encode($day->id))}}" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a></p>
         <hr>
             @endforeach
           </td>

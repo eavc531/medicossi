@@ -58,7 +58,7 @@
               </div>
             </div>
             <div class="col-lg-12 col-12 mt-3">
-              <a href="{{route("resend_mail_confirm_patient",$patient->id)}}" class="btn btn-primary">Reenviar Correo de Confirmación</a>
+              <a href="{{route("resend_mail_confirm_patient",\Hashids::encode($patient->id))}}" class="btn btn-primary">Reenviar Correo de Confirmación</a>
 
              </a>
            </div>

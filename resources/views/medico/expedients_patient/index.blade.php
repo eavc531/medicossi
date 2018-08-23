@@ -24,7 +24,7 @@
       <div class="register">
         <div class="row">
           <div class="col-12">
-            <h2 class="text-center font-title">Expedientes de Paciente: <span>{{$patient->name }} {{$patient->lastName }}</span></h2>
+            <h3 class="text-center font-title">Expedientes de Paciente: <span>{{$patient->name }} {{$patient->lastName }}</span></h3>
           </div>
         </div>
 
@@ -47,7 +47,7 @@
         {!!Form::date('search_date',null,['class'=>'form-control ml-1','placeholder'=>'busqueda por nombre','id'=>'search_date','style'=>'display:none'])!!}
 
         <button class="btn btn-primary ml-1" type="submit" name="button"><i class="fas fa-search"></i></button>
-        <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-info ml-1">Todos los expedientes</a>
+        <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-info ml-1">Todos los expedientes</a>
       </div>
       {!!Form::close()!!}
 
@@ -147,7 +147,7 @@
             @foreach ($expedients as $expedient)
             <tr>
               <td><span class="pre">{{$expedient->name}}</span>
-                <form class="" action="{{route('expedient_update',$expedient->id)}}" method="post">
+                <form class="" action="{{route('expedient_update',\Hashids::encode($patient->id))}}" method="post">
                   {{csrf_field()}}
 
                 <div class="input-group" style="display:none">
@@ -166,10 +166,10 @@
               <td>
                 <div class="form-inline">
 
-                  <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
+                  <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
 
                   <a class="btn btn-warning mr-1 editar text-white"><i class="fas fa-edit"></i></a>
-                  <a href="{{route('expedient_delete',$expedient->id)}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
+                  <a href="{{route('expedient_delete',\Hashids::encode($expedient->id))}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
                 </div>
 
               </td>
@@ -197,7 +197,7 @@
             @foreach ($expedients as $expedient)
             <tr>
               <td><span class="pre">{{$expedient->name}}</span>
-                <form class="" action="{{route('expedient_update',$expedient->id)}}" method="post">
+                <form class="" action="{{route('expedient_update',\Hashids::encode($patient->id))}}" method="post">
                   {{csrf_field()}}
 
                 <div class="input-group" style="display:none">
@@ -216,10 +216,10 @@
               <td>
                 <div class="form-inline">
 
-                  <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
+                  <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
 
                   <a class="btn btn-warning mr-1 editar text-white"><i class="fas fa-edit"></i></a>
-                  <a href="{{route('expedient_delete',$expedient->id)}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
+                  <a href="{{route('expedient_delete',\Hashids::encode($patient->id))}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
                 </div>
 
               </td>

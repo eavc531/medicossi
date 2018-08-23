@@ -18,7 +18,7 @@
       <h2 class="text-center font-title">Editar datos de Consultorio</h2>
     </div>
   </div>
-  {!!Form::model($consulting_room,['route'=>['consulting_room_update',$consulting_room],'method'=>'update'])!!}
+  {!!Form::model($consulting_room,['route'=>['consulting_room_update',\Hashids::encode($consulting_room)],'method'=>'update'])!!}
 
   <div class="col-12">
     <div class="row" id="comb">
@@ -126,7 +126,7 @@
   <div class="row">
 
     <div class="col-lg-6 col-12 mt-2">
-      <a href="{{route('medico.edit',$medico->id)}}" class="btn btn-primary btn-block">Cancelar</a>
+      <a href="{{route('medico.edit',\Hashids::encode($medico->id))}}" class="btn btn-primary btn-block">Cancelar</a>
     </div>
 
     <div class="col-lg-6 col-12 mt-2">

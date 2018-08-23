@@ -144,7 +144,7 @@
 
    <div class="col-4">
      @if($app->medico_confirmed == 'No')
-     <a href="{{route('appointment_confirm',$app->id)}}" class="btn btn-info btn-block" id="confirmar">Confirmar Cita</a>
+     <a href="{{route('appointment_confirm',\Hashids::encode($app->id))}}" class="btn btn-info btn-block" id="confirmar">Confirmar Cita</a>
    </div>
      @endif
 </div>

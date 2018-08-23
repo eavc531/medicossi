@@ -7,7 +7,7 @@
     <div class="col-lg col-12">
     </div>
     <div class="col-lg col-12 text-right">
-      <a class="btn btn-primary" href="{{route('medicalCenter.edit',request()->id)}}">Atras</a>
+      <a class="btn btn-primary" href="{{route('medicalCenter.edit',\Hashids::encode(request()->id))}}">Atras</a>
     </div>
   </div>
   <div class="row">

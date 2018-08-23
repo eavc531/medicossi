@@ -16,11 +16,16 @@ class patient_data_complete
     public function handle($request, Closure $next)
     {
 
+        if (Auth::user()->role == 'Paciente') {
             if(Auth::user()->patient->stateConfirm == 'complete'){
                 return $next($request);
             }else{
                 return redirect()->route('address_patient',Auth::user()->patient->id)->with('success', 'Bienvendi@: '.Auth::user()->patient->name.' '.Auth::user()->patient->lastName.' antes de Continuar por favor agrega los datos correspondientes a tu dirección.');
             }
+        }else{
+            return $next($request);
+        }
+
 
 
     }

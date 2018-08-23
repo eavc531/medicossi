@@ -19,6 +19,7 @@ use Auth;
 use App\rate_medic;
 use App\photo;
 use App\data_patient;
+use App\rate_and_comentary_medic;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 class patientController extends Controller
@@ -39,48 +40,47 @@ class patientController extends Controller
 
 
      public function calification_medic_show_patient(Request $request){
-       $rate_medicCount = rate_medic::where('medico_id', $request->medico_id)->count();//marcar
+         // return response()->json($request->all());
+         $take = 2;
+         if($request->has('skip')){
+             $skip = $request->skip;
+             $vista = 'show_more';
 
-       $paginate = 5;//MARCAR
-        $page_calification = 1;//
-        if($request->page == 'Sig'){
-            $page_calification = $request->page1 + 1;
-        }elseif($request->page == 'Ant'){
-            $page_calification = $request->page1 - 1;
-        }else{
-          if($request->page != null){
-            $page_calification = $request->page;
-          }
-        }
+         }else {
+             $skip = 0;
+             $vista = 'normal';
+         }
 
-        $skip = ($page_calification - 1)* $paginate;//
-        $cant_page = round($rate_medicCount / $paginate); //marcar
+         $medico = medico::find($request->medico_id);
+
+         $views = 'vistas';
+
+         $rate_medic = rate_medic::where('medico_id',$request->medico_id)->where('views','si')->skip($skip)->take(2)->get();
+
+         // return response()->json($rate_medic);
 
 
+        if($request->has('skip')){
+             return view('patient.medico.show_more_calification_ajax',compact('rate_medic','medico','views','skip'));
+         }
+             return view('patient.medico.calification_ajax',compact('rate_medic','medico','views','skip'));
 
-        // if($page_calification > $cant_page){
-        //   return response()->json('limite');
-        // }
 
-        $rate_medic = rate_medic::where('medico_id',$request->medico_id)->skip($skip)->take($paginate)->get();//marcar
 
-       $medico = medico::find($request->medico_id);
-
-        return view('patient.calification_medic_show_patient',compact('rate_medic','medico','cant_page','page_calification'));
      }
 
 
 
      public function qualify_medic($p_id,$m_id,$app_id){
 
-
+         // return 'eje';
        $event = event::find($app_id);
 
        if($event->status == 'calificada'){
          return back()->with('success','Solo puedes calificar al Médico una vez por Cita.');
        }
 
-       if(\Carbon\Carbon::now() < \Carbon\Carbon::parse($event->end)){
+       if(\Carbon\Carbon::now() > \Carbon\Carbon::parse($event->end)->format('Y-m-d H:i')){
          return back()->with('success','No puedes calificar la Cita hasta despues de su fecha de culminacion.');
        }
 
@@ -92,102 +92,90 @@ class patientController extends Controller
 
        $patient = patient::find($p_id);
 
-       return view('patient.patient_rate_medic',compact('you_rate','medico','patient','count_rate','event'));
+       return view('patient.rate_medic',compact('you_rate','medico','patient','count_rate','event'));
 
      }
 
 
      public function store_rate_comentary(Request $request)
      {
-       //dd($request->all());
-      $medico = medico::find($request->medico_id);
-
-       if($request->conservar == 'conservar'){
-
-           $event = event::find($request->event_id);
-           $event->status = 'calificada';
-           $event->save();
-
-          return redirect()->route('patient_appointments',$request->patient_id)->with('success', 'Se a guardado tu opinion referente al Médico : '.$medico->name.' '.$medico->lastName.'.');
-       }
-
-       if($request->rate == 6){
-         return back()->with('warning', 'El campo Calificación es requerido');
-       }
-       $request->validate([
-         'rate'=>'required',
-         'comentary'=>'max:200'
-       ]);
+          $medico = medico::find($request->medico_id);
 
 
-       $calification = '';
-       switch ($request->rate) {
-    case  Null:
-        $calification = 'Neutral';
-        break;
-    case 1:
-        $calification = 'Pesimo';
-        break;
-    case 2:
-        $calification = 'Malo';
-        break;
-    case 3:
-        $calification = 'Regular';
-        break;
-    case 4:
-        $calification = 'Buena';
-        break;
-    case 5:
-        $calification = 'Excelente';
-        break;
+         $request->validate([
+            'answer1'=>'required|max:255',
+            'answer2'=>'required|max:255',
+            'answer3'=>'required|max:255',
+            'answer4'=>'required|max:255',
+            'answer5'=>'max:255',
+            'answer6'=>'max:255',
+            'answer7'=>'max:255',
+         ]);
 
-      }
+        function valorar($value){
+            if($value == 'Pésima'){
+                return 1;
+            }elseif ($value == 'Mala') {
+                return 2;
+            }elseif ($value == 'Regular') {
+                return 3;
+            }elseif ($value == 'Buena') {
+                return 4;
+            }elseif ($value == 'Excelente') {
+                return 5;
+            }
+        }
 
-      $rate_medic1 = rate_medic::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->count();
-      $rate_medic2 = rate_medic::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->first();
-      if($rate_medic1 != 0){
+        $puntaje1 = valorar($request->answer1);
+        $puntaje2 = valorar($request->answer2);
+        $puntaje3 = valorar($request->answer3);
+        // dd($puntaje1);
+        $valor_total = ($puntaje1 + $puntaje2 + $puntaje3)/3;
+        // $valor_total = round($valor_total);
 
-        $rate_medic2->delete();
-      }
+      $verifyrcm = rate_medic::where('medico_id', $request->medico_id)->where('patient_id', $request->patient_id)->first();
+      // $rate_medicT = rate_medic::
+      if($verifyrcm == Null){
+          $rcm = new rate_medic;
+          $rcm->fill($request->all());
+          $rcm->rate = $valor_total;
+          $rcm->patient_id = $request->patient_id;
+          $rcm->save();
 
-      $rate_medic = new rate_medic;
-      $rate_medic->rate = $request->rate;
-      $rate_medic->comentary = $request->comentary;
-      $rate_medic->patient_id = $request->patient_id;
-      $rate_medic->medico_id = $request->medico_id;
-      if($medico->show_comentary == 'Si'){
-        $rate_medic->show = 'Si';
       }else{
-        $rate_medic->show = 'No';
+          $verifyrcm->fill($request->all());
+          $verifyrcm->rate = $valor_total;
+           $verifyrcm->views = Null;
+          $verifyrcm->renews = 'si';
+          $verifyrcm->save();
       }
-      $rate_medic->save();
 
-      $rate_medicT = rate_medic::where('medico_id',$request->medico_id)->get();
-      $count = rate_medic::where('medico_id',$request->medico_id)->count();
+      $rate_medic_not_see_count = rate_medic::where('medico_id', $medico->id)->whereNull('views')->count();
 
-      $suma = 0;
-       foreach ($rate_medicT as $value) {
-         $suma = $suma + $value->rate;
-       }
+      $rate_medic_count = rate_medic::where('medico_id',$medico->id)->count();
+      $rate_medic_total = rate_medic::where('medico_id',$medico->id)->sum('rate');
+      $medico->calification = $rate_medic_total/$rate_medic_count;
+      $medico->votes = $rate_medic_count;
+      $medico->calification_not_see = $rate_medic_not_see_count;
+      $medico->save();
 
+      $event = event::find($request->event_id);
+      $event->status = 'calificada';
 
-        $medico->calification = $suma / $count;
-        $medico->votes = $count;
-        $medico->save();
+      $event->save();
 
-        $event = event::find($request->event_id);
-        $event->status = 'calificada';
-        $event->save();
+      return  redirect()->route('patient_appointments',\Hashids::encode(Auth::user()->patient_id))->with('success', 'Se a guardado su opinion referente al Profesional Médico: '.$medico->nameComplete);
 
-       return redirect()->route('patient_appointments',$request->patient_id)->with('success', 'Se aguardado tu opinion referente al Médico : '.$medico->name.' '.$medico->lastName.'.');
      }
 
 
      public function patient_rate_medic($p_id,$m_id){
+
        $you_rate = rate_medic::where('patient_id', $p_id)->first();
        $rate_medic = rate_medic::paginate(10);
        $medico = medico::find($m_id);
        $patient = medico::find($p_id);
+
        return view('patient.patient_rate_medic',compact('you_rate','rate_medic','medico','patient'));
      }
 
@@ -221,20 +209,21 @@ class patientController extends Controller
      }
        public function resend_mail_confirm_patient($id)
      {
-       $user = user::where('patient_id',$id);
-       $code = str_random(25);
        $patient = patient::find($id);
+       $user = user::where('patient_id',$id)->first();
+       $code = str_random(25);
+
        $patient->confirmation_code = $code;
        $patient->save();
 
        Mail::send('mails.confirmPatient',['patient'=>$patient,'code'=>$code,'user'=>$user], function($msj) use ($patient){
           $msj->subject('Médicos Si');
-          $msj->to($patient->email);
-          // $msj->to('eavc53189@gmail.com');
+          // $msj->to($patient->email);
+          $msj->to('eavc53189@gmail.com');
 
         });
 
-        return redirect()->route('successRegPatient',$patient->id)->with('success', 'Se ha reenviado el mensaje de confirmación, al correo electronico asociado a tu cuenta MédicosSi');
+        return redirect()->route('successRegPatient',\Hashids::encode($patient->id))->with('success', 'Se ha reenviado el mensaje de confirmación, al correo electronico asociado a tu cuenta MédicosSi');
 
      }
 
@@ -307,33 +296,53 @@ class patientController extends Controller
        $app = event::find($id);
        return view('patient.rate_appointment',compact('app'));
      }
+
      public function patient_appointments(Request $request,$id)
      {
 
+         $appointments_pending_confirm_count = event::where('patient_id', $id)->where('state','Pendiente')->where('confirmed_medico','!=','Si')->orderBy('start','asc')->count();
        $patient = patient::find($id);
        $appointments = event::where('patient_id', $id)->orderBy('id','desc')->paginate(4);
 
-         return view('patient.appointments',compact('patient','appointments'));
+         return view('patient.appointments',compact('patient','appointments','appointments_pending_confirm_count'));
      }
 
      public function patient_appointments_pending(Request $request,$id)
      {
-
-       $patient = patient::find($id);
-       // dd(Carbon::now());
-       $appointments = event::where('patient_id', $id)->where('state','Pendiente')->where('status','!=','calificada')->orderBy('id','desc')->paginate(4);
-       // dd($appointments->all());
+          $appointments_pending_confirm_count = event::where('patient_id', $id)->where('state','Pendiente')->where('confirmed_medico','!=','Si')->orderBy('start','asc')->count();
+           $patient = patient::find($id);
+           // end = 2018-08-13 09:30:00
+           // now = 2018-08-13 08:40:15
+           $appointments = event::where('patient_id', $id)->where('confirmed_medico','=','Si')->where('state','!=', 'Rechazada/Cancelada')->where('end','>',\Carbon\Carbon::now())->orderBy('start','asc')->paginate(4);
+       // dd($appointments);
        $pending = 'Pendiente';
-         return view('patient.appointments',compact('patient','appointments','pending'));
+         return view('patient.appointments',compact('patient','appointments','pending','appointments_pending_confirm_count'));
      }
      //verificar estoo
      public function patient_appointments_unrated(Request $request,$id)
      {
+          $appointments_pending_confirm_count = event::where('patient_id', $id)->where('state','Pendiente')->where('confirmed_medico','!=','Si')->orderBy('start','asc')->count();
 
-       $patient = patient::find($id);
-       $appointments = event::where('patient_id', $id)->where('status','!=','calificada')->where('state','!=', 'Rechazada/Cancelada')->where('end','<',\Carbon\Carbon::now())->orderBy('id','desc')->paginate(4);
-        $unrated = 'Por Calificar';
-         return view('patient.appointments',compact('patient','appointments','unrated'));
+           $patient = patient::find($id);
+           $appointments = event::where('patient_id', $id)->whereNull('status')->where('state','!=', 'Rechazada/Cancelada')->where('end','<',\Carbon\Carbon::now()->format('Y-m-d H:i'))->where('confirmed_medico', 'Si')->orderBy('id','desc')->paginate(4);
+
+           // dd('sdsd');
+            $unrated = 'Por Calificar';
+             return view('patient.appointments',compact('patient','appointments','unrated','appointments_pending_confirm_count'));
+     }
+
+     public function patient_pending_confirm(Request $request,$id)
+     {
+          $appointments_pending_confirm_count = event::where('patient_id', $id)->where('state','!=','Rechazada/Cancelada')->where('state','!=','Rechazada/Cancelada')->where('confirmed_medico','!=','Si')->orderBy('start','asc')->count();
+
+           $patient = patient::find($id);
+           // end = 2018-08-13 09:30:00
+           // now = 2018-08-13 08:40:15
+           $appointments = event::where('patient_id', $id)->where('state','Pendiente')->where('confirmed_medico','!=','Si')->orderBy('start','asc')->paginate(4);
+
+           // dd($appointments);
+           $pending_confirm = 'Pendiente';
+             return view('patient.appointments',compact('patient','appointments','pending_confirm','appointments_pending_confirm_count'));
      }
 
     public function create()
@@ -401,7 +410,7 @@ class patientController extends Controller
 
         });
 
-        return redirect()->route('successRegPatient',$patient->id);
+        return redirect()->route('successRegPatient',\Hashids::encode($patient->id));
      }
 
      public function successRegPatient($id)
@@ -423,41 +432,41 @@ class patientController extends Controller
              return redirect()->route('home')->with('confirmMedico', 'confirmMedico');
      }else{
        $patient->save();
-        return redirect()->route('successRegPatient',$patient->id)->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
+        return redirect()->route('successRegPatient',\Hashids::encode($patient->id))->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
      }
    }
 
-    public function store(Request $request)
-    {
-      $request->validate([
-        'identification'=>'required|unique:patients',
-        'gender'=>'required',
-        'name'=>'required',
-        'lastName'=>'required',
-        'phone1'=>'required|numeric',
-        'phone2'=>'numeric|nullable',
-        'email'=>'required|email|unique:patients',
-        'password'=>'required',
-      ]);
-
-      $patient = new patient;
-      $patient->fill($request->all());
-      $patient->nameComplete = $request->name.' '.$request->lastName;
-      $patient->save();
-
-      $user = new User;
-      $user->name = $request->name;
-      $user->email = $request->email;
-      $user->password = bcrypt($request->password);
-      $user->patient_id = $patient->id;
-      $user->role = 'Paciente';
-
-      $user->save();
-      $role = Role::where('name','patient')->first();
-
-      $user->attachRole($role);
-       return redirect()->route('patient.index')->with('success', 'Se ha registrado un nuevo Paciente de Forma Satisfactoria');
-    }
+    // public function store(Request $request)
+    // {
+    //   $request->validate([
+    //     'identification'=>'required|unique:patients',
+    //     'gender'=>'required',
+    //     'name'=>'required',
+    //     'lastName'=>'required',
+    //     'phone1'=>'required|numeric',
+    //     'phone2'=>'numeric|nullable',
+    //     'email'=>'required|email|unique:patients',
+    //     'password'=>'required',
+    //   ]);
+    //
+    //   $patient = new patient;
+    //   $patient->fill($request->all());
+    //   $patient->nameComplete = $request->name.' '.$request->lastName;
+    //   $patient->save();
+    //
+    //   $user = new User;
+    //   $user->name = $request->name;
+    //   $user->email = $request->email;
+    //   $user->password = bcrypt($request->password);
+    //   $user->patient_id = $patient->id;
+    //   $user->role = 'Paciente';
+    //
+    //   $user->save();
+    //   $role = Role::where('name','patient')->first();
+    //
+    //   $user->attachRole($role);
+    //    return redirect()->route('patient.index')->with('success', 'Se ha registrado un nuevo Paciente de Forma Satisfactoria');
+    // }
 
     public function edit($id)
     {
@@ -508,7 +517,7 @@ class patientController extends Controller
         $user->save();
 
 
-        return redirect()->route('patient_profile',$id)->with('success', 'Los datos han sido actualizados de forma exitosa.');
+        return redirect()->route('patient_profile',\Hashids::encode($id))->with('success', 'Los datos han sido actualizados de forma exitosa.');
     }
 
     /**
@@ -581,7 +590,7 @@ class patientController extends Controller
 
           $patient->save();
 
-          return redirect()->route('patient_profile',$patient->id)->with('success', 'Datos de dirección guardados de forma satisfactoria');
+          return redirect()->route('patient_profile',\Hashids::encode($patient->id))->with('success', 'Datos de dirección guardados de forma satisfactoria');
     }
 
     public function stipulate_appointment($id){

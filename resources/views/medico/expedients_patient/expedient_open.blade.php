@@ -12,7 +12,19 @@
     float:left;
     /* border:solid 1px black; */
   }
+
+  .area{
+      height: 100px;
+  }
 </style>
+
+@isset($salubridad_report->status)
+
+    <input type="hidden" name="" value="{{$salubridad_report->status}}" id="report">
+@else
+    <input type="hidden" name="" value="" id="report">
+
+@endisset
 
 @endsection
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
@@ -37,9 +49,9 @@
 
     @include('medico.expedients_patient.main_notes_create_config')
 
-    <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id,'expedient'=>$expedient->id])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
+    <a href="{{route('data_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'expedient'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
 
-    <a href="{{route('expedients_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary float-right ml-1">atras</a>
+    <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary float-right ml-1">atras</a>
 
 @if($expedient_notes->first() != Null and !isset($search))
 
@@ -50,8 +62,8 @@
   </div>
 
   <div class="" style="background:red">
-    <a href="{{route('download_expedient_pdf',$expedient->id)}}" class="btn btn-info float-right mb-2 ml-1">Descargar Expediente pdf</a>
-    <a href="{{route('expedient_preview',$expedient->id)}}" class="btn btn-secondary float-right mb-2">Vista previa Expediente</a>
+    <a href="{{route('download_expedient_pdf',\Hashids::encode($expedient->id))}}" class="btn btn-info float-right mb-2 ml-1">Descargar Expediente pdf</a>
+    <a href="{{route('expedient_preview',\Hashids::encode($expedient->id))}}" class="btn btn-secondary float-right mb-2">Vista previa Expediente</a>
 
   </div>
 
@@ -73,11 +85,11 @@
 
           <td>
 
-              <a class="mr-2 btn btn-secondary" href="{{route('view_preview',['m_id'=>$expedient_n->medico_id,'p_id'=>$expedient_n->note->patient_id,'n_id'=>$expedient_n->note->id,'expedient_id'=>$expedient->id])}}"><i class="fas fa-eye"></i></a>
+              <a class="mr-2 btn btn-secondary" href="{{route('view_preview',['m_id'=>\Hashids::encode($expedient_n->medico_id),'p_id'=>\Hashids::encode($expedient_n->note->patient_id),'n_id'=>\Hashids::encode($expedient_n->note->id),'expedient_id'=>\Hashids::encode($expedient->id)])}}"><i class="fas fa-eye"></i></a>
 
-              <a class="mr-2 btn btn-primary" href="{{route('note_edit',['m_id'=>$expedient_n->medico_id,'p_id'=>$expedient_n->note->patient_id,'n_id'=>$expedient_n->note->id,'expedient_id'=>$expedient->id])}}"><i class="fas fa-edit"></i></a>
-              <a href="{{route('download_pdf',[$expedient_n->note_id,'expedient_id'=>$expedient->id])}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
-              <a href="{{route('note_move',[$expedient_n->note_id,'expedient_id'=>$expedient->id])}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
+              <a class="mr-2 btn btn-primary" href="{{route('note_edit',['m_id'=>\Hashids::encode($expedient_n->medico_id),'p_id'=>\Hashids::encode($expedient_n->note->patient_id),'n_id'=>\Hashids::encode($expedient_n->note->id),'expedient_id'=>\Hashids::encode($expedient->id)])}}"><i class="fas fa-edit"></i></a>
+              <a href="{{route('download_pdf',[\Hashids::encode($expedient_n->note_id),'expedient_id'=>\Hashids::encode($expedient->id)])}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
+              <a href="{{route('note_move',[\Hashids::encode($expedient_n->note_id),'expedient_id'=>\Hashids::encode($expedient->id)])}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
           </td>
 
         </tr>
@@ -116,36 +128,42 @@
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 
 @section('scriptJS')
-  {{-- <script src="{{asset('fullcalendar/lib/jquery.min.js')}}"></script> --}}
-  {{-- <script type="text/javascript">
-  function toogle(result){
-    label = result.parentNode;
-    div = label;
-    note_id = "{{$note->id}}";
-    variable = result.id;
 
-    route = "{{route('check_input_notes')}}";
-    $.ajax({
-      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      type: 'POST',
-      url: route,
-      data:{variable:variable,note_id:note_id},
+  <script type="text/javascript">
 
-      success:function(result){
-        console.log(result);
-        // alert(result.variable);
-        // CKEDITOR.instances['Signos_vitales'].setReadOnly(true);
-          //
-          // $(div).next('.form-control').hide();
-          // $(div).prev().css('color','grey');
-        }
-        // $(result).next('.form-control').css({"height":"1px"}).attr("disabled","true");
-      },
-      error:function(error){
-       console.log(error);
-     },
-  });
-  } --}}
+  function verify_empty(result){
+
+      $('#select').val(result.value);
+      if(result.value == 'no' || result.value == 'no_preguntar'){
+           $('#form-report').submit();
+           return false;
+      }
+
+      text = $('#text_diagnostic').val();
+
+      if(text.length == 0){
+          $('#alert_campo').html('El campo diagnostico para el reporte no puede estar vacio, rellene el campo o seleccione otra opcion para continar')
+
+          return false;
+      }else{
+          $('#form-report').submit();
+
+      }
+  }
+  function verify_report(result){
+
+      if(result.id == 'Nota Médica Inicial' || result.id == 'Nota Médica de Evolucion'){
+          window.location.href = result.name;
+          return false;
+      }
+      report = $('#report').val();
+      if(report.length == 0){
+          $('#url_form').val(result.name);
+          $('#modal-report').modal('show');
+          return false;
+      }
+      window.location.href = result.name;
+  }
   </script>
 
 @endsection

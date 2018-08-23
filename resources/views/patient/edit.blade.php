@@ -11,7 +11,7 @@
 					</div>
 				</div>
 
-				{!!Form::model($patient,['route'=>['patient.update',$patient],'method'=>'PUT'])!!}
+				{!!Form::model($patient,['route'=>['patient.update',\Hashids::encode($patient->id)],'method'=>'PUT'])!!}
 					<div class="row">
             <div class="col-lg-6 col-12">
 							<div class="form-group">

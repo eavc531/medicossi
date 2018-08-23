@@ -11,10 +11,8 @@ textarea.form-control{
   <div class="col-12 mb-3">
     <h2 class="text-center font-title">Vista previa: "{{$expedient->name}}" {{\Carbon\Carbon::parse($expedient->created_at)->format('m-d-Y H:i')}}"</h2>
 
-
-
 {{-- <div class="text-right">
-  <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+  <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id) ,'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
 </div> --}}
 
 <div class="card">
@@ -541,12 +539,12 @@ textarea.form-control{
 
 <div class="col-12 text-right">
   @if($expedient == Null)
-      <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+      <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id) ,'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
   @else
-      <a href="{{route('expedient_open',['m_id'=>$medico->id ,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+      <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id) ,'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
   @endif
 
 
-  <a href="{{route('download_expedient_pdf',$expedient->id)}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
+  <a href="{{route('download_expedient_pdf',\Hashids::encode($expedient->id))}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
 </div>
 @endsection

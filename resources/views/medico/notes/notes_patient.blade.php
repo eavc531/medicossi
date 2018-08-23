@@ -13,6 +13,10 @@
   float:left;
   /* border:solid 1px black; */
 }
+
+.area{
+        height: 100px;
+}
 </style>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -58,12 +62,12 @@
         @endif
 
         <button class="btn btn-primary ml-1" type="submit" name="button"><i class="fas fa-search"></i></button>
-        <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-info ml-1">Todas</a>
+        <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-info ml-1">Todas</a>
       </div>
       {!!Form::close()!!}
         @include('medico.notes.main_notes_create_config')
-          {{-- <a class="btn btn-info" href="{{route('type_notes',['medico_id'=>$medico->id,'patient_id'=>$patient->id])}}" data-toggle="tooltip" data-placement="top" title="Tipos de Notas"><i class="fas fa-file-medical"></i></a> --}}
-          <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
+          {{-- <a class="btn btn-info" href="{{route('type_notes',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id)])}}" data-toggle="tooltip" data-placement="top" title="Tipos de Notas"><i class="fas fa-file-medical"></i></a> --}}
+          <a href="{{route('data_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
 
         </div>
 
@@ -87,11 +91,11 @@
                   <td>
 
 
-                    <a class="mr-2 btn btn-secondary" href="{{route('view_preview',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id])}}"><i class="fas fa-eye"></i></a>
-                    <a class="mr-2 btn btn-primary" href="{{route('note_edit',['m_id'=>$medico->id,'p_id'=>$patient->id,'n_id'=>$note->id])}}"><i class="fas fa-edit"></i></a>
-                    <a href="{{route('download_pdf',$note->id)}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
-                    <a href="{{route('note_move',$note->id)}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
-                      {{-- <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota Médica del expediente?, la nota seguira exisitiendo en el panel ´Notas del Paciente´ despues de realizar esta acción.');" href="{{route('expedient_note_delete',$note->id)}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a> --}}
+                    <a class="mr-2 btn btn-secondary" href="{{route('view_preview',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'n_id'=>\Hashids::encode($note->id)])}}"><i class="fas fa-eye"></i></a>
+                    <a class="mr-2 btn btn-primary" href="{{route('note_edit',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'n_id'=>\Hashids::encode($note->id)])}}"><i class="fas fa-edit"></i></a>
+                    <a href="{{route('download_pdf',\Hashids::encode($note->id))}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
+                    <a href="{{route('note_move',\Hashids::encode($note->id))}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
+                      {{-- <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota Médica del expediente?, la nota seguira exisitiendo en el panel ´Notas del Paciente´ despues de realizar esta acción.');" href="{{route('expedient_note_delete',\Hashids::encode($note->id))}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a> --}}
                   </td>
 
                 </tr>
@@ -102,16 +106,16 @@
             {{$notes->appends(Request::all())->links()}}
           </div>
         @elseif($notes->first() == Null and isset($search))
-          <div class="card">
+          <div class="card mt-5">
             <div class="card-body">
               <button type="close" name="button" class="close"></button>
               <h5 class="font-title-blue text-center">No se encontraron resultados para la busqueda</h5>
             </div>
           </div>
         @elseif($notes->first() == Null)
-          <div class="card my-3">
+          <div class="card mt-5">
             <div class="card-body">
-              <h5 class="font-title-blue text-center">No ahi registro de Expedientes</h5>
+              <h5 class="font-title-blue text-center">No ahi registro de notas</h5>
             </div>
           </div>
         @endif
@@ -127,6 +131,14 @@
 </div>
 </div>
 
+    @isset($salubridad_report->status)
+        xx
+        <input type="hidden" name="" value="{{$salubridad_report->status}}" id="report">
+    @else
+        <input type="hidden" name="" value="" id="report">
+
+    @endisset
+
 @endsection
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 
@@ -136,6 +148,21 @@
 
 <script>
 
+    function verify_report(result){
+        $('#seleccion').val(result.id)
+
+        if(result.id == 'Nota Médica Inicial' || result.id == 'Nota Médica de Evolucion'){
+            window.location.href = result.name;
+            return false;
+        }
+        report = $('#report').val();
+        if(report.length == 0){
+            $('#url_form').val(result.name);
+            $('#modal-report').modal('show');
+            return false;
+        }
+        window.location.href = result.name;
+    }
       $(document).ready(function(){
         if($('#select_input').val() == 'Tipo y Fecha'){
             $('#date1').show();

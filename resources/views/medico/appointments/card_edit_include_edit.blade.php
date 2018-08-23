@@ -32,7 +32,7 @@
   <div class="col-lg-3 col-12">
     <div class="form-group">
       <label for="" class="font-title">Tipo de evento</label>
-      {!!Form::select('title',['Ambulatoria'=>'Ambulatoria','Externa o a Domicilio'=>'Externa o a Domicilio','Urgencias'=>'Urgencias','Cita por Internet'=>'Cita por Internet'],null,['class'=>'form-control','id'=>'title9','placeholder'=>'Tipo de Cita'])!!}
+      {!!Form::text('title',null,['class'=>'form-control','id'=>'title9','placeholder'=>'Tipo de Cita','readonly'])!!}
     </div>
   </div>
   <div class="col-lg-3 col-12">

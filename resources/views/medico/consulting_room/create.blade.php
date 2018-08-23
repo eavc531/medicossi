@@ -17,7 +17,7 @@
       <h2 class="text-center font-title">Agregar Consultorio</h2>
     </div>
   </div>
-  {!!Form::open(['route'=>['consulting_room_store',$medico->id],'method'=>'POST'])!!}
+  {!!Form::open(['route'=>['consulting_room_store',\Hashids::encode($medico->id)],'method'=>'POST'])!!}
 
   <div class="col-12">
     <div class="row" id="comb">
@@ -104,7 +104,7 @@
   <div class="row">
 
     <div class="col-lg-6 col-12 mt-2">
-      <a href="{{route('medico.edit',$medico->id)}}" class="btn btn-primary btn-block">Cancelar</a>
+      <a href="{{route('medico.edit',\Hashids::encode($medico->id))}}" class="btn btn-primary btn-block">Cancelar</a>
     </div>
 
     <div class="col-lg-6 col-12 mt-2">

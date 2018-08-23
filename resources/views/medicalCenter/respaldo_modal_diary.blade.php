@@ -123,7 +123,7 @@ Launch demo modal
         </button>
       </div>
       <div class="modal-body">
-        {!!Form::open(['route'=>['medico_diary.update',$medico->id],'method'=>'PUT'])!!}
+        {!!Form::open(['route'=>['medico_diary.update',\Hashids::encode($medico->id)],'method'=>'PUT'])!!}
         {!!Form::hidden('medico_id',$medico->id)!!}
         {!!Form::hidden('event_id',null,['id'=>'event_id'])!!}
         <div class="form-group">
@@ -181,7 +181,7 @@ Launch demo modal
         <button type="submit" class="btn btn-primary">Actualizar</button>
 
         {!!Form::close()!!}
-        {!!Form::open(['route'=>['medico_diary.destroy',$medico->id],'method'=>'DELETE'])!!}
+        {!!Form::open(['route'=>['medico_diary.destroy',\Hashids::encode($medico->id)],'method'=>'DELETE'])!!}
         {!!Form::hidden('event_id',null,['id'=>'event_id_destroy'])!!}
 
           <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estas Segur@ de querer Eliminar este Evento?')">Eliminar</button>

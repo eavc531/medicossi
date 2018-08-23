@@ -9,7 +9,7 @@
       <h2 class="text-center font-title">Calificar cita con Médico: {{$app->medico->name}} {{$app->medico->lastName}} </h2>
     </div>
     <div class="col-1 text-right">
-      <a href="{{route('patient_appointments',$app->patient_id)}}" class="btn btn-secondary"><i class="fas fa-arrow-left mr-2"></i>Atras</a>
+      <a href="{{route('patient_appointments',\Hashids::encode($app->patient_id))}}" class="btn btn-secondary"><i class="fas fa-arrow-left mr-2"></i>Atras</a>
     </div>
   </div>
   <div class="row mt-3">
@@ -70,7 +70,7 @@
            <div class="col-12 col-lg nopadding">
              {{Form::radio('score',5,['class'=> 'mr-1'])}}  Muy Bueno
            </div>
-          
+
          </div>
          <div class="form-group">
           <label for="" class="font-title-grey">Comentario sobre la Cita:</label>

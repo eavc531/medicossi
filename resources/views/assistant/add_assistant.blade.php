@@ -18,8 +18,8 @@
                   {!!Form::text('search',null,['class'=>'form-control','placeholder'=>'nombre/cedula del Asistente','style'=>'width:250px'])!!}
                   {!!Form::submit('Buscar',['class'=>'btn btn-success'])!!}
                   {!!Form::close()!!}
-                  <a href="{{route('add_assistant',$medico->id)}}" class="btn btn-primary ml-2">Mostrar Todos</a>
-                  <a href="{{route('medico_assistants',$medico->id)}}" class="btn btn-secondary ml-2">Mis Asistentes</a>
+                  <a href="{{route('add_assistant',\Hashids::encode($medico->id))}}" class="btn btn-primary ml-2">Mostrar Todos</a>
+                  <a href="{{route('medico_assistants',\Hashids::encode($medico->id))}}" class="btn btn-secondary ml-2">Mis Asistentes</a>
                     </div>
 
 				<div class="row mt-4">

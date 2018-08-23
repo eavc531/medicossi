@@ -44,7 +44,7 @@
 										<td><div class="btn-group" role="group" aria-label="...">
 											<div class="row">
 												<div class="col-12">
-													<a class="btn btn-info  text-center" data-toggle="tooltip" data-placement="top" title="Ver mas" role="button" href="{{route('medicalCenter.edit',$medicalCenter->id)}}">Perfil</i>
+													<a class="btn btn-info  text-center" data-toggle="tooltip" data-placement="top" title="Ver mas" role="button" href="{{route('medicalCenter.edit',\Hashids::encode($medicalCenter->id))}}">Perfil</i>
 													</a>
 												</div>
 											</div>

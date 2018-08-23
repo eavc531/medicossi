@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <h2>"Notificación Cita Agendad por Paciente a travez de Médicossi"</h2>
+  <h2>"Notificación Cita Agendada por Paciente a travez de Médicossi"</h2>
 
     <p>Un Cordial saludo: {{$medico->nameComplete}}, un usario de la plataforma Médicossi: {{$patient->nameComplete}}, con numero de identificaión: {{$patient->identification}}, ha solicitado una cita con usted para la fecha: {{\Carbon\Carbon::parse($event->start)->format('d-m-Y H:i')}}
 

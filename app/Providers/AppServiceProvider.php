@@ -15,11 +15,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Blade::directive('h', function($expression) {
-                $variable = Hashids::encode($expression);
-               return $variable;
-           });
+        //////Paciente o medico
 
+            Blade::if('rol_edit', function(){
+                if(Auth::check() and Auth::user()->role == 'medico'){
+                    return app();
+                }elseif(Auth::check() and Auth::user()->role == 'Asistente'){
+                    return app();
+                }
+            });
+        ///
         \Carbon\Carbon::setLocale(config('app.locale'));
 
         Blade::if('admin', function(){

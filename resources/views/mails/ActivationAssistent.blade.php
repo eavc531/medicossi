@@ -14,7 +14,7 @@
 
     <p><strong>Sus Datos de Usuario para poder ingresar a su cuenta como asistente son los Siguientes:</strong></p>
     <p><strong>Correo: </strong>{{$user->email}}</p>
-    <p><strong>Contraseña:</strong>{{$pass}}</p>
+    <p><strong>Contraseña: </strong>{{$pass}}</p>
 
     <p>Cuenta Creada en la fecha: {{\Carbon\Carbon::now()}}</p>
 

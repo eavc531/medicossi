@@ -38,9 +38,9 @@
 										<div class="btn-group" role="group" aria-label="...">
 										<div class="row">
 											<div class="col-12">
-												<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('specialty_category.edit',$category->id)}}">Editar
+												<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('specialty_category.edit',\Hashids::encode($category->id))}}">Editar
 												</a>
-												<a onclick="return confirm('¿Esta segur@ de Eliminar Esta Categoria?')" class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('specialtyC_delete',$category->id)}}">Eliminar
+												<a onclick="return confirm('¿Esta segur@ de Eliminar Esta Categoria?')" class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('specialtyC_delete',\Hashids::encode($category->id))}}">Eliminar
 												</a>
 											</div>
 										</div>

@@ -27,7 +27,7 @@
             <hr>
           </div>
         </div>
-				{!!Form::open(['route'=>['medico_store_new_patient',$medico->id],'method'=>'POST'])!!}
+				{!!Form::open(['route'=>['medico_store_new_patient',\Hashids::encode($medico->id)],'method'=>'POST'])!!}
 					<div class="row">
             <div class="col-lg-6 col-12">
               <label for="" class="font-title">Email</label>
@@ -136,7 +136,7 @@
           </div>
 				  <div class="row">
 				  	<div class="col-lg-6 col-12 mt-2">
-              <a href="{{route('medico_patients',$medico->id)}}" class="btn-config-blue btn btn-block">Cancelar</a>
+              <a href="{{route('medico_patients',\Hashids::encode($medico->id))}}" class="btn-config-blue btn btn-block">Cancelar</a>
 
 				  	</div>
 				  	<div class="col-lg-6 col-12 mt-2">

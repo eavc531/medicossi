@@ -55,7 +55,7 @@
 									<td><div class="btn-group" role="group" aria-label="...">
 										<div class="row">
 											<div class="col-12">
-												<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('sub_specialty.edit',$specialty->id)}}">Editar
+												<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('sub_specialty.edit',\Hashids::encode($specialty->id))}}">Editar
 												</a>
 											</div>
 										</div>

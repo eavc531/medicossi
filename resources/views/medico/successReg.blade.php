@@ -66,7 +66,7 @@
               </div>
             </div>
             <div class="col-lg-12 col-12 mt-3">
-              <a onclick="loader();this.form.submit()" href="{{route('resendMailMedicoConfirm',$medico->user->id)}}" class="btn btn-primary">Reenviar Correo de Confirmación</a>
+              <a onclick="loader();this.form.submit()" href="{{route('resendMailMedicoConfirm',\Hashids::encode($medico->user->id))}}" class="btn btn-primary">Reenviar Correo de Confirmación</a>
 
            </div>
          </div>

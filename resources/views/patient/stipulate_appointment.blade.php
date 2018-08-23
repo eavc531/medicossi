@@ -6,6 +6,7 @@
 .fc-event {
     border-width: 1px;
 }
+
 </style>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 {{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.css"> --}}
@@ -14,6 +15,7 @@
 @endsection
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 @section('content')
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-9 col-sm-8 col-12">
@@ -40,22 +42,20 @@
        <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
        <h5 id="text_success_1" style=""></h5>
 
-       <a href="{{route('patient_appointments_pending',Auth::user()->patient->id)}}" class="btn btn-outline-primary">Ver mis Citas Pendienes</a>
-        <a href="{{route('home')}}" class="btn btn-outline-success">Ir a Inicio</a>
+       {{-- <a href="{{route('patient_appointments_pending',\Hashids::encode(Auth::user()->patient->id))}}" class="btn btn-outline-primary">Ver mis Citas Pendienes</a> --}}
+        {{-- <a href="{{route('home')}}" class="btn btn-outline-success">Ir a Inicio</a> --}}
        {{--<a class="btn btn-outline-success" href="{{route('patient_appointments',Auth::user()->patient->id)}}">Tus Citas Pendientes</a>--}}
      </div>
      {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
      {{-- IF SHOW CALENDAR --}}
      <div class="text-right">
-         <a href="{{route('home')}}" class="btn btn-secondary">Ir Inicio</a>
-         @if(request()->get('search') != Null)
-            <a class="btn btn-secondary my-3" href="{{request()->get('search')}}"><i class="fas fa-arrow-left mr-1"></i>volver a Perfil {{$medico->nameComplete}}</a>
-        @elseif(request()->get('back'))
-            <a class="btn btn-secondary my-3" href="{{request()->get('back')}}"><i class="fas fa-arrow-left mr-1"></i>volver a mis médicos</a>
-         @endisset
-            {{-- <a href="{{route('medico.edit',$medico->id)}}" class="btn btn-secondary">volver a Perfil {{$medico->nameComplete}}</a> --}}
-     </div>
 
+
+     </div>
+     <div class="text-right mb-2">
+         <a href="{{route('home')}}" class="btn btn-secondary">Ir Inicio</a>
+         <button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Volver</button>
+     </div>
      @if($countEventSchedule != 0)
      <div id='calendar' style=""></div>
      @else
@@ -86,7 +86,7 @@
       <a href="" class="btn-info btn" data-toggle="modal" data-target="#info-modal"><i class="fas fa-info mr-2"></i>¿Como Agendar?</a>
       <div class="form-group text-center">
         <div class="form-group mt-2">
-          <label for="" class="label-title ">Agendar Cita con: {{$medico->name}} {{$medico->lastName}}</label>
+          <label for="" class="label-title ">Agendar Cita con el Médico: {{$medico->name}} {{$medico->lastName}}</label>
         </div>
 
 
@@ -306,7 +306,7 @@
          day = start.format('d');
          hour_start = start.format('HH:mm');
          hour_end = end.format('HH:mm');
-         route = "{{route('compare_hours',$medico->id)}}";
+         route = "{{route('compare_hours',\Hashids::encode($medico->id))}}";
 
          $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -336,7 +336,7 @@
          //alert(start.format('YYYY-MM-DD'));
        },
 
-       events:"{{route('patient_medico_diary_events',$medico->id)}}",
+       events:"{{route('patient_medico_diary_events',\Hashids::encode($medico->id))}}",
 
        eventRender: function (event, element, view) {
 
@@ -411,7 +411,7 @@
     function store_event(){
 
       loader();
-      $('#alert_carga').fadeIn();
+     
       close_edit();
       title = $('#eventType2').val();
       payment_method = $('#payment_method6').val();
@@ -433,9 +433,7 @@
        data:{title:title,payment_method:payment_method,date_start:date_start,hourStart:hourStart,minsStart:minsStart,dateEnd:dateEnd,hourEnd:hourEnd,minsEnd:minsEnd,medico_id:medico_id,patient_id:patient_id},
        error:function(error){
            stop_loader();
-          $('#btn_agendar').attr("disabled", false);
-          $('#btn_cancelar').attr("disabled", false);
-          $('#alert_carga').fadeOut();
+
 
          $.each(error.responseJSON.errors, function(index, val){
           errormsj+='<li>'+val+'</li>';
@@ -554,7 +552,7 @@
    function filtrar(filtro){
       $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
       test = 1;
-      route = '{{route('medico_diary_events2',$medico->id)}}';
+      route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
       $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
        type:'post',

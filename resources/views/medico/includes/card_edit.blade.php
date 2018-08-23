@@ -1,10 +1,14 @@
 <div class="card p-2 mb-2" id="card_edit" style="display:none">
   <div class="row">
     <div class="col-12">
-      <button type="button" class="close" onclick="cerrar_edit()"><span >&times;</span></button>
-
-      {{-- &times; --}}
-    </button>
+      {{-- <button type="button" class="close" onclick="cerrar_edit()"><span >&times;</span></button> --}}
+    {{-- </button> --}}
+    {!!Form::open(['route'=>['redierct_manage_patient'],'method'=>'POST'])!!}
+    {!!Form::hidden('patient_id',null,['id'=>'patient_id9'])!!}
+    {!!Form::hidden('medico_id',$medico->id,['id'=>'patient_id9'])!!}
+    <button type="submit" name="button" class="btn btn-primary btn-sm float-right"><i class="fas  fa-user-cog"></i> Gestionar Paciente</button>
+    {!!Form::close()!!}
+    {{-- <a href="{{route('manage_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success btn-sm float-right"><i class="fas fa-user-cog"></i> Gestionar Paciente</a> --}}
     <h3 class="font-title-blue text-center my-2">Editar</h3>
   </div>
 </div>
@@ -14,6 +18,9 @@
 
     {!!Form::open(['route'=>'update_event','method'=>'POST','id'=>'fo3'])!!}
     {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id9'])!!}
+                    {{-- /////////////////////////////////////////////////////// --}}
+
+                                            {{-- /////////////////////////////// --}}
     {!!Form::hidden('event_id',null,['id'=>'event_id9'])!!}
     {!!Form::hidden('event_id3',null,['id'=>'event_id3'])!!}
     {{-- //clones --}}
@@ -26,13 +33,14 @@
     {{-- // --}}
     <div class="form-group">
       <label for="" class="font-title">Paciente</label>
-      {{Form::text('namePatient',null,['id'=>'namePatient9','class'=>'form-control','disabled'])}}
+      {{Form::text('namePatient',null,['id'=>'namePatient9','class'=>'form-control','readonly'])}}
     </div>
   </div>
   <div class="col-lg-3 col-12">
     <div class="form-group">
       <label for="" class="font-title">Tipo de evento</label>
-      {!!Form::select('title',['Ambulatoria'=>'Ambulatoria','Externa o a Domicilio'=>'Externa o a Domicilio','Urgencias'=>'Urgencias','Cita por Internet'=>'Cita por Internet'],null,['class'=>'form-control','id'=>'title9','placeholder'=>'Tipo de Cita'])!!}
+      {!!Form::text('title',null,['class'=>'form-control','id'=>'title9','placeholder'=>'Tipo de Cita','readonly'])!!}
+
     </div>
   </div>
   <div class="col-lg-3 col-12">
@@ -43,7 +51,7 @@
   </div>
   <div class="col-2">
     <label for="" class="font-title">¿Pagó?</label>
-    {!!Form::text('payment_state',null,['class'=>'form-control','id'=>'payment_state9','disabled'])!!}
+    {!!Form::text('payment_state',null,['class'=>'form-control','id'=>'payment_state9','readonly'])!!}
   </div>
 </div>
 
@@ -93,7 +101,7 @@
   </div>
   <div class="col-3">
     <label for="Estado" class="font-title">Estado:</label>
-    {{Form::text('state',null,['class'=>'form-control','id'=>'state9','disabled'])}}
+    {{Form::text('state',null,['class'=>'form-control','id'=>'state9','readonly'])}}
   </div>
   <div class="col-6 row">
     <div class="col-12 text-center">
@@ -127,7 +135,7 @@
   </div>
   <div class="col-3">
 
-    <input name="mysubmit" type="submit" value="Guardar y Confirmar" class="btn btn-success btn-block" id="but_save"/>
+    <input name="mysubmit" type="submit" value="Guardar" class="btn btn-success btn-block" id="but_save"/>
 
   </div>
     <div class="col-3">

@@ -17,7 +17,7 @@
       <h2 class="text-center font-title">Editar Dirección de Trabajo Principal: {{$medico->name}} {{$medico->lastName}}</h2>
     </div>
   </div>
-  {!!Form::model($medico,['route'=>['medico_update_address',$medico],'method'=>'update'])!!}
+  {!!Form::model($medico,['route'=>['medico_update_address',\Hashids::encode($medico->id)],'method'=>'update'])!!}
 
   <div class="col-12">
     <div class="row" id="comb">
@@ -125,7 +125,7 @@
   <div class="row">
     @if($medico->stateConfirm == 'complete')
     <div class="col-lg-6 col-12 mt-2">
-      <a href="{{route('medico.edit',$medico->id)}}" class="btn btn-primary btn-block">Cancelar</a>
+      <a href="{{route('medico.edit',\Hashids::encode($medico->id))}}" class="btn btn-primary btn-block">Cancelar</a>
     </div>
     @endif
     <div class="col-lg-6 col-12 mt-2">

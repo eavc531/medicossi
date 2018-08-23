@@ -138,7 +138,7 @@
             </div>
             <div class="card-body">
               <h5>Para poder ver el Calendario  de recordatorios y todas sus funciones debe otorgar un Horario de Trabajo</h5>
-              <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-primary">Otorgar Horario de Trabajo</a>
+              <a href="{{route('medico_schedule',\Hashids::encode($medico->id))}}" class="btn btn-primary">Otorgar Horario de Trabajo</a>
             </div>
           </div>
         @endif
@@ -157,11 +157,11 @@
             </div>
             <div class="col-12 border-panel-green text-center my-1">
                 @edit_schedule
-              <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
+              <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',\Hashids::encode($medico->id))}}">
                 Editar horario de consulta
               </a>
           @else
-              <a class="btn btn-block btn-config-green disabled" href="{{route('medico_schedule',$medico->id)}}">
+              <a class="btn btn-block btn-config-green disabled" href="{{route('medico_schedule',\Hashids::encode($medico->id))}}">
                 Editar horario de consulta
               </a>
               @endedit_schedule
@@ -601,7 +601,7 @@
          day = start.format('d');
          hour_start = start.format('HH:mm');
          hour_end = end.format('HH:mm');
-         route = "{{route('compare_hours',$medico->id)}}";
+         route = "{{route('compare_hours',\Hashids::encode($medico->id))}}";
 
          $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -629,7 +629,7 @@
 
         },
 
-        events:"{{route('reminder_calendar',$medico->id)}}",
+        events:"{{route('reminder_calendar',\Hashids::encode($medico->id))}}",
 
         eventClick: function(event, jsEvent, view){
             var start = $.fullCalendar.moment(event.start).format('YYYY-MM-DD');

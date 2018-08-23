@@ -31,6 +31,11 @@ class medico extends Model
        'name_comercial'
     ];
 
+
+    public function rate_medic(){
+      return $this->hasOne('App\rate_medic');
+   }
+
     public function promoter(){
       return $this->belongsTo('App\promoter');
 

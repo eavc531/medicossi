@@ -6,12 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class rate_medic extends Model
 {
-  // public function medico(){
-  //    return $this->belongsTo('App\medico');
-  // }
+    protected $fillable = [
+        'question1',
+        'answer1',
+        'question2',
+        'answer2',
+        'question3',
+        'answer3',
+        'question4',
+        'answer4',
+        'question5',
+        'answer5',
+        'answer6',
+        'answer7',
+        'rate',
+        'votes',
+        'show',
+        'medico_id',
+        'patient_id',
 
-  public function patient(){
-     return $this->belongsTo('App\patient');
-  }
+        ];
+
+          public function patient(){
+             return $this->belongsTo('App\patient');
+          }
 
 }

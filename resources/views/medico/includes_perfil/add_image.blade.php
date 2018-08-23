@@ -12,7 +12,7 @@
 	</div>
 	<div class="container">
 		<div class="text-right">
-			<a class="btn btn-secondary mb-1"href="{{route('medico.edit',$medico->id)}}">Volver</a>
+			<a class="btn btn-secondary mb-1"href="{{route('medico.edit',\Hashids::encode($medico->id))}}">Volver</a>
 
 		</div>
 		<div class="register">

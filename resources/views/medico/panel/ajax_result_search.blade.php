@@ -18,7 +18,7 @@
             <td>{{$patient->lastName}}</td>
             <td>{{$patient->state}}</td>
             <td>{{$patient->city}}</td>
-            <td><a href="{{route('medico_stipulate_appointment',['medico_id'=>$medico_id,'patient_id'=>$patient->id])}}" class="btn btn-primary btn-sm">Agendar Cita</a></td>
+            <td><a href="{{route('medico_stipulate_appointment',['medico_id'=>\Hashids::encode($medico_id),'patient_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-primary btn-sm">Agendar Cita</a></td>
           </tr>
         @endforeach
 

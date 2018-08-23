@@ -38,8 +38,8 @@
         </div>
         <div class="row">
           <div class="col-lg mt-3 col-12 col-sm-6 inline">
-            <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-primary mr-2 mt-1" data-toggle="tooltip" data-html="true" title="<em>Lista de Pacientes</em>"><i class="fas fa-bars mr-2"></i>Lista de Pacientes</a>
-            <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-primary mr-2 mt-1" data-toggle="tooltip" data-html="true" title="<em>Notas Médicas</em>"><i class="fas fa-notes-medical mr-2"></i>Notas Médicas</a>
+            <a href="{{route('medico_patients',\Hashids::encode($medico->id))}}" class="btn btn-primary mr-2 mt-1" data-toggle="tooltip" data-html="true" title="<em>Lista de Pacientes</em>"><i class="fas fa-bars mr-2"></i>Lista de Pacientes</a>
+            <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-primary mr-2 mt-1" data-toggle="tooltip" data-html="true" title="<em>Notas Médicas</em>"><i class="fas fa-notes-medical mr-2"></i>Notas Médicas</a>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@
           <h4 class="font-title-blue mb-0">Nueva {{$note->title}}</h4>
         </div>
         <div class="col-lg-6 col-sm-6 col-12 mt-2">
-          <a href="{{route('admin_data_patient',['med_id'=>$medico->id,'pat_id'=>$patient->id])}}" class="btn btn-primary mb-2" data-toggle="tooltip" data-html="true" title="<em>Modelos Notas Médicas</em>"><i class="far fa-file mr-2"></i>Modelos Notas Médicas</a>
+          <a href="{{route('admin_data_patient',['med_id'=>\Hashids::encode($medico->id),'pat_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-primary mb-2" data-toggle="tooltip" data-html="true" title="<em>Modelos Notas Médicas</em>"><i class="far fa-file mr-2"></i>Modelos Notas Médicas</a>
         </div>
       </div>
       {!!Form::open(['route'=>'note_store','method'=>'POST'])!!}
@@ -102,7 +102,7 @@
           </div>
         </div>
       </div>
-      {!!Form::model($patient,['route'=>['patient_store_address',$patient],'method'=>'update'])!!}
+      {!!Form::model($patient,['route'=>['patient_store_address',\Hashids::encode($patient->id)],'method'=>'update'])!!}
       <div class="card p-3">
         <h5 class="font-title-blue"><b>Dirección del Paciente</b></h5>
         <div class="row mt-3">

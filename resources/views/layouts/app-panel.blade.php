@@ -148,7 +148,7 @@
     <ul class="navbar-nav mr-auto">
 		@if(Auth::check())
   				 <a class="navbar-brand mr-auto" id="show" href="#" style="position: absolute; left: 2%; top: 30%;"><i class="fas fa-bars"></i></a>
-  	 @endif
+  	 	@endif
   	 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
   		 <span><i class="fa fa-bars"></i></span>
   	 </button>
@@ -261,7 +261,7 @@
 						</div>
 					</div>
 					<div class="col-lg-10 col-sm-9 col-12">
-						
+
 						@include('notifications.alerts')
 						@yield('content')
 					</div>

@@ -19,7 +19,7 @@
 				</div>
 				@if(Auth::user()->role == 'Asistente')
 				<div class="text-right">
-					<a href="{{route('assistant_medicos',$assistant->id)}}" class="btn btn-secondary">Atras</a>
+					<a href="{{route('assistant_medicos',\Hashids::encode($assistant->id))}}" class="btn btn-secondary">Atras</a>
 				</div>
 				<div class="text-center">
 					<p class="text-secondary"></p>
@@ -459,7 +459,7 @@
                     	@assistant
 
 					@else
-						<a href="{{route('medico_assistants',$medico->id)}}" class="btn btn-secondary">Cancelar</a>
+						<a href="{{route('medico_assistants',\Hashids::encode($medico->id))}}" class="btn btn-secondary">Cancelar</a>
 						<input type="submit" class="btn btn-success " name="" value="Guardar Cambios">
 						@endassistant
                     </div>

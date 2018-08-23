@@ -47,7 +47,7 @@
 						</div>
 						<div class="col-6  text-right">
 							@admin
-								<a class="btn btn-secondary" href="{{route('promoters.index',$promoter->id)}}">Atras</a>
+								<a class="btn btn-secondary" href="{{route('promoters.index',\Hashids::encode($promoter->id))}}">Atras</a>
 
 							@else
 									<a class="btn btn-secondary" href="{{route('panel_control_promoters',request()->id)}}">Atras</a>

@@ -10,7 +10,7 @@
             <hr>
           </div>
         </div>
-      {!!Form::model($category,['route'=>['specialty.update',$category],'method'=>'PUT'])!!}
+      {!!Form::model($category,['route'=>['specialty.update',\Hashids::encode($category->id)],'method'=>'PUT'])!!}
 
           <div class="row">
             <div class="col-lg-6 col-12">

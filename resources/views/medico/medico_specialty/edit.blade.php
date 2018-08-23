@@ -9,7 +9,7 @@
       <div class="col-8">
         <ul class="nav flex-column text-left">
           <li class="nav-item">
-            {!!Form::model($specialty,['route'=>['medico_specialty_update',$specialty],'method'=>'POST'])!!}
+            {!!Form::model($specialty,['route'=>['medico_specialty_update',\Hashids::encode($specialty)],'method'=>'POST'])!!}
             {{Form::radio('type','Pregrado o  Carrera Profesional')}}
             <span for=""> Pregrado o  Carrera Profesional </span>
           </li>
@@ -85,7 +85,7 @@
     </div>
      <div class="row my-5">
        <div class="col-6">
-         <a href="{{route('medico.edit',$specialty->medico_id)}}" class="btn-config-blue btn btn-block">Cancelar</a>
+         <a href="{{route('medico.edit',\Hashids::encode($specialty->medico_id))}}" class="btn-config-blue btn btn-block">Cancelar</a>
 
        </div>
       <div class="col-6">

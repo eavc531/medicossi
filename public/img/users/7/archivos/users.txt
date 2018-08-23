@@ -1,0 +1,7 @@
+Panel administradores y promotores
+
+ya funciona casi todo el panel de administrador, puede ir probando y 
+ver la informacion de los usuarios que se muestra en este, aqui tambien puede
+modificar el precio de los planes, agregar especialidades, sub especialidades y categorias.
+
+para probar puede realizar 

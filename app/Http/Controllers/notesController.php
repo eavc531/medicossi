@@ -11,16 +11,86 @@ use App\data_patient;
 use App\expedient;
 use App\expedient_note;
 use App\test_lab;
+use App\salubridad_report;
+
 
 use Session;
 use PDF;
 use App\vital_sign;
+use App\disease_list;
 
 //validacion personalizada
 use Validator;
 //
 class notesController extends Controller
 {
+
+    public function store_report(Request $request){
+        // dd($request->select);
+        if($request->select == 'no'){
+            return redirect($request->url);
+        }elseif($request->select == 'no_preguntar'){
+
+            $patient = patient::find($request->patient_id)->toArray();
+            $salubridad_report = new salubridad_report;
+            $salubridad_report->fill($patient);
+            $salubridad_report->status = 'no_recordar';
+            $salubridad_report->diagnostic = Null;
+            $salubridad_report->medico_id = $request->medico_id;
+            $salubridad_report->patient_id = $request->patient_id;
+            $salubridad_report->save();
+            return redirect($request->url);
+        }
+
+
+        $request->validate([
+            'diagnostic_report'=>'required|max:255'
+        ]);
+
+            $patient = patient::find($request->patient_id)->toArray();
+
+            $salubridad_report = new salubridad_report;
+            $salubridad_report->fill($patient);
+            $salubridad_report->status = 'realizado';
+            $salubridad_report->diagnostic = $request->diagnostic_report;
+            $salubridad_report->medico_id = $request->medico_id;
+            $salubridad_report->patient_id = $request->patient_id;
+            $salubridad_report->save();
+
+            return back()->with('success','El reporte de salubridad para este paciente ha sido creado con exito.');
+
+
+
+    }
+
+    // public function salubridad_report_store(Request $request){
+    //     $validator = Validator::make($request->all(), [
+    //         'diagnostic_report'=>'required|max:255'
+    //     ]);
+    //
+    //     if ($validator->fails()) {
+    //         return back()->with('error2','El campo Diagnostico de reporte es requerido, y debe ser menor a 255 cracteres.')
+    //         ->withInput();
+    //     }
+    //
+    //     $request->validate([
+    //
+    //     ]);
+    //     dd($request->all());
+    // }
+
+
+    public function autocomplete_diagnostic(){
+      $diagnostic = request()->input('term');
+      $list = disease_list::where('name','LIKE','%'.$diagnostic.'%')->get();
+
+      foreach ($list as $query)
+        {
+            $results[] = ['id'=>$query->id,'value'=>$query->name];
+        }
+
+      return response()->json($results);
+    }
 
     public function vital_sign_delete(Request $request)
     {
@@ -259,7 +329,7 @@ class notesController extends Controller
         $data_patient = data_patient::where('medico_id',$medico_id)->where('patient_id',$expedient->patient_id)->first();
 
         if($data_patient == Null){
-            return redirect()->route('data_patient',['m_id'=>$medico_id,'p_id'=>$expedient->patient_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
+            return redirect()->route('data_patient',['m_id'=>\Hashids::encode($medico_id),'p_id'=>\Hashids::encode($expedient->patient_id)])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
         }
 
         $expedient_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->patient_id;
@@ -310,8 +380,12 @@ class notesController extends Controller
 
     }
     public function expedient_open($m_id,$p_id,$ex_id){
+
+
         $notes_pre = note::where('type', 'default')->get();
         $expedient = expedient::find($ex_id);
+
+        // dd($ex_id);
         $expedient_notes  = expedient_note::where('expedient_id', $ex_id)->orderBy('note_id','desc')->paginate(10);
         $medico = medico::find($m_id);
         $patient = patient::find($p_id);
@@ -359,7 +433,7 @@ class notesController extends Controller
         $data_patient = data_patient::where('medico_id',$note->medico_id)->where('patient_id',$note->patient_id)->first();
 
         if($data_patient == Null){
-            return redirect()->route('data_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
+            return redirect()->route('data_patient',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id)])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
         }
         $medico = medico::find($note->medico_id);
         $patient = patient::find($note->patient_id);
@@ -405,7 +479,7 @@ class notesController extends Controller
 
         $data_patient = data_patient::where('medico_id',$m_id)->where('patient_id',$p_id)->first();
         if($data_patient == Null){
-            return redirect()->route('data_patient',['m_id'=>$m_id,'p_id'=>$p_id])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
+            return redirect()->route('data_patient',['m_id'=>\Hashids::encode($m_id),'p_id'=>\Hashids::encode($p_id)])->with('warning', 'Antes de poder ver la vista previa de un documento o descargarlo, debe rellenar los datos siguintes.');
         }
         $patient = patient::find($p_id);
         $note = note::find($n_id);
@@ -442,6 +516,7 @@ class notesController extends Controller
         $medico = medico::find($m_id);
         $note = note::find($n_id);
         //
+
         if($request->expedient_id == Null){
             $expedient = Null;
         }else{
@@ -625,15 +700,18 @@ class notesController extends Controller
 
 
         public function note_create(Request $request,$m_id,$p_id,$n_id){
+            $salubridad_report = salubridad_report::where('medico_id',$m_id)->where('patient_id', $p_id)->first();
+
 
             $patient = patient::find($p_id);
             $notedefault = note::find($n_id);
 
             $medico = medico::find($m_id);
+
             // dd($request->medico_id);
             $noteCount = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
 
-            $note_ini = note::where('medico_id',$m_id)->where('title','Nota Médica Inicial')->where('type', 'customized')->first();
+            $note_ini = note::where('medico_id',$m_id)->where('title',$notedefault->title)->where('type', 'customized')->first();
 
             if($note_ini == null){
                 $note_ini_exist = 'no';
@@ -651,7 +729,7 @@ class notesController extends Controller
 
             foreach ($data as $value) {
                 if($note_ini_exist == 'no'){
-                    dd('noooo');
+
                     $note = new note;
                     $note->title = $value['title'];
                     $note->medico_id = $m_id;
@@ -714,8 +792,10 @@ class notesController extends Controller
 
             $note = note::where('medico_id',$m_id)->where('title', $notedefault->title)->where('type', 'customized')->first();
 
+            // dd($notedefault->title);
             ////////////////////////////////
             $test_labs = test_lab::where('note_id',$note->id)->orderBy('question','asc')->get();
+
             $vital_signs = vital_sign::where('note_id',$note->id)->orderBy('question','asc')->get();
 
             // dd($vital_signs);
@@ -723,22 +803,24 @@ class notesController extends Controller
             if($request->expedient_id == Null){
                 $expedient = Null;
             }else{
-                $expedient = expedient::find($request->expedient_id);
+                $expedient = expedient::find(\Hashids::decode($request->expedient_id))->first();
             }
 
+            /////////////VERIFICAR si Ahi reporte para Salubridad
+
             if($note->title == 'Nota Médica Inicial'){
-                return view('medico.notes.note_medic_ini_create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient'));
+                return view('medico.notes.note_medic_ini_create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
             }elseif($note->title == 'Nota Médica de Evolucion'){
 
-                return view('medico.notes.evo.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient'));
+                return view('medico.notes.evo.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
             }elseif($note->title == 'Nota de Interconsulta'){
-                return view('medico.notes.inter.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient'));
+                return view('medico.notes.inter.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
             }elseif($note->title == 'Nota médica de Urgencias'){
-                return view('medico.notes.urgencias.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient'));
+                return view('medico.notes.urgencias.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
             }elseif($note->title == 'Nota médica de Egreso'){
-                return view('medico.notes.egreso.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient'));
+                return view('medico.notes.egreso.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
             }elseif($note->title == 'Nota de Referencia o traslado'){
-                return view('medico.notes.referencia.create',compact('patient','medico','note','expedient','test_labs','vital_signs'));
+                return view('medico.notes.referencia.create',compact('patient','medico','note','expedient','test_labs','vital_signs','salubridad_report'));
             }
 
             return view('medico.notes.note_medic_ini_config',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient'));
@@ -769,10 +851,10 @@ class notesController extends Controller
 
         // dd($request->all());
         if($request->boton_submit == 'Guardar'){
-            return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
+            return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
 
         }else{
-            return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
+            return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
         }
     }
 
@@ -790,8 +872,8 @@ class notesController extends Controller
         $patient = patient::find($p_id);
         $notes_pre = note::where('type', 'default')->get();
         $medico = medico::find($m_id);
-
-        return view('medico.notes.notes_patient',compact('notes','patient','medico','notes_pre'));
+        $salubridad_report = salubridad_report::where('medico_id',$m_id)->where('patient_id', $p_id)->first();
+        return view('medico.notes.notes_patient',compact('notes','patient','medico','notes_pre','salubridad_report'));
     }
 
 
@@ -805,7 +887,7 @@ class notesController extends Controller
             ]);
 
             if($request->type == 'Todas'){
-                return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id]);
+                return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)]);
             }
             $notes = note::where('patient_id', $request->patient_id)->where('medico_id',$request->medico_id)->where('title',$request->type)->orderBy('created_at','desc')->paginate(10);
 
@@ -882,14 +964,15 @@ class notesController extends Controller
         }
 
         if($request->boton_submit == 'Guardar'){
-            return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id])->with('success', 'se han guardado los datos de forma satisfactoria');;
+            return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success', 'se han guardado los datos de forma satisfactoria');;
 
         }else{
-            return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'se han guardado los datos de forma satisfactoria');
+            return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'se han guardado los datos de forma satisfactoria');
         }
 
     }
     public function note_store(Request $request){
+
 
             if($request->title == 'Nota médica de Egreso'){
             $request->validate([
@@ -994,14 +1077,49 @@ class notesController extends Controller
             $expedient_note->note_id = $note->id;
             $expedient_note->save();
         }
+        ///HACER REPORTE  O NO
 
 
-        if($request->boton_submit == 'Guardar Nota en Expediente'){
-            return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id]);
+        if($request->guarda_report == 'si'){
+            $patient = patient::find($request->patient_id)->toArray();
+
+            $salubridad_report = new salubridad_report;
+            $salubridad_report->fill($patient);
+            $salubridad_report->status = 'realizado';
+            $salubridad_report->diagnostic = $request->diagnostic_report;
+            $salubridad_report->medico_id = $request->medico_id;
+            $salubridad_report->patient_id = $request->patient_id;
+            $salubridad_report->save();
+        }elseif($request->guarda_report == 'no_recordar'){
+            $salubridad_report = new salubridad_report;
+            $salubridad_report->fill($patient);
+            $salubridad_report->status = 'no_recordar';
+            $salubridad_report->diagnostic = Null;
+            $salubridad_report->medico_id = $request->medico_id;
+            $salubridad_report->patient_id = $request->patient_id;
+            $salubridad_report->save();
+        }
+
+        if($request->expedient_id != Null){
+            if($request->guarda_report == 'si'){
+                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success', 'Se a creado la nota, y se creado el reporte del medico para salubridad, puede ver y editar este reporte en el panel "gestion paciente"');
+            }else{
+                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)]);
+            }
 
         }else{
-            return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success', 'Nueva nota Médica creada');
+            if($request->guarda_report == 'si')
+            {
+                return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Se a creado la nota, y se creado el reporte del medico para salubridad, puede ver y editar este reporte en el panel "gestion paciente"');;
+            }else{
+                return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Se a creado la nota de forma satisfactoria');
+            }
+
+
+
+
         }
+
     }
 
     public function check_input_notes(Request $request){

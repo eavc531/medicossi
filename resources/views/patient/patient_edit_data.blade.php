@@ -20,7 +20,7 @@
 						<hr>
 					</div>
 				</div>
-				{!!Form::model($patient,['route'=>['patient_update',$patient],'method'=>'POST'])!!}
+				{!!Form::model($patient,['route'=>['patient_update',\Hashids::encode($patient->id)],'method'=>'POST'])!!}
 					<div class="row">
             <div class="col-lg-6 col-12">
 							<div class="form-group">
@@ -69,7 +69,7 @@
 					</div>
 				  <div class="row">
 				  	<div class="col-lg-6 col-12 mt-2">
-              <a href="{{route('patient_profile',$patient->id)}}" class="btn-config-blue btn btn-block">Cancelar</a>
+              <a href="{{route('patient_profile',\Hashids::encode($patient->id))}}" class="btn-config-blue btn btn-block">Cancelar</a>
 				  	</div>
 				  	<div class="col-lg-6 col-12 mt-2">
 				  		{!!Form::submit('Guardar',['class'=>'btn-config-green btn btn-block'])!!}

@@ -33,7 +33,7 @@
 								@foreach ($cities as $city)
 								<tr>
 									<td class="text-center">{{$city->name}}</td>
-									<td class="text-center"><a onclick="return confirm('Esta Seguro de Deshabilitar esta Ciudad.')" href="{{route('deleteCityAdmin',$city->id)}}">Eliminar</a></td>
+									<td class="text-center"><a onclick="return confirm('Esta Seguro de Deshabilitar esta Ciudad.')" href="{{route('deleteCityAdmin',\Hashids::encode($city->id))}}">Eliminar</a></td>
 								</tr>
 								@endforeach
 

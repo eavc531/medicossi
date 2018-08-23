@@ -78,7 +78,7 @@
               <div class="col-12 text-center">
                  @if(Auth::user()->role == 'medico')
                      @if($plan_actual == Null)
-                       <a href="{{route('plan_agenda_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                       <a href="{{route('plan_agenda_contract',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-primary btn-block">Contratar</a>
                      @else
                        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
                          Contratar
@@ -86,7 +86,7 @@
                      @endif
                 @else
                     @if($plan_actual == Null)
-                      <a href="{{route('plan_agenda_contract',Auth::user()->assistant->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                      <a href="{{route('plan_agenda_contract',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-primary btn-block">Contratar</a>
                     @else
                       <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
                         Contratar
@@ -114,12 +114,14 @@
            </div>
            <div class="card-body card-height">
              <p class="card-text">-Todo lo del plan mi agenda+</p>
-             <p class="card-text">-Perfil completo</p>
+             <p class="card-text">-PERFIL COMPLETO. usuarios podran ubicarlo a travez de la busqueda por filtros principal</p>
              <p class="card-text ml-3">-Telefono oficina</p>
              <p class="card-text ml-3">-Telefono móvil</p>
              <p class="card-text ml-3">-Redes sociales y web site</p>
              <p class="card-text">-Sus pacientes podran agendar citas en linea</p>
 
+             <p class="card-text">-Podra crear usuarios tipo asistente para su agenda, y asignarle derechos. Ejemplo: ver agenda,asignar citas, cambiar su estatus, enviar mensajes de confirmación, etc...</p>
+             <p class="card-text">Podra ser calíficado por su paciente (¡Esto atraera mas confianza a nuevos pacientes obteniendo así mas citas!).</p>
              {{-- <p class="card-text">-Adjuntar archivos a expedientes clínicos</p>
              <p class="card-text ml-3">Sube el expediente de su paciente</p>
              <p class="card-text ml-3">-Fotos</p>
@@ -130,8 +132,6 @@
              <p class="card-text">Obten información relevante</p>
              <p class="card-text ml-3">-Numero de pacientes atendidos por primera vez para el reporte (suive) con clave del diagnostico CIE-10</p> --}}
              {{-- <p class="card-text ml-3">-Pacientes atendidos según su tipo de consulta</p> --}}
-             <p class="card-text">-Podra crear usuarios tipo asistente para su agenda, y asignarle derechos. Ejemplo: ver agenda,asignar citas, cambiar su estatus, enviar mensajes de confirmación, etc...</p>
-             <p class="card-text">Podra ser calíficado por su paciente (¡Esto atraera mas confianza a nuevos pacientes obteniendo así mas citas!).</p>
 
 
           </div>
@@ -140,7 +140,7 @@
 
                 @if(Auth::user()->role == 'medico')
                     @if($plan_actual == Null)
-                      <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                      <a href="{{route('plan_profesional_contract',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-primary btn-block">Contratar</a>
                     @else
                       <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal11">
                         Contratar
@@ -148,7 +148,7 @@
                     @endif
                @else
                    @if($plan_actual == Null)
-                     <a href="{{route('plan_profesional_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                     <a href="{{route('plan_profesional_contract',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-primary btn-block">Contratar</a>
                    @else
                      <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal11">
                        Contratar
@@ -188,9 +188,29 @@
            <p class="card-text ml-3">-Nota de interconsulta (Comparte la información del excedente con otro profesional de salud)</p>
            <p class="card-text ml-3">-Notas para cirugia</p>
            <p class="card-text">-Impresiones de recetas y estudios de laboratorios</p>
+            <p class="card-text">-Adjuntar archivos a expedientes clinicos</p>
+            <p class="card-text">-Subir el expediente de su asistente:</p>
+            <p class="card-text">
+                <ul>
+                    <li>Fotos</li>
+                    <li>Placas Radiograficas</li>
+                    <li>Estudios de Laboratorio</li>
+
+                </ul>
+            </p>
            <p class="card-text">-Modulos de respaldos</p>
-           <p class="card-text ml-3">-Los respaldos podra almacenarlos donde prefiera</p>
-           <p class="card-text ml-3">-Sus expedientes podran migrarlos en el momento</p>
+           <p class="card-text ml-3"><ul>
+                                        <li>
+                                            Los respaldos podra almacenarlos donde prefiera.
+                                        </li>
+                                        <li>
+                                            Sus expedientes podran migrarlos en el momento que prefiera, o convertirlos en pdf.
+                                        </li>
+
+                                    </ul>
+                                </p>
+            <p class="card-text">-RESPALDO DE TODOS SUS ARCHIVOS EN LA NUBE CON LA MEJOR TECNOLOGIA DE SEGURIDAD</p>
+            <p class="card-text">-MODULO DE ESTADISTICAS (para la recopilación de información importante.)</p>                   
 
         </div>
         <div class="my-2">
@@ -198,7 +218,7 @@
 
               @if(Auth::user()->role == 'medico')
                   @if($plan_actual == Null)
-                    <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                    <a href="{{route('plan_platino_contract',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-primary btn-block">Contratar</a>
                   @else
                     <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal33">
                       Contratar
@@ -206,7 +226,7 @@
                   @endif
              @else
                  @if($plan_actual == Null)
-                   <a href="{{route('plan_platino_contract',Auth::user()->medico_id)}}" class="btn btn-primary btn-block">Contratar</a>
+                   <a href="{{route('plan_platino_contract',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-primary btn-block">Contratar</a>
                  @else
                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal33">
                      Contratar
@@ -241,9 +261,9 @@
         <div class="col-12 text-center">
           {{-- <a href="" class="btn btn-primary btn-block" data-toggle="modal" data-target="#information">Contratar</a> --}}
           @if(Auth::user()->role == 'medico')
-          <a class="btn btn-primary btn-block" href="{{route('contract_basic',Auth::user()->medico_id)}}">Contratar</a>
+          <a class="btn btn-primary btn-block" href="{{route('contract_basic',\Hashids::encode(Auth::user()->medico_id))}}">Contratar</a>
       @elseif(Auth::user()->role == 'Asistente')
-          <a class="btn btn-primary btn-block" href="{{route('contract_basic',Auth::user()->assistant->medico_id)}}">Contratar</a>
+          <a class="btn btn-primary btn-block" href="{{route('contract_basic',\Hashids::encode(Auth::user()->assistant->medico_id))}}">Contratar</a>
       @endif
         </div>
       </div>

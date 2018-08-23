@@ -52,7 +52,7 @@
                 <li><strong>Id del Centro Medico:</strong> {{$medicalCenter->id_medicalCenter}}</li>
                 <li><strong>Telefono de Oficina 2:</strong> {{$medicalCenter->phone2}}</li>
               </ul>
-              <a class="btn btn-success btn-block" href="{{route('medical_center_edit_data',$medicalCenter->id)}}">Editar</a>
+              <a class="btn btn-success btn-block" href="{{route('medical_center_edit_data',\Hashids::encode($medicalCenter->id))}}">Editar</a>
             </div>
           </div>
           <hr>
@@ -80,7 +80,7 @@
                 <li><strong>Numero Interno:</strong> {{$medicalCenter->number_int}}</li>
               </ul>
 
-              <a class="btn btn-success btn-block" href="{{route('medical_center_edit_address',$medicalCenter->id)}}">Editar</a>
+              <a class="btn btn-success btn-block" href="{{route('medical_center_edit_address',\Hashids::encode($medicalCenter->id))}}">Editar</a>
             </div>
           </div>
           <hr>
@@ -247,7 +247,7 @@
         </div>
         <div class="row">
           <div class="col-12 col-sm-6 offset-sm-6 col-lg-6 offset-lg-6">
-            <a class="btn btn-success btn-block" href="{{route('medical_center_edit_schedule',$medicalCenter->id)}}">Editar Horario</a>
+            <a class="btn btn-success btn-block" href="{{route('medical_center_edit_schedule',\Hashids::encode($medicalCenter->id))}}">Editar Horario</a>
           </div>
         </div>
         <hr>
@@ -290,7 +290,7 @@
 <div class="row my-3">
   <div class="col-12 col-sm-6 offset-sm-6 col-lg-6 offset-lg-6">
 
-   <a href="{{route('medical_center_manage_medicos',$medicalCenter->id)}}" data-target="#modal-service2" class="btn btn-success btn-block">Ver/Administrar</a>
+   <a href="{{route('medical_center_manage_medicos',\Hashids::encode($medicalCenter->id))}}" data-target="#modal-service2" class="btn btn-success btn-block">Ver/Administrar</a>
  </div>
 </div>
 <hr>
@@ -327,7 +327,7 @@
       {{-- div que encierra cada imagen --}}
       <div class="col my-2">
         <img src="{{asset($image->path)}}" width="auto" height="80px" alt="">
-        <a onclick="return confirm('¿Esta seguro de eliminar esta Imagen?')"href="{{route('photo_delete',$image->id)}}">x</a>
+        <a onclick="return confirm('¿Esta seguro de eliminar esta Imagen?')"href="{{route('photo_delete',\Hashids::encode($image->id))}}">x</a>
       </div>
       @endforeach
     </div>
@@ -422,7 +422,7 @@
       <label class="" for="show-question2"></label>
     </div>
     <div class= "p-3 mt-3" id="panel-insurance" style="display:none;">
-      <a href="{{route('create_add_insurrances',$medicalCenter->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
+      <a href="{{route('create_add_insurrances',\Hashids::encode($medicalCenter->id))}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
     </div>
     <div class="aseguradoras" id="aseguradoras" style="display:none">
         <div class="card">
@@ -439,7 +439,7 @@
 
               </div>
               <div class="col-6">
-                  <a href="{{route('create_add_insurrances',$medicalCenter->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
+                  <a href="{{route('create_add_insurrances',\Hashids::encode($medicalCenter->id))}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
               </div>
             </div>
           </div>
@@ -483,7 +483,7 @@
 
     function hide_aseguradoras(){
       type_patient_service = $('#radio').val();
-      medicalCenter_id = "{{$medicalCenter->id}}"
+      medicalCenter_id = "{{\Hashids::encode($medicalCenter->id)}}"
       route = "{{route('select_insurrances')}}"
       $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -501,7 +501,7 @@
 
     function show_aseguradoras(){
       type_patient_service = $('#radio2').val();
-      medicalCenter_id = "{{$medicalCenter->id}}"
+      medicalCenter_id = "{{\Hashids::encode($medicalCenter->id)}}"
       route = "{{route('select_insurrances')}}"
       $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -596,7 +596,7 @@
     }//fin searchInMap
 
     function store_coordinates(){
-      route = '{{route('medicalCenter_store_coordinates',$medicalCenter->id)}}';
+      route = '{{route('medicalCenter_store_coordinates',\Hashids::encode($medicalCenter->id))}}';
       latitud = $('#latitudSave').val();
       longitud = $('#longitudSave').val();
 
@@ -620,7 +620,7 @@
 
 
     function show_description(){
-      route = '{{route('medicalCenter_description_show',$medicalCenter->id)}}';
+      route = '{{route('medicalCenter_description_show',\Hashids::encode($medicalCenter->id))}}';
       $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
        type:'post',
@@ -644,7 +644,7 @@
 
       description = $('#input_description').val();
     //medicalCenter_id = 'xxssd';
-    route = "{{route('medicalCenter_description_update',$medicalCenter->id)}}";
+    route = "{{route('medicalCenter_description_update',\Hashids::encode($medicalCenter->id))}}";
     errormsj = '';
     $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -671,7 +671,7 @@
 
   function medicalCenter_list_specialty(){
 
-   route = "{{route('medicalCenter_list_specialty',$medicalCenter->id)}}";
+   route = "{{route('medicalCenter_list_specialty',\Hashids::encode($medicalCenter->id))}}";
    medicalCenter_id = '{{$medicalCenter->id}}';
 
    $.ajax({
@@ -691,7 +691,7 @@
 
  function medicalCenter_list_experience(){
 
-   route = "{{route('medicalCenter_list_experience',$medicalCenter->id)}}";
+   route = "{{route('medicalCenter_list_experience',\Hashids::encode($medicalCenter->id))}}";
    medicalCenter_id = '{{$medicalCenter->id}}';
 
    $.ajax({
@@ -712,7 +712,7 @@
  function medical_center_experience_store(){
   name = $('#input_experience').val();
       //medicalCenter_id = 'xxssd';
-      route = "{{route('medical_center_experience_store',$medicalCenter->id)}}";
+      route = "{{route('medical_center_experience_store',\Hashids::encode($medicalCenter->id))}}";
       errormsj = '';
       $.ajax({
        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -740,7 +740,7 @@
 
       name = $('#input_specialty').val();
     //medicalCenter_id = 'xxssd';
-    route = "{{route('medical_center_specialty_store',$medicalCenter->id)}}";
+    route = "{{route('medical_center_specialty_store',\Hashids::encode($medicalCenter->id))}}";
     errormsj = '';
     $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

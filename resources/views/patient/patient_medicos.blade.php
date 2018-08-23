@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{asset('rateyo/jquery.rateyo.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
 
 @endsection
 @section('content')
+    {{-- 'back'=>Request::fullUrl() --}}
 <section class="box-register">
   <div class="container">
    <div class="register">
@@ -40,7 +41,9 @@
              <span class="ml-2 mr-2">@include('home.star_rate')</span>
                       @if($medico['calification'] != Null)
                          <span> de "{{$medico['votes']}}" voto(s).</span>
+                         <button onclick="show_califications(this)" type="button" name="button" class="btn btn-secondary btn-sm" id="{{$medico['id']}}">opiniones</button>
                      @endif
+                     
            </div>
            {{-- <button onclick="show_calification(this)" type="button" name="{{$medico['id']}}">test</button>
            <a href"{{route('list_calification_medico',['medico_id'=>$medico['id']])}}">Opiniones de los usuarios</a> --}}
@@ -57,15 +60,15 @@
          {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
          {{-- {{Route::currentRouteName()}} --}}
 
-         <a class="btn btn-primary" href="{{route('medico.edit',[$medico['id'],'back'=>Request::fullUrl()])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
+         <a class="btn btn-primary" href="{{route('medico.edit',\Hashids::encode($medico['id']))}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
        </div>
        <div class="form-group">
        @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
-         <a href="{{route('stipulate_appointment',['id'=>$medico['id'],'back'=>Request::fullUrl()])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i> cita</a>
+         <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id']),'back'=>Request::fullUrl()])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i> cita</a>
        @else
          @if(Auth::check() and Auth::user()->role == 'Paciente')
-         <a href="{{route('stipulate_appointment',['id'=>$medico['id'],'back'=>Request::fullUrl()])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+         <a href="{{route('stipulate_appointment',\Hashids::encode($medico['id']))}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
          @else
          <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
          @endif
@@ -88,6 +91,21 @@
 </div>
 </div>
 </section>
+
+
+<div class="modal fade" id="modal-calification" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="" id="content_calification">
+        </div>
+        <div class="card-footer text-right">
+          <button class="btn btn-secondary" type="button" name="button" onclick="cerrar_calificaciones()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 @section('scriptJS')
 <script src="{{asset('rateyo/jquery.rateyo.js')}}" type="text/javascript">
@@ -102,5 +120,67 @@
 
     });
   });
+
+  ///////////////////////////////CALIFICATIONS
+  function toogle(result){
+      if( $(result).parent('.id_label').parent('.este').next('.div_detail').css('display') == 'none'){
+          result = $(result).parent('.id_label').parent('.este').next('.div_detail').show();
+      }else{
+          result = $(result).parent('.id_label').parent('.este').next('.div_detail').hide();
+
+      }
+  }
+
+  function show_califications(result){
+
+   route = "{{route('calification_medic_show_patient')}}";
+   medico_id = result.id;
+
+   $.ajax({
+     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+     type:'POST',
+     url: route,
+     data:{medico_id:medico_id},
+     success:function(result){
+       $('#modal-calification').modal('show');
+       $('#content_calification').empty().html(result);
+        console.log(result);
+     },
+     error:function(error){
+       console.log(error);
+     },
+   });
+ }
+
+  function show_more(result){
+
+      element = result;
+      route = "{{route('calification_medic_show_patient')}}";
+      medico_id = result.id;
+      skip = result.name;
+
+
+      $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type:'POST',
+        url: route,
+        data:{skip:skip,medico_id:medico_id},
+        success:function(result){
+        $(element).parent('.padre').next('.sig').empty().html('Cargando...');
+          $(element).parent('.padre').next('.sig').empty().html(result);
+
+          $(element).hide();
+           console.log(result);
+        },
+        error:function(error){
+          console.log(error);
+        },
+      });
+  }
+  function cerrar_calificaciones(){
+    $('#modal-calification').modal('hide');
+  }
+
+///////////////////////////////FIN CALIFICATIONS
 </script>
 @endsection

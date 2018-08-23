@@ -29,7 +29,9 @@
         </div>
 
      </div>
-
+     <div class="text-right mb-2">
+         <button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Volver</button>
+     </div>
      @include('medico.includes.main_medico_patients')
     @include('medico.includes.alert_calendar')
     @include('medico.includes.card_edit')
@@ -39,8 +41,8 @@
       <div id="alert_success_1" class="alert alert-success alert-dismissible fade show text-left" role="alert" style="display:none">
        <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
        <p id="text_success_1" style="font-size:12px"></p>
-       <a href="{{route('home')}}" class="btn btn-outline-success">ir a Pacientes</a>
-       <a href="{{route('medico_diary',$medico->id)}}" class="btn btn-outline-primary">ir a Mi Agenda</a>
+       {{-- <a href="{{route('home')}}" class="btn btn-outline-success">ir a Pacientes</a>
+       <a href="{{route('medico_diary',\Hashids::encode($medico->id))}}" class="btn btn-outline-primary">ir a Mi Agenda</a> --}}
        {{--<a class="btn btn-outline-success" href="{{route('patient_appointments',Auth::user()->patient->id)}}">Tus Citas Pendientes</a>--}}
      </div>
      {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
@@ -64,7 +66,7 @@
       <span>{{$medico->name}} {{$medico->lastName}}</span>
     </div>
     {{-- <div class="col-12 border-panel-green text-center my-1">
-      <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',$medico->id)}}">
+      <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',\Hashids::encode($medico->id))}}">
         Otorgar horario de consulta
       </a>
     </div> --}}
@@ -307,7 +309,7 @@
          day = start.format('d');
          hour_start = start.format('HH:mm');
          hour_end = end.format('HH:mm');
-         route = "{{route('compare_hours',$medico->id)}}";
+         route = "{{route('compare_hours',\Hashids::encode($medico->id))}}";
 
          $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -337,7 +339,7 @@
          //alert(start.format('YYYY-MM-DD'));
        },
 
-       events:"{{route('medico_diary_events',$medico->id)}}",
+       events:"{{route('medico_diary_events',\Hashids::encode($medico->id))}}",
 
 
 
@@ -428,8 +430,8 @@
 
       loader();
       send = result;
-      $('#btn_agendar').attr("disabled", true);
-      $('#alert_carga').fadeIn();
+
+
       title = $('#eventType2').val();
       payment_method = $('#payment_method6').val();
       description = $('#description6').val();
@@ -453,8 +455,6 @@
        error:function(error){
          stop_loader();
           console.log(error);
-          $('#btn_agendar').attr("disabled", false);
-          $('#alert_carga').fadeOut();
 
          $.each(error.responseJSON.errors, function(index, val){
           errormsj+='<li>'+val+'</li>';
@@ -463,13 +463,8 @@
          $('#alert_error').fadeIn();
          $('#alert_success').fadeOut();
 
-
        },
        success:function(result){
-
-         $('#alert_carga').fadeOut();
-         $('#btn_agendar').attr("disabled", false);
-
 
         if(result == 'fuera del horario'){
             $('#alert_success').fadeOut();
@@ -497,9 +492,10 @@
           $('#calendar').fullCalendar('refetchEvents');
           $('#text_success_1').html(result);
           $('#alert_success_1').fadeIn();
-          $('#btn_agendar').attr("disabled", false);
-          $('#alert_carga').fadeOut();
+
+
         }
+        $(".form-control").val('');
         stop_loader();
       }
     });
@@ -602,7 +598,7 @@
     function filtroDisponible(filtro){
         $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
         test = 1;
-        route = '{{route('medico_diary_events2',$medico->id)}}';
+        route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
         $.ajax({
          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
          type:'post',
@@ -626,7 +622,7 @@
       function filtroCitaPorInternet(){
           $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
           test = 1;
-          route = '{{route('medico_diary_events2',$medico->id)}}';
+          route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
           $.ajax({
            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
            type:'post',
@@ -650,7 +646,7 @@
         function pagada_y_completada(){
             $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
             test = 1;
-            route = '{{route('medico_diary_events2',$medico->id)}}';
+            route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
             $.ajax({
              headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
              type:'post',
@@ -674,7 +670,7 @@
           function  PendientePorCobrar(){
   $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
   test = 1;
-  route = '{{route('medico_diary_events2',$medico->id)}}';
+  route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
    type:'post',
@@ -698,7 +694,7 @@
 function  FiltroPacienteCancelo(){
     $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
     test = 1;
-    route = '{{route('medico_diary_events2',$medico->id)}}';
+    route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
     $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
      type:'post',

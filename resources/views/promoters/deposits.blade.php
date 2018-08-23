@@ -19,26 +19,26 @@
 
 						<div class="col-6">
 							@if(isset($pendientes))
-								<a href="{{route('promoter_deposits_paid_out',$promoter->id)}}" class="btn btn-success">Pagados</a>
-								<a href="{{route('promoter_deposits_pending',$promoter->id)}}" class="btn btn-warning disabled">pendientes</a>
+								<a href="{{route('promoter_deposits_paid_out',\Hashids::encode($promoter->id))}}" class="btn btn-success">Pagados</a>
+								<a href="{{route('promoter_deposits_pending',\Hashids::encode($promoter->id))}}" class="btn btn-warning disabled">pendientes</a>
 
-								<a href="{{route('promoter_deposits',$promoter->id)}}" class="btn btn-primary">Todos</a>
+								<a href="{{route('promoter_deposits',\Hashids::encode($promoter->id))}}" class="btn btn-primary">Todos</a>
 							@elseif(isset($realizados))
-								<a href="{{route('promoter_deposits_paid_out',$promoter->id)}}" class="btn btn-success disabled">Pagados</a>
-								<a href="{{route('promoter_deposits_pending',$promoter->id)}}" class="btn btn-warning">pendientes</a>
+								<a href="{{route('promoter_deposits_paid_out',\Hashids::encode($promoter->id))}}" class="btn btn-success disabled">Pagados</a>
+								<a href="{{route('promoter_deposits_pending',\Hashids::encode($promoter->id))}}" class="btn btn-warning">pendientes</a>
 
-								<a href="{{route('promoter_deposits',$promoter->id)}}" class="btn btn-primary">Todos</a>
+								<a href="{{route('promoter_deposits',\Hashids::encode($promoter->id))}}" class="btn btn-primary">Todos</a>
 							@else
-								<a href="{{route('promoter_deposits_paid_out',$promoter->id)}}" class="btn btn-success">Pagados</a>
-								<a href="{{route('promoter_deposits_pending',$promoter->id)}}" class="btn btn-warning">pendientes</a>
+								<a href="{{route('promoter_deposits_paid_out',\Hashids::encode($promoter->id))}}" class="btn btn-success">Pagados</a>
+								<a href="{{route('promoter_deposits_pending',\Hashids::encode($promoter->id))}}" class="btn btn-warning">pendientes</a>
 
-								<a href="{{route('promoter_deposits',$promoter->id)}}" class="btn btn-primary disabled">Todos</a>
+								<a href="{{route('promoter_deposits',\Hashids::encode($promoter->id))}}" class="btn btn-primary disabled">Todos</a>
 							@endif
 
 
 						</div>
 						<div class="col-6  text-right">
-							<a class="btn btn-secondary" href="{{route('promoters.index',request()->id)}}">Atras</a>
+							<a class="btn btn-secondary" href="{{route('promoters.index',\Hashids::encode(request()->id))}}">Atras</a>
 						</div>
 					</div>
 
@@ -79,10 +79,10 @@
 		                                            <td class="text-center">
 														@if($record->state_payment == 'no')
 															@if(Auth::user()->role == 'Administrador')
-																<a class="btn btn-success" href="{{route('deposit_establish_payment',$record->id)}}"><i class="fas fa-check"></i></a>
+																<a class="btn btn-success" href="{{route('deposit_establish_payment',\Hashids::encode($record->id))}}"><i class="fas fa-check"></i></a>
 															@endif
 														@else
-															<a class="btn btn-info" href="{{route('deposit_details',$record->id)}}"><i class="fas fa-info"></i></a>
+															<a class="btn btn-info" href="{{route('deposit_details',\Hashids::encode($record->id))}}"><i class="fas fa-info"></i></a>
 														@endif
 														{{$record->info_payment}}
 

@@ -19,4 +19,8 @@ class patient extends Model
     'gender',
     'birthdate'
   ];
+
+  public function event(){
+     return $this->hasMany('App\event');
+  }
 }

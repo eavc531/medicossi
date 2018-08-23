@@ -10,8 +10,8 @@
     </div>
     <div class="col-12 text-right">
 
-        <a href="{{route('notification_appointments',$app->medico_id)}}" class="btn btn-primary">Notificaciones</a>
-        <a href="{{route('medico_appointments_patient',['m_id'=>$app->medico_id,'p_id'=>$app->patient_id])}}" class="btn btn-secondary"><i class="fas fa-arrow-left mr-2"></i>Atras</a>
+        <a href="{{route('notification_appointments',\Hashids::encode($app->medico_id))}}" class="btn btn-primary">Notificaciones</a>
+        <a href="{{route('medico_appointments_patient',['m_id'=>\Hashids::encode($app->medico_id),'p_id'=>\Hashids::encode($app->patient_id)])}}" class="btn btn-secondary"><i class="fas fa-arrow-left mr-2"></i>Atras</a>
 
 
     </div>
@@ -29,7 +29,7 @@
       <div class="row">
         <div class="col-lg-4 col-sm-4 col-12">
          <div class="p-2">
-          <label for="" class="font-title-grey"> Paciente:</label> <p><a href="{{route('medico.edit',$app->medico->id)}}"><strong>{{$app->patient->name}} {{$app->patient->lastName}}</strong></a></p>
+          <label for="" class="font-title-grey"> Paciente:</label> <p><a href="{{route('medico.edit',\Hashids::encode($app->medico->id))}}"><strong>{{$app->patient->name}} {{$app->patient->lastName}}</strong></a></p>
           <label for="" class="font-title-grey">Tipo de Cita:</label> <p>{{$app->title}}</p>
           {{-- <label for="" class="font-title-grey">Especialidad del Medico:</label> <p>{{$app->medico->scpecialty}}</p> --}}
 

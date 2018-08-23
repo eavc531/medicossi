@@ -33,7 +33,7 @@ class assistantController extends Controller
             $medico_assistant->save();
 
 
-            return redirect()->route('medico_assistants',$request->medico_id)->with('success', 'Se ha agregado "'.$assistant->nameComplete.'" a su lista de asistentes. Para que Pueda asistirle en los procesos de su cuenta de medico Médicossi, debera asignarle permisos.');
+            return redirect()->route('medico_assistants',\Hashids::encode($request->medico_id))->with('success', 'Se ha agregado "'.$assistant->nameComplete.'" a su lista de asistentes. Para que Pueda asistirle en los procesos de su cuenta de medico Médicossi, debera asignarle permisos.');
         }else{
             return back()->with('warning', '"'.$assistant->nameComplete.'" ya existe en su lista de Asistentes.');
 
@@ -92,7 +92,7 @@ class assistantController extends Controller
 
         $assistant = assistant::find($request->assistant_id);
 
-        return redirect()->route('medico_assistants',$request->medico_id)->with('success', 'Se han editado los Permisos para el Asistente: '.$assistant->nameComplete);
+        return redirect()->route('medico_assistants',\Hashids::encode($request->medico_id))->with('success', 'Se han editado los Permisos para el Asistente: '.$assistant->nameComplete);
    }
 
    public function assist_medico(Request $request){
@@ -182,7 +182,7 @@ class assistantController extends Controller
 
       });
 
-      return redirect()->route('medico_assistants',$medico->id)->with('success', 'Se ha agregado un nuevo asistente, antes de que pueda asistirle debera asignarle los permisos necesarios.
+      return redirect()->route('medico_assistants',\Hashids::encode($medico->id))->with('success', 'Se ha agregado un nuevo asistente, antes de que pueda asistirle debera asignarle los permisos necesarios.
       Se a enviado un mensaje al correo asociado, con los datos necearios para que pueda ingresar a su cuenta de asistente Médicossi.');
 
    }

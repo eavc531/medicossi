@@ -10,7 +10,8 @@
 
   <h2>"Notificación de Cambio de Cita Medicossi"</h2>
 
-    <p>Un Cordial saludo: {{$patient->name}} {{$patient->lastName}}, le notificamos que el Profesional Médico: {{$medico->name}} {{$medico->lastName}}, Especialista en: {{$medico->specialty}}, a cambiado la fecha de su Cita estipulada para: {{$before_date}} por la Fecha:{{\Carbon\Carbon::parse($event->start)->format('d-m-Y')}}, Hora:{{\Carbon\Carbon::parse($event->start)->format('H:i')}}. Feliz Dia.
+    <p>Un Cordial saludo: {{$patient->name}} {{$patient->lastName}}, le notificamos que el Profesional Médico: {{$medico->name}} {{$medico->lastName}}, Especialista en: {{$medico->specialty}}, a cambiado la fecha de su Cita estipulada para: {{$before_date}} por la Fecha:{{\Carbon\Carbon::parse($event->start)->format('d-m-Y')}}, Hora:{{\Carbon\Carbon::parse($event->start)->format('H:i')}}. Feliz Dia.</p>
+
 
 </body>
 </html>

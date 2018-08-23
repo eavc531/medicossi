@@ -1,9 +1,12 @@
 @extends('layouts.app')
 
-@section('css')
-
-{{-- <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css"> --}}
+{{-- @section('css')
 <link rel="stylesheet" href="{{asset('jqueryui/jquery-ui.css')}}">
+@endsection --}}
+
+@section('css')
+<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('jqueryui/jquery-ui.css')}}">
 
 @endsection
 @section('content')
@@ -38,6 +41,7 @@
       <div class="col-lg-12">
         {{Form::model(Request::all(),['route'=>'tolist2','method'=>'get'])}}
         <div class="input-group search">
+
           <span class="mr-2 white" id="filter"><i class="fas fa-filter fa-2x" data-toggle="tooltip" data-placement="top" title="Busqueda Avanzada"></i></span>
           {{Form::select('typeSearch',['Centro Medico'=>'Nombre del Centro Médico','Especialidad Medica'=>'Especialidad Médica','Nombre/Cedula del Medico'=>'Nombre/Cedula del Medico',],null,['placeholder'=>'Buscar Por:','id'=>'typeSearch'])}}
           {{Form::text('search',null,['class'=>'form-control','placeholder'=>'Ingresar termino de Busqueda','id'=>'search'])}}
@@ -356,8 +360,9 @@
                       <div class="form-inline">
                         Calificación:
                         <span class="ml-2 mr-2">@include('home.star_rate')</span>
-           						 @if($medico['calification'] != Null)
+           						 @if($medico['votes'] != Null)
            						 	<span> de "{{$medico['votes']}}" voto(s).</span>
+                                    <button onclick="show_califications(this)" type="button" name="button" class="btn btn-secondary btn-sm" id="{{$medico['id']}}">opiniones</button>
            					  	@endif
                       </div>
                       {{-- <button onclick="show_calification(this)" type="button" name="{{$medico['id']}}">test</button>
@@ -374,18 +379,18 @@
                   <div class="form-group">
                     {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
                     {{-- {{Route::currentRouteName()}} --}}
-
-                    <a class="btn btn-primary" href="{{route('medico.edit',[\Hashids::encode($medico['id']),'search'=>Request::fullUrl()])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
+                    <a class="btn btn-primary" href="{{route('medico.edit',[\Hashids::encode($medico['id'])])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
                   </div>
                   <div class="form-group">
+
                   @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
                     <a href="" class="btn disabled" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
                   @else
                     @if(Auth::check() and Auth::user()->role == 'Paciente')
-                    <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id'])])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+                        <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id'])])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
                     @else
-                    <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
+                        <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
                     @endif
                   @endif
                   </div>
@@ -614,6 +619,20 @@
   </div>
 
 
+  <div class="modal fade" id="modal-calification" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="" id="content_calification">
+          </div>
+          <div class="card-footer text-right">
+            <button class="btn btn-secondary" type="button" name="button" onclick="cerrar_calificaciones()">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   @isset($currentPage)
   <input type="hidden" name="" value="{{$currentPage}}" id="numberPageNow">
   @endisset
@@ -666,6 +685,67 @@
 
   <script type="text/javascript">
 
+  ///////////////////////////////CALIFICATIONS
+  function toogle(result){
+      if( $(result).parent('.id_label').parent('.este').next('.div_detail').css('display') == 'none'){
+          result = $(result).parent('.id_label').parent('.este').next('.div_detail').show();
+      }else{
+          result = $(result).parent('.id_label').parent('.este').next('.div_detail').hide();
+
+      }
+  }
+
+  function show_califications(result){
+
+   route = "{{route('calification_medic_show_patient')}}";
+   medico_id = result.id;
+
+   $.ajax({
+     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+     type:'POST',
+     url: route,
+     data:{medico_id:medico_id},
+     success:function(result){
+       $('#modal-calification').modal('show');
+       $('#content_calification').empty().html(result);
+        console.log(result);
+     },
+     error:function(error){
+       console.log(error);
+     },
+   });
+ }
+
+  function show_more(result){
+
+      element = result;
+      route = "{{route('calification_medic_show_patient')}}";
+      medico_id = result.id;
+      skip = result.name;
+
+
+      $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type:'POST',
+        url: route,
+        data:{skip:skip,medico_id:medico_id},
+        success:function(result){
+        $(element).parent('.padre').next('.sig').empty().html('Cargando...');
+          $(element).parent('.padre').next('.sig').empty().html(result);
+
+          $(element).hide();
+           console.log(result);
+        },
+        error:function(error){
+          console.log(error);
+        },
+      });
+  }
+  function cerrar_calificaciones(){
+    $('#modal-calification').modal('hide');
+  }
+
+///////////////////////////////FIN CALIFICATIONS
   function cerrar_a(result){
     $(result).parent().hide();
 

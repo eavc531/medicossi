@@ -46,11 +46,12 @@
             </div>
             </div>
             <div class="text-right">
-                @isset(request()->back)
-                    <a href="{{route('medico_appointments_patient',['m_id'=>$event_edit->medico_id,'p_id'=>$event_edit->patient_id])}}" class="btn btn-secondary">atras</a>
+                <button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Atras</button>
+                {{-- @isset(request()->back)
+                    <a href="{{route('medico_appointments_patient',['m_id'=>\Hashids::encode($event_edit->medico_id),'p_id'=>$event_edit->patient_id])}}" class="btn btn-secondary">atras</a>
                 @else
-                    <a href="{{route('appointments',['m_id'=>$event_edit->medico_id])}}" class="btn btn-secondary">atras</a>
-                @endisset
+                    <a href="{{route('appointments',['m_id'=>\Hashids::encode($event_edit->medico_id)])}}" class="btn btn-secondary">atras</a>
+                @endisset --}}
             </div>
           <div class="alert-info p-3 m-2" style="display:none" id="alert_carga5">
             Procesando...
@@ -81,7 +82,7 @@
             </div>
             <div class="card-body">
               <h5>Para poder ver el Calendario de agenda y todas sus fucniones debe Otorgar un Horario de Trabajo</h5>
-              <a href="{{route('medico_schedule',$medico->id)}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
+              <a href="{{route('medico_schedule',\Hashids::encode($medico->id))}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
             </div>
           </div>
         @endif
@@ -210,7 +211,7 @@
   function confirmed_completed(){
     price = $('#price9').val();
 
-    // medico_id = "{{$medico->id}}";
+    // medico_id = "{{\Hashids::encode($medico->id)}}";
     event_id = $('#event_id9').val();
     route = "{{route('confirmed_completed_app')}}";
     $.ajax({
@@ -226,6 +227,8 @@
         $('#button_confirmed_complete').show();
         $('#calendar').fullCalendar('removeEvents');
         $('#calendar').fullCalendar('refetchEvents');
+
+
         $('#confirmed_patient9').attr('disabled',true);
         $('#confirmed_medico9').attr('disabled',true);
         $('#price9').attr('disabled',true);
@@ -263,7 +266,7 @@
   function confirmed_payment_app(){
 
     price = $('#price9').val();
-    // medico_id = "{{$medico->id}}";
+    // medico_id = "{{\Hashids::encode($medico->id)}}";
     event_id = $('#event_id9').val();
     route = "{{route('confirmed_payment_app')}}";
     $.ajax({
@@ -315,90 +318,86 @@
         ajax_data_edit_event();
 
 
-      $('#form, #fo3').submit(function(){
-
-          if($('#dateStart99').val() != $('#dateStart9').val() || $('#hourStart99').val() != $('#hourStart9').val() || $('#minsStart99').val() != $('#minsStart9').val() || $('#hourEnd99').val() != $('#hourEnd9').val() || $('#minsEnd99').val() != $('#minsEnd9').val()){
-              question = confirm('Se ha modificado la fecha de la consulta, al guardar cambio se enviara un correo al paciente para notificarle, ¿desea continuar?');
-              if(question == false){
-                  return false;
-              }
-          }
-        loader();
-        cerrar();
-        $('#alert_carga5').fadeIn();
-        $('#guardar5').attr("disabled", true);
-        $('#delete5').attr("disabled", true);
-        $('#cancelar5').attr("disabled", true);
-        errormsj = '';
-             $.ajax({
-               headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-               type: 'POST',
-               url: $(this).attr('action'),
-               data: $(this).serialize(),
-               // Mostramos un mensaje con la respuesta de PHP
-               error:function(error){
-                 stop_loader();
-                 $('#alert_carga5').fadeOut();
-                 $('#guardar5').attr("disabled", false);
-                 $('#delete5').attr("disabled", false);
-                 $('#cancelar5').attr("disabled", false);
-                 console.log(error);
-                $.each(error.responseJSON.errors, function(index, val){
-                  errormsj+='<li>'+val+'</li>';
-                });
-                $('#text_error_up1').html('<ul style="list-style:none;">'+errormsj+'</ul>');
-                $('#alert_error_up1').fadeIn();
-                $('#alert_success_up1').fadeOut();
-
-                console.log(errormsj);
-              },
-               success:function(result){
-                 stop_loader();
-                 console.log(result);
-                 $('#alert_carga5').fadeOut();
-                 $('#guardar5').attr("disabled", false);
-                 $('#delete5').attr("disabled", false);
-                 $('#cancelar5').attr("disabled", false);
-
-                 if(result == 'fuera del horario'){
-                   $('#text_error_up1').html('imposible guardar evento, fuera del horario establecido');
-                   $('#alert_error_up1').fadeIn();
-                 }else if(result == 'fecha_editada'){
-                   $('#text_success_up1').html('Se ha cambiado la "Hora/Fecha" de la consulta con Exito. Se ha enviado un correo al Paciente para notificarle del cambio de la consulta.');
-                   $('#alert_success_up1').fadeIn();
-                   $('#calendar').fullCalendar('removeEvents');
-                   $('#calendar').fullCalendar('refetchEvents');
-                   // $('#card_edit').fadeOut();
-               }else if(result == 'end menor start'){
-                     $('#text_error_up1').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
-                     $('#alert_error_up1').fadeIn();
-                 }else if(result == 'ya existe'){
-                   $('#text_error_up1').html('Imposible actualizar evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
-                   $('#alert_error_up1').fadeIn();
-                   $('#alert_success').fadeOut();
-
-                 }else {
-                   console.log(result);
-                   // $('#card_edit').fadeOut();
-                   $('#text_success_up1').html('Guardado con Exito');
-                   $('#alert_success_up1').fadeIn();
-                   $('#alert_error_up1').fadeOut();
-                   $('#calendar').fullCalendar('removeEvents');
-                   $('#calendar').fullCalendar('refetchEvents');
-                   var1 = $('#dateStart9').val();
-                   var2 = $('#hourStart9').val();
-                   var3 = $('#minsStart9').val();
-                   $('#dateStart99').val(var1);
-                   $('#hourStart99').val(var2);
-                   $('#minsStart99').val(var3);
-                 }
-
+        $('#form, #fo3').submit(function(){
+           if($('#confirmed_medico9').val() == 'Si'){
+               if($('#dateStart99').val() != $('#dateStart9').val() || $('#hourStart99').val() != $('#hourStart9').val() || $('#minsStart99').val() != $('#minsStart9').val()){
+                   question = confirm('Se ha modificado la fecha de la consulta, al guardar cambio se enviara un correo al paciente para notificarle, ¿desea continuar?');
+                   if(question == false){
+                       return false;
+                   }
                }
+           }
 
-           })
+          loader();
+          cerrar();
+          errormsj = '';
+               $.ajax({
+                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                 type: 'POST',
+                 url: $(this).attr('action'),
+                 data: $(this).serialize(),
+                 // Mostramos un mensaje con la respuesta de PHP
+                 error:function(error){
+                   stop_loader();
 
-           return false;
-       });
+                   console.log(error);
+                  $.each(error.responseJSON.errors, function(index, val){
+                    errormsj+='<li>'+val+'</li>';
+                  });
+                  $('#text_error_up1').html('<ul style="list-style:none;">'+errormsj+'</ul>');
+                  $('#alert_error_up1').fadeIn();
+                  $('#alert_success_up1').fadeOut();
+
+                  console.log(error);
+                },
+                 success:function(result){
+                     stop_loader();
+
+                     console.log(result);
+                   if(result.message.error == 'fuera del horario'){
+                       alert('Imposible guardar evento fuera del horario establecido');
+                       // $('#text_error_up1').html('imposible guardar evento fuera del horario establecido');
+                       // $('#alert_error_up1').fadeIn();
+                   }else if(result.message.error == 'end menor start'){
+                       alert('Imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
+                         // $('#text_error_up1').html('Imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
+                         // $('#alert_error_up1').fadeIn();
+                     }else if(result.message.error == 'ya existe'){
+                         alert('Imposible actualizar evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
+                   }else if(result.message.error == 'fecha_editada'){
+                     $('#text_success_up1').html('Se ha cambiado la "Hora/Fecha" de la consulta con Exito. Se ha enviado un correo al Paciente para notificarle del cambio de la consulta.');
+                     $('#alert_success_up1').fadeIn();
+
+                 }else if(result.message.error == 'confirmado_editado'){
+                   $('#text_success_up1').html('Se ha cambiado la "Hora/Fecha" y Confirmada consulta con Exito. Se ha enviado un correo al Paciente para notificarle del cambio de la consulta.');
+                   $('#alert_success_up1').fadeIn();
+
+               }else if(result.message.error == 'cita_confirmada'){
+                     $('#text_success_up1').html(result.message.message_error);
+                     $('#alert_success_up1').fadeIn();
+                     $('#alert_error_up1').fadeOut();
+                     $('#calendar').fullCalendar('removeEvents');
+                     $('#calendar').fullCalendar('refetchEvents');
+
+                 }else if(result.message.error == 'ok'){
+                       console.log(result);
+
+                       $('#text_success_up1').html('Los datos de la cita, han sido guardados con exito.');
+                       $('#alert_success_up1').fadeIn();
+                       $('#alert_error_up1').fadeOut();
+                       $('#calendar').fullCalendar('removeEvents');
+                       $('#calendar').fullCalendar('refetchEvents');
+
+                  }else if(result.message.error == 'fecha_pasada'){
+                       alert(result.message.message_error);
+
+                   }
+
+             }
+         });
+
+             return false;
+         });
 
       max_hour = $('#max_hour').val();
       min_hour = $('#min_hour').val();
@@ -471,7 +470,7 @@
          day = start.format('d');
          hour_start = start.format('HH:mm');
          hour_end = end.format('HH:mm');
-         route = "{{route('compare_hours',$medico->id)}}";
+         route = "{{route('compare_hours',\Hashids::encode($medico->id))}}";
 
          $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -501,7 +500,7 @@
          //alert(start.format('YYYY-MM-DD'));
         },
 
-        events:"{{route('medico_diary_events',$medico->id)}}",
+        events:"{{route('medico_diary_events',\Hashids::encode($medico->id))}}",
 
         eventClick: function(event, jsEvent, view){
             alert('Este panel es exclusivo solo para editar citas pre-seleccionadas, para editar todas las citas de modo libre acceda al panel "Mi Agenda"');
@@ -714,7 +713,7 @@
 
 
 
-        // $('#card_edit').fadeOut();
+        //
       }
     });
 
@@ -750,7 +749,7 @@
         $('#alert_error_up1').fadeOut();
         $('#calendar').fullCalendar('removeEvents');
         $('#calendar').fullCalendar('refetchEvents');
-        // $('#card_edit').fadeOut();
+        //
       }
     });
 
@@ -845,6 +844,7 @@
     }
 
     function ajax_data_edit_event(){
+
         event_edit = "{{$event_edit->id}}"
         route = "{{route('ajax_data_edit_event')}}"
         $.ajax({
@@ -864,6 +864,8 @@
             mins_start = $.fullCalendar.moment(event.start).format('mm');
             hour_end = $.fullCalendar.moment(event.end).format('HH');
             mins_end = $.fullCalendar.moment(event.end).format('mm');
+
+            $('#calendar').fullCalendar('gotoDate',start);
 
             $('#confirmed_patient9').val(event.confirmed_patient);
             $('#confirmed_medico9').val(event.confirmed_medico);
@@ -900,9 +902,11 @@
             $('#alert_success_up1').fadeOut();
             vaciar();
             if(event.confirmed_medico == 'Si'){
+
               $('#but_save').attr('value','Guardar Cambios');
             }else{
               $('#but_save').attr('value','Guardar y Confirmar');
+
             }
 
             if(event.state == 'Pagada y Completada'){
@@ -1030,18 +1034,13 @@
 
             }
 
-            // if(event.confirmed_medico == 'No'){
-            //
-            //
-            //     $('#confirmed_medico_div').fadeIn();
-            //     $('#button_confirm_app_div').fadeOut();
-            //
-            // }else{
-            //
-            //     $('#confirmed_medico_div').fadeOut();
-            //     $('#button_confirm_app_div').fadeIn();
-            //
-            // }
+            if(event.confirmed_medico != 'Si'){
+                $('#but_save').attr('value','Guardar y Confirmar');
+                $('#button_confirmed_payment').attr('disabled',true);
+            }else{
+                $('#but_save').attr('value','Guardar');
+                $('#button_confirmed_payment').attr('disabled',false);
+            }
           cerrar();
 
         }

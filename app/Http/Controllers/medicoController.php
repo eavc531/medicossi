@@ -31,6 +31,10 @@ use App\data_patient;
 use DB;
 use Session;
 use Auth;
+use App\expedient;
+use App\file;
+
+
 
 use App\insurrance_show;
 use Illuminate\Validation\Rule;
@@ -49,8 +53,42 @@ class medicoController extends Controller
       {
          // $this->middleware('authenticate', ['except' => ['edit','create','store']]);
       }
+      /////////una redirecciona a la otra esto por q relleno un campo con ajax
+
+      public function redierct_manage_patient(Request $request)
+      {
+          return redirect()->route('manage_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)]);
+      }
+
+      public function manage_patient($m_id,$p_id)
+      {
+
+          $appointments_all = event::where('medico_id',$m_id)->where('patient_id',$p_id)->whereNull('rendering')->where('title','!=', 'Ausente')->count();
+          $appointments_no_confirmed = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->count();
+          $appointments_confirmed = event::where('medico_id',$m_id)->where('patient_id',$p_id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->count();
+          $appointments_past = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->count();
+          $appointments_paid = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Pendiente')->count();
+          $appointments_cancel = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->count();
+          $appointments_completed = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Completada')->count();
+
+
+          $medico = medico::find($m_id);
+          $patient = patient::find($p_id);
+          // dd($request->patient_id);
+          $notes = note::where('medico_id',$m_id)->where('patient_id', $patient->id)->count();
+          $expedients = expedient::where('medico_id',$m_id)->where('patient_id', $patient->id)->count();
+          $appointments_pending = event::where('medico_id',$m_id)->where('patient_id', $patient->id)->count();
+          $data_patient = data_patient::where(['medico_id'=>$m_id,'patient_id'=>$p_id])->first();
+
+          $note_count = note::where('medico_id',$m_id)->where('patient_id',$p_id)->count();
+          $exp_count = expedient::where('medico_id',$m_id)->where('patient_id',$p_id)->count();
+          $files_count = file::where('medico_id',$m_id)->where('patient_id',$p_id)->count();
+
+          return view('medico.patient.manage_patient',compact('notes','expedients','appointments_pending','patient','medico','data_patient','appointments_all','appointments_no_confirmed','appointments_past','appointments_paid','appointments_confirmed','appointments_cancel','appointments_completed','note_count','exp_count','files_count'));
+      }
 
       public function data_patient($m_id,$p_id){
+          // dd('aqui');
         $states = state::orderBy('name','asc')->pluck('name','name');
         $cities = city::orderBy('name','asc')->pluck('name','name');
         $medico = medico::find($m_id);
@@ -61,6 +99,7 @@ class medicoController extends Controller
         return view('medico.patient.data_patient',compact('medico','patient','data_patient','states','cities'));
 
       }
+      ////////////////////////////////
 
       public function data_patient_extract_perfil($m_id,$p_id){
         $states = state::orderBy('name','asc')->pluck('name','name');
@@ -115,12 +154,10 @@ class medicoController extends Controller
 
         }
         if($request->expedient_id != Null){
-          return redirect()->route('expedient_open',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id,'ex_id'=>$request->expedient_id])->with('success','Se han Guardado los Datos Personales del Paciente');
+          return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success','Se han Guardado los Datos Personales del Paciente');
         }else{
-          return redirect()->route('notes_patient',['m_id'=>$request->medico_id,'p_id'=>$request->patient_id])->with('success','Se han Guardado los Datos Personales del Paciente');
+          return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success','Se han Guardado los Datos Personales del Paciente');
         }
-
-
 
       }
 
@@ -227,7 +264,7 @@ class medicoController extends Controller
 
         });
 
-       return redirect()->route('medico_patients',$request->medico_id)->with('success','Se a registrado el paciente '.$patient->nameComplete.' de forma satisfactoria. Se ha enviado un mensaje al correo electronico asociado,con los datos necesarios para que el paciente pueda acceder a la cuenta creada, si asi lo desea, en donde podra ver el estado de sus citas, calificarle como médico en el sistema, agendar citas y mas.');
+       return redirect()->route('medico_patients',\Hashids::encode($request->medico_id))->with('success','Se a registrado el paciente '.$patient->nameComplete.' de forma satisfactoria. Se ha enviado un mensaje al correo electronico asociado,con los datos necesarios para que el paciente pueda acceder a la cuenta creada, si asi lo desea, en donde podra ver el estado de sus citas, calificarle como médico en el sistema, agendar citas y mas.');
      }
 
      public function medico_register_new_patient($id)
@@ -400,19 +437,18 @@ class medicoController extends Controller
      public function calification_medic($id){
 
       $medico = medico::find($id);
-      $type = 'no_vistas';
-      $rate_medic1 = rate_medic::where('medico_id',$id)->paginate(5);
-      $rate_medic2 = rate_medic::where('medico_id',$id)->where('viewed','No')->paginate(5);
+      // $type = 'no_vistas';
+      $rate_medic = rate_medic::where('medico_id',$id)->whereNull('views')->paginate(5);
+      // $rate_medic2 = rate_medic::where('medico_id',$id)->where('viewed','No')->paginate(5);
 
-       return view('medico.calification_medic',compact('rate_medic1','medico','rate_medic2','type'));
+       return view('medico.calification.calification_medic',compact('rate_medic','medico','rate_medic2','type'));
 
      }
      public function calification_medic_viewed($id){
-       $type = 'vistas';
-       $medico = medico::find($id);
-       $rate_medic1 = rate_medic::where('medico_id',$id)->paginate(5);
-       $rate_medic2 = rate_medic::where('medico_id',$id)->paginate(5);
-       return view('medico.calification_medic',compact('rate_medic1','medico','rate_medic2','type'));
+         $medico = medico::find($id);
+         $views = 'no_vistas';
+         $rate_medic = rate_medic::where('medico_id',$id)->where('views','si')->paginate(5);
+       return view('medico.calification.calification_medic',compact('rate_medic','medico','rate_medic2','views'));
      }
 
      public function medico_create_add_insurrances(Request $request,$id){
@@ -506,6 +542,77 @@ class medicoController extends Controller
 
      }
 
+     ///////////
+
+
+
+
+
+     public function patient_appointments_all($m_id,$p_id){
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->whereNull('rendering')->where('title','!=', 'Ausente')->paginate(4);
+       $type = 'todas';
+       $medico = medico::find($m_id);
+       $patient = patient::find($p_id);
+       return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
+     public function patient_appointments_no_confirmed($m_id,$p_id){
+       $medico = medico::find($m_id);
+       $patient = patient::find($p_id);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $type = 'sin confirmar';
+       return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
+     public function patient_appointments_past_collect($m_id,$p_id){
+       $medico = medico::find($m_id);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->paginate(4);
+
+       $type = 'Pasada y por Cobrar';
+       $patient = patient::find($p_id);
+       return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
+     public function patient_appointments_paid_and_pending($m_id,$p_id){
+       $medico = medico::find($m_id);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Pendiente')->paginate(4);
+       $type = 'Pagadas y Pendientes';
+       $patient = patient::find($p_id);
+       return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
+     public function patient_appointments_confirmed($m_id,$p_id){
+       $medico = medico::find($m_id);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $type = 'confirmadas';
+       $patient = patient::find($p_id);
+       return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
+     public function patient_appointments_canceled($m_id,$p_id){
+       $medico = medico::find($m_id);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $type = 'canceladas';
+       $patient = patient::find($p_id);
+       return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
+     public function patient_appointments_completed($m_id,$p_id){
+       $medico = medico::find($m_id);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Completada')->paginate(4);
+       $type = 'Pagadas y Completadas';
+       $patient = patient::find($p_id);
+       return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
+     ///////// END
      public function medico_note_edit($m_id,$p_id,$n_id){
        $note = note::find($n_id);
        $medico = medico::find($m_id);
@@ -525,7 +632,7 @@ class medicoController extends Controller
         $note->type_note = 'saved';
         $note->save();
 
-         return redirect()->route('admin_data_patient',['med_id'=>$request->medico_id, 'p_id'=>$request->patient_id])->with('success', 'Nota Guardada de Forma Exitosa.');
+         return redirect()->route('admin_data_patient',['med_id'=>\Hashids::encode($request->medico_id), 'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Nota Guardada de Forma Exitosa.');
      }
 
 
@@ -601,7 +708,7 @@ class medicoController extends Controller
 
            $medico = medico::find($id);
            if($medico->stateConfirm != 'data_primordial_complete' and $medico->stateConfirm != 'complete'){
-             return redirect()->route('data_primordial_medico',$id)->with('warning', 'Debes rellenar los siguietnes Datos para Poder acceder a otros paneles de tu cuenta.');
+             return redirect()->route('data_primordial_medico',\Hashids::encode($id))->with('warning', 'Debes rellenar los siguietnes Datos para Poder acceder a otros paneles de tu cuenta.');
            }
            $medico->country = $request->country;
            $medico->state = $request->state;
@@ -623,10 +730,10 @@ class medicoController extends Controller
            if($medico->stateConfirm == 'data_primordial_complete'){
              $medico->stateConfirm = 'complete';
              $medico->save();
-             return redirect()->route('medico.edit',$id)->with('successComplete','nada');
+             return redirect()->route('medico.edit',\Hashids::encode($id))->with('successComplete','nada');
            }
 
-        return redirect()->route('medico.edit',$medico->id)->with('medico', $medico)->with('success','Se ha actualizado la Dirección de su sitio de trabajo');
+        return redirect()->route('medico.edit',\Hashids::encode($medico->id))->with('medico', $medico)->with('success','Se ha actualizado la Dirección de su sitio de trabajo');
      }
 
 
@@ -708,7 +815,7 @@ class medicoController extends Controller
        }
        $medico_specialty->save();
 
-       return redirect()->route('medico.edit',$request->medico_id)->with('success','la información se ha actualizado de forma satisfactoria.');
+       return redirect()->route('medico.edit',\Hashids::encode($request->medico_id))->with('success','la información se ha actualizado de forma satisfactoria.');
 
      }
 
@@ -744,7 +851,7 @@ class medicoController extends Controller
        }
        $medico_specialty->save();
 
-       return redirect()->route('medico.edit',$request->medico_id)->with('success','Se ha Agregado una nueva Especialidad/Carrera, de forma satisfactoria.');
+       return redirect()->route('medico.edit',\Hashids::encode($request->medico_id))->with('success','Se ha Agregado una nueva Especialidad/Carrera, de forma satisfactoria.');
 
      }
      public function data_primordial_medico($id){
@@ -752,16 +859,16 @@ class medicoController extends Controller
              if(Auth::user()->medico_id == $id){
 
              }else{
-                 return home()->with('warning', 'No tienes permisos, o se cerrado su sesión');
+                 return redirect()->route('home')->with('warning', 'No tienes permisos, o se cerrado su sesión');
              }
          }elseif(Auth::user()->role == 'Asistente') {
              if(Auth::user()->assistant->medico_id == $id){
 
              }else{
-                 return home()->with('warning', 'No tienes permisos, o se cerrado su sesión');
+                 return redirect()->route('home')->with('warning', 'No tienes permisos, o se cerrado su sesión');
              }
          }else{
-             return home()->with('warning', 'No tienes permisos, o se cerrado su sesión');
+             return redirect()->route('home')->with('warning', 'No tienes permisos, o se cerrado su sesión');
          }
 
 
@@ -847,7 +954,7 @@ class medicoController extends Controller
          $medico_experience->medico_id = $request->medico_id;
          $medico_experience->save();
 
-         return redirect()->route('medico.edit',$request->medico_id)->with('success', 'Experiencia Agregada');
+         return redirect()->route('medico.edit',\Hashids::encode($request->medico_id))->with('success', 'Experiencia Agregada');
 
      }
      public function service_medico_store(Request $request)
@@ -861,7 +968,7 @@ class medicoController extends Controller
          $medico_service->medico_id = $request->medico_id;
          $medico_service->save();
 
-         return redirect()->route('medico.edit',$request->medico_id)->with('success', 'Servicio Agregado');
+         return redirect()->route('medico.edit',\Hashids::encode($request->medico_id))->with('success', 'Servicio Agregado');
 
      }
 
@@ -916,7 +1023,7 @@ class medicoController extends Controller
       }
 
           $user->save();
-         return redirect()->route('successRegMedico',$user->medico_id)->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
+         return redirect()->route('successRegMedico',\Hashids::encode($user->medico_id))->with('warning', 'No se pudo verificar la autenticacion del usuario,por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
 
      }
 
@@ -971,7 +1078,7 @@ class medicoController extends Controller
 
       });
 
-         return redirect()->route('successRegMedico',$medico->id)->with('user', $user)->with('medico', $medico);
+         return redirect()->route('successRegMedico',\Hashids::encode($medico->id))->with('user', $user)->with('medico', $medico);
 
     }
 
@@ -998,7 +1105,7 @@ class medicoController extends Controller
             $msj->to('eavc53189@gmail.com');
         });
 
-        return redirect()->route('successRegMedico',$medico->id)->with('success', 'Se ha reenviado el mensaje de confirmación al correo electronico asociado a tu cuenta MédicosSi')->with('user', $user);
+        return redirect()->route('successRegMedico',\Hashids::encode($medico->id))->with('success', 'Se ha reenviado el mensaje de confirmación al correo electronico asociado a tu cuenta MédicosSi')->with('user', $user);
    }
     /**
      * Display the specified resource.
@@ -1049,6 +1156,8 @@ class medicoController extends Controller
 
     public function edit($id)
     {
+
+
         $insurance_carrier = insurance_carrier::where('medico_id',$id)->get();
         $medicalCenter = medicalCenter::orderBy('name','asc')->pluck('name','name');
         $cities = city::orderBy('name','asc')->pluck('name','id');
@@ -1118,12 +1227,12 @@ class medicoController extends Controller
 
       if($medico->stateConfirm == 'complete'){
         $medico->save();
-          return redirect()->route('medico.edit',$id)->with('success','Sus datos han sido actualizados con exito');
+          return redirect()->route('medico.edit',\Hashids::encode($id))->with('success','Sus datos han sido actualizados con exito');
       }else{
         $medico->stateConfirm = 'data_primordial_complete';
         $medico->save();
 
-          return redirect()->route('medico_edit_address',$id)->with('success', 'Sus datos han sido Guardados con exito, por Favor Agregue su dirección de trabajo.');
+          return redirect()->route('medico_edit_address',\Hashids::encode($id))->with('success', 'Sus datos han sido Guardados con exito, por Favor Agregue su dirección de trabajo.');
           // return redirect()->route('medico.edit',$id)->with('successComplete', 'valusse');
       }
 
@@ -1250,6 +1359,12 @@ class medicoController extends Controller
       $rate_medic->show = 'No';
       $rate_medic->viewed = 'Si';
       $rate_medic->save();
+
+      $rate_medic_not_see_count = rate_medic::where('medico_id', $rate_medic->$medico_id)->whereNull('views')->count();
+      $medico = medico::find($rate_medic->$medico_id);
+      $medico->calification_not_see = $rate_medic_not_see_count;
+      $medico->save();
+
       return response()->json('ok');
 
     }
@@ -1257,6 +1372,12 @@ class medicoController extends Controller
       $rate_medic = rate_medic::find($request->rate_id);
       $rate_medic->viewed = 'Si';
       $rate_medic->save();
+
+      $rate_medic_not_see_count = rate_medic::where('medico_id', $rate_medic->$medico_id)->whereNull('views')->count();
+      $medico = medico::find($rate_medic->$medico_id);
+      $medico->calification_not_see = $rate_medic_not_see_count;
+      $medico->save();
+
       return response()->json('ok');
 
     }
@@ -1377,4 +1498,67 @@ class medicoController extends Controller
 
       return view('medico.income_medic.income_medic_without_pay',compact('ingresos_obtenidos','citas_cobradas','ingresos_pendientes','citas_pendientes','list_citas_x_cobrar'));
     }
+
+    public function check_show_rate(Request $request){
+        $rate_medic = rate_medic::find($request->rate_id);
+        if($rate_medic->show == 'si'){
+            $rate_medic->show = Null;
+        }else{
+            $rate_medic->show = $request->valor;
+        }
+        $rate_medic->views = 'si';
+        $rate_medic->save();
+
+        $rate_medic_not_see_count = rate_medic::where('medico_id', $rate_medic->medico_id)->whereNull('views')->count();
+        $medico = medico::find($rate_medic->medico_id);
+        $medico->calification_not_see = $rate_medic_not_see_count;
+        $medico->save();
+
+        return response()->json('ok');
+
+    }
+
+    public function check_view_ajax(Request $request){
+        $rate_medic = rate_medic::find($request->rate_id);
+        $view = $rate_medic->views;
+        $rate_medic->views = 'si';
+        $rate_medic->save();
+
+        $rate_medic_not_see_count = rate_medic::where('medico_id', $rate_medic->medico_id)->whereNull('views')->count();
+        $medico = medico::find($rate_medic->medico_id);
+        $medico->calification_not_see = $rate_medic_not_see_count;
+        $medico->save();
+        return response()->json('ok');
+    }
+
+    public function check_all_view($id){
+        // dd('sdsd');
+        $rate_medic = rate_medic::where('medico_id',$id)->get();
+
+        foreach ($rate_medic as $value) {
+            $value->views = 'si';
+            $value->save();
+        }
+        $medico = medico::find($id);
+        $medico->calification_not_see = 0;
+        $medico->save();
+
+        return back()->with('success', 'Todos los comentarios nuevos han sido marcados como vistos');
+    }
+    public function check_all_view_show($id){
+        $rate_medic = rate_medic::where('medico_id',$id)->get();
+
+        foreach ($rate_medic as $value) {
+            $value->views = 'si';
+            $value->show = 'si';
+            $value->save();
+        }
+
+        $medico = medico::find($id);
+        $medico->calification_not_see = 0;
+        $medico->save();
+        return back()->with('success', 'Todos los comentarios nuevos han sido marcados como vistos y configurados para mostrarse a los visitantes');
+    }
+
+
 }

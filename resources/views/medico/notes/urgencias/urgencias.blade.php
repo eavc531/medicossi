@@ -80,8 +80,8 @@
   </div>
 
   <div class="text-right">
-    <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
-    <a href="{{route('download_pdf',$note->id)}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
+    <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id) ,'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+    <a href="{{route('download_pdf',\Hashids::encode($note->id))}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
   </div>
 
 </div>

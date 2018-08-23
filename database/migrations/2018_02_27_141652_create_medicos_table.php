@@ -57,6 +57,7 @@ class CreateMedicosTable extends Migration
             $table->integer('notification_number')->default(0);
             $table->string('type_patient_service')->nullable();
             $table->string('calification')->nullable();
+            $table->string('calification_not_see')->nullable();
             $table->string('votes')->default(0);
             $table->string('show_comentary')->default('No');
             $table->string('plan')->nullable();

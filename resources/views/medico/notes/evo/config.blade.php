@@ -1,4 +1,4 @@
-@extends('layouts.app')
+\Hashids::encode($note->id)@extends('layouts.app')
 
 @section('css')
     <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
@@ -36,7 +36,7 @@
    <b> {{$note->title}}</b>
   </div>
   <div class="card-body">
-    {!!Form::model($note,['route'=>['note_config_store',$note],'method'=>'POST'])!!}
+    {!!Form::model($note,['route'=>['note_config_store',\Hashids::encode($note->id)],'method'=>'POST'])!!}
       {!!Form::hidden('note_id',$note->id)!!}
       {!!Form::hidden('title',$note->title)!!}
       {!!Form::hidden('medico_id',$medico->id)!!}
@@ -300,9 +300,9 @@
 
     {!!Form::close()!!}
     @if($expedient != Null)
-      <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+      <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-secondary line" >Cancelar</i></a>
     @else
-      <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
+      <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
     @endif
     </div>
     </div>

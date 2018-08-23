@@ -46,13 +46,13 @@
 									<td class="text-center">{{$promoter->id_promoter}}</td>
 									<td>
 
-									<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Clientes del promotor" role="button" href="{{route('list_client',$promoter->id)}}"><i class="fas fa-users"></i>
+									<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Clientes del promotor" role="button" href="{{route('list_client',\Hashids::encode($promoter->id))}}"><i class="fas fa-users"></i>
 									</a>
-									<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Depositos" role="button" href="{{route('promoter_deposits_pending',$promoter->id)}}"><i class="fas fa-filter"></i>
+									<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Depositos" role="button" href="{{route('promoter_deposits_pending',\Hashids::encode($promoter->id))}}"><i class="fas fa-filter"></i>
 									</a>
-									<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Cuentas Bancarias" role="button" href="{{route('accounts_number',['p_id'=>$promoter->id,'back'=>'back'])}}"><i class="fas fa-money-bill-alt"></i>
+									<a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Cuentas Bancarias" role="button" href="{{route('accounts_number',['p_id'=>\Hashids::encode($promoter->id),'back'=>'back'])}}"><i class="fas fa-money-bill-alt"></i>
 									</a>
-									{{-- <a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Planes Que Puede Ofrecer" role="button" href="{{route('listPermissionSet',$promoter->id)}}"><i class="fas fa-ban"></i>
+									{{-- <a class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Planes Que Puede Ofrecer" role="button" href="{{route('listPermissionSet',\Hashids::encode($promoter->id))}}"><i class="fas fa-ban"></i>
 										</a> --}}
 
 								</td>

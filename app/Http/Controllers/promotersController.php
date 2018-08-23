@@ -54,7 +54,7 @@ class promotersController extends Controller
         $record->date_payment = $request->date_payment;
         $record->save();
 
-        return redirect()->route('promoter_deposits',$record->promoter_id)->with('success', 'se ha marcado el deposito como pagado, de forma satisfactoria.');
+        return redirect()->route('promoter_deposits',\Hashids::encode($record->promoter_id))->with('success', 'se ha marcado el deposito como pagado, de forma satisfactoria.');
 
      }
 
@@ -87,7 +87,7 @@ class promotersController extends Controller
 
         $a_n->save();
 
-        return redirect()->route('accounts_number',$a_n->promoter_id)->with('success', 'cambios guardados de forma satisfactoria');
+        return redirect()->route('accounts_number',\Hashids::encode($a_n->promoter_id))->with('success', 'cambios guardados de forma satisfactoria');
     }
 
 
@@ -97,7 +97,7 @@ class promotersController extends Controller
         $promoter_id = $account->promoter_id;
         $account->delete();
 
-        return redirect()->route('accounts_number',$promoter_id)->with('danger', 'Se ha eliminado el numero de cuenta de forma satisfactoria');
+        return redirect()->route('accounts_number',\Hashids::encode($promoter_id))->with('danger', 'Se ha eliminado el numero de cuenta de forma satisfactoria');
 
     }
      public function account_number_edit($id)
@@ -527,7 +527,7 @@ class promotersController extends Controller
 
           });
 
-         return redirect()->route('list_client',$request->promoter_id)->with('success', 'Se ha Registrado un nuevo usuario como su Invitado, solo falta que el usuario confirme su cuenta a travez de el correo asociado a su registro en el sistema.');
+         return redirect()->route('list_client',\Hashids::encode($request->promoter_id))->with('success', 'Se ha Registrado un nuevo usuario como su Invitado, solo falta que el usuario confirme su cuenta a travez de el correo asociado a su registro en el sistema.');
 
      }
 
@@ -594,7 +594,7 @@ class promotersController extends Controller
         // $msj->to('eavc53189@gmail.com');
        });
 
-           return redirect()->route('list_client',$request->promoter_id)->with('success', 'Se ha Registrado un nuevo Médico como su invitado, de forma simultanea se a enviado un mensaje al correo del médico recien agregado, con la información necesaria para  que pueda acceder a su cuenta Médicossi.');
+           return redirect()->route('list_client',\Hashids::encode($request->promoter_id))->with('success', 'Se ha Registrado un nuevo Médico como su invitado, de forma simultanea se a enviado un mensaje al correo del médico recien agregado, con la información necesaria para  que pueda acceder a su cuenta Médicossi.');
 
      }
 

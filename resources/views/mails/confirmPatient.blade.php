@@ -10,7 +10,7 @@
 
   <h2>"Verificación por correo electrónico de MédicosSi"</h2>
 
-    <p>Un Cordial saludo: {{$patient->name}} {{$patient->lastName}}, este es un mensaje de confirmacion para aperturar cuenta en MédicosSi, Para Confirmar su registro debe Ingresar a la Ruta: </p><a href="{{route('confirmPatient',['id'=>$patient->id,'code'=>$code])}}">{{route('confirmPatient',['id'=>$patient->id,'code'=>$code])}}</a>
+    <p>Un Cordial saludo: {{$patient->name}} {{$patient->lastName}}, este es un mensaje de confirmacion para aperturar cuenta en MédicosSi, Para Confirmar su registro debe Ingresar a la Ruta: </p><a href="{{route('confirmPatient',['id'=>\Hashids::encode($patient->id),'code'=>$code])}}">{{route('confirmPatient',['id'=>\Hashids::encode($user->id),'code'=>$code])}}</a>
 
     <p>Si usted no Solicito una cuenta en MédicosSi, Simplemente omita el mensaje; de este modo la cuenta no sera verificada.</p>
 

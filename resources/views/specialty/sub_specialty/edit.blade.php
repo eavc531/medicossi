@@ -18,7 +18,7 @@
             <hr>
           </div>
         </div>
-        {!!Form::model($sub_specialty,['route'=>['sub_specialty.update',$sub_specialty->id],'method'=>'PUT'])!!}
+        {!!Form::model($sub_specialty,['route'=>['sub_specialty.update',\Hashids::encode($sub_specialty->id)],'method'=>'PUT'])!!}
 
           <div class="row">
             <div class="col-lg-6 col-12">

@@ -8,10 +8,10 @@
       <h3 class="font-title text-center mb-3">Editar datos de centros médicos</h3>
     </div>
     <div class="col text-right">
-      <a class="btn btn-primary" href="{{route('medicalCenter.edit',request()->id)}}">Atras</a>
+      <a class="btn btn-primary" href="{{route('medicalCenter.edit',\Hashids::encode(request()->id))}}">Atras</a>
     </div>
   </div>
-  {!!Form::model($medicalCenter,['route'=>['medical_center_edit_data_update',$medicalCenter],'method'=>'update'])!!}
+  {!!Form::model($medicalCenter,['route'=>['medical_center_edit_data_update',\Hashids::encode($medicalCenter)],'method'=>'update'])!!}
   <div class="row">
     <div class="col-lg-6 col-sm-6 m-sm-auto col-12">
       <div class="form-group">
@@ -68,7 +68,7 @@
   <div class="row mb-3">
     <div class="col-lg-6 col-sm-6 col-12">
       <div class="form-group">
-        <a href="{{route('medicalCenter.edit',$medicalCenter->id)}}" class="btn btn-primary btn-block">Cancelar</a>
+        <a href="{{route('medicalCenter.edit',\Hashids::encode($medicalCenter->id))}}" class="btn btn-primary btn-block">Cancelar</a>
       </div>
     </div>
     <div class="col-lg-6 col-sm-6 col-12">

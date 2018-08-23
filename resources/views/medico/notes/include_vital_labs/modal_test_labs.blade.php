@@ -33,7 +33,7 @@
 
           <div class="text-right">
               @if(Route::currentRouteName() == 'note_config')
-                  <a href="{{route('medico_test_labs',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id,'back'=>Route::currentRouteName()])}}" class="btn btn-success btn-sm">Agregar Eliminar nuevos Campos a la lista</a>
+                  <a href="{{route('medico_test_labs',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id),'back'=>Route::currentRouteName()])}}" class="btn btn-success btn-sm">Agregar Eliminar nuevos Campos a la lista</a>
               @else
                   <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal2">
                     Agregar Eliminar nuevos Campos a la lista
@@ -75,7 +75,7 @@
 
           <div class="text-center">
 
-              <a href="{{route('medico_test_labs',['medico_id'=>$medico->id,'patient_id'=>$patient->id,'note_id'=>$note->id,'back'=>Route::currentRouteName()])}}" class="btn btn-success">Aceptar y Continuar</a>
+              <a href="{{route('medico_test_labs',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id),'back'=>Route::currentRouteName()])}}" class="btn btn-success">Aceptar y Continuar</a>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           </div>
 

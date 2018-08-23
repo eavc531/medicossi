@@ -60,10 +60,10 @@
 
             <div class="row">
                 <div class="col-lg-6 col-12 mt-2">
-                    <a href="{{route('medico_assistant_create',$medico->id)}}" class="btn-config-blue btn btn-block">Limpiar</a>
+                    <a href="{{route('medico_assistant_create',\Hashids::encode($medico->id))}}" class="btn-config-blue btn btn-block">Limpiar</a>
                 </div>
                 <div class="col-lg-6 col-12 mt-2">
-                    
+
                     <button type="submit" class="btn-config-green btn btn-block">Registrar</button>
 
                 </div>

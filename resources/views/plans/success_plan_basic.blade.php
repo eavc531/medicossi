@@ -11,7 +11,7 @@
 
 <div class="row mt-5">
   <div class="col-6">
-    <a href="{{route('planes_medic',request()->id)}}" class="btn btn-success btn-block">Volver a Planes</a>
+    <a href="{{route('planes_medic',\Hashids::encode(request()->id))}}" class="btn btn-success btn-block">Volver a Planes</a>
   </div>
   <div class="col-6">
     <a href="{{route('home')}}" class="btn btn-warning btn-block">Ir a Inicio</a>

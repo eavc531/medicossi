@@ -18,8 +18,8 @@
             </div>
           </div>
 
-        <a href="{{route('income_medic',request()->id)}}" class="btn btn-primary disabled">Citas Cobradas</a>
-        <a href="{{route('income_medic_without_pay',request()->id)}}" class="btn btn-warning">Citas por Cobrar</a>
+        <a href="{{route('income_medic',\Hashids::encode(request()->id)))}}" class="btn btn-primary disabled">Citas Cobradas</a>
+        <a href="{{route('income_medic_without_pay',\Hashids::encode(request()->id)))}}" class="btn btn-warning">Citas por Cobrar</a>
         <div class="">
           <h5>Citas por Cobrar</h5>
         </div>

@@ -154,7 +154,7 @@
             @endplan_profesional
             @plan_profesional
                 <div class="col-12">
-                  <a href="{{route('calification_medic',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+                  <a href="{{route('calification_medic',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="btn btn-block btn-config-dashboard color-assistant"><i class="far fa-list-alt"></i><span>Calificación</span><span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->calification_not_see}})</span></a>
                 </div>
             @endplan_profesional
               <div class="col-12">
@@ -266,10 +266,16 @@
 
                                     <a href="{{route('medico_diary',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
                                   </div>
+
                                   @plan_agenda
+
                                   <div class="col-12">
-                                            <a href="{{route('appointments_confirmed', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
-                                    </div>
+                                  @plan_profesional
+                                      <a href="{{route('appointments', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                                  @else
+                                      <a href="{{route('appointments_confirmed', \Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
+                                  @endplan_profesional
+                                  </div>
 
                                   <div class="col-12">
                                     <a href="{{route('medico_reminders',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
@@ -304,7 +310,7 @@
                                 @endplan_profesional
                                 @plan_profesional
                                     <div class="col-12">
-                                      <a href="{{route('calification_medic',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
+                                      <a href="{{route('calification_medic',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span><span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->calification_not_see}})</span></a>
                                     </div>
                                 @endplan_profesional
                                   <div class="col-12">
@@ -491,11 +497,8 @@
                     </div>
                   </div>
                   <div class="row">
-                    {{-- <div class="col-12">
-                      <a href="#" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-user-plus fa-2"></i><span>Agregar comentario y/o calificación</a>
-                      </div>
-                    </div>
-                    <div class="row py-1">
+
+
                       {{-- <div class="col-12">
                         <a href="#" class="btn btn-block btn-config-dashboard color-patient"><i class="fas fa-book"></i><span>Agendar cita</span></a>
                       </div> --}}

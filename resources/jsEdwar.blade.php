@@ -1,4 +1,101 @@
 <?php
+
+public function store_rate_comentary(Request $request)
+{
+  //dd($request->all());
+ $medico = medico::find($request->medico_id);
+
+  if($request->conservar == 'conservar'){
+
+      $event = event::find($request->event_id);
+      $event->status = 'calificada';
+      $event->save();
+
+     return redirect()->route('patient_appointments',\Hashids::encode($request->patient_id))->with('success', 'Se a guardado tu opinion referente al Médico : '.$medico->name.' '.$medico->lastName.'.');
+  }
+
+  if($request->rate == 6){
+    return back()->with('warning', 'El campo Calificación es requerido');
+  }
+  $request->validate([
+    'rate'=>'required',
+    'comentary'=>'max:200'
+  ]);
+
+
+  $calification = '';
+  switch ($request->rate) {
+case  Null:
+   $calification = 'Neutral';
+   break;
+case 1:
+   $calification = 'Pesimo';
+   break;
+case 2:
+   $calification = 'Malo';
+   break;
+case 3:
+   $calification = 'Regular';
+   break;
+case 4:
+   $calification = 'Buena';
+   break;
+case 5:
+   $calification = 'Excelente';
+   break;
+
+ }
+
+ $rate_medic1 = rate_medic::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->count();
+ $rate_medic2 = rate_medic::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->first();
+ if($rate_medic1 != 0){
+
+   $rate_medic2->delete();
+ }
+
+ $rate_medic = new rate_medic;
+ $rate_medic->rate = $request->rate;
+ $rate_medic->comentary = $request->comentary;
+ $rate_medic->patient_id = $request->patient_id;
+ $rate_medic->medico_id = $request->medico_id;
+ if($medico->show_comentary == 'Si'){
+   $rate_medic->show = 'Si';
+ }else{
+   $rate_medic->show = 'No';
+ }
+ $rate_medic->save();
+
+ $rate_medicT = rate_medic::where('medico_id',$request->medico_id)->get();
+ $count = rate_medic::where('medico_id',$request->medico_id)->count();
+
+ $suma = 0;
+  foreach ($rate_medicT as $value) {
+    $suma = $suma + $value->rate;
+  }
+
+
+   $medico->calification = $suma / $count;
+   $medico->votes = $count;
+   $medico->save();
+
+   $event = event::find($request->event_id);
+   $event->status = 'calificada';
+   $event->save();
+
+  return redirect()->route('patient_appointments',\Hashids::encode($request->patient_id))->with('success', 'Se aguardado tu opinion referente al Médico : '.$medico->name.' '.$medico->lastName.'.');
+}
+
+
+///////////////////////
+
+
+
+
+
+
+
+
+
 $patient = patient::find($request->patient_id);
 $medico = medico::find($request->medico_id);
 // dd($request->medico_id);

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+\Hashids::encode($note->patient_id)@extends('layouts.app')
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
@@ -28,9 +28,9 @@
          <h5>{{Session::get('success2')}}</h5>
 
          <div class="mt-2">
-             <a href="{{route('expedient_open',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id,'exp_id'=>Session::get('exp_id')] )}}" class="btn btn-outline-success">ir a Expediente: {{Session::get('exp')}}</a>
-             <a href="{{route('notes_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id] )}}" class="btn btn-outline-success">ir a Notas</a>
-             <a href="{{route('expedients_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id] )}}" class="btn btn-outline-success">ir a expedientes</a>
+             <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id),'exp_id'=>\Hashids::encode(Session::get('exp_id'))] )}}" class="btn btn-outline-success">ir a Expediente: {{Session::get('exp')}}</a>
+             <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id)] )}}" class="btn btn-outline-success">ir a Notas</a>
+             <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id)] )}}" class="btn btn-outline-success">ir a expedientes</a>
          </div>
       </div>
     </div>
@@ -43,9 +43,9 @@
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             {{Session::get('warning2')}}
             <div class="mt-2">
-                <a href="{{route('expedient_open',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id,'exp_id'=>Session::get('exp_id')] )}}" class="btn btn-outline-warning">ir a Expediente: {{Session::get('exp')}}</a>
-                <a href="{{route('notes_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id] )}}" class="btn btn-outline-warning">ir a Notas</a>
-                <a href="{{route('expedient_open',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id,'exp_id'=>Session::get('exp_id')] )}}" class="btn btn-outline-warning">ir a expedientes</a>
+                <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id),'exp_id'=>\Hashids::encode(Session::get('exp_id'))] )}}" class="btn btn-outline-warning">ir a Expediente: {{Session::get('exp')}}</a>
+                <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id)] )}}" class="btn btn-outline-warning">ir a Notas</a>
+                <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id),'exp_id'=>\Hashids::encode(Session::get('exp_id'))] )}}" class="btn btn-outline-warning">ir a expedientes</a>
             </div>
          </div>
        </div>
@@ -53,10 +53,10 @@
       @endif
       <div class="text-right">
           @isset(request()->expedient_id)
-              <a class="btn btn-secondary" href="{{route('expedient_open',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id,'ex_id'=>request()->expedient_id])}}">atras</a>
+              <a class="btn btn-secondary" href="{{route('expedient_open',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id),'ex_id'=>\Hashids::encode(request()->expedient_id)])}}">atras</a>
 
           @else
-            <a class="btn btn-secondary" href="{{route('notes_patient',['m_id'=>$note->medico_id,'p_id'=>$note->patient_id])}}">atras</a>
+            <a class="btn btn-secondary" href="{{route('notes_patient',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id)])}}">atras</a>
         @endisset
       </div>
 
@@ -81,7 +81,7 @@
           @foreach ($expedients as $expedient)
           <tr>
             <td><span class="pre">{{$expedient->name}}</span>
-              <form class="" action="{{route('expedient_update',$expedient->id)}}" method="post">
+              <form class="" action="{{route('expedient_update',\Hashids::encode($expedient->id))}}" method="post">
                 {{csrf_field()}}
 
               <div class="input-group" style="display:none">
@@ -96,7 +96,7 @@
             <td>{{\Carbon\Carbon::parse($expedient->created_at)->format('d-m-Y')}}</td>
 
             <td>
-                <a href="{{route('note_move_store',['note_id'=>$note->id,'ex_id'=>$expedient->id])}}" class="btn btn-success"><i class="fas fa-check"></i></a>
+                <a href="{{route('note_move_store',['note_id'=>$note->id,'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success"><i class="fas fa-check"></i></a>
             </td>
           </tr>
             @endforeach

@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      {!!Form::model($medico,['route'=>['medico.update',$medico],'method'=>'PUT','id'=>'person'])!!}
+      {!!Form::model($medico,['route'=>['medico.update',\Hashids::encode($medico->id)],'method'=>'PUT','id'=>'person'])!!}
 
       <div class="row">
         <div class="col-lg-6 col-12">
@@ -165,7 +165,7 @@
              <div class="col-6">
                @if($medico->stateConfirm == 'complete')
 
-                 <a href="{{route('medico.edit',$medico->id)}}" class="btn btn-primary btn-block">Cancelar</a>
+                 <a href="{{route('medico.edit',\Hashids::encode($medico->id))}}" class="btn btn-primary btn-block">Cancelar</a>
 
                @endif
              </div>

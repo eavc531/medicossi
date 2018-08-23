@@ -17,7 +17,7 @@
 
     @isset(request()->back)
         <div class="text-right">
-            <a href="{{route('medico_patients',request()->back)}}" class="btn btn-secondary">atras</a>
+            <a href="{{route('medico_patients',\Hashids::encode(request()->back))}}" class="btn btn-secondary">atras</a>
 
         </div>
     @endisset
@@ -88,7 +88,7 @@
         <li><b>Fecha de Nacimiento:</b>@isset($patient->birthdate) {{\Carbon\Carbon::parse($patient->birthdate)->format('m-d-Y')}}@else <span class="text-secondary">No especifica @endisset</li>
         <li><b>Edad:</b>{{$patient->age}}</li>
       </ul>
-        <a href="{{route('patient_edit_data',$patient->id)}}" class="btn btn-block btn-success">Editar</a>
+        <a href="{{route('patient_edit_data',\Hashids::encode($patient->id))}}" class="btn btn-block btn-success">Editar</a>
     </div>
   </div>
 </div>
@@ -117,7 +117,7 @@
       <li><strong>Numero Interno:</strong> @isset($patient->number_int){{$patient->number_int}}@else <span class="text-secondary">No especifica @endisset</li>
     </ul>
 
-    <a href="{{route('address_patient',$patient->id)}}" class="btn btn-block btn-success">Editar</a>
+    <a href="{{route('address_patient',\Hashids::encode($patient->id))}}" class="btn btn-block btn-success">Editar</a>
   </div>
 </div>
 <hr>

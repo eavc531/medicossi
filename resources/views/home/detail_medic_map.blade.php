@@ -4,7 +4,7 @@
 
 	<section class="box-register">
 		<div class="text-right">
-
+			
 			<button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Volver</button>
 		</div>
     <div class="row mb-4">
@@ -45,7 +45,7 @@
             </div>
             <div class="row mt-3 align-self-end">
               <div class="col-12">
-                <a href="{{route('detail_medic_map',$medico['id'])}}" class="btn btn-primary btn-sm text-white"><p class="card-text"><i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
+                <a href="{{route('detail_medic_map',\Hashids::encode($medico['id']))}}" class="btn btn-primary btn-sm text-white"><p class="card-text"><i class="fas fa-map-marker-alt mr-1"></i><b>{{$medico['state']}},{{$medico['city']}}</b></p></a>
               </div>
             </div>
           </div>
@@ -53,7 +53,7 @@
         <div class="col-12 col-sm-4 col-lg-4 p-4">
           <div class="form-group">
 
-            <a class="btn btn-success" href="{{route('medico.edit',$medico['id'])}}">Perfil</a>
+            <a class="btn btn-success" href="{{route('medico.edit',\Hashids::encode($medico['id']))}}">Perfil</a>
           </div>
           <div class="form-group">
             <a href="" class="btn-icon"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>

@@ -24,6 +24,24 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+
+        //PARA LOS METODOS RESOURCE ESPECIFICAR EL NOMBRE DEL CONTROLADOR
+        Route::bind('medico', function($id) {
+            return \Hashids::decode($id)[0];
+        });
+        ///////////////////////////////////////////
+
+
+        Route::bind('ex_id', function($ex_id, $route)
+            {
+                return \Hashids::decode($ex_id)[0];
+            });
+
+        Route::bind('app_id', function($app_id, $route)
+            {
+                return \Hashids::decode($app_id)[0];
+            });
+
             Route::bind('id', function($id, $route)
                 {
                     return \Hashids::decode($id)[0];
@@ -32,6 +50,11 @@ class RouteServiceProvider extends ServiceProvider
             Route::bind('m_id', function($m_id, $route)
                 {
                     return \Hashids::decode($m_id)[0];
+                });
+
+            Route::bind('p_id', function($p_id, $route)
+                {
+                    return \Hashids::decode($p_id)[0];
                 });
 
             Route::bind('P_id', function($P_id, $route)
@@ -43,6 +66,8 @@ class RouteServiceProvider extends ServiceProvider
                 {
                     return \Hashids::decode($n_id)[0];
                 });
+
+
 
         parent::boot();
     }

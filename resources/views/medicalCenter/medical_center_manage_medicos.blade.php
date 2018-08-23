@@ -12,7 +12,7 @@
 
         </div>
         <div class="col-6 text-right">
-          <a class="btn btn-secondary" href="{{route('medicalCenter.edit',request()->id)}}">Atras</a>
+          <a class="btn btn-secondary" href="{{route('medicalCenter.edit',\Hashids::encode(request()->id))}}">Atras</a>
         </div>
       </div>
 
@@ -20,7 +20,7 @@
 
 
       <div class="col-6">
-        {{Form::open(['route'=>['search_medico_belong_medical_center',request()->id],'method'=>'get'])}}
+        {{Form::open(['route'=>['search_medico_belong_medical_center',\Hashids::encode(request()->id)],'method'=>'get'])}}
         <div class="form-inline">
           <label for="[object Object]">Buscar Médicos Agregados</label>
           <input class="form-control w-100 col-lg-10 col-12" type="search" placeholder="Cédula,nombre o apellido" aria-label="Buscar" name="search">
@@ -32,7 +32,7 @@
 
 
       <div class="col-6">
-        {{Form::open(['route'=>['search_medico_medical_center',request()->id],'method'=>'get'])}}
+        {{Form::open(['route'=>['search_medico_medical_center',\Hashids::encode(request()->id)],'method'=>'get'])}}
         <div class="form-inline">
           <label for="[object Object]">Buscar Médicos no Agregados</label>
             <input class="form-control w-100 col-lg-10 col-12" type="search" placeholder="Cédula,nombre o apellido" aria-label="Buscar" name="search">
@@ -49,7 +49,7 @@
               <div class="card mt-4">
 
                 <div class="card-header bg-success text-white">
-                  <a href="{{route('medical_center_manage_medicos',request()->id)}}" class="close text-right"><span aria-hidden="true">&times;</span></a>
+                  <a href="{{route('medical_center_manage_medicos',\Hashids::encode(request()->id))}}" class="close text-right"><span aria-hidden="true">&times;</span></a>
                   <h5>Médicos no Registrados en este Centro Médico</h5>
                 </div>
               <table class="table">
@@ -84,7 +84,7 @@
                       </td>
                       <td>
 
-                        {{Form::open(['route'=>['medical_center_add_medico',request()->id],'method'=>'post'])}}
+                        {{Form::open(['route'=>['medical_center_add_medico',\Hashids::encode(request()->id)],'method'=>'post'])}}
                           <input type="hidden" name="medico_id" value="{{$medico['id']}}">
                           <input type="hidden" name="medicalCenter_id" value="{{request()->id}}">
                           <button type="submit" name="button" class="btn btn-success">Agregar</button>
@@ -97,7 +97,7 @@
                 <tfoot>
                   <td colspan="4">{{$medicosSearch->appends(Request::all())->links()}}</td>
                   <td>
-                    <a href="{{route('medical_center_manage_medicos',request()->id)}}" class="btn btn-secondary">volver a medicos Agregados</a>
+                    <a href="{{route('medical_center_manage_medicos',\Hashids::encode(request()->id))}}" class="btn btn-secondary">volver a medicos Agregados</a>
                   </td>
                 </tfoot>
               </table>
@@ -106,7 +106,7 @@
           <div class="card">
             <div class="card-body">
               <h5>No se Encontraron Resultados para la Busqueda</h5>
-              <a href="{{route('medical_center_manage_medicos',request()->id)}}" class="close"><span aria-hidden="true">&times;</span></a>
+              <a href="{{route('medical_center_manage_medicos',\Hashids::encode(request()->id))}}" class="close"><span aria-hidden="true">&times;</span></a>
             </div>
           </div>
         @endif

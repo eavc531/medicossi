@@ -34,7 +34,7 @@
 
 								@foreach ($administrators as $admin)
 								<tr>
-									<th scope="row">{{$admin->id}}</th>
+									<th scope="row">{{\Hashids::encode($admin->id)}}</th>
 									<td class="text-center">{{$admin->name}}</th>
 									<td class="text-center">{{$admin->lastName}}</td>
 									<td class="text-center">{{$admin->email}}</td>
@@ -45,11 +45,11 @@
 												<div class="btn-group" role="group" aria-label="...">
 													<div class="row">
 														<div class="col-4">
-															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('administrators.edit',$admin->id)}}"><i class="fas fa-edit"></i>
+															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Editar" role="button" href="{{route('administrators.edit',\Hashids::encode($admin->id))}}"><i class="fas fa-edit"></i>
 															</a>
 														</div>
 														{{-- <div class="col-4">
-															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Ciudades que puede editar" role="button" href="{{route('citiesAdmin',$admin->id)}}"><i class="fas fa-bars"></i>
+															<a  class="btn btn-secondary  text-center" data-toggle="tooltip" data-placement="top" title="Ciudades que puede editar" role="button" href="{{route('citiesAdmin',\Hashids::encode($admin->id))}}"><i class="fas fa-bars"></i>
 															</a>
 
 														</div> --}}

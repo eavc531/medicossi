@@ -114,7 +114,7 @@ class medicalCenterController extends Controller
       $medico->medicalCenter_id = $request->medicalCenter_id;
       $medico->save();
 
-      return redirect()->route('medical_center_manage_medicos',$request->medicalCenter_id)->with('success', 'El medico: '.$medico->name.' '.$medico->lastName.' ha sido agregado a este Centro Médico de forma Exitosa');
+      return redirect()->route('medical_center_manage_medicos',\Hashids::encode($request->medicalCenter_id))->with('success', 'El medico: '.$medico->name.' '.$medico->lastName.' ha sido agregado a este Centro Médico de forma Exitosa');
     }
 
     public function search_medico_belong_medical_center(Request $request,$id){
@@ -276,7 +276,7 @@ class medicalCenterController extends Controller
         $medicalCenter->save();
 
 
-     return redirect()->route('medicalCenter.edit',$medicalCenter->id)->with('medicalCenter', $medicalCenter)->with('success','Se han actualziado datos de la Dirección del Centro Médico');
+     return redirect()->route('medicalCenter.edit',\Hashids::encode($medicalCenter->id))->with('medicalCenter', $medicalCenter)->with('success','Se han actualziado datos de la Dirección del Centro Médico');
   }
 
   public function medical_center_edit_data($id){
@@ -312,7 +312,7 @@ class medicalCenterController extends Controller
 
     $medicalCenter->save();
 
-     return redirect()->route('medicalCenter.edit',$medicalCenter->id)->with('success','Se han guardado los datos del centro medico con exito');
+     return redirect()->route('medicalCenter.edit',\Hashids::encode($medicalCenter->id))->with('success','Se han guardado los datos del centro medico con exito');
   }
 
 
@@ -357,7 +357,7 @@ class medicalCenterController extends Controller
           return redirect()->route('home')->with('confirmMedico', 'confirmMedico');
       }
 
-         return redirect()->route('successRegMedicalCenter',$medicalCenter->id)->with('warning', 'No se pudo verificar la autenticacion del usuario, por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
+         return redirect()->route('successRegMedicalCenter',\Hashids::encode($medicalCenter->id))->with('warning', 'No se pudo verificar la autenticacion del usuario, por favor presione el boton "Reenviar Correo de Confirmación" para intentarlo Nuevamente.');
 
     }
     /**
@@ -433,7 +433,7 @@ class medicalCenterController extends Controller
          // if($request->id_promoter != Null){
          //   return redirect()->route('list_client',$request->id_promoter);
          // }
-        return redirect()->route('successRegMedicalCenter',$medicalCenter->id);
+        return redirect()->route('successRegMedicalCenter',\Hashids::encode($medicalCenter->id));
     }
 
     public function successRegMedicalCenter($id){
@@ -452,7 +452,7 @@ class medicalCenterController extends Controller
          $msj->to($medicalCenter->emailAdmin);
        });
 
-       return redirect()->route('successRegMedicalCenter',$medicalCenter->id)->with('success','Se ha Enviado un mensaje a su correo electronico para que pueda Confirmar su Cuenta');
+       return redirect()->route('successRegMedicalCenter',\Hashids::encode($medicalCenter->id))->with('success','Se ha Enviado un mensaje a su correo electronico para que pueda Confirmar su Cuenta');
     }
 
     public function show($id)
@@ -536,7 +536,7 @@ class medicalCenterController extends Controller
         $medicalCenter->fill($request->all());
         $medicalCenter->save();
 
-        return redirect()->route('medicalCenter.edit',$id);
+        return redirect()->route('medicalCenter.edit',\Hashids::encode($id));
 
     }
 

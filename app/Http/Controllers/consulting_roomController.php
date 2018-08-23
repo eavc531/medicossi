@@ -18,7 +18,7 @@ class consulting_roomController extends Controller
      public function consulting_room_delete($id)
      {
          $type_consulting_room = consulting_room::find($id);
-         
+
          $type_consulting_room->delete();
 
          return back()->with('danger', 'Consultorio Eliminado');
@@ -78,7 +78,7 @@ class consulting_roomController extends Controller
       $consulting_room->street = $request->street;
       $consulting_room->save();
 
-        return redirect()->route('medico.edit',$consulting_room->medico_id)->with('success', 'Se han guardado los cambios para el consultorio de forma satisfactoria');
+        return redirect()->route('medico.edit',\Hashids::encode($consulting_room->medico_id))->with('success', 'Se han guardado los cambios para el consultorio de forma satisfactoria');
     }
 
     public function consulting_room_store(Request $request,$id)
@@ -120,7 +120,7 @@ class consulting_roomController extends Controller
       $consulting_room->street = $request->street;
       $consulting_room->save();
 
-        return redirect()->route('medico.edit',$id)->with('success', 'Se a agregado un nuevo consultorio de forma satisfactoria');
+        return redirect()->route('medico.edit',\Hashids::encode($id))->with('success', 'Se a agregado un nuevo consultorio de forma satisfactoria');
     }
     public function consulting_room_edit($id){
       $consulting_room = consulting_room::find($id);
@@ -173,7 +173,7 @@ class consulting_roomController extends Controller
         }
         $consulting_room->save();
 
-        return redirect()->route('medico.edit',$request->medico_id)->with('success3', 'Nuevo Consultorio agregado de forma satisfactoria');
+        return redirect()->route('medico.edit',\Hashids::encode($request->medico_id))->with('success3', 'Nuevo Consultorio agregado de forma satisfactoria');
 
     }
 

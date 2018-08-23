@@ -18,7 +18,7 @@
 				</div>
 
 				<div class="text-right">
-					<a href="{{route('assistant_medicos',$administrator->id)}}" class="btn btn-secondary">Atras</a>
+					<a href="{{route('assistant_medicos',\Hashids::encode($administrator->id))}}" class="btn btn-secondary">Atras</a>
 				</div>
 
 

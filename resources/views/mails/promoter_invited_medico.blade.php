@@ -15,7 +15,7 @@ prediseñadas, organizar sus citas, ser ubicado por pacientes a travez de busque
 
     <p><strong>Sus Datos de Usuario para poder ingresar a su cuenta Médicossi son los Siguientes:</strong></p>
     <p><strong>Correo: </strong>{{$medico->email}}</p>
-    <p><strong>Contraseña:</strong>{{$code}}</p>
+    <p><strong>Contraseña: </strong>{{$code}}</p>
 
     <p>Cuenta Creada en la fecha: {{\Carbon\Carbon::now()}}</p>
 

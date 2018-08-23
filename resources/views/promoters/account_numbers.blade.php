@@ -10,7 +10,7 @@
 						<h2 class="text-center font-title">Numeros de Cuenta: {{$promoter->name}} {{$promoter->lastName}}</h2>
 					</div>
 					</div>
-					
+
 					<div class="col-12 mb-5">
 						@if(Auth::user()->promoter_id == $promoter->id)
 
@@ -152,8 +152,8 @@
 											<td class="text-center">{{$account->email}}</td>
 										@if(Auth::user()->promotor_id == $promoter->id)
 											<td>
-												<a href="{{route('account_number_edit',$account->id)}}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-												<a onclick="return confirm('¿Esta segur@ de eliminar este Numero de Cuenta?')"href="{{route('account_number_delete',$account->id)}}" class="btn btn-danger"><i class="fas fa-times"></i></a>
+												<a href="{{route('account_number_edit',\Hashids::encode($account->id))}}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
+												<a onclick="return confirm('¿Esta segur@ de eliminar este Numero de Cuenta?')"href="{{route('account_number_delete',\Hashids::encode($account->id))}}" class="btn btn-danger"><i class="fas fa-times"></i></a>
 											</td>
 										@endif
 

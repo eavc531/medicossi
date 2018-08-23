@@ -9,7 +9,7 @@
   </div>
 
   <div class="text-right">
-      <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+      <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id) ,'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
   </div>
 
   <div class="card">
@@ -48,7 +48,7 @@
   <div class="mt-5">
     <div class="" style="width:50%;float:left">
       <p class="font-title-grey"><strong>Médico Tratante:</strong> {{$medico->name}} {{$medico->lastName}}</p>
-      <p class="font-title-grey"><strong>Cedula profesional:</strong> {{$medico->identification}}</p>
+      <p class="font-title-grey"><strong>Cedula profesional:</strong> {{\Hashids::encode($medico->id)entification}}</p>
     </div>
 
     <div class="" style="width:50%;float:right">
@@ -71,8 +71,8 @@
 
 </div>
 <div class="text-right">
-    <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
-    <a href="{{route('download_pdf',$note->id)}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
+    <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id) ,'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+    <a href="{{route('download_pdf',\Hashids::encode($note->id))}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
 </div>
 
 

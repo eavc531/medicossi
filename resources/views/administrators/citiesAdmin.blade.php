@@ -40,7 +40,7 @@
 									<td class="text-center">{{$city->name}}</td>
 									<td class="text-center">
 										</a>
-											<a  class="btn btn-danger  text-center" data-toggle="tooltip" data-placement="top" title="Ciudades que puede editar" role="button" onclick="return confirm('Esta Seguro de Deshabilitar esta Ciudad.')" href="{{route('deleteCityAdmin',$city->id)}}"><i class="fas fa-ban"></i>
+											<a  class="btn btn-danger  text-center" data-toggle="tooltip" data-placement="top" title="Ciudades que puede editar" role="button" onclick="return confirm('Esta Seguro de Deshabilitar esta Ciudad.')" href="{{route('deleteCityAdmin',\Hashids::encode($city->id))}}"><i class="fas fa-ban"></i>
 										</a>
 									</td>
 								</tr>

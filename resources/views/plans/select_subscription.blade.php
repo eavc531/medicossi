@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="text-right">
-      <a href="{{route('planes_medic',$medico->id)}}" class="btn btn-secondary">Vovler</a>
+      <a href="{{route('planes_medic',\Hashids::encode($medico->id))}}" class="btn btn-secondary">Vovler</a>
     </div>
     @if($plan->name == 'Plan Platino')
       <div class="col-lg-8 m-lg-auto">

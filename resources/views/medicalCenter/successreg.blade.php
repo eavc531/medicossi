@@ -64,7 +64,7 @@
             </div>
             <div class="col-12">
 
-              <a class="btn btn-primary"href="{{route('resend_mail_medical_center',$medicalCenter->id)}}">Reenviar Correo de Confirmación</a>
+              <a class="btn btn-primary"href="{{route('resend_mail_medical_center',\Hashids::encode($medicalCenter->id))}}">Reenviar Correo de Confirmación</a>
 
             </div>
           </div>

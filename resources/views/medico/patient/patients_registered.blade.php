@@ -15,7 +15,7 @@
     </div>
   </div>
   <div class="text-right">
-    <a href="{{route('medico_patients',$medico->id)}}" class="btn btn-secondary">Mis Pacientes</a>
+    <a href="{{route('medico_patients',\Hashids::encode($medico->id))}}" class="btn btn-secondary">Mis Pacientes</a>
 
   </div>
     <div class="form-inline mb-5">
@@ -29,9 +29,9 @@
       </div>
 
     <div class="mb-2">
-      <a href="{{route('patients_registered',$medico->id)}}" class="btn btn-primary ml-2">Mostrar Todos</a>
-      <a href="{{route('patients_registered',$medico->id)}}" class="btn btn-warning ml-2 disabled">Buscar Paciente Registrado</a>
-      <a href="{{route('medico_register_new_patient',$medico->id)}}" class="btn btn-info ml-2">Registrar nuevo Paciente</a>
+      <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-primary ml-2">Mostrar Todos</a>
+      <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-warning ml-2 disabled">Buscar Paciente Registrado</a>
+      <a href="{{route('medico_register_new_patient',\Hashids::encode($medico->id))}}" class="btn btn-info ml-2">Registrar nuevo Paciente</a>
     </div>
 <hr>
   @if($patients->first() != Null)

@@ -31,23 +31,23 @@
                     <div class="text-right my-2">
 
                         {{-- @if(isset(request()->expedient))
-                        <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>request()->expedient])}}" class="btn btn-secondary mr-1">Atras</a>
+                        <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>$patient->id,'ex_id'=>request()->expedient])}}" class="btn btn-secondary mr-1">Atras</a>
                     @else
-                    <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary ml-1">atras</a>
+                    <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>$patient->id])}}" class="btn btn-secondary ml-1">atras</a>
                 @endif --}}
 
             </div>
             <div class="alert alert-success">
                 <p>Se han extraido los datos del perfil de la cuenta del paciente: {{$patient->nameComplete}}, es posible que estos datos esten desactualizados, depende del uso de la cuenta por parte del paciente, puede guardar los cambios, editarlos o presionar el boton cancelar para mantener la información antigua.<b>Modificar esta información no altera los datos de la cuenta Médicossi del paciente,el campo email, e identificación se mantienen para evitar confusiones, solo el paciente puede editar estos datos en su cuenta.</p>
-                    <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-outline-warning"><strong>Cancelar Extraccion</strong></a>
+                    <a href="{{route('data_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-outline-warning"><strong>Cancelar Extraccion</strong></a>
                 </div>
             @else
                 <div class="text-right my-2">
-                    <a href="{{route('data_patient_extract_perfil',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success">Extraer Datos del perfil del paciente</a>
+                    <a href="{{route('data_patient_extract_perfil',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-success">Extraer Datos del perfil del paciente</a>
                     @if(isset(request()->expedient))
-                        <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>request()->expedient])}}" class="btn btn-secondary mr-1">Atras</a>
+                        <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>request()->expedient])}}" class="btn btn-secondary mr-1">Atras</a>
                     @else
-                        <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary ml-1">atras</a>
+                        <a href="{{route('manage_patient',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient['id'])])}}" class="btn btn-secondary ml-1">atras</a>
                     @endif
                 </div>
 
@@ -163,7 +163,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-6 col-12 mt-2">
-                    <a href="{{route('data_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn-config-blue btn btn-block">Cancelar</a>
+                    <a href="{{route('manage_patient',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient['id'])])}}" class="btn btn-secondary btn-block">Cancelar</a>
 
                 </div>
                 <div class="col-lg-6 col-12 mt-2">

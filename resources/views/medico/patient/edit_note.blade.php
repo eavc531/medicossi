@@ -23,7 +23,7 @@
               <hr>
             </div>
           </div>
-        
+
           <div class="row">
             <div class="col-lg-6 col-12">
             </div>
@@ -36,7 +36,7 @@
               <h4>Nueva {{$note->title}}</h4>
             </div>
             <div class="col-6">
-              <a href="{{route('admin_data_patient',['med_id'=>$medico->id,'pat_id'=>$patient->id])}}" class="btn btn-secondary">Modelos Notas Médicas</a>
+              <a href="{{route('admin_data_patient',['med_id'=>\Hashids::encode($medico->id),'pat_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary">Modelos Notas Médicas</a>
             </div>
           </div>
 

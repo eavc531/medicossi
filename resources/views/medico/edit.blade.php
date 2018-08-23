@@ -1,28 +1,22 @@
-@extends('layouts.app')
-
+ @extends('layouts.app')
+ @section('css')
+ <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+ @endsection
 @section('content')
-
-
-
-
-
 
 <div class="row">
   <div class="col-12">
     <h2 class="font-title text-center" id="title">Perfil Profesional Médico</h2>
   </div>
 </div>
+@if (Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id == $medico->id)
 
-@if(request()->get('search') != Null)
+@else
     <div class="text-right">
-        <a class="btn btn-secondary my-3" href="{{request()->get('search')}}"><i class="fas fa-arrow-left mr-1"></i>Volver a la busqueda de médicos</a>
+        <button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Volver</button>
     </div>
-@endisset
-@if(request()->get('back') != Null)
-    <div class="text-right">
-        <a class="btn btn-secondary my-3" href="{{request()->get('back')}}"><i class="fas fa-arrow-left mr-1"></i>Volver a mis médicos</a>
-    </div>
-@endisset
+@endif
+
 @if(Session::Has('successComplete'))
 <div class="div-alert" style="padding:20px; max-width: 100%;">
  <div class="alert alert-success alert-dismissible" role="alert">
@@ -73,31 +67,35 @@
       @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
       <div class="">
         <h4>
-          <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2">Opinion de los Usuarios</a>
+          <a href="{{route('calification_medic',['id'=>\Hashids::encode($medico->id),'back'=>\Request::route()->getName()])}}" class="btn btn-primary mt-2">Calificaciones y Comentarios</a>
         </h4>
         {{-- <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p> --}}
       </div>
+
       @else
       <div class="">
         <h4>
-          <a href="{{route('calification_medic',$medico->id)}}" class="btn btn-primary mt-2 disabled">Opinion de los Usuarios</a>
+          <a href="" class="btn btn-primary mt-2 disabled">Opinion de los Usuarios</a>
         </h4>
         <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
       </div>
       @endif
     </div>
-    @else
+@else
     <div class="col-lg-6 text-center">
       <h3>Calificación:</h3>
       <span class="">@include('home.star_rate')</span>
       <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
       <div class="">
         <h4>
-          <button class="btn btn-success btn-block" type="button" name="button" onclick="calification_medic_show_patient()">Calificaciones y Comentarios</button>
+
+            <button onclick="show_califications()" type="button" name="button" class="btn btn-success btn-block">Calificaciones y Comentarios</button>
+
         </h4>
       </div>
 
       <div class="form-group mt-5">
+
       @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
         <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-block btn-lg disabled" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
@@ -105,10 +103,10 @@
       @else
         @if(Auth::check() and Auth::user()->role == 'Paciente')
             @if(request()->get('search') != Null)
-                <a href="{{route('stipulate_appointment',[$medico['id'],'search'=>Request::fullUrl()])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+                <a href="{{route('stipulate_appointment',[\Hashids::encode($medico['id']),'search'=>Request::fullUrl()])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
 
             @else
-                <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+                <a href="{{route('stipulate_appointment',\Hashids::encode($medico['id']))}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
             @endisset
 
         @else
@@ -164,7 +162,7 @@
             <li><b>Mostrar Numeros de oficina:&nbsp;</b><span style="color:rgb(215,141,15)">No</span></li>
           @endif
         </ul>
-        <a href="{{route('data_primordial_medico',$medico->id)}}" class="btn btn-block btn-success">Editar</a>
+        <a href="{{route('data_primordial_medico',\Hashids::encode($medico->id))}}" class="btn btn-block btn-success">Editar</a>
       </div>
     </div>
   </div>
@@ -278,11 +276,11 @@
 <div class="row">
   <div class="col-6">
     @if($consulting_room->first() == Null)
-      <a class="btn btn-primary btn-block"href="{{route('consulting_room_create',$medico->id,$medico->id)}}">Agregar Consultorio</a>
+      <a class="btn btn-primary btn-block"href="{{route('consulting_room_create',\Hashids::encode($medico->id))}}">Agregar Consultorio</a>
     @endif
   </div>
   <div class="col-6">
-    <a class="btn btn-success btn-block"href="{{route('medico_edit_address',$medico->id)}}">Editar</a>
+    <a class="btn btn-success btn-block"href="{{route('medico_edit_address',\Hashids::encode($medico->id))}}">Editar</a>
   </div>
 </div>
 @if($consulting_room->first() != Null)
@@ -323,8 +321,8 @@
 
         </div>
         <div class="col-6 text-right">
-          <a href="{{route('consulting_room_edit',$value->id)}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
-          <a href="{{route('consulting_room_delete',$value->id)}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+          <a href="{{route('consulting_room_edit',\Hashids::encode($value->id))}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
+          <a href="{{route('consulting_room_delete',\Hashids::encode($value->id))}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
         </div>
       </div>
     </div>
@@ -338,7 +336,7 @@
 
   </div>
   <div class="col-6">
-  <a class="btn btn-success btn-block mt-3"href="{{route('consulting_room_create',$medico->id,$medico->id)}}">Agregar Consultorio</a>
+  <a class="btn btn-success btn-block mt-3"href="{{route('consulting_room_create',\Hashids::encode($medico->id))}}">Agregar Consultorio</a>
   </div>
 </div>
 @endif
@@ -407,8 +405,8 @@
            <span style="color:rgb(173, 173, 173)">No especifica</span>
            @endisset </li>
            <div class="text-right">
-             <a href="{{route('medico_specialty_edit',$info->id)}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
-             <a href="{{route('medico_specialty_delete',$info->id)}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+             <a href="{{route('medico_specialty_edit',\Hashids::encode($info->id))}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
+             <a href="{{route('medico_specialty_delete',\Hashids::encode($info->id))}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
            </div>
 
 
@@ -426,7 +424,7 @@
 
  <div class="row">
    <div class="col-12 text-right mt-3">
-     <a href="{{route('medico_specialty_create',$medico->id)}}" class="btn btn-success">Agregar Especialidad/Estudios Realizados</a>
+     <a href="{{route('medico_specialty_create',\Hashids::encode($medico->id))}}" class="btn btn-success">Agregar Especialidad/Estudios Realizados</a>
    </div>
  </div>
  <hr>
@@ -499,7 +497,7 @@
     </div>
   </div>
   </div>
-  <a href="{{'add_image',$medico->id}}" class="btn btn-success">Agregar/Eliminar Imagenes</a>
+  <a href="{{'add_image',\Hashids::encode($medico->id)}}" class="btn btn-success">Agregar/Eliminar Imagenes</a>
 
 </div>
 {{-- //videos --}}
@@ -596,7 +594,7 @@
     </div>
 
     {{-- <div class= "p-3 mt-3" id="panel-insurance" style="display:none;">
-      <a href="{{route('create_add_insurrances',$medico->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
+      <a href="{{route('create_add_insurrances',\Hashids::encode($medico->id))}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
     </div> --}}
     @if($medico->type_patient_service == "Solo pacientes privados")
         <div class="aseguradoras" id="aseguradoras" style="display:none">
@@ -621,7 +619,7 @@
 
             </div>
             <div class="col-6 mt-2">
-              <a href="{{route('medico_create_add_insurrances',$medico->id)}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
+              <a href="{{route('medico_create_add_insurrances',\Hashids::encode($medico->id))}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
             </div>
           </div>
         </div>
@@ -742,7 +740,7 @@
       <div class="modal-body">
         <div class="" id="content_calification">
         </div>
-        <div class="card-footer">
+        <div class="card-footer text-right">
           <button class="btn btn-secondary" type="button" name="button" onclick="cerrar_calificaciones()">Cerrar</button>
         </div>
       </div>
@@ -788,6 +786,7 @@
   <script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>
 <script type="text/javascript">
 
+
 // Get the modal
 var modal = document.getElementById('myModal-img');
 
@@ -819,10 +818,20 @@ if ( $(".cerrar")[0] ) {
     $('#modal-calification').modal('hide');
   }
 
-  function calification_medic_show_patient(){
+  ///////////////////////////////CALIFICATIONS
+  function toogle(result){
+      if( $(result).parent('.id_label').parent('.este').next('.div_detail').css('display') == 'none'){
+          result = $(result).parent('.id_label').parent('.este').next('.div_detail').show();
+      }else{
+          result = $(result).parent('.id_label').parent('.este').next('.div_detail').hide();
+
+      }
+  }
+
+  function show_califications(result){
 
    route = "{{route('calification_medic_show_patient')}}";
-   medico_id = $('#medico_id').val();
+   medico_id = "{{$medico->id}}";
 
    $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -832,66 +841,45 @@ if ( $(".cerrar")[0] ) {
      success:function(result){
        $('#modal-calification').modal('show');
        $('#content_calification').empty().html(result);
-
-
+        console.log(result);
      },
      error:function(error){
        console.log(error);
      },
    });
  }
-  // calification_medic_show_patient();
 
-  function paginate_calification(result){
-   page = result;
-   page1 = $('#page_calificatione_exp').val();
-   route = "{{route('calification_medic_show_patient')}}";
-   medico_id = $('#medico_id').val();
-   $.ajax({
-     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'POST',
-     url: route,
-     data:{medico_id:medico_id,page:page,page1:page1},
-     success:function(result){
-       if(result == 'limite'){
-         return false;
-       }
-       $('#content_calification').empty().html(result);
-         // $('#div_calification').empty().html(result);
+  function show_more(result){
+
+      element = result;
+      route = "{{route('calification_medic_show_patient')}}";
+      medico_id = result.id;
+      skip = result.name;
 
 
-       },
-       error:function(error){
-         console.log(error);
-       },
-     });
+      $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type:'POST',
+        url: route,
+        data:{skip:skip,medico_id:medico_id},
+        success:function(result){
+        $(element).parent('.padre').next('.sig').empty().html('Cargando...');
+          $(element).parent('.padre').next('.sig').empty().html(result);
 
- }
- function paginate_experience(result){
-   page = result;
-   page1 = $('#page_exp').val();
-   route = "{{route('medico_experience_list')}}";
-   medico_id = $('#medico_id').val();
-   $.ajax({
-     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'POST',
-     url: route,
-     data:{medico_id:medico_id,page:page,page1:page1},
-     success:function(result){
-       if(result == 'limite'){
-         return false;
-       }
-       $('#medico_experience_ajax').empty().html(result);
-       // $('#div_calification').empty().html(result);
+          $(element).hide();
+           console.log(result);
+        },
+        error:function(error){
+          console.log(error);
+        },
+      });
+  }
+  function cerrar_calificaciones(){
+    $('#modal-calification').modal('hide');
+  }
 
-       $('.bd-example-modal-lg').modal('show');
-     },
-     error:function(error){
-       console.log(error);
-     },
-   });
+///////////////////////////////FIN CALIFICATIONS
 
- }
 
  function volver(){
   window.history.back();
@@ -1302,7 +1290,7 @@ function updateMedic(){
   sub_specialtyMedic = $('#sub_specialtyMedic').val();
   errormsj = '';
 
-  route = "{{route('medico.update',$medico->id)}}";
+  route = "{{route('medico.update',\Hashids::encode($medico->id))}}";
 
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1411,7 +1399,7 @@ function searchInMap(){
 }//fin searchInMap
 
 function store_coordinates(){
-  route = '{{route('medico_store_coordinates',$medico->id)}}';
+  route = '{{route('medico_store_coordinates',\Hashids::encode($medico->id))}}';
   latitud = $('#latitudSave').val();
   longitud = $('#longitudSave').val();
 

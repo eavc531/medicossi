@@ -2,6 +2,7 @@
 @section('css')
 
 <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('jqueryui/jquery-ui.css')}}">
 <style media="screen">
 /* ///////////////////////// */
 .input-text{
@@ -10,6 +11,10 @@
 
 .area{
     height: 100px;
+}
+
+.ui-autocomplete {
+  z-index:2147483647;
 }
 /* //APLICAR ESTO en form-control area element */
 </style>
@@ -31,7 +36,7 @@
     <b>{{$note->title}}</b>
   </div>
   <div class="card-body">
-    {!!Form::model($note,['route'=>'note_store','method'=>'POST'])!!}
+    {!!Form::model($note,['route'=>'note_store','method'=>'POST','id'=>'myform'])!!}
     {!!Form::hidden('note_id',$note->id)!!}
     {!!Form::hidden('title',$note->title)!!}
     {!!Form::hidden('medico_id',$medico->id)!!}
@@ -268,26 +273,36 @@
         <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar Nota en Expediente">
 
     @else
-      <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota">
+        @if(!isset($salubridad_report->status) or $salubridad_report->status == 'no_realizado')
+
+            <button type="button" class="btn btn-primary line mx-1" onclick="show_modal_report()">
+              Guardar Nota
+            </button>
+        @else
+            <input type="submit" class="btn btn-primary line mx-1" name="boton_submit" value="Guardar Nota">
+
+        @endif
 
     @endisset
-
-
+    {{-- //// >>>>>>>>--}}
+    <input type="hidden" name="guarda_report" value="" id="guarda_report">
+    <input type="hidden" name="diagnostic_report" value="" id="text_diagnostic_form">
+{{-- /// >>>>>>>><--}}
 
   {!!Form::close()!!}
- @isset($expedient)
-    <a href="{{route('expedient_open',['m_id'=>$medico->id,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary line" >Cancelar</i></a>
+  @if($expedient != Null)
+    <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-secondary line" >Cancelar</i></a>
   @else
     <a href="{{route('notes_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
-@endisset
+  @endif
 </div>
 </div>
 
 
-{{-- <input type="hidden" name="vital_sign_config_id" value="{{$vital_sign_config->id}}" id="vital_sign_config_id"> --}}
+<!-- Modal -->
+@include('medico.notes.modal_report_salub')
 
-{{-- {{$vital_sign_config->id}} --}}
-{{-- /////////// --}}
+
 @include('medico.notes.include_vital_labs.modal_vital_signs')
 @include('medico.notes.include_vital_labs.modal_test_labs')
 {{-- //////////////// --}}
@@ -295,7 +310,62 @@
 
 @section('scriptJS')
 {{-- <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script> --}}
+<script src="{{asset('jqueryui/jquery-ui.js')}}"></script>
+
 <script type="text/javascript">
+        function show_modal_report(){
+            text = $("#Diagnostico").val();
+            $("#text_diagnostic").val(text);
+            $("#modal-report").modal('show');
+
+        }
+
+        function submitform(result)
+        {
+
+            if(result.value == 'si'){
+                question = confirm('Esta segur@ de crear el reporte con este diagnostico');
+                if(question != true){
+                    return false;
+                }
+                $('#guarda_report').val('si');
+                if($("#text_diagnostic").val().length == 0){
+                    $("#alert_campo").html('El campo diagnostico para el reporte no puede estar vacio, rellene el campo o seleccione otra opcion para continar');
+                    return false;
+                }
+                text_diagnostic = $("#text_diagnostic").val();
+                $("#text_diagnostic_form").val(text_diagnostic);
+
+            }else if(result.value == 'no_preguntar'){
+                $('#guarda_report').val('no_preguntar');
+            }
+          $('#myform').submit();
+        }
+
+        $(function()
+        {
+          $("#Diagnostico").autocomplete({
+            source: "{{route('autocomplete_diagnostic')}}",
+            minLength: 2,
+            select: function(event, ui) {
+              $('#q').val(ui.item.value);
+            }
+          });
+        });
+
+        $(function()
+        {
+          $("#text_diagnostic").autocomplete({
+            source: "{{route('autocomplete_diagnostic')}}",
+            minLength: 2,
+            select: function(event, ui) {
+              $('#q').val(ui.item.value);
+            }
+          });
+        });
+        ///////////////////////////////////aqui
+
+
 
         $(document).ready(function(){
         vital_signs();
@@ -430,9 +500,13 @@
       }
 
       function show_modal_vital(){
-          // alert('vvv');
+
            $('#modal_vital_signs').modal('show');
       }
+
+
+
+
 
 </script>
 

@@ -41,7 +41,7 @@
                                                 <input type="submit" class="btn btn-primary mr-2" name="" value="Asistir">
                                                 {{Form::close()}}
 
-                                                <a href="{{route('assistant_permissions',$a_m->permission_id)}}"class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="permisos" role="button" >Permisos Otorgados
+                                                <a href="{{route('assistant_permissions',\Hashids::encode($a_m->permission_id))}}"class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="permisos" role="button" >Permisos Otorgados
                                                 </a>
 
 

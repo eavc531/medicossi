@@ -10,8 +10,8 @@
 					</div>
 				</div>
 				<div class="row">
-					<a href="{{route('medico_assistant_create',$medico->id)}}" class="btn btn-primary mr-2">Registrar Asistente</a>
-					<a href="{{route('add_assistant',$medico->id)}}" class="btn btn-success">Agregar Asistente ya registrado</a>
+					<a href="{{route('medico_assistant_create',\Hashids::encode($medico->id))}}" class="btn btn-primary mr-2">Registrar Asistente</a>
+					<a href="{{route('add_assistant',\Hashids::encode($medico->id))}}" class="btn btn-success">Agregar Asistente ya registrado</a>
 				</div>
 				<div class="row mt-4">
 					<table class="table table-bordered">
@@ -36,7 +36,7 @@
 									<td><div class="btn-group" role="group" aria-label="...">
 										<div class="row">
 											<div class="col-12">
-												<a href="{{route('assistant_permissions',$m_a->permission_id)}}"class="btn btn-warning btn-block" data-toggle="tooltip" data-placement="top" title="permisos" role="button" >Permisos
+												<a href="{{route('assistant_permissions',\Hashids::encode($m_a->permission_id))}}"class="btn btn-warning btn-block" data-toggle="tooltip" data-placement="top" title="permisos" role="button" >Permisos
 												</a>
 											</div>
 										</div>

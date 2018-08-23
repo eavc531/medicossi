@@ -40,7 +40,7 @@
 										<tr style="font-size:14px">
 
 											<td class="text-center">{{$medico->created_at->format('d-m-Y')}}</td>
-											<td class="text-center">{{$medico->identification}}</td>
+											<td class="text-center">{{\Hashids::encode($medico->id)entification}}</td>
 
 											<td class="text-center">{{$medico->name}} {{$medico->lastName}}</td>
 
@@ -59,10 +59,10 @@
 
 
 											<td>
-											{{$medico->records_of_plans_medico->sum('comision')}} <a href="{{route('promoter_medico_comisions',$medico->id)}}" class="btn btn-info btn-sm float-right">ver</a>
+											{{$medico->records_of_plans_medico->sum('comision')}} <a href="{{route('promoter_medico_comisions',\Hashids::encode($medico->id))}}" class="btn btn-info btn-sm float-right">ver</a>
 											</td>
 											<td>
-												<a href="{{route('calification_medic',$medico->id)}}" class="btn btn-info btn-sm float-right">ver</a>
+												<a href="{{route('calification_medic',\Hashids::encode($medico->id))}}" class="btn btn-info btn-sm float-right">ver</a>
 												@if($medico->cailification == Null)
 													0/5
 												@else
@@ -71,7 +71,7 @@
 												de {{$medico->votes}} voto(s)
 											</td>
 											<td>
-												<a href="{{route('medico.edit',$medico->id)}}" class="btn btn-primary btn-sm">Perfil</a>
+												<a href="{{route('medico.edit',\Hashids::encode($medico->id))}}" class="btn btn-primary btn-sm">Perfil</a>
 											</td>
 											@endforeach
 										</tbody>

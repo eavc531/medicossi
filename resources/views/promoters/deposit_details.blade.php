@@ -112,7 +112,7 @@
                                     </div>
                                     {{Form::hidden('record_id',$record->id)}}
                                     <div class="col-12 mt-5">
-                                        <a href="{{route('promoter_deposits',$record->promoter_id)}}" class="btn btn-secondary float-right ml-2   ">Atras</a>
+                                        <a href="{{route('promoter_deposits',\Hashids::encode($record->promoter_id))}}" class="btn btn-secondary float-right ml-2   ">Atras</a>
 
 
                                     </div>

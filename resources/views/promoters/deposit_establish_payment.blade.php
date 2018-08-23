@@ -166,7 +166,7 @@
                                     </div>
                                     {{Form::hidden('record_id',$record->id)}}
                                     <div class="col-12 mt-5">
-                                        <a href="{{route('promoter_deposits_pending',$record->promoter_id)}}" class="btn btn-secondary float-right ml-2   ">Cancelar</a>
+                                        <a href="{{route('promoter_deposits_pending',\Hashids::encode($record->promoter_id))}}" class="btn btn-secondary float-right ml-2   ">Cancelar</a>
                                         <button type="submit" name="button" class="btn btn-success float-right">Guardar y marcar deposito como pagado</button>
 
                                     </div>

@@ -8,12 +8,12 @@
         <h3 class="font-title text-center">Editar Horario</h3>
       </div>
     <div class="col-lg col-12 text-right">
-      <a class="btn btn-primary" href="{{route('medicalCenter.edit',request()->id)}}">Atras</a>
+      <a class="btn btn-primary" href="{{route('medicalCenter.edit',\Hashids::encode(request()->id))}}">Atras</a>
     </div>
     </div>
     <div class="my-4 card p-3">
       <div class="form-inline">
-        {!!Form::open(['route'=>['medical_center_store_schedule',$medicalCenter->id],'method'=>'post'])!!}
+        {!!Form::open(['route'=>['medical_center_store_schedule',\Hashids::encode($medicalCenter->id)],'method'=>'post'])!!}
 
         <label for="" class="font-title col-label-form">Agregar horas a dia:</label>
         {{Form::select('day',['lunes'=>'Lunes',
@@ -50,7 +50,7 @@
       </div>
       <div class="row" >
        <div class="col-6">
-        <a href="{{route('medicalCenter.edit',$medicalCenter->id)}}" class="btn btn-primary btn-block">Cancelar</a>
+        <a href="{{route('medicalCenter.edit',\Hashids::encode($medicalCenter->id))}}" class="btn btn-primary btn-block">Cancelar</a>
       </div>
       <div class="col-6">
         <input type="submit" name="" value="Guardar" class="btn btn-success btn-block">
@@ -81,7 +81,7 @@
               {{$day->hour_ini}}
               a
               {{$day->hour_end}}
-              <a href="{{route('medical_center_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
+              <a href="{{route('medical_center_schedule_delete',\Hashids::encode($day->id))}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
             </li>
 
           </ul>
@@ -94,7 +94,7 @@
               {{$day->hour_ini}}
               a
               {{$day->hour_end}}
-              <a href="{{route('medical_center_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
+              <a href="{{route('medical_center_schedule_delete',\Hashids::encode($day->id))}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
             </li>
 
           </ul>
@@ -107,7 +107,7 @@
               {{$day->hour_ini}}
               a
               {{$day->hour_end}}
-              <a href="{{route('medical_center_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
+              <a href="{{route('medical_center_schedule_delete',\Hashids::encode($day->id))}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
             </li>
 
           </ul>
@@ -120,7 +120,7 @@
               {{$day->hour_ini}}
               a
               {{$day->hour_end}}
-              <a href="{{route('medical_center_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
+              <a href="{{route('medical_center_schedule_delete',\Hashids::encode($day->id))}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
             </li>
 
           </ul>
@@ -133,7 +133,7 @@
               {{$day->hour_ini}}
               a
               {{$day->hour_end}}
-              <a href="{{route('medical_center_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
+              <a href="{{route('medical_center_schedule_delete',\Hashids::encode($day->id))}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
             </li>
 
           </ul>
@@ -146,7 +146,7 @@
               {{$day->hour_ini}}
               a
               {{$day->hour_end}}
-              <a href="{{route('medical_center_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
+              <a href="{{route('medical_center_schedule_delete',\Hashids::encode($day->id))}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
             </li>
 
           </ul>
@@ -159,7 +159,7 @@
               {{$day->hour_ini}}
               a
               {{$day->hour_end}}
-              <a href="{{route('medical_center_schedule_delete',$day->id)}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
+              <a href="{{route('medical_center_schedule_delete',\Hashids::encode($day->id))}}" style="color:red" onclick="return confirm('¿Estas Segur@ de querer eliminar este campo?')">x</a>
             </li>
           </ul>
           @endforeach
