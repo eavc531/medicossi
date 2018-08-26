@@ -203,7 +203,7 @@
                     <div class="dropdown-divider"></div>
                 @plan_agenda_no
                     <a href="{{route('medico_patients',\Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
-                    <a href="{{route('medico_diary',7)}}" class="dropdown-item "><i class="fas fa-book"></i><span>Mi Agenda</span></a>
+                    <a href="{{route('medico_diary',\Hashids::encode(Auth::user()->assistant->medico_id) )}}" class="dropdown-item "><i class="fas fa-book"></i><span>Mi Agenda</span></a>
 
                     <a href="{{route('appointments_confirmed', \Hashids::encode(Auth::user()->assistant->medico_id))}}" class="dropdown-item"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->assistant->medico->notification_number}})</span> </span></a>
 
@@ -260,6 +260,24 @@
                                     <div class="col-12">
                                     <a href="{{route('medico_patients',\Hashids::encode(Auth::user()->medico_id))}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
                                   </div>
+                                  <div class="col-12">
+
+                                  <div class="dropright">
+                                      <button class="btn btn-block btn-config-dashboard color-medic dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-history"></i> historial
+                                      </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width:210px">
+                                          <span class="ml-2 text-secondary" style="font-size:8">Ultimos Pacientes atend.</span>
+                                    <div class="dropdown-divider"></div>
+                                        <ul>
+                                        @foreach (Auth::user()->medico->history as $value)
+                                            <a href="{{route('manage_patient',['m_id'=>\Hashids::encode(Auth::user()->medico_id),'p_id'=>\Hashids::encode($value->patient_id)])}}" class="dropdown-button btn btn-secondary">{{$value->name}}</a>
+
+                                        @endforeach
+                                        </ul>
+                                    </div>
+                                    </div>
+                                </div>
                                   @endplan_agenda
 
                                   <div class="col-12">

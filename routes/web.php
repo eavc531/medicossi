@@ -17,6 +17,15 @@
 /////////PANEL CALIFICATIONS
 //SALUBRIDAD
 
+Route::get('medico/{m_id}/create_xml','notesController@create_xml')->name('create_xml');
+
+Route::get('medico/{m_id}/search_report','notesController@search_reports')->name('search_reports');
+
+Route::post('salubridad_reports_store_edit','notesController@salubridad_reports_store_edit')->name('salubridad_reports_store_edit');
+
+
+Route::get('medico/{m_id}/salubridad_reports','notesController@salubridad_reports')->name('salubridad_reports');
+Route::get('medico/{m_id}/patient/{p_id}/create/edit/salubridad_report','notesController@create_edit_salubridad_report')->name('create_edit_salubridad_report');
 Route::post('store_report','notesController@store_report')->name('store_report');
 Route::post('salubridad_report_store','notesController@salubridad_report_store')->name('salubridad_report_store');
 //SELECT estadosciudades

@@ -16,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //////Paciente o medico
+        \Carbon\Carbon::setLocale(config('app.locale'));
 
+        
             Blade::if('rol_edit', function(){
                 if(Auth::check() and Auth::user()->role == 'medico'){
                     return app();
@@ -25,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             });
         ///
-        \Carbon\Carbon::setLocale(config('app.locale'));
+
 
         Blade::if('admin', function(){
             if(Auth::check() and Auth::user()->role == 'Administrador'){

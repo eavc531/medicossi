@@ -31,6 +31,9 @@ class medico extends Model
        'name_comercial'
     ];
 
+    public function history(){
+      return $this->hasMany('App\history')->orderBy('id','desc');
+   }
 
     public function rate_medic(){
       return $this->hasOne('App\rate_medic');

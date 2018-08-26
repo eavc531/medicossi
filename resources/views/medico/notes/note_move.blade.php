@@ -53,7 +53,7 @@
       @endif
       <div class="text-right">
           @isset(request()->expedient_id)
-              <a class="btn btn-secondary" href="{{route('expedient_open',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id),'ex_id'=>\Hashids::encode(request()->expedient_id)])}}">atras</a>
+              <a class="btn btn-secondary" href="{{route('expedient_open',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id),'ex_id'=>request()->expedient_id])}}">atras</a>
 
           @else
             <a class="btn btn-secondary" href="{{route('notes_patient',['m_id'=>\Hashids::encode($note->medico_id),'p_id'=>\Hashids::encode($note->patient_id)])}}">atras</a>

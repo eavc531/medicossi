@@ -4,7 +4,8 @@
     <div class="col-12">
 
       {{-- &times; --}}
-    </button>
+      <a href="{{route('manage_patient',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}" class="btn btn-primary btn-sm float-right"><i class="fas  fa-user-cog"></i> Gestionar Paciente</a>
+
     <h3 class="font-title-blue text-center my-2">Editar</h3>
   </div>
 </div>
@@ -17,6 +18,7 @@
     {!!Form::hidden('event_id',null,['id'=>'event_id9'])!!}
     {!!Form::hidden('event_id3',null,['id'=>'event_id3'])!!}
     {{-- //clones --}}
+
         {!!Form::hidden('event_id3',null,['id'=>'dateStart99'])!!}
         {!!Form::hidden('event_id3',null,['id'=>'hourStart99'])!!}
         {!!Form::hidden('event_id3',null,['id'=>'minsStart99'])!!}

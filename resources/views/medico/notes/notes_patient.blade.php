@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('css')
-<link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
+
+<link rel="stylesheet" type="text/css" href="{{asset('jqueryui/jquery-ui.css')}}">
 <style media="screen">
 .dropdown-menu {
   width: 430px !important;
@@ -15,7 +15,12 @@
 }
 
 .area{
-        height: 100px;
+        height: 80px;
+}
+
+/* //yakusa// */
+.ui-autocomplete {
+  z-index:2147483647;
 }
 </style>
 
@@ -131,13 +136,14 @@
 </div>
 </div>
 
-    @isset($salubridad_report->status)
-        xx
-        <input type="hidden" name="" value="{{$salubridad_report->status}}" id="report">
-    @else
-        <input type="hidden" name="" value="" id="report">
+@isset($salubridad_report->status)
 
-    @endisset
+    <input type="hidden" name="" value="{{$salubridad_report->status}}" id="report">
+@else
+    <input type="hidden" name="" value="" id="report">
+
+@endisset
+
 
 @endsection
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
@@ -145,24 +151,68 @@
 @section('scriptJS')
 {{-- <script src="{{asset('fullcalendar/lib/jquery.min.js')}}"></script> --}}
 
-
+<script src="{{asset('jqueryui/jquery-ui.js')}}"></script>
 <script>
 
-    function verify_report(result){
-        $('#seleccion').val(result.id)
+    function verify_empty(result){
 
-        if(result.id == 'Nota Médica Inicial' || result.id == 'Nota Médica de Evolucion'){
-            window.location.href = result.name;
-            return false;
-        }
-        report = $('#report').val();
-        if(report.length == 0){
-            $('#url_form').val(result.name);
-            $('#modal-report').modal('show');
-            return false;
-        }
+      $('#select').val(result.value);
+      if(result.value == 'no' || result.value == 'no_recordar'){
+
+          $('#select').val(result.value);
+           $('#form-report').submit();
+           return false;
+      }
+
+      text = $('#diagnostic_report').val();
+
+      if(text.length == 0){
+          $('#alert_campo').html('El campo diagnostico para el reporte no puede estar vacio, rellene el campo o seleccione otra opcion para continar')
+
+          return false;
+      }else{
+
+          question = confirm('¿Esta Segu@ de Crear el reporte de salubridad con el diagnostico descrito?');
+          if(question == true){
+              $('#form-report').submit();
+          }else{
+              return false;
+          }
+
+
+      }
+  }
+
+function verify_report(result){
+
+    if(result.id == 'Nota Médica Inicial' || result.id == 'Nota Médica de Evolucion'){
         window.location.href = result.name;
+        return false;
     }
+
+    report = $('#report').val();
+
+
+    if(report.length == 0){
+        $('#url_form').val(result.name);
+        $('#modal-report').modal('show');
+        return false;
+    }
+    window.location.href = result.name;
+}
+
+
+$(function()
+{
+  $("#diagnostic_report").autocomplete({
+    source: "{{route('autocomplete_diagnostic')}}",
+    minLength: 2,
+    select: function(event, ui) {
+      $('#q').val(ui.item.value);
+    }
+  });
+});
+
       $(document).ready(function(){
         if($('#select_input').val() == 'Tipo y Fecha'){
             $('#date1').show();

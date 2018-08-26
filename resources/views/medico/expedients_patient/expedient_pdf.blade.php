@@ -11,7 +11,10 @@
   {{-- <link rel="stylesheet" type="text/css" href="{{asset('css/styles.css')}}"> --}}
   <title>Document</title>
   <style media="screen">
-
+        .font-title{
+            color:rgb(97, 210, 44);
+            font-weight: bold;
+        }
   </style>
 </head>
 <body>
@@ -42,15 +45,57 @@
         @if($expedient_n->note->Signos_vitales_show == 'si')
           <div class="">
             <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
-            <p>{!!$expedient_n->note->Signos_vitales!!}</p>
+            <input type="hidden" name="" value="{{$suma = 0}}">
+            <table>
+
+                @foreach ($expedient_n->note->vital_sign as $question)
+                    @if($question->show == 'on')
+                        <input type="hidden" name="" value="{{$suma = $suma + 1}}">
+                        @if($suma%2!=0)
+                        <tr>
+                            <td width="350px">
+                                <br>
+                                <span class="font-title" style="">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        @else
+                            <td width="350px">
+                                <br>
+                                <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        </tr>
+                        @endif
+                    @endif
+
+                @endforeach
+
+            </table>
           </div>
           <hr>
         @endif
         @if($expedient_n->note->Pruebas_de_laboratorio_show == 'si')
-          <div class="form-group">
-            <h5 class="font-title-blue">Pruebas de laboratorio</h5>
-            <p>{!!$expedient_n->note->Pruebas_de_laboratorio!!}</p>
-          </div>
+            <div class="">
+              <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de Laboratorio</h5>
+              <input type="hidden" name="" value="{{$suma = 0}}">
+              <table>
+
+                  @foreach ($expedient_n->note->test_lab as $question)
+                      @if($question->show == 'on')
+                          <input type="hidden" name="" value="{{$suma = $suma + 1}}">
+                          @if($suma%2!=0)
+                          <tr>
+                              <td width="350px">
+                                  <br>
+                                  <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                          @else
+                              <td width="350px">
+                                  <br>
+                                  <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                          </tr>
+                          @endif
+                      @endif
+
+                  @endforeach
+
+              </table>
+            </div>
           <hr>
         @endif
         @if($expedient_n->note->Diagnostico_show == 'si')
@@ -108,17 +153,59 @@
           <hr>
         @endif
         @if($expedient_n->note->Signos_vitales_show == 'si')
-          <div class="form-group">
-            <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
-            <p>{!!$expedient_n->note->Signos_vitales!!}</p>
+          <div class="">
+            <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
+            <input type="hidden" name="" value="{{$suma = 0}}">
+            <table>
+
+                @foreach ($expedient_n->note->vital_sign as $question)
+                    @if($question->show == 'on')
+                        <input type="hidden" name="" value="{{$suma = $suma + 1}}">
+                        @if($suma%2!=0)
+                        <tr>
+                            <td width="350px">
+                                <br>
+                                <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        @else
+                            <td width="350px">
+                                <br>
+                                <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        </tr>
+                        @endif
+                    @endif
+
+                @endforeach
+
+            </table>
           </div>
           <hr>
         @endif
         @if($expedient_n->note->Pruebas_de_laboratorio_show == 'si')
-          <div class="form-group">
-            <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de laboratorio</h5>
-            <p>{!!$expedient_n->note->Pruebas_de_laboratorio!!}</p>
-          </div>
+            <div class="">
+              <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de Laboratorio</h5>
+              <input type="hidden" name="" value="{{$suma = 0}}">
+              <table>
+
+                  @foreach ($expedient_n->note->test_lab as $question)
+                      @if($question->show == 'on')
+                          <input type="hidden" name="" value="{{$suma = $suma + 1}}">
+                          @if($suma%2!=0)
+                          <tr>
+                              <td width="350px">
+                                  <br>
+                                  <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                          @else
+                              <td width="350px">
+                                  <br>
+                                  <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                          </tr>
+                          @endif
+                      @endif
+
+                  @endforeach
+
+              </table>
+            </div>
           <hr>
         @endif
         @if($expedient_n->note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
@@ -198,11 +285,31 @@
         <hr>
       @endif
       @if($expedient_n->note->Pruebas_de_laboratorio_show == 'si')
-        <div class="form-group">
-          <h4 style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de laboratorio</h4>
-          <p>{!!$expedient_n->note->Pruebas_de_laboratorio!!}</p>
+          <div class="">
+            <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Pruebas de Laboratorio</h5>
+            <input type="hidden" name="" value="{{$suma = 0}}">
+            <table>
 
-        </div>
+                @foreach ($expedient_n->note->test_lab as $question)
+                    @if($question->show == 'on')
+                        <input type="hidden" name="" value="{{$suma = $suma + 1}}">
+                        @if($suma%2!=0)
+                        <tr>
+                            <td width="350px">
+                                <br>
+                                <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        @else
+                            <td width="350px">
+                                <br>
+                                <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        </tr>
+                        @endif
+                    @endif
+
+                @endforeach
+
+            </table>
+          </div>
         <hr>
       @endif
       @if($expedient_n->note->Evolucion_y_actualizacion_del_cuadro_clinico_show == 'si')
@@ -223,15 +330,34 @@
       @endif
 
     @elseif($expedient_n->note->title == 'Nota médica de Urgencias')
-      @if($expedient_n->note->Signos_vitales_show == 'si')
-        <div class="form-group">
+        @if($expedient_n->note->Signos_vitales_show == 'si')
+          <div class="">
+            <h5 class="" style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
+            <input type="hidden" name="" value="{{$suma = 0}}">
+            <table>
 
-          <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Signos vitales</h5>
-          <p>{!!$expedient_n->note->Signos_vitales!!}</p>
+                @foreach ($expedient_n->note->vital_sign as $question)
+                    @if($question->show == 'on')
+                        <input type="hidden" name="" value="{{$suma = $suma + 1}}">
+                        @if($suma%2!=0)
+                        <tr>
+                            <td width="350px">
+                                <br>
+                                <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        @else
+                            <td width="350px">
+                                <br>
+                                <span class="font-title">{{$question->name_question}}: </span><span>{{$question->answer}}</span></td>
+                        </tr>
+                        @endif
+                    @endif
 
-        </div>
-        <hr>
-      @endif
+                @endforeach
+
+            </table>
+          </div>
+          <hr>
+        @endif
       @if($expedient_n->note->Motivo_de_atencion_show == 'si')
         <div class="form-group">
           <h5 style="font-size: 1rem; color: #0060df;font-weight: 700;">Motivo_de_atencion</h5>

@@ -1,3 +1,45 @@
+<tr>
+  <td><span class="pre">{{$expedient->name}}</span>
+    <form class="" action="{{route('expedient_update',\Hashids::encode($patient->id))}}" method="post">
+      {{csrf_field()}}
+
+    <div class="input-group" style="display:none">
+        <input name="name_exp" type="text" value="{{$expedient->name}}" class="form-control inp">
+      <div class="input-group-append">
+        <button type="submit" name="button" class="btn btn-primary btn-sm"><i class="fas fa-save"></i></button>
+          <button class="cancel_edit" type="button" name="button" class="btn btn-warning btn-sm"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    </form>
+
+
+   </td>
+  <td>{{\Carbon\Carbon::parse($expedient->created_at)->format('d-m-Y')}}</td>
+  {{-- <td>{{$expedient->date_edit}}</td> --}}
+  <td>
+    <div class="form-inline">
+
+      <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
+
+      <a class="btn btn-warning mr-1 editar text-white"><i class="fas fa-edit"></i></a>
+      <a href="{{route('expedient_delete',\Hashids::encode($expedient->id))}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
+    </div>
+
+  </td>
+
+</tr>
+
+
+//////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
 <?php
 
 public function store_rate_comentary(Request $request)

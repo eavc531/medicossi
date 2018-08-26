@@ -17,7 +17,7 @@
 
     @isset(request()->back)
         <div class="text-right">
-            <a href="{{route('medico_patients',\Hashids::encode(request()->back))}}" class="btn btn-secondary">atras</a>
+            <a href="{{route('medico_patients',request()->back)}}" class="btn btn-secondary">atras</a>
 
         </div>
     @endisset

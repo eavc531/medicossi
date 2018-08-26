@@ -52,35 +52,49 @@
 
     <div class="col-6 mt-3">
 
+
+
+
+
+
+
         <div class="card">
             <div class="card-header">
                 <strong>Citas</strong>
             </div>
             <div class="card-body">
-                <li>totales: {{$appointments_all}}</li>
-                <li>Sin Confirmar: {{$appointments_no_confirmed}}</li>
-                <li>Confirmada: {{$appointments_confirmed}}</li>
-                <li>Pagadas y pendientes: {{$appointments_paid}}</li>
-                <li>Pasadas y por Cobrar: {{$appointments_past}}</li>
-                <li>Canceladas/Rechazadas: {{$appointments_cancel}}</li>
-                <li>Completadas: {{$appointments_completed}}</li>
+                <li><a href="{{route('patient_appointments_all',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Totales: {{$appointments_all}}</a></li>
+                <li><a href="{{route('patient_appointments_no_confirmed',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Sin Confirmar: {{$appointments_no_confirmed}}</a></li>
+                <li><a href="{{route('patient_appointments_confirmed',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Confirmada: {{$appointments_confirmed}}</a></li>
+                <li><a href="{{route('patient_appointments_paid_and_pending',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Pagadas y pendientes: {{$appointments_paid}}</a></li>
+                <li><a href="{{route('patient_appointments_past_collect',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Pasadas y por Cobrar: {{$appointments_past}}</a></li>
+                <li><a href="{{route('patient_appointments_canceled',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Canceladas/Rechazadas: {{$appointments_cancel}}</a></li>
+                <li><a href="{{route('patient_appointments_completed',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Completadas: {{$appointments_completed}}</a></li>
 
             </div>
         </div>
     </div>
 
     <div class="col-6 mt-3">
+        <div class="card mb-1">
+
+            <div class="card-body">
+                Reporte de Salubridad: @if(!isset($salubridad_report->status) or $salubridad_report->status == 'no_recordar') <span class="text-warning">No realizado <a href="{{route('create_edit_salubridad_report',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}" class="btn btn-success btn-sm float-right">Hacer reporte</a> </span> @else <span class="text-success">Realizado</span> <a href="{{route('create_edit_salubridad_report',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}" class="btn btn-success btn-sm float-right">Editar</a> @endif
+            </div>
+        </div>
         <div class="card">
+
             <div class="card-header">
                 <strong>Documentos:</strong>
             </div>
             <div class="card-body">
-                <li>Notas: {{$note_count}}</li>
-                <li>Expedientes: {{$exp_count}}</li>
-                <li>Archivos/imagenes: {{$files_count}} </li>
+                <li><a href="{{route('notes_patient',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Notas: {{$note_count}}</a></li>
+                <li><a href="{{route('expedients_patient',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Expedientes: {{$exp_count}}</a></li>
+                <li><a href="{{route('patient_files',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}">Archivos/imagenes: {{$files_count}} </a></li>
 
             </div>
         </div>
+
     </div>
 </div>
 @endsection

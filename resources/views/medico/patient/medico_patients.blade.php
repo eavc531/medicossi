@@ -70,16 +70,16 @@
       <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a class="btn btn-secondary" href="{{route('patient_profile',['p_id'=>\Hashids::encode($patient['id']),'back'=>\Hashids::encode($medico->id)])}}" data-toggle="tooltip" data-html="true" title="<em>Perfil</em>"><i class="fas fa-user"></i></a>
       </div>
-      <div class="col-lg-2 col-2  col-sm-3 text-center">
+      {{-- <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>citas con paciente</em>"><i class="far fa-calendar-alt"><span style="font-size:11"></span></i></a>
-      </div>
+      </div> --}}
       @plan_platino
-        <div class="col-lg-2 col-2  col-sm-4 text-center">
+        {{-- <div class="col-lg-2 col-2  col-sm-4 text-center">
           <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary"><i class="fas fa-folder"></i></a>
         </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
-      </div>
+      </div> --}}
   @else
 
       <div class="col-lg-2 col-2  col-sm-4 text-center">

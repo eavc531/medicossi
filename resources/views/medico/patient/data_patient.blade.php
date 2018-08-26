@@ -38,7 +38,7 @@
 
             </div>
             <div class="alert alert-success">
-                <p>Se han extraido los datos del perfil de la cuenta del paciente: {{$patient->nameComplete}}, es posible que estos datos esten desactualizados, depende del uso de la cuenta por parte del paciente, puede guardar los cambios, editarlos o presionar el boton cancelar para mantener la información antigua.<b>Modificar esta información no altera los datos de la cuenta Médicossi del paciente,el campo email, e identificación se mantienen para evitar confusiones, solo el paciente puede editar estos datos en su cuenta.</p>
+                <p>Se han extraido los datos del perfil de la cuenta del paciente: {{$patient->nameComplete}}, es posible que estos datos esten desactualizados, depende del uso de la cuenta por parte del paciente, puede guardar los cambios, editarlos o presionar el boton cancelar para mantener la información antigua.<b>Modificar esta información no altera los datos de la cuenta Médicossi del paciente,el campo email, e identificación se mantienen para evitar inconvenientes, solo el paciente puede editar estos datos en su cuenta.</p>
                     <a href="{{route('data_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-outline-warning"><strong>Cancelar Extraccion</strong></a>
                 </div>
             @else

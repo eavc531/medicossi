@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('jqueryui/jquery-ui.css')}}">
   <style media="screen">
   .dropdown-menu {
     width: 430px !important;
@@ -14,17 +15,16 @@
   }
 
   .area{
-      height: 100px;
+      height: 80px;
   }
+
+  /* //yakusa// */
+  .ui-autocomplete {
+    z-index:2147483647;
+  }
+
 </style>
 
-@isset($salubridad_report->status)
-
-    <input type="hidden" name="" value="{{$salubridad_report->status}}" id="report">
-@else
-    <input type="hidden" name="" value="" id="report">
-
-@endisset
 
 @endsection
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
@@ -123,30 +123,47 @@
 </div>
 </div>
 </div>
+{{-- //yakuza// --}}
+@isset($salubridad_report->status)
+
+    <input type="hidden" name="" value="{{$salubridad_report->status}}" id="report">
+@else
+    <input type="hidden" name="" value="" id="report">
+
+@endisset
 
 @endsection
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 
 @section('scriptJS')
-
+    <script src="{{asset('jqueryui/jquery-ui.js')}}"></script>
   <script type="text/javascript">
 
   function verify_empty(result){
 
       $('#select').val(result.value);
-      if(result.value == 'no' || result.value == 'no_preguntar'){
+      if(result.value == 'no' || result.value == 'no_recordar'){
+
+          $('#select').val(result.value);
            $('#form-report').submit();
            return false;
       }
 
-      text = $('#text_diagnostic').val();
+      text = $('#diagnostic_report').val();
 
       if(text.length == 0){
           $('#alert_campo').html('El campo diagnostico para el reporte no puede estar vacio, rellene el campo o seleccione otra opcion para continar')
 
           return false;
       }else{
-          $('#form-report').submit();
+
+          question = confirm('¿Esta Segu@ de Crear el reporte de salubridad con el diagnostico descrito?');
+          if(question == true){
+              $('#form-report').submit();
+          }else{
+              return false;
+          }
+
 
       }
   }
@@ -156,7 +173,10 @@
           window.location.href = result.name;
           return false;
       }
+
       report = $('#report').val();
+
+
       if(report.length == 0){
           $('#url_form').val(result.name);
           $('#modal-report').modal('show');
@@ -164,6 +184,20 @@
       }
       window.location.href = result.name;
   }
+
+
+  $(function()
+  {
+    $("#diagnostic_report").autocomplete({
+      source: "{{route('autocomplete_diagnostic')}}",
+      minLength: 2,
+      select: function(event, ui) {
+        $('#q').val(ui.item.value);
+      }
+    });
+  });
+
+
   </script>
 
 @endsection

@@ -135,7 +135,9 @@
 
 
       @if($expedients->first() != Null and !isset($search))
-
+            <div class="my-5 text-center">
+                <h5 class="text-primary">Expedientes</h5>
+            </div>
         <table class="table table-bordered">
           <thead>
               <td>Nombre</td>
