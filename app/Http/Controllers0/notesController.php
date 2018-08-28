@@ -242,6 +242,11 @@ class notesController extends Controller
 
     public function medico_vital_sign_store(Request $request)
     {
+
+
+        $request->validate([
+            'name_question'=>'required|alpha'
+        ]);
         $notes_customized = note::where('medico_id',$request->medico_id)->where('type','customized')->get();
 
         foreach ($notes_customized as $not) {
@@ -271,6 +276,10 @@ class notesController extends Controller
 
     public function medico_test_labs_store(Request $request)
     {
+        $request->validate([
+            'name_question'=>'required|alpha'
+        ]);
+
         $notes_customized = note::where('medico_id',$request->medico_id)->where('type','customized')->get();
 
         foreach ($notes_customized as $not) {
@@ -300,6 +309,7 @@ class notesController extends Controller
 
     public function medico_test_labs(Request $request,$m_id,$p_id,$n_id)
     {
+
         $medico = medico::find($m_id);
         $patient = patient::find($p_id);
         $note = note::find($n_id);
@@ -316,6 +326,7 @@ class notesController extends Controller
 
     public function medico_vital_signs(Request $request,$m_id,$p_id,$n_id)
     {
+
         $medico = medico::find($m_id);
         $patient = patient::find($p_id);
         $note = note::find($n_id);
@@ -352,6 +363,7 @@ class notesController extends Controller
     }
     public function vital_sign_config_update(Request $request){
 
+
         $vital_signs = vital_sign::where('note_id',$request->note_id)->get();
 
 
@@ -384,7 +396,7 @@ class notesController extends Controller
     }
 
     public function note_move_store($n_id,$ex_id){
-
+        // dd($n_id);
         $note = note::find($n_id);
         $expedient = expedient::find($ex_id);
         $verify = expedient_note::where('note_id',$n_id)->where('expedient_id',$ex_id)->first();
@@ -444,8 +456,9 @@ class notesController extends Controller
         $expedient_notes = expedient_note::where('expedient_id',$id)->orderBy('date_start')->get();
         $expedient_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->patient_id;
         $medico_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->medico_id;
-        $patient = patient::find($expedient_id);
-        $medico = medico::find($medico_id);
+        $patient = patient::find($expedient->patient_id);
+
+        $medico = medico::find($expedient->medico_id);
 
         $pdf = PDF::loadView('medico.expedients_patient.expedient_pdf', ['medico'=> $medico,'expedient_notes'=>$expedient_notes,'patient'=>$patient,'expedient'=>$expedient]);
         $date = \Carbon\Carbon::now()->format('d-m-Y');
@@ -458,8 +471,9 @@ class notesController extends Controller
         $expedient_notes = expedient_note::where('expedient_id',$id)->orderBy('date_start')->get();
         $expedient_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->patient_id;
         $medico_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->medico_id;
-        $patient = patient::find($expedient_id);
-        $medico = medico::find($medico_id);
+        $patient = patient::find($expedient->patient_id);
+
+        $medico = medico::find($expedient->medico_id);
         return view('medico.expedients_patient.preview',compact('expedient_notes','expedient','patient','medico'));
     }
 
@@ -598,7 +612,7 @@ class notesController extends Controller
         if($request->expedient_id == Null){
             $expedient = Null;
         }else{
-            $expedient = expedient::find($request->expedient_id);
+            $expedient = expedient::find(\Hashids::decode($request->expedient_id))->first();
         }
 
         $test_labs = test_lab::where('note_id',$note->id)->get();
@@ -957,8 +971,8 @@ class notesController extends Controller
         }
 
         // dd($request->all());
-        if($request->boton_submit == 'Guardar'){
-            return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
+        if($request->expedient_id != Null){
+            return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>$request->expedient_id])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
 
         }else{
             return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Nueva Configuracion guardada para: '.$note->title);
@@ -1070,9 +1084,9 @@ class notesController extends Controller
             $tld->save();
         }
 
-        // dd($request->boton_submit);
+        // dd($request->expedient_id);
         if($request->boton_submit == 'Guardar Nota en Expediente'){
-            return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success', 'se han guardado los datos de forma satisfactoria');;
+            return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>$request->expedient_id])->with('success', 'se han guardado los datos de forma satisfactoria');;
 
         }else{
             return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'se han guardado los datos de forma satisfactoria');
@@ -1175,12 +1189,12 @@ class notesController extends Controller
         }
 
         if($request->boton_submit == 'Guardar Nota en Expediente'){
-            $expedient_verify = expedient_note::where('expedient_id', $request->expedient_id)->first();
+            $expedient_verify = expedient_note::where('expedient_id',\Hashids::decode($request->expedient_id)[0])->first();
             $expedient_note = new expedient_note;
             $expedient_note->name = 'x';
             $expedient_note->medico_id = $request->medico_id;
             $expedient_note->patient_id = $request->patient_id;
-            $expedient_note->expedient_id = $request->expedient_id;
+            $expedient_note->expedient_id = \Hashids::decode($request->expedient_id)[0];
             $expedient_note->note_id = $note->id;
             $expedient_note->save();
         }
@@ -1210,9 +1224,9 @@ class notesController extends Controller
 
         if($request->expedient_id != Null){
             if($request->guarda_report == 'si'){
-                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success', 'Se a creado la nota, y se creado el reporte del medico para salubridad, puede ver y editar este reporte en el panel "gestion paciente"');
+                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>$request->expedient_id])->with('success', 'Se a creado la nota, y se creado el reporte del medico para salubridad, puede ver y editar este reporte en el panel "gestion paciente"');
             }else{
-                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)]);
+                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>$request->expedient_id]);
             }
 
         }else{

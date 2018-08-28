@@ -18,7 +18,7 @@ class CreateRemindersTable extends Migration
             $table->integer('medico_id')->unsigned()->nullable();
             $table->foreign('medico_id')->references('id')->on('medicos');
             $table->string('type');
-            $table->integer('mins_before')->nullable();
+            $table->integer('times_before')->nullable();
             $table->string('options')->default('No');
             $table->timestamps();
         });

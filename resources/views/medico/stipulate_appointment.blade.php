@@ -85,7 +85,7 @@
         <label for="" class="mt-2 font-title">Tipo de Evento</label>
         {!!Form::select('title',['Ambulatoria'=>'Ambulatoria','Externa o a Domicilio'=>'Externa o a Domicilio','Urgencias'=>'Urgencias','Cita por Internet'=>'Cita por Internet'],null,['class'=>'form-control','id'=>'eventType2','placeholder'=>'seleccionar'])!!}
         <label for="" class="mt-2 font-title">Metodo de Pago</label>
-        {!!Form::select('payment_method',['Normal'=>'Normal','Pre-pagada'=>'Pre-pagada','Aseguradora'=>'Aseguradora'],null,['class'=>'form-control','id'=>'payment_method6'])!!}
+        {!!Form::select('payment_method',['Normal'=>'Normal','Pre-pagada'=>'Pre-pagada','Aseguradora'=>'Aseguradora'],null,['class'=>'form-control','id'=>'payment_method6','placeholder'=>'seleccionar'])!!}
 
         <label for="" class="mt-2 font-title">Precio (Opcional)</label>
         {!!Form::number('price',null,['class'=>'form-control','id'=>'price6'])!!}
@@ -356,31 +356,7 @@
     $('#ModalCreate').modal('show');
   }
 
-    // desactivar botones
-    // ,
-    //          viewRender: function(currentView){
-    //          var minDate = moment(),
-    //          maxDate = moment().add(6,'days');
-    //          // Past
-    //          if (minDate >= currentView.start && minDate <= currentView.end) {
-    //             $(".fc-prev-button").hide();
-    //            // $(".fc-prev-button").prop('disabled', true);
-    //            // $(".fc-prev-button").addClass('fc-state-disabled');
-    //          }
-    //          else {
-    //            $(".fc-prev-button").removeClass('fc-state-disabled');
-    //            $(".fc-prev-button").prop('disabled', false);
-    //          }
-    //          // Future
-    //          if (maxDate >= currentView.start && maxDate <= currentView.end) {
-    //               $(".fc-next-button").hide();
-    //            // $(".fc-next-button").prop('disabled', true);
-    //            // $(".fc-next-button").addClass('fc-state-disabled');
-    //          } else {
-    //            $(".fc-next-button").removeClass('fc-state-disabled');
-    //            $(".fc-next-button").prop('disabled', false);
-    //          }
-    //        }
+
 
     function cerrar(){
       $('#alert_error').fadeOut();
@@ -463,6 +439,7 @@
          $('#alert_error').fadeIn();
          $('#alert_success').fadeOut();
 
+         return false;
        },
        success:function(result){
 
@@ -478,10 +455,14 @@
             $('#alert_success').fadeOut();
           $('#text_error').html('Error. Para agendar cita prepagada, añada el monto del pago');
           $('#alert_error').fadeIn();
+          stop_loader();
+          return false;
         }else if(result == 'ya existe'){
             $('#alert_success').fadeOut();
           $('#text_error').html('Imposible crear evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
           $('#alert_error').fadeIn();
+          stop_loader();
+          return false;
         }else{
 
           vaciar();
@@ -594,126 +575,6 @@
 
    }
 
-
-    function filtroDisponible(filtro){
-        $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
-        test = 1;
-        route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
-        $.ajax({
-         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-         type:'post',
-         url:route,
-         data:{test:test},
-         error:function(error){
-           console.log(error);
-         },
-         success:function(result){
-                  $.each(result,function(index,value){//for each event, I will compare the value with the filter, if true, render
-                    if(value.state != 'Cancelada' & value.state != 'Cerrada y Cobrada'){
-                      $("#calendar").fullCalendar('renderEvent', value, true);
-                    }
-                  });
-
-                }
-              });
-
-      }
-
-      function filtroCitaPorInternet(){
-          $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
-          test = 1;
-          route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
-          $.ajax({
-           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-           type:'post',
-           url:route,
-           data:{test:test},
-           error:function(error){
-             console.log(error);
-           },
-           success:function(result){
-                    $.each(result,function(index,value){//for each event, I will compare the value with the filter, if true, render
-                      if(value.eventType == 'Cita por Internet'){
-                        $("#calendar").fullCalendar('renderEvent', value, true);
-                      }
-                    });
-
-                  }
-                });
-
-        }
-
-        function pagada_y_completada(){
-            $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
-            test = 1;
-            route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
-            $.ajax({
-             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-             type:'post',
-             url:route,
-             data:{test:test},
-             error:function(error){
-               console.log(error);
-             },
-             success:function(result){
-                      $.each(result,function(index,value){//for each event, I will compare the value with the filter, if true, render
-                        if(value.state == 'Pagada y Completada'){
-                          $("#calendar").fullCalendar('renderEvent', value, true);
-                        }
-                      });
-
-                    }
-                  });
-
-          }
-
-          function  PendientePorCobrar(){
-  $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
-  test = 1;
-  route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
-  $.ajax({
-   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-   type:'post',
-   url:route,
-   data:{test:test},
-   error:function(error){
-     console.log(error);
-   },
-   success:function(result){
-            $.each(result,function(index,value){//for each event, I will compare the value with the filter, if true, render
-              if(value.state == 'Pendiente'){
-                $("#calendar").fullCalendar('renderEvent', value, true);
-              }
-            });
-
-          }
-        });
-
-}
-
-function  FiltroPacienteCancelo(){
-    $("#calendar").fullCalendar('removeEvents');//remove the old filtered events
-    test = 1;
-    route = '{{route('medico_diary_events2',\Hashids::encode($medico->id))}}';
-    $.ajax({
-     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-     type:'post',
-     url:route,
-     data:{test:test},
-     error:function(error){
-       console.log(error);
-     },
-     success:function(result){
-              $.each(result,function(index,value){//for each event, I will compare the value with the filter, if true, render
-                if(value.state == 'Pagada'){
-                  $("#calendar").fullCalendar('renderEvent', value, true);
-                }
-              });
-
-            }
-          });
-
-  }
 
   function parpadeo(){
 

@@ -180,11 +180,8 @@ class medicoController extends Controller
           $data_patient->save();
 
         }
-        if($request->expedient_id != Null){
-          return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success','Se han Guardado los Datos Personales del Paciente');
-        }else{
+
           return redirect()->route('manage_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success','Se han Guardado los Datos Personales del Paciente');
-        }
 
       }
 

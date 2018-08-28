@@ -109,7 +109,7 @@
 
                     <a onclick="return alert('No podras calificar al médico hasta que la cita sea confirmada y halla pasado la fecha de la misma.')" href="#" class="btn btn-warning mt-4" data-toggle="tooltip" data-placement="top" title="No podras Calificar al médico hasta despues de la cita."><strong>Calificar Médico</strong></a>
                 @else
-                    xx
+                    
                   <a class="btn btn-primary mt-2" href="{{route('qualify_medic',['p_id'=>\Hashids::encode($app->patient_id),'m_id'=>\Hashids::encode($app->medico_id),'app_id'=>\Hashids::encode($app->id)])}}">Calificar Médico</a>
 
                 @endif

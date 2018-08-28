@@ -5,7 +5,7 @@
              {{-- Paciente --}}
         </a>
 
-            <a href="{{route('patient_appointments_all',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient['id'])])}}" class="btn btn-menu-medico btn-menu-medico-azul" data-toggle="tooltip" data-placement="top" title=" Paciente">
+            <a href="{{route('patient_appointments_all',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient['id'])])}}" class="btn btn-menu-medico btn-menu-medico-azul" data-toggle="tooltip" data-placement="top" title="Citas Paciente">
 
                 <i class="far fa-calendar-alt"><span style="font-size:11"></span></i>
                 {{-- Citas --}}

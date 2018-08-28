@@ -33,7 +33,7 @@
 
           <div class="text-right">
               @if(Route::currentRouteName() == 'note_config')
-                  <a href="{{route('medico_test_labs',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id),'back'=>Route::currentRouteName()])}}" class="btn btn-success btn-sm">Agregar Eliminar nuevos Campos a la lista</a>
+                  <a href="{{route('medico_test_labs',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id),'back'=>Route::currentRouteName(),'expedient_id'=>request()->expedient_id])}}" class="btn btn-success btn-sm">Agregar Eliminar nuevos Campos a la lista</a>
               @else
                   <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal2">
                     Agregar Eliminar nuevos Campos a la lista
@@ -68,14 +68,15 @@
         </button>
       </div>
       <div class="modal-body">
-
+         
               <p class="text-danger">Para Agregar o eliminar campos de la lista "Pruebas de laboratorio" debera salir del panel actual,se perderan los datos no guardados de la nota actual, le invitamos a antes guardar la nota e ingresar al panel configuracion de "{{$note->title}}" para realizar esta accción, podra utilizar los campos agregados en la creación y edición de notas.Tambien puede continuar y configurar por este medio aceptando las consecuencias.</p>
               <p>¿Que desea hacer?</p>
 
 
           <div class="text-center">
 
-              <a href="{{route('medico_test_labs',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id),'back'=>Route::currentRouteName()])}}" class="btn btn-success">Aceptar y Continuar</a>
+              {{-- <input type="hidden" name="" value="{{$exp_id == request()->expedient_id}}"> --}}
+              <a href="{{route('medico_test_labs',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id),'back'=>Route::currentRouteName(),'expedient_id'=>request()->expedient_id])}}" class="btn btn-success">Aceptar y Continuar</a>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           </div>
 

@@ -172,6 +172,9 @@ Route::post('medico/{id}/diary/events2','medico_diaryController@medico_diary_eve
 Route::resource('medico_diary','medico_diaryController');
 Route::post('appoitment/store','medico_diaryController@appointment_store')->name('appointment_store');
 Route::post('medico/update/event', 'medico_diaryController@update_event')->name('update_event');
+Route::post('medico/event_personal/update', 'medico_diaryController@event_personal_update')->name('event_personal_update');
+Route::post('medico/event_personal/delete', 'medico_diaryController@event_personal_delete')->name('event_personal_delete');
+
 
 // MIDLEWARE Autenticacion
 // Route::group(['middleware' => ['authenticate']], function (){

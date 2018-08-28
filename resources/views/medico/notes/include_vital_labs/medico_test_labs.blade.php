@@ -12,7 +12,8 @@
 {{-- MENU DE PACIENTES --}}
 
 <div class="text-right">
-  <a class="btn btn-secondary my-2" href="{{route(request()->get('back'),['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id)])}}">Atras</a>
+    
+  <a class="btn btn-secondary my-2" href="{{route(request()->get('back'),['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'note_id'=>\Hashids::encode($note->id),'expedient_id'=>request()->expedient_id])}}">Atras</a>
 </div>
 
 

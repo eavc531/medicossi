@@ -180,11 +180,8 @@ class medicoController extends Controller
           $data_patient->save();
 
         }
-        if($request->expedient_id != Null){
-          return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>\Hashids::encode($request->expedient_id)])->with('success','Se han Guardado los Datos Personales del Paciente');
-        }else{
+
           return redirect()->route('manage_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success','Se han Guardado los Datos Personales del Paciente');
-        }
 
       }
 
@@ -509,7 +506,7 @@ class medicoController extends Controller
      }
 
      public function appointments_all($id){
-       $appointments = event::where('medico_id',$id)->whereNull('rendering')->where('title','!=', 'Ausente')->paginate(4);
+       $appointments = event::where('medico_id',$id)->whereNull('rendering')->where('title','!=', 'Ausente')->orderBy('start','desc')->paginate(5);
        $type = 'todas';
        $medico = medico::find($id);
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
@@ -522,7 +519,7 @@ class medicoController extends Controller
        //   return redirect()->route('appointments_all',$id);
        // }
 
-       $appointments = event::where('medico_id',$id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $appointments = event::where('medico_id',$id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'sin confirmar';
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
@@ -530,7 +527,7 @@ class medicoController extends Controller
 
      public function appointments_past_collect($id){
        $medico = medico::find($id);
-       $appointments = event::where('medico_id',$id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->paginate(4);
+       $appointments = event::where('medico_id',$id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
 
        $type = 'Pasada y por Cobrar';
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
@@ -539,7 +536,7 @@ class medicoController extends Controller
 
      public function appointments_paid_and_pending($id){
        $medico = medico::find($id);
-       $appointments = event::where('medico_id',$id)->where('state','Pagada y Pendiente')->paginate(4);
+       $appointments = event::where('medico_id',$id)->where('state','Pagada y Pendiente')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Pendientes';
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
@@ -547,7 +544,7 @@ class medicoController extends Controller
 
      public function appointments_confirmed($id){
        $medico = medico::find($id);
-       $appointments = event::where('medico_id',$id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $appointments = event::where('medico_id',$id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'confirmadas';
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
@@ -555,7 +552,7 @@ class medicoController extends Controller
 
      public function appointments_canceled($id){
        $medico = medico::find($id);
-       $appointments = event::where('medico_id',$id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $appointments = event::where('medico_id',$id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'canceladas';
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
@@ -563,7 +560,7 @@ class medicoController extends Controller
 
      public function appointments_completed($id){
        $medico = medico::find($id);
-       $appointments = event::where('medico_id',$id)->where('state','Pagada y Completada')->paginate(4);
+       $appointments = event::where('medico_id',$id)->where('state','Pagada y Completada')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Completadas';
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
@@ -572,7 +569,7 @@ class medicoController extends Controller
      ///////////
 
      public function patient_appointments_all($m_id,$p_id){
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->whereNull('rendering')->where('title','!=', 'Ausente')->paginate(4);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->whereNull('rendering')->where('title','!=', 'Ausente')->orderBy('start','desc')->paginate(5);
        $type = 'todas';
        $medico = medico::find($m_id);
        $patient = patient::find($p_id);
@@ -583,7 +580,7 @@ class medicoController extends Controller
      public function patient_appointments_no_confirmed($m_id,$p_id){
        $medico = medico::find($m_id);
        $patient = patient::find($p_id);
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'sin confirmar';
        return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
 
@@ -591,7 +588,7 @@ class medicoController extends Controller
 
      public function patient_appointments_past_collect($m_id,$p_id){
        $medico = medico::find($m_id);
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->paginate(4);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
 
        $type = 'Pasada y por Cobrar';
        $patient = patient::find($p_id);
@@ -601,7 +598,7 @@ class medicoController extends Controller
 
      public function patient_appointments_paid_and_pending($m_id,$p_id){
        $medico = medico::find($m_id);
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Pendiente')->paginate(4);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Pendiente')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Pendientes';
        $patient = patient::find($p_id);
        return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
@@ -610,7 +607,7 @@ class medicoController extends Controller
 
      public function patient_appointments_confirmed($m_id,$p_id){
        $medico = medico::find($m_id);
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'confirmadas';
        $patient = patient::find($p_id);
        return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
@@ -619,7 +616,7 @@ class medicoController extends Controller
 
      public function patient_appointments_canceled($m_id,$p_id){
        $medico = medico::find($m_id);
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->paginate(4);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'canceladas';
        $patient = patient::find($p_id);
        return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
@@ -628,7 +625,7 @@ class medicoController extends Controller
 
      public function patient_appointments_completed($m_id,$p_id){
        $medico = medico::find($m_id);
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Completada')->paginate(4);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Completada')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Completadas';
        $patient = patient::find($p_id);
        return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
@@ -1096,8 +1093,8 @@ class medicoController extends Controller
 
          Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
            $msj->subject('Médicos Si');
-           // $msj->to($medico->email);
-           $msj->to('eavc53189@gmail.com');
+           $msj->to($medico->email);
+           // $msj->to('eavc53189@gmail.com');
 
       });
 
@@ -1124,8 +1121,8 @@ class medicoController extends Controller
 
          Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
             $msj->subject('Médicos Si');
-            // $msj->to($medico->email);
-            $msj->to('eavc53189@gmail.com');
+            $msj->to($medico->email);
+            // $msj->to('eavc53189@gmail.com');
         });
 
         return redirect()->route('successRegMedico',\Hashids::encode($medico->id))->with('success', 'Se ha reenviado el mensaje de confirmación al correo electronico asociado a tu cuenta MédicosSi')->with('user', $user);

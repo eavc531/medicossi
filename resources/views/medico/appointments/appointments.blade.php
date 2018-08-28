@@ -147,7 +147,8 @@
 
                 </p>
                 <div class="form-inline">
-                  @if($app->confirmed_medico == 'No')
+                  @if($app->confirmed_medico == 'No' and $app->state != 'Rechazada/Cancelada' and $app->state != 'Pagada y Completada')
+
                     <a href="{{route('edit_appointment',['m_id'=>\Hashids::encode(request()->id),'p_id'=>\Hashids::encode($app->patient_id),'app_id'=>\Hashids::encode($app->id)])}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Editar Cita"><i class="far fa-edit"></i></a>
                     @cita_confirm
                     <a onclick="loader()" href="{{route('appointment_confirm',\Hashids::encode($app->id))}}" class="btn btn-success ml-2" data-toggle="tooltip" data-placement="top" title="Confirmar Cita"><i class="fas fa-check"></i></a>

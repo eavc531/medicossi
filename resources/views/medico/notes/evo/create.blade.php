@@ -285,11 +285,20 @@
        @endif
       </div>
 
-      @isset($expedient)
+      @if(request()->expedient_id != Null)
 
-        <input type="hidden" name="expedient_id" value="{{$expedient->id}}">
-          <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar Nota en Expediente">
+        <input type="hidden" name="expedient_id" value="{{request()->expedient_id}}">
 
+          @if(!isset($salubridad_report->status) or $salubridad_report->status == 'no_realizado')
+
+              <button type="button" class="btn btn-primary line mx-1" onclick="show_modal_report()">
+                Guardar Nota
+              </button>
+          @else
+              <input type="submit" class="btn btn-success line mx-1" name="boton_submit" value="Guardar Nota en Expediente">
+
+
+          @endif
       @else
           @if(!isset($salubridad_report->status) or $salubridad_report->status == 'no_realizado')
 
@@ -301,15 +310,15 @@
 
           @endif
 
-      @endisset
+      @endif
       {{-- //// >>>>>>>>--}}
       <input type="hidden" name="guarda_report" value="" id="guarda_report">
       <input type="hidden" name="diagnostic_report" value="" id="text_diagnostic_form">
   {{-- /// >>>>>>>><--}}
 
     {!!Form::close()!!}
-    @if($expedient != Null)
-      <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-secondary line" >Cancelar</i></a>
+    @if(request()->expedient_id != Null)
+      <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>request()->expedient_id])}}" class="btn btn-secondary line" >Cancelar</i></a>
     @else
      <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}" class="btn btn-secondary mx-1 line">Cancelar</a>
     @endif

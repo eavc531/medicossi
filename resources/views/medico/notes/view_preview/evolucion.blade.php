@@ -131,14 +131,14 @@
 
 
 <div class="col-12 text-right">
-  @if($expedient == Null)
-      <a href="{{route('notes_patient',['m_id'=>$medico->id ,'p_id'=>$patient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
-  @else
-      <a href="{{route('expedient_open',['m_id'=>$medico->id ,'p_id'=>$patient->id,'ex_id'=>$expedient->id])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
-  @endif
+    @if($expedient == Null)
+        <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+    @else
+        <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-secondary my-2 ml-auto">atras</a>
+    @endif
 
 
-  <a href="{{route('download_pdf',$note->id)}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
+  <a href="{{route('download_pdf',\Hashids::encode($note->id))}}" class="btn btn-info ml-auto mr-3">Descargar en pdf</a>
 </div>
 </div>
 </div>

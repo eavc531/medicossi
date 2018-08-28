@@ -108,7 +108,7 @@ class reminderController extends Controller
 
 
 
-       $reminder_alarm->fill($request->all());
+
        //$reminder_alarm->title
        $reminder_alarm->start = $start;
        $reminder_alarm->end = $end;
@@ -357,15 +357,29 @@ class reminderController extends Controller
       $reminder = new reminder;
       $reminder->type = 'Cita Confirmada';
       $reminder->medico_id = $request->medico_id;
-      $reminder->options = $request->options;
+      $reminder->options = 'Si';
       $reminder->save();
     }else{
       $reminder = reminder::where('medico_id', $request->medico_id)->where('type','Cita Confirmada')->first();
-      $reminder->options = $request->options;
+      if($reminder->options == 'Si'){
+          $reminder->options = 'No';
+      }else{
+          $reminder->options = 'Si';
+      }
+
       $reminder->save();
     }
-    return response()->json('ok1');
+    return response()->json($reminder->options);
   }
+
+  public function reminder_time_confirmed(Request $request){
+
+    $reminder = reminder::where('medico_id', $request->medico_id)->where('type','Cita Confirmada')->first();
+
+    $reminder->times_before = $request->time;
+    $reminder->save();
+  }
+
 
   public function config_acvtivate_reminder_alarm(Request $request){
 
@@ -385,14 +399,7 @@ class reminderController extends Controller
     return response()->json('ok2');
   }
 
-  public function reminder_time_confirmed(Request $request){
 
-
-    $reminder = reminder::where('medico_id', $request->medico_id)->where('type','Cita Confirmada')->first();
-    $reminder->days_before = $request->time;
-    $reminder->save();
-    return response()->json('ok2');
-  }
 
   public function reminder_time_alarm(Request $request){
 
@@ -410,11 +417,15 @@ class reminderController extends Controller
       $reminder = new reminder;
       $reminder->type = 'Pasada y Pagada';
       $reminder->medico_id = $request->medico_id;
-      $reminder->options = $request->options;
+      $reminder->options = 'Si';
       $reminder->save();
     }else{
       $reminder = reminder::where('medico_id', $request->medico_id)->where('type','Pasada y Pagada')->first();
-      $reminder->options = $request->options;
+      if($reminder->options == 'Si'){
+          $reminder->options = 'No';
+      }else{
+          $reminder->options = 'Si';
+      }
       $reminder->save();
     }
     return response()->json('ok');

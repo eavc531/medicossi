@@ -1,4 +1,4 @@
-\Hashids::encode($note->patient_id)@extends('layouts.app')
+@extends('layouts.app')
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
@@ -96,7 +96,7 @@
             <td>{{\Carbon\Carbon::parse($expedient->created_at)->format('d-m-Y')}}</td>
 
             <td>
-                <a href="{{route('note_move_store',['note_id'=>$note->id,'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success"><i class="fas fa-check"></i></a>
+                <a href="{{route('note_move_store',['n_id'=>\Hashids::encode($note->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success"><i class="fas fa-check"></i></a>
             </td>
           </tr>
             @endforeach
