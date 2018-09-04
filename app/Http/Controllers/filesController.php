@@ -8,6 +8,9 @@ use App\patient;
 use App\file;
 //validacion personalizada
 use Validator;
+use App\task_consultation;
+use Auth;
+
 use Illuminate\Validation\Rule;
 
 class filesController extends Controller
@@ -17,10 +20,19 @@ class filesController extends Controller
         $file = file::find($id);
 
         $pathtoFile = public_path().'/'.$file->path;
-        return response()->download($pathtoFile);
+        if(file_exists($pathtoFile)){
+            return response()->download($pathtoFile);
+        }else{
+            return back()->with('warning', 'Este archivo no existe o fue eliminado del sistema.');
+        }
+
 
     }
     public function file_delete($id){
+        $task_consultation = task_consultation::where('file_id',$id)->first();
+        $task_consultation->file_id = Null;
+        $task_consultation->save();
+        
         $file = file::find($id);
 
         if(\File::exists(public_path($file->path))){
@@ -109,6 +121,20 @@ class filesController extends Controller
                // $file->upload_for =
                $file->save();
         }
+            //anotar tarea en la consulta abierta
+            if(Auth::user()->role == 'medico'){
+
+                if(Auth::user()->medico->event_id != Null){
+                    $task = new task_consultation;
+                    $task->task = 'Archivo subido';
+                    $task->event_id = Auth::user()->medico->event_id;
+                    $task->file_id = $file->id;
+                    $task->save();
+                }
+
+            }elseif(Auth::user()->role == 'Asistente'){
+
+            }
 
         return back()->with('success', 'El archivo a sido guardado con exito');
 

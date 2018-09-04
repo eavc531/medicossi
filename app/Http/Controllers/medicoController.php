@@ -35,8 +35,7 @@ use App\expedient;
 use App\file;
 use App\salubridad_report;
 use App\history;
-
-
+use App\task_consultation;
 
 use App\insurrance_show;
 use Illuminate\Validation\Rule;
@@ -59,13 +58,60 @@ class medicoController extends Controller
 
       public function redierct_manage_patient(Request $request)
       {
-          return redirect()->route('manage_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)]);
+
+          if($request->event_id != Null){
+
+              if(Auth::user()->role == 'medico'){
+                  $medico2 = medico::find(Auth::user()->medico_id);
+
+                  if($medico2->event_id == $request->event_id) {
+                      return redirect()->route('manage_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'event_id'=>\Hashids::encode($request->event_id)]);
+                  }else{
+                      $medico2->event_id = $request->event_id;
+                      $medico2->save();
+                      $event = event::find($request->event_id);
+                      $fecha = \Carbon\Carbon::parse($event->start)->format('d-m-Y H:i');
+                      return redirect()->route('manage_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'event_id'=>\Hashids::encode($request->event_id)])->with('success', 'Se ha Abierto la consulta: '.$event->title.' '.$fecha.' Paciente: '.$event->namePatient);
+                  }
+                      // $event_id = $request->event_id;
+
+                  }elseif(Auth::user()->role == 'Asistente'){
+                      $medico2 = medico::find(Auth::user()->assistant->medico_id);
+
+                  }
+
+          }else{
+              return redirect()->route('manage_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)]);
+          }
+
+
       }
 
-      public function manage_patient($m_id,$p_id)
+      public function manage_patient(Request $request,$m_id,$p_id)
       {
-           $patient = patient::find($p_id);
+          if($request->event_id != Null){
+
+              $event_id = \Hashids::decode($request->event_id)[0];
+              if(Auth::user()->role == 'medico'){
+
+                 $medico2 = medico::find(Auth::user()->medico_id);
+
+              }elseif(Auth::user()->role == 'Paciente'){
+
+                 $medico2 = medico::find(Auth::user()->assistant->medico_id);
+              }
+
+              if($medico2->event_id == Null){
+                  $medico2->event_id = $event_id;
+                  $medico2->save();
+              }
+          }
+
+          $medico = medico::find($m_id);
+
+          $patient = patient::find($p_id);
           $data_patient = data_patient::where('medico_id',$m_id)->where('patient_id',$p_id)->first();
+
           if($data_patient == Null){
               return redirect()->route('data_patient',['m_id'=>\Hashids::encode($m_id),'p_id'=>\Hashids::encode($p_id)])->with('warning', 'Antes de entrar al panel de gestion del paciente: '.$patient->nameComplete.' debe ingresar los siguientes datos.');
           }
@@ -73,14 +119,13 @@ class medicoController extends Controller
           $appointments_all = event::where('medico_id',$m_id)->where('patient_id',$p_id)->whereNull('rendering')->where('title','!=', 'Ausente')->count();
           $appointments_no_confirmed = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->count();
           $appointments_confirmed = event::where('medico_id',$m_id)->where('patient_id',$p_id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->count();
-          $appointments_past = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->count();
+          $appointments_past = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y sin realizar')->where('title','!=','Ausente')->count();
           $appointments_paid = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Pendiente')->count();
           $appointments_cancel = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->count();
           $appointments_completed = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Completada')->count();
 
 
           $medico = medico::find($m_id);
-
           // dd($request->patient_id);
           $notes = note::where('medico_id',$m_id)->where('patient_id', $patient->id)->count();
           $expedients = expedient::where('medico_id',$m_id)->where('patient_id', $patient->id)->count();
@@ -505,7 +550,21 @@ class medicoController extends Controller
 
      }
 
+     public function verify_past_appointment($id){
+         $verify_past_appointment = event::where('medico_id',$id)->where('end','<', \Carbon\Carbon::now())->where('confirmed_medico','Si')->where('state', 'Pendiente')->get();
+
+         foreach ($verify_past_appointment as $value) {
+             // $value->color = 'rgb(190, 61, 13)';
+             $value->state = 'Pasada y sin realizar';
+             $value->save();
+         }
+         // rgb(190, 61, 13)
+
+     }
+
      public function appointments_all($id){
+
+      medicoController::verify_past_appointment($id);
        $appointments = event::where('medico_id',$id)->whereNull('rendering')->where('title','!=', 'Ausente')->orderBy('start','desc')->paginate(5);
        $type = 'todas';
        $medico = medico::find($id);
@@ -514,10 +573,8 @@ class medicoController extends Controller
      }
 
      public function appointments($id){
+         medicoController::verify_past_appointment($id);
        $medico = medico::find($id);
-       // if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
-       //   return redirect()->route('appointments_all',$id);
-       // }
 
        $appointments = event::where('medico_id',$id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'sin confirmar';
@@ -526,15 +583,27 @@ class medicoController extends Controller
      }
 
      public function appointments_past_collect($id){
+         medicoController::verify_past_appointment($id);
        $medico = medico::find($id);
-       $appointments = event::where('medico_id',$id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
+       $appointments = event::where('medico_id',$id)->where('state','Pasada y sin realizar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
 
-       $type = 'Pasada y por Cobrar';
+       $type = 'Pasada y sin realizar';
+       return view('medico.appointments.appointments',compact('appointments','type','medico'));
+
+     }
+
+     public function app_realizada_por_cobrar($id){
+        medicoController::verify_past_appointment($id);
+
+       $medico = medico::find($id);
+       $appointments = event::where('medico_id',$id)->where('state','Realizada y por cobrar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
+       $type = 'Realizadas y por cobrar';
        return view('medico.appointments.appointments',compact('appointments','type','medico'));
 
      }
 
      public function appointments_paid_and_pending($id){
+         medicoController::verify_past_appointment($id);
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->where('state','Pagada y Pendiente')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Pendientes';
@@ -543,6 +612,7 @@ class medicoController extends Controller
      }
 
      public function appointments_confirmed($id){
+         medicoController::verify_past_appointment($id);
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'confirmadas';
@@ -551,6 +621,7 @@ class medicoController extends Controller
      }
 
      public function appointments_canceled($id){
+         medicoController::verify_past_appointment($id);
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'canceladas';
@@ -559,6 +630,7 @@ class medicoController extends Controller
      }
 
      public function appointments_completed($id){
+         medicoController::verify_past_appointment($id);
        $medico = medico::find($id);
        $appointments = event::where('medico_id',$id)->where('state','Pagada y Completada')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Completadas';
@@ -568,7 +640,19 @@ class medicoController extends Controller
 
      ///////////
 
+     public function patient_app_realizada_por_cobrar($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
+         $medico = medico::find($m_id);
+         $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Realizada y por cobrar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
+
+         $type = 'Realizadas y por cobrar';
+         $patient = patient::find($p_id);
+         return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
+
+     }
+
      public function patient_appointments_all($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
        $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->whereNull('rendering')->where('title','!=', 'Ausente')->orderBy('start','desc')->paginate(5);
        $type = 'todas';
        $medico = medico::find($m_id);
@@ -578,6 +662,7 @@ class medicoController extends Controller
      }
 
      public function patient_appointments_no_confirmed($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
        $medico = medico::find($m_id);
        $patient = patient::find($p_id);
        $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
@@ -587,16 +672,18 @@ class medicoController extends Controller
      }
 
      public function patient_appointments_past_collect($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
        $medico = medico::find($m_id);
-       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y por Cobrar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
+       $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pasada y sin realizar')->where('title','!=','Ausente')->orderBy('start','desc')->paginate(5);
 
-       $type = 'Pasada y por Cobrar';
+       $type = 'Pasada y sin realizar';
        $patient = patient::find($p_id);
        return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
 
      }
 
      public function patient_appointments_paid_and_pending($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
        $medico = medico::find($m_id);
        $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Pendiente')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Pendientes';
@@ -606,6 +693,7 @@ class medicoController extends Controller
      }
 
      public function patient_appointments_confirmed($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
        $medico = medico::find($m_id);
        $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->Where('confirmed_medico','Si')->where('state','!=' ,'Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'confirmadas';
@@ -615,6 +703,7 @@ class medicoController extends Controller
      }
 
      public function patient_appointments_canceled($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
        $medico = medico::find($m_id);
        $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Rechazada/Cancelada')->whereNull('rendering')->orderBy('start','desc')->paginate(5);
        $type = 'canceladas';
@@ -624,6 +713,7 @@ class medicoController extends Controller
      }
 
      public function patient_appointments_completed($m_id,$p_id){
+         medicoController::verify_past_appointment($m_id);
        $medico = medico::find($m_id);
        $appointments = event::where('medico_id',$m_id)->where('patient_id',$p_id)->where('state','Pagada y Completada')->orderBy('start','desc')->paginate(5);
        $type = 'Pagadas y Completadas';
@@ -651,6 +741,9 @@ class medicoController extends Controller
         $note->medico_id = $request->medico_id;
         $note->type_note = 'saved';
         $note->save();
+
+
+
 
          return redirect()->route('admin_data_patient',['med_id'=>\Hashids::encode($request->medico_id), 'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Nota Guardada de Forma Exitosa.');
      }

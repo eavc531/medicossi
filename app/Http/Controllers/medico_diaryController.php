@@ -13,7 +13,7 @@ use Mail;
 use App\reminder;
 use App\reminder_alarm;
 use App\data_patient;
-
+use App\task_consultation;
 use DB;
 class medico_diaryController extends Controller
 {
@@ -59,8 +59,13 @@ class medico_diaryController extends Controller
         return response()->json('ok');
     }
 
-
     public function confirmed_completed_app(Request $request){
+
+        if($request->consultation == 'si'){
+            $medico = medico::find($request->medico_id);
+            $medico->event_id = Null;
+            $medico->save();
+        }
         $event = event::find($request->event_id);
         $event->payment_state = 'Si';
         $event->price = $request->price;
@@ -70,6 +75,10 @@ class medico_diaryController extends Controller
         // return response()->json('ok');
         $event->color = 'rgb(255, 255, 255)';
         $event->save();
+
+        if($request->consultation == 'si'){
+            return response()->json('redirect_agenda');
+        }
         return response()->json('ok');
     }
 
@@ -83,29 +92,37 @@ class medico_diaryController extends Controller
 
     }
 
-    public function appointment_cancel($id)
-    {
-
-        $event = event::find($id);
-        $event->state = 'Rechazada/Cancelada';
-        $event->color = 'rgb(139, 139, 139)';
-        $event->save();
-        $medico = medico::find($event->medico_id);
-        $patient = patient::find($event->patient_id);
-
-        $count_event = event::where('medico_id',$medico->id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->where('state','!=','Pagada y Completada')->whereNull('rendering')->count();
-        $medico->notification_number = $count_event;
-        $medico->save();
-
-        Mail::send('mails.cancel_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
-            $msj->subject('Notificación Cancelacion de Cita, MédicosSi');
-            $msj->to($patient->email);
-            // $msj->to('eavc53189@gmail.com');
-        });
-
-        return response()->json(['danger'=>'Se a Rechazado/Cancelado la cita con el paciente: '.$event->patient->name.' '.$event->patient->lastName.' para la Fecha: '.$event->start]);
-
-    }
+    // public function appointment_cancel(Request $request,$id)
+    // {
+    //     dd($request->all());
+    //     $event = event::find($id);
+    //     $event->state = 'Rechazada/Cancelada';
+    //     $event->color = 'rgb(139, 139, 139)';
+    //     $event->save();
+    //     $medico = medico::find($event->medico_id);
+    //     $patient = patient::find($event->patient_id);
+    //
+    //     $count_event = event::where('medico_id',$medico->id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->where('state','!=','Pagada y Completada')->whereNull('rendering')->count();
+    //     $medico->notification_number = $count_event;
+    //     $medico->event_id = Null;
+    //
+    //     $medico->save();
+    //
+    //
+    //     Mail::send('mails.cancel_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
+    //         $msj->subject('Notificación Cancelacion de Cita, MédicosSi');
+    //         $msj->to($patient->email);
+    //         // $msj->to('eavc53189@gmail.com');
+    //     });
+    //
+    //     if(request()->ajax){
+    //         return response()->json(['danger'=>'Se a Rechazado/Cancelado la cita '.$event->title.' '.$event->start.' con el paciente: '.$event->namePatient]);
+    //     }else{
+    //         return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('danger','Se a Rechazado/Cancelado la cita '.$event->title.' '.$event->start.' con el paciente: '.$event->namePatient);
+    //     }
+    //
+    //
+    // }
     //de tipo post la enterior es get
     public function cancel_appointment(Request $request)
     {
@@ -114,8 +131,10 @@ class medico_diaryController extends Controller
         $event->color = 'rgb(139, 139, 139)';
         $event->save();
 
-
         $medico = medico::find($event->medico_id);
+        $medico->event_id = Null;
+        $medico->save();
+
         $patient = patient::find($event->patient_id);
 
         if($event->namePatient == Null){
@@ -131,10 +150,21 @@ class medico_diaryController extends Controller
                 // $msj->to('eavc53189@gmail.com');
             });
 
+            if(request()->ajax){
+                return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.' y se le a enviado una notificacion a su correo, Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
+            }else{
+                return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('danger', 'Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.' y se le a enviado una notificacion a su correo, Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
+            }
 
         }
 
-        return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.' y se le a enviado una notificacion a su correo, Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
+
+        if(request()->ajax){
+            return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.'. Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
+        }else{
+            return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('danger','Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.'. Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
+        }
+
     }
 
     public function appointment_confirm($id)
@@ -305,7 +335,7 @@ class medico_diaryController extends Controller
 
     public function update_event(Request $request)
     {
-
+        // dd($request->all());
         $hour_start1 = $request->hourStart.':'.$request->minsStart;
         $hour_end1 = $request->hourEnd.':'.$request->minsEnd;
         $hourStart = $request->hourStart.':'.$request->minsStart.':'.'00';
@@ -334,14 +364,26 @@ class medico_diaryController extends Controller
         ////////////////
 
         if($start > $end){
-            return response()->json(['message'=>['error'=>'end menor start','message_error'=>'end menor start']]);
+            if($request->ajax())
+            {
+                return response()->json(['message'=>['error'=>'end menor start','message_error'=>'end menor start']]);
+            }else{
+                return back()->with('warning', 'la fecha de inicio no debe ser mayor a la fecha de culminacion.');
+            }
+
 
         }
 
         //Verificar FECHA ACTUALIZADA
         if($event->confirmed_medico != 'Si'){
             if($start < \carbon\carbon::now()){
-                return response()->json(['message'=>['error'=>'fecha_pasada','message_error'=>'la fecha de inico de la Cita ha pasado, por favor agregue una fecha valida e intente nuevamente para poder confirmar la cita.']]);
+                if($request->ajax())
+                {
+                    return response()->json(['message'=>['error'=>'fecha_pasada','message_error'=>'La fecha de inico de la Cita ha pasado, por favor agregue una fecha valida e intente nuevamente para poder confirmar la cita.']]);
+                }else{
+                    return back()->with('warning', 'La fecha de inico de la Cita ha pasado, por favor agregue una fecha valida e intente nuevamente para poder confirmar la cita.');
+                }
+
             }
             $confirmando_cita = 'si';
         }else{
@@ -388,7 +430,13 @@ class medico_diaryController extends Controller
         $comprobar_horario2 = event::where('medico_id',$request->medico_id)->where('title', $day)->where('rendering', 'background')->where('start','<=',$hour_end2)->where('end','>=',$hour_end2)->count();
 
         if($comprobar_horario == 0 or $comprobar_horario2 == 0){
-            return response()->json(['message'=>['error'=>'fuera del horario','message_error'=>'fuera del horario']]);
+            if($request->ajax())
+            {
+                return response()->json(['message'=>['error'=>'fuera del horario','message_error'=>'fuera del horario']]);
+            }else{
+                return back()->with('warning', 'Imposible Guardar, la fecha esta fuera del horario establecido.');
+            }
+
         }
 
 
@@ -397,7 +445,14 @@ class medico_diaryController extends Controller
             $comprobar_disponibilidad = event::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<=',\Carbon\Carbon::parse($start)->format('Y-m-d H:i'))->where('end','>',$start)->where('state','!=','Rechazada/Cancelada')->count();
 
             if($comprobar_disponibilidad != 0){
-                return response()->json(['message'=>['error'=>'ya existe','message_error'=>'ya existe']]);
+                if($request->ajax())
+                {
+                    return response()->json(['message'=>['error'=>'ya existe','message_error'=>'ya existe']]);
+
+                }else{
+                    return back()->with('warning', 'Imposible realizar acción, Ya existe una cita en el horario que intenta guardar.');
+                }
+
 
             }
         }
@@ -406,15 +461,17 @@ class medico_diaryController extends Controller
             $comprobar_disponibilidad2 = event::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<',$end)->where('end','>=',\Carbon\Carbon::parse($end)->format('Y-m-d H:i'))->where('state','!=','Rechazada/Cancelada')->count();
 
             if($comprobar_disponibilidad2 != 0){
-                return response()->json(['message'=>['error'=>'ya existe','message_error'=>'ya existe']]);
+                if($request->ajax())
+                {
+                    return response()->json(['message'=>['error'=>'ya existe','message_error'=>'ya existe']]);
+                }else{
+                    return back()->with('warning', 'Imposible realizar acción, Ya existe una cita en el horario que intenta guardar.');
+                }
+
 
             }
 
         }
-
-
-        //////////////////////////////////////////
-        //  \Carbon\Carbon::parse()
 
         $before_date = $event->start;
         // return response()->json(['message'=>['error'=>$start]]);
@@ -429,7 +486,7 @@ class medico_diaryController extends Controller
         $event->description = $request->description;
         $event->confirmed_medico = 'Si';
 
-        if($event->state != 'Pasada y por Cobrar'){
+        if($event->state != 'Pasada y sin realizar'){
             if($request->title == 'Cita por Internet'){
                 $event->color = 'rgb(35, 44, 173)';
             }else{
@@ -442,20 +499,49 @@ class medico_diaryController extends Controller
             }
         }
 
-        $event->state = $request->state;
+
+        $medico = medico::find($event->medico_id);
+
+        //ESTO SE APLICA A FINALIZAR CITAS
+        if($request->cerrar_cita == Null){
+
+            $event->state = $request->state;
+        }else{
+            if($request->cerrar_cita == 'cerrar_pago_pendiente'){
+                $event->state = 'Realizada y por cobrar';
+                $event->color = 'rgb(246, 43, 244)';
+                $event->save();
+                $medico->event_id = Null;
+                $medico->save();
+
+                    return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('success','La cita:' .$event->title.' '.$event->start.', con el Paciente: '.$event->namePatient.' ha sido cerrada y marcada como "Realizada y por Cobrar".');
+
+
+            }elseif($request->cerrar_cita == 'cerrar_completada') {
+                $event->state = 'Pagada y Completada';
+                $event->color = 'rgb(255, 255, 255)';
+                $event->save();
+                $medico->event_id = Null;
+                $medico->save();
+
+                    return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('success','La cita:' .$event->title.' '.$event->start.', con el Paciente: '.$event->namePatient.' ha sido cerrada y marcada como "Completada".');
+
+            }
+
+
+
+
+        }
+
         $event->medico_id = $request->medico_id;
         $event->save();
 
-
         $patient = patient::find($event->patient_id);
-        $medico = medico::find($event->medico_id);
+
 
         $count_notifications = event::where('medico_id',$request->medico_id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->whereNull('rendering')->count();
         $medico->notification_number = $count_notifications;
         $medico->save();
-
-
-
 
         if($start != $before_date and $confirmando_cita == 'si'){
 
@@ -469,8 +555,16 @@ class medico_diaryController extends Controller
 
 
             if($request->ajax()){
-                return response()->json(['message'=>['error'=>'confirmado_editado','message_error'=>'confirmado_editado']]);
+                if($request->ajax())
+                {
+                    return response()->json(['message'=>['error'=>'confirmado_editado','message_error'=>'confirmado_editado']]);
+
+                }else{
+                    return back()->with('success', 'La Cita ha sido confirmada y se han guardado los cambios de forma exitosa');
+                }
+
             }
+
         }elseif($confirmando_cita == 'si'){
 
             $event->confirmed_patient == 'Si';
@@ -483,6 +577,8 @@ class medico_diaryController extends Controller
 
             if($request->ajax()){
                 return response()->json(['message'=>['error'=>'cita_confirmada','message_error'=>'La Cita ha sido confirmada con exito. De forma simultanea se ha enviado un mensaje para notificarle al paciente sobre esta acción.']]);
+            }else{
+                return back()->with('success', 'La Cita ha sido confirmada con exito. De forma simultanea se ha enviado un mensaje para notificarle al paciente sobre esta acción.');
             }
         }
 
@@ -492,7 +588,7 @@ class medico_diaryController extends Controller
             return response()->json(['message'=>['error'=>'ok','message_error'=>'ok']]);
         }
 
-        return redirect()->route('medico_app_details',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($event->patient_id),'app_id'=>\Hashids::encode($event->id)])->with('success','La Consulta ha sido editada con exito');
+
     }
 
 
@@ -615,6 +711,7 @@ class medico_diaryController extends Controller
         return response()->json($event);
     }
 
+
     public function edit_appointment($id,$p_id,$app_id)
     {
         $event_edit = event::find($app_id);
@@ -710,6 +807,138 @@ class medico_diaryController extends Controller
         return view('medico.appointments.edit')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule)->with('patient',$patient)->with('app', $app)->with('mode', 'edition')->with('event_edit',$event_edit);
         // ->with($months, 'months');
     }
+
+
+    public function redirect_task_consultation(Request $request)
+    {
+
+        return redirect()->route('task_consultation',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'app_id'=>\Hashids::encode($request->event_id)]);
+
+
+    }
+
+    public function task_consultation($m_id,$p_id,$app_id)
+    {
+        $event_edit = event::find($app_id);
+        $tasks = task_consultation::where('event_id',$app_id)->paginate(10);
+        $medico = medico::find($m_id);
+        $patient = patient::find($p_id);
+        return view('medico.appointments.details_consultation',compact('event_edit','tasks','medico','patient'));
+    }
+
+
+    public function ending_appointment($id,$p_id,$app_id)
+    {
+
+        if (Auth::user()->role == 'medico') {
+            $tasks = task_consultation::where('event_id',Auth::user()->medico->event_id)->orderBy('id','desc')->paginate(10);
+
+        }elseif(Auth::user()->role == 'Asistente'){
+
+        }
+
+        $event_edit = event::find(Auth::user()->medico->event_id);
+
+        // dd(Auth::user()->medico->event_id);
+        // dd($event_edit);
+        $app = event::find($app_id);
+        $medico = medico::find($id);
+        $patient =  patient::find($p_id);
+
+        ///////igual
+        $lunes = event::where('medico_id',$id)->where('title','lunes')->orderBy('end','asc')->get();
+        $martes = event::where('medico_id',$id)->where('title','martes')->orderBy('end','asc')->get();
+        $miercoles = event::where('medico_id',$id)->where('title','miercoles')->orderBy('end','asc')->get();
+        $jueves = event::where('medico_id',$id)->where('title','jueves')->orderBy('end','asc')->get();
+        $viernes = event::where('medico_id',$id)->where('title','viernes')->orderBy('end','asc')->get();
+        $sabado = event::where('medico_id',$id)->where('title','sabado')->orderBy('end','asc')->get();
+        $domingo = event::where('medico_id',$id)->where('title','domingo')->orderBy('end','asc')->get();
+
+        // event::max('');
+        $countEventSchedule = event::where('medico_id',$id)->where('eventType','horario')->max('end');
+        if($countEventSchedule != 0){
+
+            $lunes1 = event::where('medico_id',$id)->where('title','lunes')->max('end');
+            $martes1 = event::where('medico_id',$id)->where('title','martes')->orderBy('end','asc')->max('end');
+            $miercoles1 = event::where('medico_id',$id)->where('title','miercoles')->orderBy('end','asc')->max('end');
+            $jueves1 = event::where('medico_id',$id)->where('title','jueves')->orderBy('end','asc')->max('end');
+            $viernes1 = event::where('medico_id',$id)->where('title','viernes')->orderBy('end','asc')->max('end');
+            $sabado1 = event::where('medico_id',$id)->where('title','sabado')->orderBy('end','asc')->max('end');
+            $domingo1 = event::where('medico_id',$id)->where('title','domingo')->orderBy('end','asc')->max('end');
+            $max_hour = max($lunes1,$martes1,$miercoles1,$jueves1,$viernes1,$sabado1,$domingo1);
+
+
+            $lunes2 = event::where('medico_id',$id)->where('title','lunes')->min('start');
+            $martes2 = event::where('medico_id',$id)->where('title','martes')->min('start');
+            $miercoles2 = event::where('medico_id',$id)->where('title','miercoles')->min('start');
+            $jueves2 = event::where('medico_id',$id)->where('title','jueves')->min('start');
+            $viernes2 = event::where('medico_id',$id)->where('title','viernes')->min('start');
+            $sabado2 = event::where('medico_id',$id)->where('title','sabado')->min('start');
+            $domingo2 = event::where('medico_id',$id)->where('title','domingo')->min('start');
+            $array = [$lunes2,$martes2,$miercoles2,$jueves2,$viernes2,$sabado2,$domingo2];
+            $array = array_diff($array, array(null));
+            $min_hour = min($array);
+
+            $lunes3 = event::where('medico_id',$id)->where('title','lunes')->count();
+            if($lunes3 == 0){
+                $lunes3 = 1;
+            }else{
+                $lunes3 = null;
+            }
+
+            $martes3 = event::where('medico_id',$id)->where('title','martes')->count();
+            if($martes3 == 0){
+                $martes3 = 2;
+            }else{
+                $martes3 = null;
+            }
+
+            $miercoles3 = event::where('medico_id',$id)->where('title','miercoles')->count();
+            if($miercoles3 == 0){
+                $miercoles3 = 3;
+            }else{
+                $miercoles3 = null;
+            }
+            $jueves3 = event::where('medico_id',$id)->where('title','jueves')->count();
+            if($jueves3 == 0){
+                $jueves3 = 4;
+            }else{
+                $jueves3 = null;
+            }
+            $viernes3 = event::where('medico_id',$id)->where('title','viernes')->count();
+            if($viernes3 == 0){
+                $viernes3 = 5;
+            }else{
+                $viernes3 = null;
+            }
+            $sabado3 = event::where('medico_id',$id)->where('title','sabado')->count();
+            if($sabado3 == 0){
+                $sabado3 = 6;
+            }else{
+                $sabado3 = null;
+            }
+            $domingo3 = event::where('medico_id',$id)->where('title','domingo')->count();
+            if($domingo3 == 0){
+                $domingo3 = 0;
+            }else{
+                $domingo3 = null;
+            }
+
+            $days_hide = ['lunes'=>$lunes3,'martes'=>$martes3,'miercoles'=>$miercoles3,'jueves'=>$jueves3,'viernes'=>$viernes3,'sabado'=>$sabado3,'domingo'=>$domingo3];
+            ///////igual
+            // edita_asistente
+
+
+            return view('medico.appointments.ending_appointment')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('min_hour', $min_hour)->with('max_hour', $max_hour)->with('days_hide', $days_hide)->with('countEventSchedule', $countEventSchedule)->with('patient', $patient)->with('app', $app)->with('mode', 'edition')->with('event_edit',$event_edit)->with('tasks',$tasks);
+
+        }
+        return view('medico.appointments.ending_appointment')->with('medico', $medico)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('countEventSchedule', $countEventSchedule)->with('patient',$patient)->with('app', $app)->with('mode', 'edition')->with('event_edit',$event_edit)->with('tasks',$tasks);
+        // ->with($months, 'months');
+    }
+
+
+
+
 
     public function medico_stipulate_appointment($id,$p_id)
     {
@@ -819,12 +1048,9 @@ class medico_diaryController extends Controller
             'payment_method'=>'required',
         ]);
 
-        // $verifyevent = event::where('patient_id', $request->patient_id)->where('medico_id', $request->medico_id)->where('state','!=', 'Rechazada/Cancelada')->where('state','!=','Pagada y Completada');
-
         $hour_start1 = $request->hourStart.':'.$request->minsStart;
         $hour_end1 = $request->hourEnd.':'.$request->minsEnd;
 
-        //fecha completa
         $hourStart = $request->hourStart.':'.$request->minsStart.':'.'00';
         $start = $request->date_start.' '.$request->hourStart.':'.$request->minsStart.':'.'00';
 
@@ -881,15 +1107,11 @@ class medico_diaryController extends Controller
             return response()->json('fuera del horario');
         }
 
-
         $comprobar_disponibilidad = event::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<=',\Carbon\Carbon::parse($start)->format('Y-m-d H:i'))->where('end','>',$start)->where('state','!=','Rechazada/Cancelada')->count();
 
         if($comprobar_disponibilidad != 0){
             return response()->json('ya existe');
-
         }
-
-
 
         $comprobar_disponibilidad2 = event::where('id','!=',$request->event_id)->where('medico_id',$request->medico_id)->whereNull('rendering')->where('start','<',$end)->where('end','>=',\Carbon\Carbon::parse($end)->format('Y-m-d H:i'))->where('state','!=','Rechazada/Cancelada')->count();
 
@@ -898,10 +1120,7 @@ class medico_diaryController extends Controller
 
         }
 
-
-
         $event = new event;
-
         //$event->price = $request->price;
         $event->payment_method = $request->payment_method;
 
@@ -912,7 +1131,6 @@ class medico_diaryController extends Controller
                 $event->payment_state = 'Si';
                 $event->state = 'Pagada y Pendiente';
             }
-
         }
         // $event->description = $request->description;
         $event->title = $request->title;
@@ -923,10 +1141,9 @@ class medico_diaryController extends Controller
         $event->description = $request->description;
         $event->price = $request->price;
 
-
-
         if(Auth::check() and Auth::user()->role == 'Paciente'){
-            $event->color = 'rgb(226, 235, 55)';
+
+            $event->color = 'rgb(4, 47, 126)';
             $event->namePatient = Auth::user()->patient->name.' '.Auth::user()->patient->lastName;
             $event->patient_id = Auth::user()->patient->id;
             $event->medico_id = $request->medico_id;
@@ -936,7 +1153,18 @@ class medico_diaryController extends Controller
             $event->notification = "not_see";
             $event->confirmed_patient = 'Si';
         }elseif (Auth::check() and Auth::user()->role == 'medico' or Auth::check() and Auth::user()->role == 'Asistente') {
-            $event->color = 'rgb(69, 189, 39)';
+
+            if($event->title == 'Cita por Internet'){
+                $event->color = 'rgb(4, 47, 126)';
+            }elseif($request->payment_method == 'Pre-pagada'){
+                $event->color = 'rgb(214, 50, 50)';
+            }elseif($request->payment_method == 'Aseguradora') {
+                $event->color = 'rgb(255, 152, 152)';
+            }else{
+                $event->color = 'rgb(69, 189, 39)';
+            }
+
+
             $event->confirmed_medico = 'No';
             $event->patient_id = $request->patient_id;
             $event->medico_id = $request->medico_id;
@@ -1234,8 +1462,8 @@ class medico_diaryController extends Controller
         $verify_past_appointment = event::where('medico_id',$id)->where('end','<', \Carbon\Carbon::now())->where('confirmed_medico','Si')->where('state', 'Pendiente')->get();
 
         foreach ($verify_past_appointment as $value) {
-            $value->color = 'rgb(190, 61, 13)';
-            $value->state = 'Pasada y por Cobrar';
+            // $value->color = 'rgb(190, 61, 13)';
+            $value->state = 'Pasada y sin realizar';
             $value->save();
         }
         // rgb(190, 61, 13)

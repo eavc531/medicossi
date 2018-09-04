@@ -12,7 +12,7 @@ class photoController extends Controller
     {
 
        $request->validate([
-         'image'=>'image|required'
+         'image'=>'image|required|mimes:jpg,jpeg,gif,png'
        ]);
 
        $extension = $request->file('image')->getClientOriginalExtension();
@@ -44,7 +44,8 @@ class photoController extends Controller
     {
 
         $request->validate([
-          'image'=>'image|required'
+
+          'image'=>'image|required|mimes:jpg,jpeg,gif,png'
         ]);
 
         $extension = $request->file('image')->getClientOriginalExtension();
@@ -81,10 +82,11 @@ class photoController extends Controller
 
     public function image_store(Request $request)
     {
-
-      $request->validate([
-        'name'=>'required'
-      ]);
+        
+        $request->validate([
+          'image'=>'image|required|mimes:jpg,jpeg,gif,png',
+          'name'=>'required|max:50',
+        ]);
 
       if(empty($request->file('image'))){
         return back()->with('warning', 'Debes seleccionar una Imagen');
@@ -134,7 +136,7 @@ class photoController extends Controller
     {
 
         $request->validate([
-          'image'=>'image|required'
+          'image'=>'image|required|mimes:jpg,jpeg,gif,png'
         ]);
 
         $extension = $request->file('image')->getClientOriginalExtension();

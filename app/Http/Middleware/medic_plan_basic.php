@@ -15,7 +15,7 @@ class medic_plan_basic
      */
     public function handle($request, Closure $next)
     {
-      if(Auth::user()->role == 'medico' or Auth::user()->role == 'Asistente'){
+      if(Auth::check() and Auth::user()->role == 'medico' or Auth::user()->role == 'Asistente'){
         return $next($request);
       }else{
         return redirect()->route('home')->with('warning', 'no tienes permisos para acceder a este panel, o tu session a expirado');

@@ -31,6 +31,11 @@ class medico extends Model
        'name_comercial'
     ];
 
+
+    public function event(){
+      return $this->belongsTo('App\event')->orderBy('id','desc');
+   }
+
     public function history(){
       return $this->hasMany('App\history')->orderBy('id','desc');
    }

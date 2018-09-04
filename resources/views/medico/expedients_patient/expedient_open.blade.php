@@ -42,14 +42,14 @@
           </div>
 
           {{-- MENU DE PACIENTES --}}
-          @include('medico.includes.main_medico_patients')
+          {{-- @include('medico.includes.main_medico_patients') --}}
 
         </div>
 
 
     @include('medico.expedients_patient.main_notes_create_config')
 
-    <a href="{{route('data_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'expedient'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
+
 
     <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary float-right ml-1">atras</a>
 
@@ -62,9 +62,9 @@
   </div>
 
   <div class="" style="background:red">
-    <a href="{{route('download_expedient_pdf',\Hashids::encode($expedient->id))}}" class="btn btn-info float-right mb-2 ml-1">Descargar Expediente pdf</a>
+    
     <a href="{{route('expedient_preview',\Hashids::encode($expedient->id))}}" class="btn btn-secondary float-right mb-2">Vista previa Expediente</a>
-
+    <a href="{{route('download_expedient_pdf',\Hashids::encode($expedient->id))}}" class="btn btn-info float-right mb-2 ml-1">Descargar Expediente pdf</a>
   </div>
 
   <table class="table table-bordered mt-2">
@@ -80,8 +80,8 @@
         {{-- <input type="hidden" name="" value="{{$}}"> --}}
         <tr>
           <td>{{$expedient_n->note->title}}</td>
-          <td>{{\Carbon\Carbon::parse($expedient_n->note->date_start)->format('d-m-Y')}}</td>
-          <td>{{\Carbon\Carbon::parse($expedient_n->note->date_edit)->format('d-m-Y')}}</td>
+          <td>{{\Carbon\Carbon::parse($expedient_n->note->created_at)->format('d-m-Y H:i')}}</td>
+          <td>{{\Carbon\Carbon::parse($expedient_n->note->updated_at)->format('d-m-Y H:i')}}</td>
 
           <td>
 
@@ -90,6 +90,7 @@
               <a class="mr-2 btn btn-primary" href="{{route('note_edit',['m_id'=>\Hashids::encode($expedient_n->medico_id),'p_id'=>\Hashids::encode($expedient_n->note->patient_id),'n_id'=>\Hashids::encode($expedient_n->note->id),'expedient_id'=>\Hashids::encode($expedient->id)])}}"><i class="fas fa-edit"></i></a>
               <a href="{{route('download_pdf',[\Hashids::encode($expedient_n->note_id),'expedient_id'=>\Hashids::encode($expedient->id)])}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
               <a href="{{route('note_move',[\Hashids::encode($expedient_n->note_id),'expedient_id'=>\Hashids::encode($expedient->id)])}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
+               <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota?');" href="{{route('expedient_note_delete',['exp_id'=>\Hashids::encode($expedient_n->expedient_id),'n_id'=>\Hashids::encode($expedient_n->note_id)])}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
           </td>
 
         </tr>

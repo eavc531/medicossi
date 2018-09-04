@@ -62,8 +62,10 @@ class CreateMedicosTable extends Migration
             $table->string('show_comentary')->default('No');
             $table->string('plan')->nullable();
             $table->string('specialty_category')->nullable();
-            // $table->integer('plan_active_id')->unsigned()->nullable();
-            // $table->foreign('plan_active_id')->references('id')->on('plan_actives');
+            //esta sera la cita con que estara trabajando para obligar q la cierre antes de inicar con otra
+            $table->integer('event_id')->unsigned()->nullable();
+            $table->foreign('event_id')->references('id')->on('events');
+
             $table->timestamps();
         });
     }

@@ -29,7 +29,7 @@
     @endisset
 
     @endrol_edit
-
+    
     @if($medico->calification != Null)
         <div class="card mt-2" style="max-width:300px">
             <div class="card-body">
@@ -52,7 +52,7 @@
                 <h4 class="text-warning">Calificaciónes sin comprobar</h4>
                 <div class="my-4 card p-2">
                     @if($rate_medic->first() != Null)
-                    <p class="text-left text-success">Mostrar todos los nuevos comentarios a los usuarios y marcar como vistos <a href="{{route('check_all_view',Hashids::encode($medico->id))}}" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a></p>
+                    <p class="text-left text-success">Mostrar todos los comentarios nuevos a los usuarios y marcar como vistos <a href="{{route('check_all_view',Hashids::encode($medico->id))}}" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a></p>
                     <p class="text-left text-primary">Marcar todas las calificaciones nuevas como vistas <a href="{{route('check_all_view_show',Hashids::encode($medico->id))}}" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i> <i class="fas fa-check"></i></a>
                     </p>
                     @endif

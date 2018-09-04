@@ -29,9 +29,11 @@
       </div>
 
     <div class="mb-2">
-      <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-primary ml-2">Mostrar Todos</a>
-      <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-warning ml-2 disabled">Buscar Paciente Registrado</a>
+      {{-- <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-warning ml-2 disabled">Buscar Paciente Registrado por otro Médico</a> --}}
       <a href="{{route('medico_register_new_patient',\Hashids::encode($medico->id))}}" class="btn btn-info ml-2">Registrar nuevo Paciente</a>
+      @isset(request()->search)
+          <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-primary ml-2">Mostrar Todos</a>
+     @endisset
     </div>
 <hr>
   @if($patients->first() != Null)

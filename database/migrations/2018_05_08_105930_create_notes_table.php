@@ -80,6 +80,7 @@ class CreateNotesTable extends Migration
             $table->date('fecha_egreso')->nullable();
             $table->date('date_start')->nullable();
             $table->date('date_edit')->nullable();
+            $table->string('deleted')->nullable();
             $table->timestamps();
         });
     }

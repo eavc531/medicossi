@@ -29,7 +29,7 @@
         </div>
 
         {{-- MENU DE PACIENTES --}}
-        @include('medico.includes.main_medico_patients')
+        {{-- @include('medico.includes.main_medico_patients') --}}
 
       </div>
       {{-- ////////////////////////////////////////////centro de menu////////////centro de menu// --}}
@@ -133,11 +133,11 @@
         @endif
 
 
-
+        <div class="my-5 text-center">
+            <h5 class="text-primary">Expedientes</h5>
+        </div>
       @if($expedients->first() != Null and !isset($search))
-            <div class="my-5 text-center">
-                <h5 class="text-primary">Expedientes</h5>
-            </div>
+
         <table class="table table-bordered">
           <thead>
               <td>Nombre</td>

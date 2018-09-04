@@ -10,7 +10,7 @@
   </div>
 </div>
 {{-- MENU DE PACIENTES --}}
-@include('medico.includes.main_medico_patients')
+{{-- @include('medico.includes.main_medico_patients') --}}
 
 <div class="mt-4 row">
     <div class="col-12">

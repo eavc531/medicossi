@@ -5,7 +5,6 @@
 <style media="screen">
 .dropdown-menu {
   width: 430px !important;
-
 }
 
 .line{
@@ -33,6 +32,22 @@
 
 @section('content')
 
+    @if(Session::Has('warning2'))
+       <div class="div-alert" style="padding:20px">
+          <div class="alert alert-warning alert-dismissible" role="alert">
+             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+             {{Session::get('warning2')}}
+             <input type="hidden" name="" value="{{$expedient_note = Session::get('expedient_note')}}">
+             @foreach($expedient_note as $value)
+                 "Expediente {{$value->expedient->name}}".
+             @endforeach
+             Antes debera eliminar la nota desde el/los expediente(s) que la contiene(n),para eiminarla por completo.
+          </div>
+
+
+          </div>
+       @endif
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-12 col-12">
@@ -44,7 +59,7 @@
         </div>
 
         {{-- MENU DE PACIENTES --}}
-        @include('medico.includes.main_medico_patients')
+        {{-- @include('medico.includes.main_medico_patients') --}}
 
       </div>
       {{-- ////////////////////////////////////////////centro de menu////////////centro de menu// --}}
@@ -71,12 +86,15 @@
       </div>
       {!!Form::close()!!}
         @include('medico.notes.main_notes_create_config')
-          {{-- <a class="btn btn-info" href="{{route('type_notes',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient->id)])}}" data-toggle="tooltip" data-placement="top" title="Tipos de Notas"><i class="fas fa-file-medical"></i></a> --}}
-          <a href="{{route('data_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Datos del Paciente">Datos Cabecera Pdf<span style="font-size:11"></span></a>
 
+          <a href="{{route('history_clinic_create',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-success">Historia Clínica<span style="font-size:11"></span></a>
+
+          <a href="{{route('note_paper_bin',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary">Papelera<span style="font-size:11"></span></a>
         </div>
-
-        @if($notes->first() != Null and !isset($search))
+        <div class="my-5 text-center">
+            <h5>Notas</h5>
+        </div>
+        @if($notes->first() != Null)
 
           <table class="table table-bordered mt-2">
             <thead>
@@ -91,8 +109,8 @@
                 {{-- <input type="hidden" name="" value="{{$}}"> --}}
                 <tr>
                   <td>{{$note->title}}</td>
-                  <td>{{\Carbon\Carbon::parse($note->date_start)->format('d-m-Y')}}</td>
-                  <td>{{\Carbon\Carbon::parse($note->date_edit)->format('d-m-Y')}}</td>
+                  <td>{{\Carbon\Carbon::parse($note->created_at)->format('d-m-Y H:i')}}</td>
+                  <td>{{\Carbon\Carbon::parse($note->updated_at)->format('d-m-Y H:i')}}</td>
                   <td>
 
 
@@ -100,7 +118,7 @@
                     <a class="mr-2 btn btn-primary" href="{{route('note_edit',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'n_id'=>\Hashids::encode($note->id)])}}"><i class="fas fa-edit"></i></a>
                     <a href="{{route('download_pdf',\Hashids::encode($note->id))}}" class="mr-2 btn btn-info" data-toggle="tooltip" data-placement="top" title="Descargar"><i class="fas fa-download"></i></a>
                     <a href="{{route('note_move',\Hashids::encode($note->id))}}" class="mr-2 btn btn-warning" data-toggle="tooltip" data-placement="top" title="Mover a"><i class="fas fa-exchange-alt"></i></a>
-                      {{-- <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota Médica del expediente?, la nota seguira exisitiendo en el panel ´Notas del Paciente´ despues de realizar esta acción.');" href="{{route('expedient_note_delete',\Hashids::encode($note->id))}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a> --}}
+                      <a onclick="return confirm('¿Esta Segur@ de eliminar esta Nota?');" href="{{route('note_delete',\Hashids::encode($note->id))}}" class="mr-2 btn btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar"><i class="fas fa-trash-alt"></i></a>
                   </td>
 
                 </tr>

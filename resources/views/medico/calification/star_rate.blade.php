@@ -1,4 +1,4 @@
-@if($medico->calification == 1)
+@if($medico->calification >= 1 and  $medico->calification < 1.5)
   <div class="row">
     <div class="col-12">
       <span class="fa fa-star checked"></span>
@@ -18,7 +18,7 @@
       <span class="fa fa-star"></span>
     </div>
   </div>
-  @elseif($medico->calification == 2)
+@elseif($medico->calification >= 2 and $medico->calification < 2.5 )
     <div class="row">
       <div class="col-12">
         <span class="fa fa-star checked"></span>
@@ -38,7 +38,7 @@
         <span class="fa fa-star"></span>
       </div>
     </div>
-    @elseif($medico->calification == 3)
+@elseif($medico->calification >= 3 and $medico->calification < 3.5)
       <div class="row">
         <div class="col-12">
           <span class="fa fa-star checked"></span>
@@ -58,7 +58,7 @@
           <span class="fa fa-star"></span>
         </div>
       </div>
-      @elseif($medico->calification == 4)
+  @elseif($medico->calification >= 4 and $medico->calification < 4.5)
         <div class="row">
           <div class="col-12">
             <span class="fa fa-star checked"></span>

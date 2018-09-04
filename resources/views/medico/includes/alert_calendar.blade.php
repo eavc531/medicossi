@@ -11,4 +11,7 @@
 <div id="alert_success_up1" class="alert alert-success alert-dismissible fade show text-left" role="alert" style="display:none">
   <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
   <h4 id="text_success_up1" style="font-size:12px"></h4>
+  <div class="div_success_boton" style="display:none" id="div_success_boton">
+      <a href="{{route('medico_diary',$medico->id)}}" class="btn btn-success">ir a agenda</a>
+  </div>
 </div>

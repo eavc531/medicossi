@@ -14,36 +14,36 @@
 //     {
 //         return \Hashids::decode($id)[0];
 //     });
-/////////PANEL CALIFICATIONS
-//SALUBRIDAD
 
-Route::get('medico/{m_id}/create_xml','notesController@create_xml')->name('create_xml');
-
-Route::get('medico/{m_id}/search_report','notesController@search_reports')->name('search_reports');
-
-Route::post('salubridad_reports_store_edit','notesController@salubridad_reports_store_edit')->name('salubridad_reports_store_edit');
+//autocomplete
+Route::get('autocomplete_diagnostic','notesController@autocomplete_diagnostic')->name('autocomplete_diagnostic');
 
 
-Route::get('medico/{m_id}/salubridad_reports','notesController@salubridad_reports')->name('salubridad_reports');
-Route::get('medico/{m_id}/patient/{p_id}/create/edit/salubridad_report','notesController@create_edit_salubridad_report')->name('create_edit_salubridad_report');
-Route::post('store_report','notesController@store_report')->name('store_report');
-Route::post('salubridad_report_store','notesController@salubridad_report_store')->name('salubridad_report_store');
+     //////////////////
+///////           ///////////////
+
+
 //SELECT estadosciudades
 Route::post('inner/cities/select','medicoController@inner_cities_select')->name('inner_cities_select');
 Route::post('inner/cities/select2','medicoController@inner_cities_select2')->name('inner_cities_select2');
 Route::post('inner/cities/select3','medicoController@inner_cities_select3')->name('inner_cities_select3');
 
-//autocomplete
-Route::get('autocomplete_diagnostic','notesController@autocomplete_diagnostic')->name('autocomplete_diagnostic');
 //HOME
 Route::get('medico/{id}/map/show','HomeController@detail_medic_map')->name('detail_medic_map');
 Route::get('autocomplete_specialty','HomeController@autocomplete_specialty')->name('autocomplete_specialty');
-
+    ////////////////Mantener fuera de midleaware verify_conultation_open///////
+    Route::post('medico/update/event', 'medico_diaryController@update_event')->name('update_event');
+    ///////////////                                                ////////////////////
+                //VERIFICA SI AHI cita abiera y bloquea acceso a rutas ahsta cerrarla
+            Route::group(['middleware' => ['verify_conultation_open'],'except' => ['update_event']], function (){
+Route::get('home','HomeController@home')->name('home');
 //perfil medico
 Route::get('medico/{id}/data/primordial/','medicoController@data_primordial_medico')->name('data_primordial_medico');
 Route::get('medico/{id}/edit/address','medicoController@medico_edit_address')->name('medico_edit_address');
+/////////////HOME
 
 Route::get('iniciar/home','HomeController@inicar_home')->name('inicar_home');
+
 Route::post('verify/Session', 'Auth\LoginController@verifySession')->name('verifySession');
 
 Route::get('check_all_view/{id}','medicoController@check_all_view')->name('check_all_view');
@@ -54,6 +54,8 @@ Route::get('check_all_view_show/{id}','medicoController@check_all_view_show')->n
 
 Route::post('patient/medico/calification/comentaries','patientController@calification_medic_show_patient')->name('calification_medic_show_patient');
 Route::post('ajax/map','HomeController@ajax_map')->name('ajax_map');
+
+
 Route::post('medico/appointment/confirm','medico_diaryController@appointment_confirm_ajax')->name('appointment_confirm_ajax');
 Route::post('medico/list/social_network','medicoController@social_network_list')->name('social_network_list');
 Route::post('medicalCenter/list/social_network','medicalCenterController@medicalCenter_social_list')->name('medicalCenter_social_list');
@@ -109,7 +111,10 @@ Route::get('medicalCenter/{id}/search/medico/belongs','medicalCenterController@s
 // Route::group(['middleware' => ['medicalCenterConfirm']], function () {
 
 Route::post('patient/photo_profile/store','photoController@patient_image_profile')->name('patient_image_profile');
-Route::get('home','HomeController@home')->name('home');
+
+
+
+
 
     // middlaware authentica
     Route::group(['middleware' => ['authenticate']], function (){
@@ -171,7 +176,7 @@ Route::get('patient/medico/{id}/diary/event','medico_diaryController@patient_med
 Route::post('medico/{id}/diary/events2','medico_diaryController@medico_diary_events2')->name('medico_diary_events2');
 Route::resource('medico_diary','medico_diaryController');
 Route::post('appoitment/store','medico_diaryController@appointment_store')->name('appointment_store');
-Route::post('medico/update/event', 'medico_diaryController@update_event')->name('update_event');
+
 Route::post('medico/event_personal/update', 'medico_diaryController@event_personal_update')->name('event_personal_update');
 Route::post('medico/event_personal/delete', 'medico_diaryController@event_personal_delete')->name('event_personal_delete');
 
@@ -191,14 +196,21 @@ Route::group(['middleware' => ['medic_plan_basic']], function (){
   Route::post('medico/{id}/medico_store_new_patient','medicoController@medico_store_new_patient')->name('medico_store_new_patient');
 
 });
+
+});
+
+});// FIN MIDLEWARE verify_conultation_openmas abajo vuelve a abrir
 //PLAN AGENDA
 Route::group(['middleware' => ['medic_plan_agenda']], function (){
+    ////////////<<<<manage_patient<<<<<<<<////////////
     Route::post('redierct_manage_patient', 'medicoController@redierct_manage_patient')->name('redierct_manage_patient');
     Route::get('medico/{m_id}/patient/{p_id}/manage', 'medicoController@manage_patient')->name('manage_patient');
+        // MIDLEWARE verify_conultation_open2
+        Route::group(['middleware' => ['verify_conultation_open'],'except' => ['index', 'show']], function (){
 
 
-    Route::get('medico/{id}/panel/diary', 'medico_diaryController@medico_diary')->name('medico_diary');
     Route::get('medico/{id}/patients','medicoController@medico_patients')->name('medico_patients');
+    Route::get('medico/{id}/panel/diary', 'medico_diaryController@medico_diary')->name('medico_diary');
 
   //REMINDER
     Route::post('reminder_delete','reminderController@reminder_delete')->name('reminder_delete');
@@ -220,7 +232,7 @@ Route::group(['middleware' => ['medic_plan_agenda']], function (){
     Route::get('medico/appointment/{id}/confirm','medico_diaryController@appointment_confirm')->name('appointment_confirm');
 
     Route::get('medico/{m_id}/patient/{p_id}/appointment/{app_id}/details','medico_diaryController@medico_app_details')->name('medico_app_details');
-    Route::post('medico/patient/cancel/appointment/','medico_diaryController@cancel_appointment')->name('cancel_appointment');
+
     Route::post('medico/event/personal','medico_diaryController@event_personal_store')->name('event_personal_store');
     Route::get('check/{id}/notification','medicoController@marcar_como_vista')->name('marcar_como_vista');
     Route::get('Medico/{m_id}/patient/{p_id}/appointment/{app_id}/marcar_como_vista','medicoController@marcar_como_vista_redirect')->name('marcar_como_vista_redirect');
@@ -233,11 +245,17 @@ Route::group(['middleware' => ['medic_plan_agenda']], function (){
     Route::post('medico/{id}/schedule/store','medico_diaryController@medico_schedule_store')->name('medico_schedule_store');
 
     Route::get('medico/{id}/delete/schedule','medico_diaryController@medico_schedule_delete')->name('medico_schedule_delete');
+    }); //FIN MIDLEWARE verify_conultation_open2 mas abajo otro
+
+    Route::post('medico/patient/cancel/appointment/','medico_diaryController@cancel_appointment')->name('cancel_appointment');
+
 });
 
 //PLAN Profesional
 Route::group(['middleware' => ['medic_plan_profesional']], function (){
 //calification_medic//b
+// MIDLEWARE verify_conultation_open3
+Route::group(['middleware' => ['verify_conultation_open'],'except' => ['index', 'show']], function (){
     Route::get('medico/{id}/appointments', 'medicoController@appointments')->name('appointments');
     Route::get('medico/{m_id}/stipulate/appointment/patient/{p_id}','medico_diaryController@medico_stipulate_appointment')->name('medico_stipulate_appointment');
     Route::get('mark_all_see/{id}','medicoController@mark_all_see')->name('mark_all_see');
@@ -251,6 +269,8 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
 
     Route::get('show_all_comentary_new/{id}','medicoController@show_all_comentary_new')->name('show_all_comentary_new');
     Route::get('hide_all_comentary_new/{id}','medicoController@hide_all_comentary_new')->name('hide_all_comentary_new');
+}); //END midleware consultation_open 3
+
 ////////
 });
 
@@ -258,12 +278,30 @@ Route::group(['middleware' => ['medic_plan_profesional']], function (){
 Route::group(['middleware' => ['medic_plan_platino']], function (){
 
     // Route::get('medico/{m_id}/manage/patient/{p_id}','medicoController@medico_manage_patient')->name('medico_manage_patient');
+    ///////<<<<<<FILES>>>>>>>/////////
     Route::get('medico/{m_id}/patient/{p_id}/files','filesController@patient_files')->name('patient_files');
     Route::get('medico/file/{p_id}/delete','filesController@file_delete')->name('file_delete');
     Route::get('medico/file/{p_id}/download','filesController@file_download')->name('file_download');
     Route::post('medico/patient/file_store','filesController@patient_file_store')->name('patient_file_store');
 
+    Route::get('medico/{m_id}/salubridad_reports','notesController@salubridad_reports')->name('salubridad_reports');
 
+
+
+    ///////<<<<<<NOTES>>>>>>>/////////
+    Route::get('medico/{m_id}/create_xml','notesController@create_xml')->name('create_xml');
+    Route::get('medico/{m_id}/search_report','notesController@search_reports')->name('search_reports');
+    Route::post('salubridad_reports_store_edit','notesController@salubridad_reports_store_edit')->name('salubridad_reports_store_edit');
+    Route::get('medico/{m_id}/patient/{p_id}/create/edit/salubridad_report','notesController@create_edit_salubridad_report')->name('create_edit_salubridad_report');
+    Route::post('store_report','notesController@store_report')->name('store_report');
+    Route::post('salubridad_report_store','notesController@salubridad_report_store')->name('salubridad_report_store');
+    Route::get('clinic_history_pdf/{id}','notesController@clinic_history_pdf')->name('clinic_history_pdf');
+    Route::get('medico/patient/clinic_history/{id}/delete','notesController@clinic_history_delete')->name('clinic_history_delete');
+    Route::get('medico/patient/clinic_history/{id}/note/delete','notesController@history_note_delete')->name('history_note_delete');
+    Route::get('medico/{m_id}/patient/{p_id}/notes/clinic_history/{ch_id}/view_preview','notesController@clinic_history_view_preview')->name('clinic_history_view_preview');
+
+    Route::get('medico/{m_id}/patient/{p_id}/notes/clinic_history/create','notesController@history_clinic_create')->name('history_clinic_create');
+    Route::get('medico/{m_id}/patient/{p_id}/notes/clinic_histories','notesController@clinic_history')->name('clinic_history');
 
     Route::post('medico_vital_sign_store','notesController@medico_vital_sign_store')->name('medico_vital_sign_store');
     Route::post('medico_test_labs_store','notesController@medico_test_labs_store')->name('medico_test_labs_store');
@@ -287,7 +325,11 @@ Route::group(['middleware' => ['medic_plan_platino']], function (){
     Route::get('medico/{m_id}/patient/{p_id}/expedient/{ex_id}/open','notesController@expedient_open')->name('expedient_open');
     Route::get('medico/patient/expedient/{id}/edit','notesController@expedient_edit')->name('expedient_edit');
 
-    Route::get('medico/patient/expedient/note/{id}/delete','notesController@expedient_note_delete')->name('expedient_note_delete');
+    Route::get('medico/patient/note/{id}/delete','notesController@note_delete')->name('note_delete');
+
+    Route::get('medico/patient/note/{id}/restart','notesController@note_restart')->name('note_restart');
+    Route::get('medico/{m_id}/patient/{p_id}/note/paper_bin','notesController@note_paper_bin')->name('note_paper_bin');
+    Route::get('medico/patient/expedient/{exp_id}/note/{n_id}/delete','notesController@expedient_note_delete')->name('expedient_note_delete');
     Route::get('medico/patient/expedient/{id}/delete','notesController@expedient_delete')->name('expedient_delete');
 
     Route::post('medico/patient/expedient/store','notesController@expedient_store')->name('expedient_store');
@@ -299,7 +341,7 @@ Route::group(['middleware' => ['medic_plan_platino']], function (){
     Route::get('medico/patient/notes/search','notesController@note_search')->name('note_search');
     // Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/edit','medicoController@medico_note_edit')->name('medico_note_edit');
     Route::post('medico/patient/note/config/store','notesController@note_config_store')->name('note_config_store');
-    Route::get('medico/{m_id}/patient/{p_id}/edit/appointment/{app_id}','medico_diaryController@edit_appointment')->name('edit_appointment');
+
     ///////////////NOTES
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/view_preview','notesController@view_preview')->name('view_preview');
     Route::get('medico/{m_id}/patient/{p_id}/type_notes','notesController@type_notes')->name('type_notes');
@@ -317,26 +359,43 @@ Route::group(['middleware' => ['medic_plan_platino']], function (){
 
     Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}/create','notesController@note_create')->name('note_create');
 
+    Route::get('note/{id}/download_pdf','notesController@download_pdf')->name('download_pdf');
+
+    Route::post('check_input_notes','notesController@check_input_notes')->name('check_input_notes');
+
+
+    Route::get('medico/{m_id}/patient/{p_id}/edit/appointment/{app_id}','medico_diaryController@edit_appointment')->name('edit_appointment');
+
+    Route::get('medico/{m_id}/patient/{p_id}/ending/app/{app_id}','medico_diaryController@ending_appointment')->name('ending_appointment');
+
+
+    Route::post('redirect_task_consultation','medico_diaryController@redirect_task_consultation')->name('redirect_task_consultation');
+
+    Route::get('medico/{m_id}/patient/{p_id}/appointment/{app_id}/tasks','medico_diaryController@task_consultation')->name('task_consultation');
+
 });
 Route::get('admin/patient_list', 'administratorsController@admin_patient_list')->name('admin_patient_list');
 
+
+/////////<>>>>>>>>>DATA_patient/>>>>>>>>>///////////>>>>>>>>>
 Route::get('medico/{m_id}/patient/{p_id}/data', 'medicoController@data_patient')->name('data_patient');
 Route::post('medico/patient/data/store', 'medicoController@data_patient_store')->name('data_patient_store');
 
 Route::get('medico/{m_id}/patient/{p_id}/data/extract', 'medicoController@data_patient_extract_perfil')->name('data_patient_extract_perfil');
+/////////////////////////
+Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}','medicoController@create_note_patient')->name('create_note_patient');
+
+Route::get('medico/{m_id}/admin/data/{p_id}/patient','medicoController@admin_data_patient')->name('admin_data_patient');
+    // MIDLEWARE verify_conultation_open4
+        Route::group(['middleware' => ['verify_conultation_open'],'except' => ['index', 'show']], function (){
 // income_medic
 Route::get('medico/{id}/income','medicoController@income_medic')->name('income_medic');
 Route::get('medico/{id}/income/without_pay','medicoController@income_medic_without_pay')->name('income_medic_without_pay');
 //
-
-
-
 //event appoitment diary
 
 /////////////////
-Route::get('medico/{m_id}/patient/{p_id}/note/{n_id}','medicoController@create_note_patient')->name('create_note_patient');
 
-Route::get('medico/{m_id}/admin/data/{p_id}/patient','medicoController@admin_data_patient')->name('admin_data_patient');
 
 Route::resource('city','cityController');
 Route::resource('user','userController');
@@ -349,10 +408,12 @@ Route::post('medico/experience/delete','medicoController@medico_experience_delet
 Route::post('medico/service/store','medicoController@service_medico_store')->name('service_medico_store');
 Route::post('medic/experience/store','medicoController@medico_experience_store')->name('medico_experience_store');
 Route::post('medic/social_network/store','medicoController@medico_social_network_store')->name('medico_social_network_store');
-Route::post('ajax_data_edit_event','medico_diaryController@ajax_data_edit_event')->name('ajax_data_edit_event');
-
+Route::post('ajax_data_edit_event_2','medico_diaryController@ajax_data_edit_event')->name('ajax_data_edit_event');
+Route::post('ajax_ending_event','medico_diaryController@ajax_ending_event')->name('ajax_ending_event');
 
 //// app patient
+
+Route::get('medico/{m_id}/patient/{p_id}/appointments/made_and_receivable','medicoController@patient_app_realizada_por_cobrar')->name('patient_app_realizada_por_cobrar');
 
 
 Route::get('medico/{m_id}/patient/{p_id}/appointments/confirmed','medicoController@patient_appointments_confirmed')->name('patient_appointments_confirmed');
@@ -368,8 +429,12 @@ Route::get('medico/{m_id}/patient/{p_id}/appointments/paid_and_pending', 'medico
 Route::get('medico/{m_id}/patient/{p_id}/appointments/canceled', 'medicoController@patient_appointments_canceled')->name('patient_appointments_canceled');
 //// app patient end
 
+
+Route::get('medico/{id}/appointments/made_and_receivable', 'medicoController@app_realizada_por_cobrar')->name('app_realizada_por_cobrar');
+
 Route::get('medico/{id}/appointments/all', 'medicoController@appointments_all')->name('appointments_all');
 Route::get('medico/{id}/appointments/past_collect', 'medicoController@appointments_past_collect')->name('appointments_past_collect');
+
 
 
 Route::get('medico/{id}/appointments/completed', 'medicoController@appointments_completed')->name('appointments_completed');
@@ -486,7 +551,7 @@ Route::get('category/{id}/specialty/delete','specialty_categoryController@specia
 Route::resource('specialty','specialtyController');
 Route::resource('sub_specialty','sub_specialtyController');
 
-Route::resource('assistant','assistantController');
+
 Route::resource('administrators','administratorsController');
 Route::get('medicos_list','administratorsController@medicos_list')->name('medicos_list');
 
@@ -562,23 +627,7 @@ Route::get('delete/city/{id}/plan','plansController@deleteCityPlan')->name('dele
 
 Route::get('admin/assistant/list','administratorsController@assistant_list')->name('assistant_list');
 
-Route::get('medico/search/assistant/registered','assistantController@search_assistants_registered')->name('search_assistants_registered');
-Route::post('medico/assistant/add/store','assistantController@add_assistant_store')->name('add_assistant_store');
 
-Route::get('medico/{id}/assistant/add','assistantController@add_assistant')->name('add_assistant');
-Route::post('assistant/assist/medico','assistantController@assist_medico')->name('assist_medico');
-Route::get('assistant/{id}/medicos','assistantController@assistant_medicos')->name('assistant_medicos');
-Route::get('medico/{id}/asistants/create','assistantController@medico_assistant_create')->name('medico_assistant_create');
-Route::get('medico/{id}/asistants','assistantController@medico_assistants')->name('medico_assistants');
-Route::post('assistant_permissions_store','assistantController@assistant_permissions_store')->name('assistant_permissions_store');
-
-Route::get('assistant/{id}/permission','assistantController@assistant_permissions')->name('assistant_permissions');
-
-Route::get('confirm/assistant/{id}/{code}','assistantController@confirmAssistant')->name('confirmAssistant');
-
-
-Route::get('register/assistant/{id}/step4','assistantController@AvisoConfirmAccountAssistant')->name('AvisoConfirmAccountAssistant');
-/////////////
 Route::resource('permissionSet','permissionSetController');
 Route::get('admin/{id}/permissions','administratorsController@permissions_admin')->name('permissions_admin');
 Route::get('permission/{id}/set/admin/','permissionSetController@PermissionSet')->name('PermissionSet');
@@ -618,8 +667,26 @@ Route::get('medico/{id}/reminders','reminderController@medico_reminders')->name(
 // pdf
 
 
-Route::get('note/{id}/download_pdf','notesController@download_pdf')->name('download_pdf');
+}); //END verify_conultation_open4
 
-Route::post('check_input_notes','notesController@check_input_notes')->name('check_input_notes');
 
-});
+
+
+Route::resource('assistant','assistantController');
+Route::get('medico/search/assistant/registered','assistantController@search_assistants_registered')->name('search_assistants_registered');
+Route::post('medico/assistant/add/store','assistantController@add_assistant_store')->name('add_assistant_store');
+
+Route::get('medico/{id}/assistant/add','assistantController@add_assistant')->name('add_assistant');
+Route::post('assistant/assist/medico','assistantController@assist_medico')->name('assist_medico');
+Route::get('assistant/{id}/medicos','assistantController@assistant_medicos')->name('assistant_medicos');
+Route::get('medico/{id}/asistants/create','assistantController@medico_assistant_create')->name('medico_assistant_create');
+Route::get('medico/{id}/asistants','assistantController@medico_assistants')->name('medico_assistants');
+Route::post('assistant_permissions_store','assistantController@assistant_permissions_store')->name('assistant_permissions_store');
+
+Route::get('assistant/{id}/permission','assistantController@assistant_permissions')->name('assistant_permissions');
+
+Route::get('confirm/assistant/{id}/{code}','assistantController@confirmAssistant')->name('confirmAssistant');
+
+
+Route::get('register/assistant/{id}/step4','assistantController@AvisoConfirmAccountAssistant')->name('AvisoConfirmAccountAssistant');
+/////////////

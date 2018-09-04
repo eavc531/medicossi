@@ -3,34 +3,12 @@
     <div class="col-12">
       {{-- <button type="button" class="close" onclick="cerrar_edit()"><span >&times;</span></button> --}}
     {{-- </button> --}}
-    <div class="form-inline">
-        {!!Form::open(['route'=>['redierct_manage_patient'],'method'=>'POST'])!!}
-        {!!Form::hidden('patient_id',null,['id'=>'patient_id9'])!!}
-        {!!Form::hidden('medico_id',$medico->id,['id'=>'patient_id9'])!!}
-
-        <button id="" style="" type="submit" name="button" class="btn btn-success btn-sm mr-3">Gestion Paciente</button>
-        {!!Form::close()!!}
-
-            {!!Form::open(['route'=>['redierct_manage_patient'],'method'=>'POST'])!!}
-            {!!Form::hidden('patient_id',null,['id'=>'patient_id10'])!!}
-            {!!Form::hidden('medico_id',$medico->id,['id'=>''])!!}
-            {!!Form::hidden('event_id',null,['id'=>'event_id4'])!!}
-            <button id="btn_ini_consul" style="display:none" type="submit" name="button" class="btn btn-primary btn-sm ">Iniciar Consulta</button>
-            {!!Form::close()!!}
-
-            {!!Form::open(['route'=>['redirect_task_consultation'],'method'=>'POST'])!!}
-            {!!Form::hidden('event_id',null,['id'=>'event_id5'])!!}
-            {!!Form::hidden('patient_id',null,['id'=>'patient_id11'])!!}
-
-            {!!Form::hidden('medico_id',$medico->id)!!}
-
-            <button id="acciones_realizadas" style="display:none" type="submit" name="button" class="btn btn-secondary btn-sm " >Acciones Realizadas</button>
-
-            {!!Form::close()!!}
-    </div>
-
-
-
+    {!!Form::open(['route'=>['redierct_manage_patient'],'method'=>'POST'])!!}
+    {!!Form::hidden('patient_id',null,['id'=>'patient_id9'])!!}
+    {!!Form::hidden('medico_id',$medico->id,['id'=>'patient_id9'])!!}
+    {!!Form::hidden('event_id',null,['id'=>'event_id4'])!!}
+    <button type="submit" name="button" class="btn btn-primary btn-sm float-right"><i class="fas  fa-user-cog"></i>Iniciar Consulta</button>
+    {!!Form::close()!!}
     {{-- <a href="{{route('manage_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success btn-sm float-right"><i class="fas fa-user-cog"></i> Gestionar Paciente</a> --}}
     <h3 class="font-title-blue text-center my-2">Editar</h3>
   </div>

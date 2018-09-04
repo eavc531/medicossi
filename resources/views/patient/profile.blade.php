@@ -47,14 +47,17 @@
         <img src="{{asset('img/profile.png')}}" class="prof-img" alt="" id="img">
       </div>
     @endisset
-
+    @if(Auth::user()->role == 'Paciente' and Auth::user()->patient_id == $patient->id)
     {!!Form::open(['route'=>'patient_image_profile','method'=>'POST','files'=>true])!!}
     {!!Form::hidden('email',$patient->email)!!}
     {!!Form::hidden('patient_id',$patient->id)!!}
+
+
     <input type="file" name="image" value="">
 
     {!!Form::submit('Subir')!!}
     {!!Form::close()!!}
+@endif
   </div>
   {{-- <div class="col-lg-5 col-12">
     <label for="">Barra de progreso</label>

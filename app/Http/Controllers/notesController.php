@@ -13,13 +13,16 @@ use App\expedient_note;
 use App\test_lab;
 use App\salubridad_report;
 use Carbon\Carbon;
-
+use App\clinic_history;
+use App\history_note;
 use Session;
 use PDF;
 use App\vital_sign;
 use App\disease_list;
 use Spatie\ArrayToXml\ArrayToXml;
 //validacion personalizada
+use App\task_consultation;
+use Auth;
 use Validator;
 use File;
 use SoapBox\Formatter\Formatter;
@@ -468,7 +471,14 @@ class notesController extends Controller
     }
     public function expedient_preview($id){
         $expedient = expedient::find($id);
+        if($expedient == Null){
+            return back()->with('warning', 'Imposible mostrar mostrar Nota, debido a que fue borrada del sistema.');
+        }
         $expedient_notes = expedient_note::where('expedient_id',$id)->orderBy('date_start')->get();
+        $expedient_count = expedient_note::where('expedient_id',$id)->orderBy('date_start')->count();
+        if($expedient_count == 0){
+            return back()->with('warning', 'Imposible mostrar mostrar la vista previa del expediente: '.$expedient->name. ' ya que esta vacio.');
+        }
         $expedient_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->patient_id;
         $medico_id = expedient_note::where('expedient_id',$id)->orderBy('date_start')->first()->medico_id;
         $patient = patient::find($expedient->patient_id);
@@ -477,13 +487,14 @@ class notesController extends Controller
         return view('medico.expedients_patient.preview',compact('expedient_notes','expedient','patient','medico'));
     }
 
-    public function expedient_note_delete($id){
+    public function expedient_note_delete($exp_id,$n_id){
+        $note = note::find($n_id);
+        $name = $note->title.' '.\Carbon\Carbon::parse($note->created_at)->format('d-m-Y H:i');
+        $exp_id = \hashids::decode($exp_id)[0];
+        $expedient_note = expedient_note::where('expedient_id',$exp_id)->where('note_id',$n_id)->first();
+        $expedient_note->delete();
 
-        $expedient = expedient_note::find($id);
-        $name = $expedient->note->title.' '.\Carbon\Carbon::parse($expedient->note->date_start)->format('m-d-Y');
-        $expedient->delete();
-
-        return back()->with('danger', $name.' ha sido eliminada del Expediente.');
+        return back()->with('danger','La Nota '.$name.' ha sido eliminada del Expediente.');
     }
 
     public function expedient_delete($id){
@@ -494,6 +505,11 @@ class notesController extends Controller
 
         $expedient = expedient::find($id);
         $name = $expedient->name;
+        $task_consultation = task_consultation::where('expedient_id',$id)->first();
+        if($task_consultation != Null){
+            $task_consultation->expedient_id = Null;
+            $task_consultation->save();
+        }
         $expedient->delete();
 
         return back()->with('danger', 'se ha eliminado el Expediente: '.$name);
@@ -537,7 +553,21 @@ class notesController extends Controller
         $expedient->patient_id = $request->patient_id;
         $expedient->save();
 
-        return back()->with('success', 'se Agregado un nuevo expediente con el nombre de: '.$request->name);
+        if(Auth::user()->role == 'medico'){
+
+            if(Auth::user()->medico->event_id != Null){
+                $task = new task_consultation;
+                $task->task = 'Expediente Creado';
+                $task->event_id = Auth::user()->medico->event_id;
+                $task->expedient_id = $expedient->id;
+                $task->save();
+            }
+
+        }elseif(Auth::user()->role == 'Asistente'){
+
+        }
+
+        return back()->with('success', 'Se a agregado un nuevo expediente con el nombre de: '.$request->name);
     }
 
     public function expedients_patient($m_id,$p_id){
@@ -687,7 +717,7 @@ class notesController extends Controller
         $test_labs = test_lab::where('note_id',$note->id)->orderBy('question','asc')->get();
 
         if($note->title == 'Nota Médica Inicial'){
-            return view('medico.notes.note_ini_edit',compact('patient','medico','note','data_note','expedient','test_labs','vital_signs'));
+            return view('medico.notes.inicial.edit',compact('patient','medico','note','data_note','expedient','test_labs','vital_signs'));
         }elseif($note->title == 'Nota Médica de Evolucion'){
             return view('medico.notes.evo.edit',compact('patient','medico','note','data_note','expedient','test_labs','vital_signs'));
         }elseif($note->title == 'Nota de Interconsulta'){
@@ -803,7 +833,7 @@ class notesController extends Controller
         }
 
         if($note->title == 'Nota Médica Inicial'){
-            return view('medico.notes.note_medic_ini_config',compact('patient','medico','note','expedient','test_labs','vital_signs'));
+            return view('medico.notes.inicial.config',compact('patient','medico','note','expedient','test_labs','vital_signs'));
         }elseif($note->title == 'Nota Médica de Evolucion'){
 
             return view('medico.notes.evo.config',compact('patient','medico','note','expedient','test_labs','vital_signs'));
@@ -930,7 +960,7 @@ class notesController extends Controller
             /////////////VERIFICAR si Ahi reporte para Salubridad
 
             if($note->title == 'Nota Médica Inicial'){
-                return view('medico.notes.note_medic_ini_create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
+                return view('medico.notes.inicial.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
             }elseif($note->title == 'Nota Médica de Evolucion'){
 
                 return view('medico.notes.evo.create',compact('patient','medico','note','expedient','test_labs','vital_signs','expedient','salubridad_report'));
@@ -987,9 +1017,63 @@ class notesController extends Controller
         return view('medico.notes.type_notes',compact('patient','medico','notes_pre'));
     }
 
+    public function note_restart($id){
+        $note = note::find($id);
+        $note->deleted = null;
+        $note->save();
+
+        return back()->with('success', 'La Nota: "'.$note->title.' '.\Carbon\Carbon::parse($note->created_at)->format('Y-m-d H:i').'" ha sido restaurada y movida a notas de paciente.');
+    }
+
+    public function note_paper_bin($m_id,$p_id){
+        $medico = medico::find($m_id);
+
+            $patient = patient::find($p_id);
+        $notes = note::where('patient_id', $p_id)->where('medico_id',$m_id)->where('deleted','si')->orderBy('updated_at','desc')->paginate(10);
+
+        return view('medico.notes.note_paper_bin',compact('notes','patient','medico'));
+    }
+
     public function notes_patient($m_id,$p_id)
     {
-        $notes = note::where('patient_id', $p_id)->where('medico_id',$m_id)->orderBy('created_at','desc')->paginate(10);
+        //VERIFICA SI QUEDO HISTORIAL CLINICO Y LO BORRA
+        $verify_history = clinic_history::where('medico_id',$m_id)->where('patient_id',$p_id)->first();
+        if($verify_history != Null){
+            $history_notes = history_note::where('clinic_history_id',$verify_history->id)->get();
+
+            foreach ($history_notes as $note) {
+                $note->delete();
+            }
+
+            $verify_history->delete();
+        }
+        //VERIFICA NOTAS PAPELERAS LISTAS PARA BORRAR
+        $notes_delete = note::where('patient_id', $p_id)->where('medico_id',$m_id)->where('deleted','si')->orderBy('updated_at','desc')->get();
+        // dd($notes_delete);
+        if($notes_delete->first() != Null){
+            foreach ($notes_delete as $note){
+                if(\Carbon\Carbon::parse($note->updated_at)->addHours(1)->format('Y-m-d H:i') < \Carbon\Carbon::now()->format('Y-m-d H:i')){
+                    $test_labs = test_lab::where('note_id', $note->id)->get();
+                    foreach ($test_labs as $test) {
+                        $test->delete();
+                    }
+                    $vital_sign = vital_sign::where('note_id', $note->id)->get();
+                    foreach ($vital_sign as $vital) {
+                        $vital->delete();
+                    }
+
+                    $task_consultation = task_consultation::where('note_id',$note->id)->first();
+                    if($task_consultation != Null){
+                        $task_consultation->note_id = Null;
+                        $task_consultation->save();
+                    }
+
+                    $note->delete();
+                }
+            }
+        }
+
+        $notes = note::where('patient_id', $p_id)->where('medico_id',$m_id)->whereNull('deleted')->orderBy('created_at','desc')->paginate(10);
         $patient = patient::find($p_id);
         $notes_pre = note::where('type', 'default')->get();
         $medico = medico::find($m_id);
@@ -998,6 +1082,125 @@ class notesController extends Controller
     }
 
 
+
+    public function note_delete($id){
+
+
+        $expedient_note =  expedient_note::where('note_id',$id)->get();
+
+        if($expedient_note->first() != Null){
+
+            return back()->with('warning2', 'Imposible Borrar Nota, el/los expediente(s) descrito(s) a continuacion esta(n) usando la nota que intenta borrar:')->with('expedient_note',$expedient_note);
+        }
+
+
+        $note = note::find($id);
+        $title = $note->title;
+        $date = \Carbon\Carbon::parse($note->created_at)->format('Y-m-d H:i');
+        $note->deleted = 'si';
+        $note->save();
+
+        return back()->with('danger', 'Se ha eliminado la nota: "'.$title.' '.$date.'" de forma exitosa. Esta nota aun estara disponible en la seccion papelera, por 10 dias luego se borrara de forma permanente');
+
+    }
+
+    public function clinic_history_delete($id){
+        $clinic_history = clinic_history::find($id);
+        $history_notes = history_note::where('clinic_history_id',$id)->get();
+
+        foreach ($history_notes as $note) {
+            $note->delete();
+        }
+
+        $clinic_history->delete();
+
+        return back()->with('Danger', 'La historia Clinica a sido borrar con exito.');
+    }
+
+    public function clinic_history_pdf($id){
+
+        $clinic_history = clinic_history::find($id);
+        $history_notes = history_note::where('clinic_history_id',$id)->get();
+        $patient = patient::find($clinic_history->patient_id);
+        $medico = medico::find($clinic_history->medico_id);
+
+        // dd($clinic_history);
+
+
+
+        $pdf = PDF::loadView('medico.notes.clinic_history.pdf', ['medico'=> $medico,'history_notes'=>$history_notes,'patient'=>$patient,'clinic_history'=>$clinic_history]);
+        $date = \Carbon\Carbon::now()->format('d-m-Y');
+        return $pdf->download('Historia_clinica_'.\Carbon\Carbon::now()->format('d-m-Y').'_'.$patient->name.'_'.$patient->lastName.'.pdf');
+
+
+    }
+
+    public function clinic_history_view_preview($m_id,$p_id,$h_id){
+        $clinic_history = clinic_history::find(\Hashids::decode($h_id)[0]);
+        $history_note = history_note::where('clinic_history_id',\Hashids::decode($h_id)[0])->get();
+        $patient = patient::find($p_id);
+        $medico = medico::find($m_id);
+
+
+        return view('medico.notes.clinic_history.view_preview',compact('patient','medico','history_note','clinic_history'));
+    }
+    public function history_note_delete($id){
+        $history_note = history_note::find($id);
+        $note_title = $history_note->note->title;
+        $note_start = $history_note->note->created_at;
+        $history_note->delete();
+
+        return back()->with('danger', 'Se a eliminado la nota: "'.$note_title.' '.$note_start.'" de la Historia Clinica actual.');
+    }
+
+    public function history_clinic_create($m_id,$p_id){
+
+        $verify_history = clinic_history::where('medico_id',$m_id)->where('patient_id',$p_id)->first();
+        if($verify_history != Null){
+            $history_notes = history_note::where('clinic_history_id',$verify_history->id)->get();
+
+            foreach ($history_notes as $note) {
+                $note->delete();
+            }
+
+            $verify_history->delete();
+        }
+
+        $clinic_history = new clinic_history;
+        $clinic_history->name = 'Historia Clínica';
+        $clinic_history->medico_id = $m_id;
+        $clinic_history->patient_id = $p_id;
+
+        $clinic_history->save();
+
+        $notes = note::where('medico_id',$m_id)->where('patient_id',$p_id)->get();
+
+        foreach ($notes as $note) {
+            $history_note = new history_note;
+            $history_note->note_id = $note->id;
+            $history_note->clinic_history_id = $clinic_history->id;
+            $history_note->save();
+        }
+        // return back()->with('success', 'Se ha generado una nueva historia clinica con exito');
+        $history_note = history_note::where('clinic_history_id',$clinic_history->id)->get();
+        $patient = patient::find($p_id);
+        $medico = medico::find($m_id);
+
+
+        return view('medico.notes.clinic_history.view_preview',compact('patient','medico','history_note','clinic_history'));
+    }
+
+
+
+    public function clinic_history($m_id,$p_id)
+    {
+        $clinic_histories = clinic_history::where('patient_id', $p_id)->where('medico_id',$m_id)->orderBy('created_at','desc')->paginate(10);
+        $patient = patient::find($p_id);
+
+        $medico = medico::find($m_id);
+
+        return view('medico.notes.clinic_history.index',compact('notes','patient','medico','clinic_histories'));
+    }
 
     public function note_search(Request $request)
     {
@@ -1010,7 +1213,7 @@ class notesController extends Controller
             if($request->type == 'Todas'){
                 return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)]);
             }
-            $notes = note::where('patient_id', $request->patient_id)->where('medico_id',$request->medico_id)->where('title',$request->type)->orderBy('created_at','desc')->paginate(10);
+            $notes = note::where('patient_id', $request->patient_id)->where('medico_id',$request->medico_id)->where('title',$request->type)->where('deleted','!=','si')->orderBy('created_at','desc')->paginate(10);
 
             $patient = patient::find($request->patient_id);
             $medico = medico::find($request->medico_id);
@@ -1023,7 +1226,7 @@ class notesController extends Controller
             ]);
 
             if($request->type == 'Todas'){
-                $notes = note::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->where('created_at','LIKE',"%$request->date%")->orderBy('created_at','desc')->paginate(10);
+                $notes = note::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->where('created_at','LIKE',"%$request->date%")->where('deleted','!=','si')->orderBy('created_at','desc')->paginate(10);
                 $patient = patient::find($request->patient_id);
                 $medico = medico::find($request->medico_id);
                 $search = 'search_note';
@@ -1031,7 +1234,7 @@ class notesController extends Controller
                 return view('medico.notes.notes_patient',compact('notes','patient','medico','search','notes_pre'));
             }
 
-            $notes = note::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->where('title', $request->type)->where('created_at','LIKE',"%$request->date%")->orderBy('created_at','desc')->paginate(10);
+            $notes = note::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->where('title', $request->type)->where('created_at','LIKE',"%$request->date%")->where('deleted','!=','si')->orderBy('created_at','desc')->paginate(10);
             $patient = patient::find($request->patient_id);
             $medico = medico::find($request->medico_id);
             $search = 'search_note';
@@ -1101,6 +1304,7 @@ class notesController extends Controller
                 'fecha_ingreso'=>'required',
             ]);
         }
+
 
         $request->validate([
 
@@ -1222,23 +1426,54 @@ class notesController extends Controller
         }
 
 
+
         if($request->expedient_id != Null){
+
+            // /Guardar tarea creada en consulta
+            if(Auth::user()->role == 'medico'){
+                $expedient = expedient::find(\Hashids::decode($request->expedient_id)[0]);
+
+                if(Auth::user()->medico->event_id != Null){
+                    $task = new task_consultation;
+                    $task->task = 'Nota Creada dentro de expediente';
+                    $task->description = $expedient->name;
+                    $task->event_id = Auth::user()->medico->event_id;
+                    $task->note_id = $note->id;
+                    $task->save();
+                }
+            }elseif(Auth::user()->role == 'Asistente'){
+
+            }
+
             if($request->guarda_report == 'si'){
+
                 return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>$request->expedient_id])->with('success', 'Se a creado la nota, y se creado el reporte del medico para salubridad, puede ver y editar este reporte en el panel "gestion paciente"');
             }else{
-                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>$request->expedient_id]);
+                return redirect()->route('expedient_open',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id),'ex_id'=>$request->expedient_id])->with('success', 'Se ha creado una nueva nota dentro del expediente.');
             }
 
         }else{
+            // /Guardar tarea creada en consulta
+            if(Auth::user()->role == 'medico'){
+
+                if(Auth::user()->medico->event_id != Null){
+                    $task = new task_consultation;
+                    $task->task = 'Nota Creada';
+                    $task->event_id = Auth::user()->medico->event_id;
+                    $task->note_id = $note->id;
+                    $task->save();
+                }
+
+            }elseif(Auth::user()->role == 'Asistente'){
+
+            }
+
             if($request->guarda_report == 'si')
             {
                 return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Se a creado la nota, y se creado el reporte del medico para salubridad, puede ver y editar este reporte en el panel "gestion paciente"');;
             }else{
                 return redirect()->route('notes_patient',['m_id'=>\Hashids::encode($request->medico_id),'p_id'=>\Hashids::encode($request->patient_id)])->with('success', 'Se a creado la nota de forma satisfactoria');
             }
-
-
-
 
         }
 

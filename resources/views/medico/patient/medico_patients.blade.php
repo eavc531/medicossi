@@ -24,7 +24,7 @@
         </div>
     <div class="mb-2">
       <a href="{{route('medico_patients',\Hashids::encode($medico->id))}}" class="btn btn-primary ml-2">Mostrar Todos</a>
-      <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-warning ml-2">Buscar Paciente Registrado</a>
+          <a href="{{route('patients_registered',\Hashids::encode($medico->id))}}" class="btn btn-warning ml-2">Buscar Pacientes Ya Registrados</a>
       <a href="{{route('medico_register_new_patient',\Hashids::encode($medico->id))}}" class="btn btn-info ml-2">Registrar nuevo Paciente</a>
 
     </div>
@@ -64,8 +64,8 @@
        {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
      </div>
      <div class="row">
-         <div class="col-lg-2 col-2  col-sm-3 text-center">
-           <a class="btn btn-secondary" href="{{route('manage_patient',['medico_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Panel Paciente</em>"><i class="fas fa-tasks"></i></a>
+         <div class="col-lg-2 col-2 col-sm-3 text-center">
+           <a class="btn btn-secondary" href="{{route('manage_patient',['medico_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Panel Paciente</em>"><i class="fas fa-list"></i></a>
          </div>
       <div class="col-lg-2 col-2  col-sm-3 text-center">
         <a class="btn btn-secondary" href="{{route('patient_profile',['p_id'=>\Hashids::encode($patient['id']),'back'=>\Hashids::encode($medico->id)])}}" data-toggle="tooltip" data-html="true" title="<em>Perfil</em>"><i class="fas fa-user"></i></a>

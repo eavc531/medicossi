@@ -32,7 +32,7 @@
      <div class="text-right mb-2">
          <button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Volver</button>
      </div>
-     @include('medico.includes.main_medico_patients')
+     {{-- @include('medico.includes.main_medico_patients') --}}
     @include('medico.includes.alert_calendar')
     @include('medico.includes.card_edit')
 
@@ -90,7 +90,7 @@
         <label for="" class="mt-2 font-title">Precio (Opcional)</label>
         {!!Form::number('price',null,['class'=>'form-control','id'=>'price6'])!!}
         <label for="" class="mt-2 font-title">Descripción (Opcional)</label>
-        {!!Form::text('price',null,['class'=>'form-control','id'=>'description6'])!!}
+        {!!Form::text('description',null,['class'=>'form-control','id'=>'description6'])!!}
         {{-- <input class="form-control my-2" type="text" placeholder="precio (Opcional)" id="price2"> --}}
         <div class="row mt-2">
           <div class="col-lg-4 col-sm-12 font-title">

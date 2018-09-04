@@ -28,7 +28,7 @@
 
 <div class="row">
   <div class="col-12 mb-3">
-    <h2 class="text-center font-title">Editar Nota: "{{$note->title}}"</h2>
+    <h2 class="text-center font-title">Configurar Nota: "{{$note->title}}"</h2>
 
   </div>
 </div>

@@ -261,8 +261,8 @@
 						</div>
 					</div>
 					<div class="col-lg-10 col-sm-9 col-12">
-
 						@include('notifications.alerts')
+						{{-- @include('layouts.show_consultation_now') --}}
 						@yield('content')
 					</div>
 				</div>

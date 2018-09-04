@@ -15,13 +15,14 @@ class medic_plan_agenda
      */
     public function handle($request, Closure $next)
     {
-      if (Auth::user()->role == 'medico') {
+
+      if (Auth::check() and Auth::user()->role == 'medico') {
         if(Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino'){
           return $next($request);
         }else{
           return redirect()->route('planes_medic',\Hashids::encode(Auth::user()->medico_id))->with('warning', 'Para Poder acceder a ciertos Paneles, debes adquirir uno de nuestros planes, cada uno de estos te permitira hacer acciones extras en el sistema, a continuacion se detallan nuestros planes, de acuerdo a tu especialidad');
         }
-    }elseif(Auth::user()->role == 'Asistente'){
+    }elseif(Auth::check() and Auth::user()->role == 'Asistente'){
         if(Auth::user()->assistant->medico->plan == 'plan_agenda' or Auth::user()->assistant->medico->plan == 'plan_profesional' or Auth::user()->assistant->medico->plan == 'plan_platino'){
           return $next($request);
         }else{

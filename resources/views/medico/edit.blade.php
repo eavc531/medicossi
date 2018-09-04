@@ -779,6 +779,35 @@
   </div>
 </div>
 {{-- FIN MODAL vierify session --}}
+
+<input type="hidden" name="medico_id_id" value="{{$medico->id}}" id="medico_id_id">
+<input type="hidden" name="calification_medic_show_patient" value="{{route('calification_medic_show_patient')}}" id="calification_medic_show_patient">
+<input type="hidden" name="delete_video" value="{{route('delete_video')}}" id="delete_video">
+<input type="hidden" name="medico_list_videos" value="{{route('medico_list_videos')}}" id="medico_list_videos">
+<input type="hidden" name="medico_experience_list" value="{{route('medico_experience_list')}}" id="medico_experience_list">
+<input type="hidden" name="medico_experience_store" value="{{route('medico_experience_store')}}" id="medico_experience_store">
+<input type="hidden" name="social_network_list" value="{{route('social_network_list')}}" id="social_network_list">
+<input type="hidden" name="select_insurrances2" value="{{route('select_insurrances2')}}" id="select_insurrances2">
+<input type="hidden" name="inner_cities_select" value="{{route('inner_cities_select')}}" id="inner_cities_select">
+<input type="hidden" name="medico_service_list" value="{{route('medico_service_list')}}" id="medico_service_list">
+<input type="hidden" name="medico_social_network_store" value="{{route('medico_social_network_store')}}" id="medico_social_network_store">
+<input type="hidden" name="medico_experience_delete" value="{{route('medico_experience_delete')}}" id="medico_experience_delete">
+<input type="hidden" name="medicoBorrar" value="{{route('medicoBorrar')}}" id="medicoBorrar">
+<input type="hidden" name="borrar_social" value="{{route('borrar_social')}}" id="borrar_social">
+<input type="hidden" name="service_medico_store" value="{{route('service_medico_store')}}" id="service_medico_store">
+
+<input type="hidden" name="medico_update" value="{{route('medico.update',\Hashids::encode($medico->id))}}" id="medico_update">
+<input type="hidden" name="lat" value="{{$medico->latitud}}" id="lat">
+<input type="hidden" name="lng" value="{{$medico->longitud}}" id="lng">
+<input type="hidden" name="img_marker" value="{{asset('img/marker-icon.png')}}" id="img_marker">
+<input type="hidden" name="medico_store_coordinates" value="{{route('medico_store_coordinates',\Hashids::encode($medico->id))}}" id="medico_store_coordinates">
+<input type="hidden" name="verifySession" value="{{route('verifySession')}}" id="verifySession">
+
+
+
+
+
+
 @endsection
 
 @section('scriptJS')
@@ -786,12 +815,8 @@
   <script type="text/javascript" src="{{asset('gmaps/gmaps.js')}}"></script>
 <script type="text/javascript">
 
-
-// Get the modal
 var modal = document.getElementById('myModal-img');
-
 // Get the image and insert it inside the modal - use its "alt" text as a caption
-
 var modalImg = document.getElementById("img01");
 var captionText = document.getElementById("caption");
 
@@ -812,12 +837,9 @@ if ( $(".cerrar")[0] ) {
   }
 }
 
-
-
   function cerrar_calificaciones(){
     $('#modal-calification').modal('hide');
   }
-
   ///////////////////////////////CALIFICATIONS
   function toogle(result){
       if( $(result).parent('.id_label').parent('.este').next('.div_detail').css('display') == 'none'){
@@ -829,9 +851,8 @@ if ( $(".cerrar")[0] ) {
   }
 
   function show_califications(result){
-
-   route = "{{route('calification_medic_show_patient')}}";
-   medico_id = "{{$medico->id}}";
+   route = $('#calification_medic_show_patient').val();
+   medico_id = $('#medico_id_id').val();
 
    $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -852,10 +873,9 @@ if ( $(".cerrar")[0] ) {
   function show_more(result){
 
       element = result;
-      route = "{{route('calification_medic_show_patient')}}";
+      route = $('#calification_medic_show_patient').val();
       medico_id = result.id;
       skip = result.name;
-
 
       $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -878,9 +898,6 @@ if ( $(".cerrar")[0] ) {
     $('#modal-calification').modal('hide');
   }
 
-///////////////////////////////FIN CALIFICATIONS
-
-
  function volver(){
   window.history.back();
 }
@@ -891,7 +908,7 @@ function delete_video(request){
     return false;
   }
   video_id = request;
-  route = "{{route('delete_video')}}";
+  route = $('#delete_video').val();
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
    type:'POST',
@@ -945,18 +962,8 @@ $('#form_video').submit(function(){
   return false;
 });
 
-
-$(document).ready(function() {
-  list_social();
-  list_service();
-  list_experience();
-  list_videos();
-
-  show_map();
-  });
-
   function list_videos(){
-   route = "{{route('medico_list_videos')}}";
+   route = $('#medico_list_videos').val();
    medico_id = $('#medico_id').val();
    $.ajax({
      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -969,6 +976,7 @@ $(document).ready(function() {
      },
      error:function(error){
        console.log(error);
+       $('#list_videos').empty().html('<p style="color:rgb(213, 17, 58)">Hubo un problema al cargar este elemento por favor recargue la pagina para solucionar el problema</p>');
      },
    });
   }
@@ -976,7 +984,7 @@ $(document).ready(function() {
 
 
    function list_experience(){
-     route = "{{route('medico_experience_list')}}";
+     route = $('#medico_experience_list').val();
      medico_id = $('#medico_id').val();
 
      $.ajax({
@@ -986,11 +994,9 @@ $(document).ready(function() {
        data:{medico_id:medico_id},
        success:function(result){
          $('#medico_experience_ajax').empty().html(result);
-
-
        },
        error:function(error){
-         console.log(error);
+         $('#medico_experience_ajax').empty().html('<p style="color:rgb(213, 17, 58)">Hubo un problema al cargar este elemento por favor recargue la pagina para solucionar el problema</p>');
        },
      });
    }
@@ -998,8 +1004,8 @@ $(document).ready(function() {
 
    function service_medico_experience(){
      name = $('#name_experience').val();
-     medico_id = "{{$medico->id}}";
-     route = "{{route('medico_experience_store')}}";
+     medico_id = $('#medico_id').val();
+     route = $('#medico_experience_store').val();
      errormsj = '';
      $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1024,7 +1030,7 @@ $(document).ready(function() {
 
 
   function list_social(){
-    route = "{{route('social_network_list')}}";
+    route = $('#social_network_list').val();
     medico_id = $('#medico_id').val();
     $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1035,7 +1041,7 @@ $(document).ready(function() {
         $('#list_social_ajax').empty().html(result);
       },
       error:function(error){
-        console.log(error);
+        $('#list_social_ajax').empty().html('<p style="color:rgb(213, 17, 58)">Hubo un problema al cargar este elemento por favor recargue la pagina para solucionar el problema</p>');
       },
     });
   }
@@ -1045,9 +1051,9 @@ $(document).ready(function() {
 
 function select_insurrances(result){
   // type_patient_service = $('#radio2').val();
-  medico_id = "{{$medico->id}}"
+  medico_id = $('#medico_id').val();
   type_patient_service = result;
-  route = "{{route('select_insurrances2')}}"
+  route = $('#select_insurrances2').val();
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
    type:'POST',
@@ -1087,7 +1093,7 @@ function modal_experience(){
 $('#stateMedic').on('change', function(){
  state_id = $('#stateMedic').val();
 
- route = "{{route('inner_cities_select')}}";
+ route = $('#inner_cities_select').val();
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
   type:'POST',
@@ -1115,11 +1121,8 @@ $('#stateMedic').on('change', function(){
 
 
 function list_service(){
-
-  route = "{{route('medico_service_list')}}";
-
+  route = $('#medico_service_list').val();
   medico_id = $('#medico_id').val();
-
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
     type:'POST',
@@ -1129,7 +1132,7 @@ function list_service(){
       $('#list_service_ajax').empty().html(result);
     },
     error:function(error){
-      console.log(error);
+      $('#list_service_ajax').empty().html('<p style="color:rgb(213, 17, 58)">Hubo un problema al cargar este elemento por favor recargue la pagina para solucionar el problema</p>');
     },
   });
 }
@@ -1138,7 +1141,9 @@ function storeSocial(){
   medico_id = $('#medico_id').val();
   name = $('#name_social').val();
   link = $('#link_social').val();
-  route = "{{route('medico_social_network_store')}}";
+
+
+  route = $('#medico_social_network_store').val();
   errormsj = '';
 
   $.ajax({
@@ -1172,7 +1177,7 @@ function medico_experience_delete(service_id){
   if(question == false){
    return false;
  }
- route = "{{route('medico_experience_delete')}}";
+ route = $('#medico_experience_delete').val();
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
   type:'POST',
@@ -1198,7 +1203,8 @@ function medico_service_delete(service_id){
   if(question == false){
     return false;
  }
- route = "{{route('medicoBorrar')}}";
+
+ route = $('#medicoBorrar').val();
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
   type:'POST',
@@ -1213,7 +1219,6 @@ function medico_service_delete(service_id){
    console.log(errormsj);
  },
  success:function(result){
-
    list_service();
  },
 });
@@ -1226,7 +1231,8 @@ function social_network_delete(social_id){
   if(question == false){
     return false;
  }
- route = "{{route('borrar_social')}}";
+
+ route = $('#borrar_social').val();
  $.ajax({
   headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
   method:'POST',
@@ -1241,9 +1247,7 @@ function social_network_delete(social_id){
    console.log(errormsj);
  },
  success:function(result){
-
    list_social();
-
  },
 });
 
@@ -1252,7 +1256,7 @@ function social_network_delete(social_id){
 function service_medico_store(){
   name = $('#input_service').val();
   medico_id = $('#medico_id').val();
-  route = "{{route('service_medico_store')}}";
+  route = $('#service_medico_store').val();
   errormsj = '';
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1268,11 +1272,18 @@ function service_medico_store(){
     console.log(errormsj);
   },
   success:function(result){
-
     $('#modal-service2').modal('toggle');
     list_service();
   }
 });
+
+$(document).ready(function(){
+  list_social();
+  list_service();
+  list_experience();
+  list_videos();
+  show_map();
+  });
 
 }
 
@@ -1289,8 +1300,7 @@ function updateMedic(){
   specialtyMedic = $('#specialtyMedic').val();
   sub_specialtyMedic = $('#sub_specialtyMedic').val();
   errormsj = '';
-
-  route = "{{route('medico.update',\Hashids::encode($medico->id))}}";
+  route = $('#medico_update').val();
 
   $.ajax({
    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1323,15 +1333,10 @@ function cerrar(){
 
 }
 
-
-//mapa
-
-
 function show_map(){
-
   $('#store_coordinates').attr('disabled', false);
-  lat = '{{$medico->latitud}}';
-  lng = '{{$medico->longitud}}';
+  lat = $('#lat').val();
+  lng = $('#lng').val();
   var map = new GMaps({
     el: '#map',
     lat: lat,
@@ -1342,7 +1347,7 @@ function show_map(){
     lat: lat,
     lng: lng,
     title: 'Tu Ubicacion',
-    icon: "{{asset('img/marker-icon.png')}}",
+    icon: $('#img_marker').val(),
     draggable: true,
     dragend: function(event) {
      var lat = event.latLng.lat();
@@ -1350,9 +1355,7 @@ function show_map(){
      $('#latitudSave').val(lat);
      $('#longitudSave').val(lng);
      $('#store_coordinates').attr('disabled', false);
-
    },
-
 });//fin marker
 }
 
@@ -1377,9 +1380,8 @@ function searchInMap(){
       map.addMarker({
        lat: latlng.lat(),
        lng: latlng.lng(),
-
        title: 'Tu Ubicacion',
-       icon: "{{asset('img/marker-icon.png')}}",
+       icon: $('#img_marker').val(),
        draggable: true,
        dragend: function(event) {
          var lat = event.latLng.lat();
@@ -1389,9 +1391,6 @@ function searchInMap(){
          $('#store_coordinates').attr('disabled', false);
        },
 
-             // infoWindow: {
-             //     content: content
-             // }
       });//fin marker
     }
   }
@@ -1399,7 +1398,7 @@ function searchInMap(){
 }//fin searchInMap
 
 function store_coordinates(){
-  route = '{{route('medico_store_coordinates',\Hashids::encode($medico->id))}}';
+  route = $('#medico_store_coordinates').val();
   latitud = $('#latitudSave').val();
   longitud = $('#longitudSave').val();
 
@@ -1412,12 +1411,6 @@ function store_coordinates(){
       console.log(error);
     },
     success:function(result){
-
-
-        // //$('#input_descripion').val(result);
-        // $('#div_descripion').html(result);
-        // decription = $('#description_text').html();
-        // $('#input_description').val(decription);
       }
     });
 }
@@ -1427,7 +1420,7 @@ function cerrar_alert(){
 
 function verifySession(){
 
-  route = "{{route('verifySession')}}";
+  route = $('#verifySession').val();
 
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1454,7 +1447,8 @@ function verifySession(){
 }
 
 function verifySession2(){
-  route = "{{route('verifySession')}}";
+
+  route = $('#verifySession').val();
 
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -1479,6 +1473,13 @@ function verifySession2(){
   });
 }
 
+$(document).ready(function(){
+  list_social();
+  list_service();
+  list_experience();
+  list_videos();
+  show_map();
+  });
 </script>
 
 @endsection

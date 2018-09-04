@@ -116,11 +116,17 @@
                     </div>
                     <div class="col">
                         <input type="radio" value="A" name="opcion" onclick="filtro_payment_method('Aseguradora')"/><br />
-                        <label for="">Aseguradora</label>
+                        <label for="" style="background:rgb(255, 152, 152)">Aseguradora</label>
                     </div>
                     <div class="col">
-                        <input type="radio" value="A" name="opcion" onclick="PendientePorCobrar()"/><br />
-                        <label for="">Sin Confirmar</label>
+                        <input type="radio" value="A" name="opcion" onclick="filtro_confirmed_medico('No')"/><br />
+                        <label for="" style="background:rgb(227, 227, 227)">Sin Confirmar</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="radio" value="A" name="opcion" onclick="filtro_state('Realizada y por cobrar')"/><br />
+                        <label for="" style="background:rgb(246, 43, 244)">Realizada y por cobrar</label>
+
                     </div>
                 </div>
 
@@ -473,9 +479,10 @@
     </div>
 
 
-    {{Form::hidden('','Ninguno',['id'=>'filtro_state'])}}
+    {{Form::hidden('filtro_state','Ninguno',['id'=>'filtro_state'])}}
     {{Form::hidden('filtro_title','Ninguno',['id'=>'filtro_title'])}}
     {{Form::hidden('filtro_payment_method','Ninguno',['id'=>'filtro_payment_method'])}}
+    {{Form::hidden('filtro_confirmed_medico','Ninguno',['id'=>'filtro_confirmed_medico'])}}
 
     <input type="hidden" name="id_medico_id" value="{{$medico->id}}" id="id_medico_id">
     <input type="hidden" name="" value="{{route('event_personal_update')}}" id="event_personal_update">
@@ -966,10 +973,24 @@
                     hour_end = $.fullCalendar.moment(event.end).format('HH');
                     mins_end = $.fullCalendar.moment(event.end).format('mm');
 
+
+
+                    // boton Iniciar consulta
+                    if(event.title != 'Ausente' & event.title != 'Personal' & event.state != 'Realizada y por cobrar' & event.state != 'Pagada y Completada' & event.confirmed_medico == 'Si'){
+                        $('#btn_ini_consul').show();
+                    }else{
+                        $('#btn_ini_consul').hide();
+                    }
+
+                    if(event.state == 'Realizada y por cobrar' || event.state == 'Pagada y Completada'){
+
+                        $('#acciones_realizadas').show();
+                    }else{
+                        $('#acciones_realizadas').hide();
+                    }
+                    // Realizada y por cobrar
                     if(event.title == 'Ausente' || event.title == 'Personal'){
-
                         cerrar();
-
                         $('#event_id10').val(event.id);
                         $('#title10').val(event.title);                        $('#description10').val(event.description);
                         $('#date_start10').val(start);
@@ -981,9 +1002,14 @@
                         $('#card_edit').hide();
                         return false;
                     }
+                    $('#event_id4').val(event.id);
+                    $('#event_id5').val(event.id);
 
                     /////////////
                     $('#patient_id9').val(event.patient_id);
+                    $('#patient_id10').val(event.patient_id);
+                    $('#patient_id11').val(event.patient_id);
+
                     $('#confirmed_patient9').val(event.confirmed_patient);
                     $('#confirmed_medico9').val(event.confirmed_medico);
                     $('#price9').val(event.price);
@@ -1014,8 +1040,6 @@
                     $('#namePatient9').val(event.namePatient);
                     $('#payment_state9').val(event.payment_state);
                     $('#card_edit').fadeOut();
-
-
 
                     $('#alert_success_up1').fadeOut();
                     vaciar();
@@ -1080,7 +1104,6 @@
                         $('#event_id_destroy9').attr('readOnly',false);
                         $('#namePatient9').attr('readOnly',true);
                         $('#payment_state9').attr('readOnly',true);
-
                     }
 
                     //verifica permisos de asistente
@@ -1094,7 +1117,6 @@
                             $('#confirmed_patient9').attr('readOnly',true);
 
                             $('#title9').attr('readOnly',true);
-
                         }
 
                         if($('#cita_change_date').val() != 1){
@@ -1133,7 +1155,6 @@
                                 $('#button_confirmed_complete').hide();
                                 $('#but_save').hide();
                                 $('#text_confirm').show();
-
                             }else{
                                 $('#text_confirm').hide();
                             }
@@ -1153,29 +1174,36 @@
                     /////////////////////////////////////////////////
                     $('#card_personal').hide();
                     $('#card_edit').fadeIn();
+                    // Realizada y por cobrar
+                    if(event.state == 'Realizada y por cobrar'){
+                        $('#but_save').hide();
+
+                    }
+
+
                 },
 
                 eventRender: function (event, element, view) {
 
                     if($('#filtro_state').val() != 'Ninguno'){
-
-
                         if(event.state != $('#filtro_state').val() &&  event.rendering != 'background'){
                             return false;
                         }
                     }
-
-
                     if($('#filtro_title').val() != 'Ninguno'){
-
                         if(event.title != $('#filtro_title').val() &&  event.rendering != 'background'){
                             return false;
                         }
                     }
-
-                    if($('#filtro_payment_method').val() != 'Ninguno'){
+                     if($('#filtro_payment_method').val() != 'Ninguno'){
 
                         if(event.payment_method != $('#filtro_payment_method').val() &&  event.rendering != 'background'){
+                            return false;
+                        }
+                    }
+                    if($('#filtro_confirmed_medico').val() != 'Ninguno'){
+
+                        if(event.confirmed_medico == 'Si' &&  event.rendering != 'background'){
                             return false;
                         }
                     }
@@ -1193,6 +1221,8 @@
             $('#filtro_state').val(result);
             $('#filtro_title').val('Ninguno');
             $('#filtro_payment_method').val('Ninguno');
+            $('#filtro_confirmed_medico').val('Ninguno');
+
             $('#calendar').fullCalendar('removeEvents');
             $('#calendar').fullCalendar('refetchEvents');
         }
@@ -1201,6 +1231,8 @@
             $('#filtro_title').val(result);
             $('#filtro_state').val('Ninguno');
             $('#filtro_payment_method').val('Ninguno');
+            $('#filtro_confirmed_medico').val('Ninguno');
+
             $('#calendar').fullCalendar('removeEvents');
             $('#calendar').fullCalendar('refetchEvents');
         }
@@ -1209,6 +1241,8 @@
             $('#filtro_payment_method').val(result);
             $('#filtro_state').val('Ninguno');
             $('#filtro_title').val('Ninguno');
+            $('#filtro_confirmed_medico').val('Ninguno');
+
             $('#calendar').fullCalendar('removeEvents');
             $('#calendar').fullCalendar('refetchEvents');
         }
@@ -1218,10 +1252,19 @@
             $('#filtro_title').val('Ninguno');
             $('#filtro_state').val('Ninguno');
             $('#filtro_payment_method').val('Ninguno');
+            $('#filtro_confirmed_medico').val('Ninguno');
             $('#calendar').fullCalendar('removeEvents');
             $('#calendar').fullCalendar('refetchEvents');
         }
 
+        function filtro_confirmed_medico(result){
+            $('#filtro_title').val('Ninguno');
+            $('#filtro_state').val('Ninguno');
+            $('#filtro_payment_method').val('Ninguno');
+            $('#filtro_confirmed_medico').val(result);
+            $('#calendar').fullCalendar('removeEvents');
+            $('#calendar').fullCalendar('refetchEvents');
+        }
         function newConsultation(){
             $('#eventType').val('Consulta Medica');
             $('#ModalCreate').modal('show');

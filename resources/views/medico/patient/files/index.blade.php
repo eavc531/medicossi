@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            @include('medico.includes.main_medico_patients')
+            {{-- @include('medico.includes.main_medico_patients') --}}
 
             <button onclick="show()" type="button" name="button" class="btn btn-primary mt-3">Subir Archivo</button>
 

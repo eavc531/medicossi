@@ -56,7 +56,7 @@
 @endif
 
 
-<div class="row my-5">
+{{-- <div class="row my-5">
   <div class="col-lg-10 col-12 align-items-center">
     <h6>¿Desea que las citas que han sido pagadas con anticipacion, se marquen como completadas automaticamente despues de pasar la fecha de la consulta?</h6>
   </div>
@@ -81,4 +81,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> --}}
