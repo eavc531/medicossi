@@ -647,6 +647,7 @@ class medicoController extends Controller
 
          $type = 'Realizadas y por cobrar';
          $patient = patient::find($p_id);
+         
          return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
 
      }
@@ -1577,6 +1578,7 @@ class medicoController extends Controller
       foreach ($list_citas_cobradas1 as $value) {
         $ingresos_obtenidos = $ingresos_obtenidos + $value->price;
       }
+
       $citas_cobradas = event::where('medico_id',$id)->where('state', 'Pagada y Pendiente')->orWhere('state', 'Pagada y Completada')->whereNotNull('namePatient')->count();
 
       $list_citas_x_cobrar = event::where('medico_id',$id)->where('state', 'Pendiente')->whereNotNull('namePatient')->paginate(10);

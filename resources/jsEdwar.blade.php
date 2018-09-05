@@ -1,501 +1,228 @@
-<tr>
-  <td><span class="pre">{{$expedient->name}}</span>
-    <form class="" action="{{route('expedient_update',\Hashids::encode($patient->id))}}" method="post">
-      {{csrf_field()}}
-
-    <div class="input-group" style="display:none">
-        <input name="name_exp" type="text" value="{{$expedient->name}}" class="form-control inp">
-      <div class="input-group-append">
-        <button type="submit" name="button" class="btn btn-primary btn-sm"><i class="fas fa-save"></i></button>
-          <button class="cancel_edit" type="button" name="button" class="btn btn-warning btn-sm"><i class="fas fa-times"></i></button>
-      </div>
-    </div>
-    </form>
-
-
-   </td>
-  <td>{{\Carbon\Carbon::parse($expedient->created_at)->format('d-m-Y')}}</td>
-  {{-- <td>{{$expedient->date_edit}}</td> --}}
-  <td>
-    <div class="form-inline">
-
-      <a href="{{route('expedient_open',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id),'ex_id'=>\Hashids::encode($expedient->id)])}}" class="btn btn-success mr-1"><i class="fas fa-folder-open"></i></a>
-
-      <a class="btn btn-warning mr-1 editar text-white"><i class="fas fa-edit"></i></a>
-      <a href="{{route('expedient_delete',\Hashids::encode($expedient->id))}}" class="btn btn-danger"> <i class="fas fa-trash-alt"></i></a>
-    </div>
-
-  </td>
-
-</tr>
-
-
-//////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-<?php
-
-public function store_rate_comentary(Request $request)
-{
-  //dd($request->all());
- $medico = medico::find($request->medico_id);
-
-  if($request->conservar == 'conservar'){
-
-      $event = event::find($request->event_id);
-      $event->status = 'calificada';
-      $event->save();
-
-     return redirect()->route('patient_appointments',\Hashids::encode($request->patient_id))->with('success', 'Se a guardado tu opinion referente al Médico : '.$medico->name.' '.$medico->lastName.'.');
-  }
-
-  if($request->rate == 6){
-    return back()->with('warning', 'El campo Calificación es requerido');
-  }
-  $request->validate([
-    'rate'=>'required',
-    'comentary'=>'max:200'
-  ]);
-
-
-  $calification = '';
-  switch ($request->rate) {
-case  Null:
-   $calification = 'Neutral';
-   break;
-case 1:
-   $calification = 'Pesimo';
-   break;
-case 2:
-   $calification = 'Malo';
-   break;
-case 3:
-   $calification = 'Regular';
-   break;
-case 4:
-   $calification = 'Buena';
-   break;
-case 5:
-   $calification = 'Excelente';
-   break;
-
- }
-
- $rate_medic1 = rate_medic::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->count();
- $rate_medic2 = rate_medic::where('patient_id',$request->patient_id)->where('medico_id',$request->medico_id)->first();
- if($rate_medic1 != 0){
-
-   $rate_medic2->delete();
- }
-
- $rate_medic = new rate_medic;
- $rate_medic->rate = $request->rate;
- $rate_medic->comentary = $request->comentary;
- $rate_medic->patient_id = $request->patient_id;
- $rate_medic->medico_id = $request->medico_id;
- if($medico->show_comentary == 'Si'){
-   $rate_medic->show = 'Si';
- }else{
-   $rate_medic->show = 'No';
- }
- $rate_medic->save();
-
- $rate_medicT = rate_medic::where('medico_id',$request->medico_id)->get();
- $count = rate_medic::where('medico_id',$request->medico_id)->count();
-
- $suma = 0;
-  foreach ($rate_medicT as $value) {
-    $suma = $suma + $value->rate;
-  }
-
-
-   $medico->calification = $suma / $count;
-   $medico->votes = $count;
-   $medico->save();
-
-   $event = event::find($request->event_id);
-   $event->status = 'calificada';
-   $event->save();
-
-  return redirect()->route('patient_appointments',\Hashids::encode($request->patient_id))->with('success', 'Se aguardado tu opinion referente al Médico : '.$medico->name.' '.$medico->lastName.'.');
-}
-
-
-///////////////////////
-
-
-
-
-
-
-
-
-
-$patient = patient::find($request->patient_id);
-$medico = medico::find($request->medico_id);
-// dd($request->medico_id);
-$notedefault = note::find($request->note_id);
-$noteCount = note::where('medico_id',$request->medico_id)->where('title',$notedefault->title)->where('type', 'customized')->count();
-
-
-if($noteCount == 0){
-  $note = new note;
-  $note->title = $notedefault->title;
-  $note->medico_id = $request->medico_id;
-  $note->Signos_vitales = $notedefault->Signos_vitales;
-  $note->Pruebas_de_laboratorio = $notedefault->Pruebas_de_laboratorio;
-  $note->type = 'customized';
-  $note->Signos_vitales_show = 'si';
-  $note->Motivo_de_atencion_show = 'si';
-  $note->Exploracion_fisica_show = 'si';
-  $note->Pruebas_de_laboratorio_show = 'si';
-  $note->Diagnostico_show = 'si';
-  $note->Afeccion_principal_o_motivo_de_consulta_show = 'si';
-  $note->Afeccion_secundaria_show = 'si';
-  $note->Pronostico_show = 'si';
-  $note->Tratamiento_y_o_recetas_show = 'si';
-  $note->Indicaciones_terapeuticas_show = 'si';
-  $note->Estado_mental_show = 'si';
-  $note->Resultados_relevantes_show = 'si';
-  $note->Manejo_durante_la_estancia_hospitalaria_show = 'si';
-  $note->Recomendaciones_para_vigilancia_ambulatoira_show = 'si';
-  $note->Otros_datos_show = 'si';
-  $note->Motivo_de_envio_show = 'si';
-  $note->Evolucion_y_actualizacion_del_cuadro_clinico_show = 'si';
-  $note->Motivo_del_egreso_show = 'si';
-  $note->Diagnosticos_finales_show = 'si';
-  $note->Resumen_de_evolucion_y_estado_actual_show = 'si';
-  $note->Problemas_clinicos_pendientes_show = 'si';
-  $note->Plan_de_manejo_y_tratamiento_show = 'si';
-  $note->Establecimiento_que_envia_show = 'si';
-  $note->Sugerencias_y_tratamiento_show = 'si';
-  $note->save();
-}else{
-    // dd('sd');
-  $note = note::where('medico_id',$request->medico_id)->where('title', $notedefault->title)->where('type', 'customized')->first();
-  // $note->Signos_vitales = $notedefault->Signos_vitales;
-  // $note->Pruebas_de_laboratorio = $notedefault->Pruebas_de_laboratorio;
-  // $note->save();
-}
-
-if($request->expedient_id == Null){
-  $expedient = Null;
-}else{
-  $expedient = expedient::find($request->expedient_id);
-}
-
-/////////////////////////////
-$vital_sign_config = vital_sign::find($request->vital_sign_config_id);
-
-if($request->Altura_show == Null){
-    $vital_sign_config->Altura_show = Null;
-}else{
-    $vital_sign_config->Altura_show = 'si';
-}
-if($request->Peso_show == Null){
-    $vital_sign_config->Peso_show = Null;
-}else{
-    $vital_sign_config->Peso_show = 'si';
-}
-if($request->Tensión_Arterial_show == Null){
-    $vital_sign_config->Tensión_Arterial_show = Null;
-}else{
-    $vital_sign_config->Tensión_Arterial_show = 'si';
-}
-if($request->Temperatura_Corporal_show == Null){
-    $vital_sign_config->Temperatura_Corporal_show = Null;
-}else{
-    $vital_sign_config->Temperatura_Corporal_show = 'si';
-}
-if($request->Frecuencia_Cardíaca_show == Null){
-    $vital_sign_config->Frecuencia_Cardíaca_show = Null;
-}else{
-    $vital_sign_config->Frecuencia_Cardíaca_show = 'si';
-}
-if($request->Frecuencia_Respiratoria_show == Null){
-    $vital_sign_config->Frecuencia_Respiratoria_show = Null;
-}else{
-    $vital_sign_config->Frecuencia_Respiratoria_show = 'si';
-}
-if($request->Oxigenación_show == Null){
-    $vital_sign_config->Oxigenación_show = Null;
-}else{
-    $vital_sign_config->Oxigenación_show = 'si';
-}
-if($request->Índice_de_Masa_Corporal_show == Null){
-    $vital_sign_config->Índice_de_Masa_Corporal_show = Null;
-}else{
-    $vital_sign_config->Índice_de_Masa_Corporal_show = 'si';
-}
-if($request->Porcentaje_de_Grasa_Corporal_show == Null){
-    $vital_sign_config->Porcentaje_de_Grasa_Corporal_show = Null;
-}else{
-    $vital_sign_config->Porcentaje_de_Grasa_Corporal_show = 'si';
-}
-if($request->Índice_de_Masa_Muscular_show == Null){
-    $vital_sign_config->Índice_de_Masa_Muscular_show = Null;
-}else{
-    $vital_sign_config->Índice_de_Masa_Muscular_show = 'si';
-}
-if($request->Cintura_show == Null){
-    $vital_sign_config->Cintura_show = Null;
-}else{
-    $vital_sign_config->Cintura_show = 'si';
-}
-if($request->Cadera_show == Null){
-    $vital_sign_config->Cadera_show = Null;
-}else{
-    $vital_sign_config->Cadera_show = 'si';
-}
-if($request->Perímetro_Cefálico_show == Null){
-    $vital_sign_config->Perímetro_Cefálico_show = Null;
-}else{
-    $vital_sign_config->Perímetro_Cefálico_show = 'si';
-}
-
-
-
-    $vital_sign_config->save();
-    return response()->json($request->all());
-
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-
-class CreateVitalSignsTable extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('vital_signs', function (Blueprint $table) {
-            $table->increments('id');
-
-            $table->string('Altura')->nullable();
-            $table->string('Altura show')->nullable();
-            $table->string('Peso')->nullable();
-            $table->string('Peso show')->nullable();
-            $table->string('Tensión Arterial')->nullable();
-            $table->string('Tensión Arterial show')->nullable();
-            $table->string('Temperatura Corporal')->nullable();
-            $table->string('Temperatura Corporal show')->nullable();
-            $table->string('Frecuencia Cardíaca')->nullable();
-            $table->string('Frecuencia Cardíaca show')->nullable();
-            $table->string('Frecuencia Respiratoria')->nullable();
-            $table->string('Frecuencia Respiratoria show')->nullable();
-            $table->string('Oxigenación')->nullable();
-            $table->string('Oxigenación show')->nullable();
-            $table->string('Índice de Masa Corporal')->nullable();
-            $table->string('Índice de Masa Corporal show')->nullable();
-            $table->string('Porcentaje de Grasa Corporal')->nullable();
-            $table->string('Porcentaje de Grasa Corporal show')->nullable();
-            $table->string('Índice de Masa Muscular')->nullable();
-            $table->string('Índice de Masa Muscular show')->nullable();
-            $table->string('Cintura')->nullable();
-            $table->string('Cintura show')->nullable();
-            $table->string('Cadera')->nullable();
-            $table->string('Cadera show')->nullable();
-            $table->string('Perímetro Cefálico')->nullable();
-            $table->string('Perímetro Cefálico show')->nullable();
-            $table->integer('note_id')->unsigned()->nullable();
-            $table->foreign('note_id')->references('id')->on('notes');
-            $table->integer('medico_id')->unsigned()->nullable();
-            $table->foreign('medico_id')->references('id')->on('medicos');
-            $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('vital_signs');
-    }
-}
-
-//signos vitales
-
-
-
-@elseif(Auth::check() and Auth::user()->hasRole('medico') and Auth::user()->medico->plan == Null)
-
-    <!-- Copia desde aqui abajo -->
-    <div class="box-dashboard" id="dashboard">
-      <div class="row">
-
-        <div class="col-12">
-          <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
-        </div>
-
-      </div>
-      <div class="row">
-
-        <div class="col-12">
-          <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-home fa-2"></i><span>Inicio</a>
-          </div>
-        <div class="col-12">
-          <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-thumbs-up"></i><span>Me gusta</span></a>
-        </div>
-        <div class="col-12">
-          <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-gift"></i><span>Compartir</span></a>
-        </div>
-      </div>
-      <div class="row py-1">
-        <div class="col-12">
-
-            <a href="{{route('medico_diary', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
-
-        </div>
-        <div class="col-12">
-          <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
-        </div>
-        {{-- <div class="col-12">
-          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-cogs"></i><span>Panel de control</span></a>
-        </div> --}}
-
-          <div class="col-12">
-
-          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
-        </div>
-
-        <div class="col-12">
-          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="col-12">
-          <a href="{{route('medico_diary',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
-        </div>
-
-        <div class="col-12">
-          <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
-        </div>
-
-        <div class="col-12">
-          <a href="{{route('planes_medic',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
-        </div>
-
-        <div class="col-12">
-          <a href="{{route('medico_diary',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
-        </div>
-
-        {{-- <div class="col-12">
-          <a href="{{route('reminders_medico',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
-        </div> --}}
-        <div class="col-12">
-          <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Descarga tu app</span></a>
-        </div>
-
-      </div>
-    </div>
-    <!-- Hasta aqui -->
-  @elseif(Auth::check() and Auth::user()->hasRole('medico'))
-  <!-- Copia desde aqui abajo -->
-  <div class="box-dashboard" id="dashboard">
-    <div class="row">
-
-      <div class="col-12">
-        <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
-      </div>
-
-    </div>
-    <div class="row">
-      @if(Auth::user()->medico->plan != Null)
-        <div class="col-12">
-          <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic" style="border-bottom:solid 1px white"><strong><span style="font-size:14px;color:white;" class="p-2 m-1"> @if(Auth::user()->medico->plan == 'plan_profesional') Plan: Plan Profesional @elseif(Auth::user()->medico->plan == 'plan_agenda') Plan: Plan Mi Agenda @elseif(Auth::user()->medico->plan == 'plan_platino') Plan: Plan Platino
-          @elseif(Auth::user()->medico->plan == 'plan_basico') Plan: Plan Basico
-          @else @endif</span></strong></a>
-        </div>
+@extends('layouts.app')
+
+@section('content')
+
+  <div class="row">
+    <div class="col-12 mb-3">
+      @if($type == 'sin confirmar')
+        <h3 class="text-center font-title">Citas Nuevas / sin confirmar
+      @elseif($type == 'Citas confirmadas o Creadas por médico')
+        <h3 class="text-center font-title">Citas Citas confirmadas o Creadas por médico
+      @elseif($type == 'Pasada y sin realizar')
+        <h3 class="text-center font-title">Citas Pasadas y sin realizar
+        @elseif($type == 'todas')
+          <h3 class="text-center font-title">Citas
+         @elseif($type == 'Realizadas y por cobrar')
+            <h3 class="text-center font-title">Citas Realizadas y por cobrar
+      @else
+        <h3 class="text-center font-title">Citas {{$type}}
       @endif
-      <div class="col-12">
-        <a href="{{route('home')}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-home fa-2"></i><span>Inicio</a>
-        </div>
-      <div class="col-12">
-        <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-thumbs-up"></i><span>Me gusta</span></a>
-      </div>
-      <div class="col-12">
-        <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-gift"></i><span>Compartir</span></a>
-      </div>
+        con el paciente: {{$patient->nameComplete}}
+        </h3>
     </div>
-    <div class="row py-1">
+  </div>
+  {{-- MENU DE PACIENTES --}}
+  {{-- @include('medico.includes.main_medico_patients') --}}
+  <div class="row mt-4 mb-1">
+    <div class="col-12 mb-1">
 
-      <div class="col-12">
+      @if($type == 'sin confirmar')
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
 
-        @if (Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-          @if(Auth::user()->medico->plan == 'plan_agenda')
-            <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
-          @else
-            <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-bell"></i> <span>Citas <span style="font-size:10px;background:rgb(222, 46, 8);border-radius:10px;padding:5px;border-color:white;">Nuevas ({{Auth::user()->medico->notification_number}})</span> </span></a>
-          @endif
-        @endif
-
-      </div>
-      <div class="col-12">
-        <a href="{{route('medico.edit', Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-user fa-2"></i><span>Editar Perfil</span></a>
-      </div>
-      {{-- <div class="col-12">
-        <a href="{{route('medico_diary',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-cogs"></i><span>Panel de control</span></a>
-      </div> --}}
-
-
-    <div class="col-12">
-
-        <a href="{{route('medico_patients',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-address-card"></i><span>Pacientes</span></a>
-      </div>
-
-      <div class="col-12">
-        <a href="{{route('calification_medic',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="far fa-list-alt"></i><span>Calificación</span></a>
-      </div>
-
-    </div >
-
-    <div class="row">
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2 disabled"> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
 
 
-      <div class="col-12">
-        <a href="{{route('medico_diary',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-book"></i><span>Mi Agenda</span></a>
-      </div>
+      @elseif($type == 'Realizadas y por cobrar')
 
-      <div class="col-12">
-        <a href="{{route('medico_schedule',Auth::user()->medico_id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-edit"></i><span>Editar Horario</span></a>
-      </div>
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
 
-      <div class="col-12">
-        <a href="{{route('planes_medic',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Planes</span></a>
-      </div>
-      @if (Auth::user()->medico->plan == 'plan_agenda' or Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-      <div class="col-12">
-        <a href="{{route('income_medic',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Ingresos</span></a>
-      </div>
-      <div class="col-12">
-        <a href="{{route('medico_reminders',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Recordatorios</span></a>
-      </div>
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2"> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white disabled" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
+
+      @elseif($type == 'Pasada y por realizar')
+
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2"> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2 disabled" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
+
+      @elseif($type == 'confirmadas')
+
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2"> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2 disabled"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
+      @elseif($type == 'Pagadas y Pendientes')
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2"> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2 disabled"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
+      @elseif($type == 'Pagadas y Completadas')
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2" disabled> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2 disabled"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
+      @elseif($type == 'todas')
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2 disabled">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2" disabled> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
+      @elseif($type == 'Pasada y sin realizar')
+
+
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2" disabled> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2 disabled" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2"> Canceladas</a>
+      @else
+          <a href="{{route('patient_appointments_all',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-success mt-2">Todas</a>
+          {{-- @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino') --}}
+
+            <a href="{{route('patient_appointments_no_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-warning mt-2" disabled> Nuevas / sin confirmar</a>
+            <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-primary mt-2"> Citas confirmadas o Creadas por médico</a>
+          {{-- @endif --}}
+          <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-info mt-2"> Pagadas y Pendientes</a>
+          <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn mt-2 text-white" style="background:rgb(92, 40, 221)">Realizadas y por cobrar</a>
+          <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn text-white mt-2" style="background:rgb(119, 38, 88)">Pasadas y sin realizar</a>
+          <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-secondary mt-2"> Completadas</a>
+          <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-danger mt-2 disabled"> Canceladas</a>
       @endif
-      @if ( Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-      <div class="col-12">
-        <a href="{{route('medico_assistants',Auth::user()->medico->id)}}" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-clipboard-list"></i><span>Asistentes</span></a>
-      </div>
-    @endif
-      <div class="col-12">
-        <a href="#" class="btn btn-block btn-config-dashboard color-medic"><i class="fas fa-mobile-alt"></i><span>Descarga tu app</span></a>
-      </div>
 
     </div>
   </div>
-  <!-- Hasta aqui -->
+
+    @if($type == 'sin confirmar')
+<div class="">
+  <p class="text-justify text-secondary" style="font-size:12px"> Las Citas "Nuevas / sin confirmar" son las citas agendadas por los pacientes, a travez de su cuenta Médicossi. @if ($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino') (Debes tener activo almenos el plan "Profesional" para que los pacientes puedan realizar esta acción). @endif</p>
+</div>
+
+@endif
+
+  @if($appointments->first() != Null)
+    <div class="row">
+      @foreach ($appointments as $app)
+        <div class="col-lg-12">
+          <div class="card date-card my-2">
+            <div class="row">
+              <div class="col-lg-4 col-sm-4 col-12">
+                <div class="mt-2">
+                  <label for="" class="font-title-grey mt-1"> Paciente: </label>{{$app->patient->name}} {{$app->patient->lastName}} <p><a href="{{route('medico.edit',\Hashids::encode(request()->id))}}"><strong></strong></a></p>
+                  <label for="" class="font-title-grey">Tipo de Cita:</label> <p>{{$app->title}}</p>
+                  {{-- <label for="" class="font-title-grey">Especialidad del Medico:</label> <p>{{$app->medico->scpecialty}}</p> --}}
+                  @isset($app->descriptión)
+                    Mensaje o descripción: <p>{{$app->descriptión}}</p>
+                  @else
+                    Mensaje o descripción:  <p style="color:rgb(153, 153, 158)">"No Aplica"</p>
+                  @endisset
+                </div>
+              </div>
+              <div class="col-lg-4 col-sm-4 col-12">
+                <div class="mt-2">
+
+                  <label for="" class="font-title-grey">Fecha:</label> <p>{{\Carbon\Carbon::parse($app->start)->format('d-m-Y')}}</p>
+                  <label for="" class="font-title-grey">Hora:</label> <p>{{\Carbon\Carbon::parse($app->start)->format('H:i')}}</p>
+                  <label for="" class="font-title-grey">Estado:</label> <p>{{$app->state}}</p>
+                </div>
+              </div>
+              <div class="col-lg-4 col-sm-4 col-12">
+                <div class="mt-2">
+                  <label for="" class="font-title-grey">Fecha de Creacion:</label> <p>{{\Carbon\Carbon::parse($app->created_at)->format('d-m-Y')}}</p>
+
+                  <label for="" class="font-title-grey">Solicitada Por:</label> <p>@if($app->stipulated == 'Paciente') Paciente: {{$app->patient->name}} {{$app->patient->lastName}}@else Medico: {{$app->medico->name}} {{$app->medico->lastName}}
+
+                  @endif
+                  {{-- <label for="" class="font-title-grey">Calificación:</label> <p>{{$app->calification}}</p>  --}}
+                  {{-- <label for="" class="font-title-grey">Comentario:</label> <p>{{$app->comentary}}</p> --}}
+                </p>
+                <div class="form-inline">
+                  @if($app->confirmed_medico == 'No' and $app->state != 'Rechazada/Cancelada' and $app->state != 'Pagada y Completada')
+                    <a href="{{route('edit_appointment',['m_id'=>\Hashids::encode(request()->id),'p_id'=>\Hashids::encode($app->patient_id),'app_id'=>\Hashids::encode($app->id)])}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Editar Cita"><i class="far fa-edit"></i></a>
+                    @cita_confirm
+                    <a onclick="loader()" href="{{route('appointment_confirm',\Hashids::encode($app->id))}}" class="btn btn-success ml-2" data-toggle="tooltip" data-placement="top" title="Confirmar Cita"><i class="fas fa-check"></i></a>
+                    @else
+                    <a href="#" class="btn btn-success ml-2 disabled" data-toggle="tooltip" data-placement="top" title="Confirmar Cita"><i class="fas fa-check"></i></a>
+                    @endcita_confirm
+                @elseif($app->state == 'Rechazada/Cancelada' or $app->state == 'Pagada y Completada')
+
+                @elseif($app->stipulated == 'Medico' or $app->confirmed_medico == 'Si')
+                    <a href="{{route('edit_appointment',['m_id'=>\Hashids::encode($app->medico_id),'p_id'=>\Hashids::encode($app->patient_id),'app_id'=>\Hashids::encode($app->id)])}}" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Editar Cita"><i class="far fa-edit"></i></a>
+                @endif
+                  <a class="btn btn-secondary ml-2" href="" data-toggle="tooltip" data-html="true" title="<em>Acciones Realizadas</em>"><i class="fas fa-list"></i></a>
+                     <strong class="ml-1">Confirmada:</strong><span>{{$app->confirmed_medico}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    @endforeach
+    <div class="card-heading">
+      {{$appointments->appends(Request::all())->links()}}
+    </div>
+  </div>
+@else
+  <div class="text-center">
+    <h5>No ahi registro de citas</h5>
+  </div>
+
+@endif
+
+@endsection

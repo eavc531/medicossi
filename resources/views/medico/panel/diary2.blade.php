@@ -1,334 +1,392 @@
 @extends('layouts.app-panel')
 @section('css')
-<link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
-<link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
-<style media="screen">
-.fc-event {
-border-width: 1px;
-}
+    <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar/fullcalendar.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('fullcalendar\tema_boostrap_descargado\tema_boostrap.css')}}">
+
+    <style media="screen">
+    .fc-event {
+        border-width: 1px;
+    }
+
+
 </style>
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+{{-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.css"> --}}
+{{-- <link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' /> --}}
+
 @endsection
+{{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
+
 @section('content')
-{{-- //ALGUNOS PERMISOS PARA LAS CITAS  --}}
-@if(Auth::user()->role == 'Asistente')
-<input type="hidden" name="" value="{{Auth::user()->assistant->cita_confirm}}" id="cita_confirm">
-<input type="hidden" name="" value="{{Auth::user()->role}}" id="auth_role">
-<input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_edit}}" id="cita_edit">
-<input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_change_date}}" id="cita_change_date">
-<input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_payment}}" id="cita_confirm_payment">
-<input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_completed}}" id="cita_confirm_completed">
-<input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_cancel}}" id="cita_cancel">
-@endif
-{{-- // --}}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="text-center font-title">Mi Agenda</h2>
-                    <button type="button" class="btn btn-green" data-toggle="modal" data-target="#myModal2">
-                    Right Sidebar Modal
-                    </button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-12">
-                </div>
-            </div>
-            <div class="alert-info p-3 m-2" style="display:none" id="alert_carga5">
-                Procesando...
-            </div>
-            <hr>
-            @if($countEventSchedule != 0)
-            {{-- //busqueda --}}
-            @cita_create
-            <div class="form-inline my-3">
-                <label for="" class="mb-0 mx-2">Agendar con: </label>
-                <input type="text" name="" value="" class="form-control sizeSearch" placeholder="Cédula / Nombre de Paciente" id="input_search">
-                <button type="button" name="button" class="btn btn-azul  mx-2" onclick="search_medic()">Buscar</button>
-                <button type="button" name="button" class="btn btn-green " onclick="vaciar_search()">vaciar</button>
-                <div class="" id="result_search">
-                </div>
-            </div>
-            @else
-            <div class="form-inline my-3">
-                <label for="" class="mb-0 mx-2">Agendar con:</label>
-                <input type="text" name="" value="" class="form-control sizeSearch" placeholder="Cédula / Nombre de Paciente" id="input_search" disabled>
-                <button type="button" name="button" class="btn btn-azul  mx-2" onclick="search_medic()" disabled>Buscar</button>
-                <button type="button" name="button" class="btn btn-green" onclick="vaciar_search()" disabled>vaciar</button>
-                <div class="" id="result_search">
-                </div>
-            </div>
-            @endcita_create
-            @endif
-            @include('medico.includes.alert_calendar')
-            @include('medico.includes.card_edit')
-            @include('medico.includes.card_personal')
-            @include('medico.includes.modals_diary')
-            {{-- // --}}
-            {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
-            {{-- IF SHOW CALENDAR --}}
-            @if($countEventSchedule != 0)
-            <div id='calendar' style=""></div>
-            {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
-            <div class="p-3 mt-2 borderOptions">
-                <div class="row text-center">
-                    <div class="col">
-                        <input type="radio" class="radio1" value="Disponible" name="opcion" onclick="filtro_todas()"/><br />
-                        <label for="Disponible" class="fontSizeLabel">Todas</label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" class="radio2" value="A" name="opcion" onclick="filtro_title('Cita por Internet')"/><br />
-                        <label for="" class="fontSizeLabel">Cita por Internet</label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" class="radio3" value="A" name="opcion" onclick="filtro_state('Pagada y Pendiente')"/><br />
-                        <label for="" class="fontSizeLabel">Pagada y Pendiente</label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" class="radio4" value="A" name="opcion" onclick="filtro_state('Pagada y Completada')"/><br/>
-                        <label for="" class="fontSizeLabel">Pagada y Completada</label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" class="radio5" value="A" name="opcion" onclick="filtro_state('Pendiente')"/><br />
-                        <label for="" class="fontSizeLabel">Pendiente </label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" class="radio6" value="A" name="opcion" onclick="filtro_state('Pasada y por Cobrar')"/><br />
-                        <label for="" class="fontSizeLabel">Pasada y por Cobrar</label>
-                    </div>
-                    <div class="col">
-                        <input class="radio8" type="radio" value="A" name="opcion" onclick="filtro_confirmed_medico('No')"/><br />
-                        <label for="" class="fontSizeLabel">Sin Confirmar</label>
-
-                    </div>
-                    <div class="col">
-                        <input class="radio9" type="radio" value="A" name="opcion" onclick="filtro_state('Realizada y por cobrar')"/><br />
-                        <label for="" class="fontSizeLabel">Realizada y por cobrar</label>
-                    </div>
-
-                </div>
-            </div>
-            @include('medico.panel.config_reminder')
-            <div class=" mt-5 mb-5" >
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <h4 class="font-title-blue text-center mt-3">Horario de trabajo</h4>
-                    </div>
-                </div>
+    {{-- //ALGUNOS PERMISOS PARA LAS CITAS  --}}
+    @if(Auth::user()->role == 'Asistente')
+        <input type="hidden" name="" value="{{Auth::user()->assistant->cita_confirm}}" id="cita_confirm">
+        <input type="hidden" name="" value="{{Auth::user()->role}}" id="auth_role">
+        <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_edit}}" id="cita_edit">
+        <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_change_date}}" id="cita_change_date">
+        <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_payment}}" id="cita_confirm_payment">
+        <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_confirm_completed}}" id="cita_confirm_completed">
+        <input type="hidden" name="" value="{{Auth::user()->assistant->permission->cita_cancel}}" id="cita_cancel">
+    @endif
+    {{-- // --}}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-9 col-12">
                 <div class="row">
                     <div class="col-12">
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="bg-azul">
-                                    <tr>
-                                        <th class="text-center">Lunes</th>
-                                        <th class="text-center">Martes</th>
-                                        <th class="text-center">Miercoles</th>
-                                        <th class="text-center">Jueves</th>
-                                        <th class="text-center">Viernes</th>
-                                        <th class="text-center">Sabado</th>
-                                        <th class="text-center">Domingo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            @foreach ($lunes as $day)
-                                            <ul>
-                                                <li>
-                                                    {{$day->start}}
-                                                    a
-                                                    {{$day->end}}
-                                                </li>
-                                            </ul>
-                                            <hr>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach ($martes as $day)
-                                            <ul>
-                                                <li>
-                                                    {{$day->start}}
-                                                    a
-                                                    {{$day->end}}
-                                                </li>
-                                            </ul>
-                                            <hr>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach ($miercoles as $day)
-                                            <ul>
-                                                <li>
-                                                    {{$day->start}}
-                                                    a
-                                                    {{$day->end}}
-                                                </ul>
-                                                <hr>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach ($jueves as $day)
-                                            <ul>
-                                                <li>
-                                                    {{$day->start}}
-                                                    a
-                                                    {{$day->end}}
-                                                </ul>
-                                                <hr>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach ($viernes as $day)
-                                            <ul>
-                                                <li>
-                                                {{$day->start}}
-                                                a
-                                                {{$day->end}}
-                                                </li>
-                                            </ul>
-                                            <hr>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach ($sabado as $day)
-                                            <ul>
-                                                <li>
-                                                {{$day->start}}
-                                                a
-                                                {{$day->end}}
-                                                </li>
-                                            </ul>
-                                            <hr>
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @foreach ($domingo as $day)
-                                            <ul>
-                                                <li>
-                                                {{$day->start}}
-                                                a
-                                                {{$day->end}}
-                                                </li>
-                                            </ul>
-                                            <hr>
-                                            @endforeach
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="text-left text-md-right">
-                                <a href="{{route('medico_schedule',[\Hashids::encode($medico->id),'back'=>'medico_diary'])}}" class="btn btn-success ">Editar</a>
+                        <h2 class="text-center font-title">Mi Agenda</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                    </div>
+                </div>
+                <div class="alert-info p-3 m-2" style="display:none" id="alert_carga5">
+                    Procesando...
+                </div>
+
+                <hr>
+                @if($countEventSchedule != 0)
+                    {{-- //busqueda --}}
+                    @cita_create
+                    <label for="" class="mt-2">Agendar con:</label>
+                    <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search">
+                    <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()">Buscar</button>
+                    <button type="button" name="button" class="btn btn-secondary btn-sm" onclick="vaciar_search()">vaciar</button>
+                    <div class="" id="result_search">
+                    </div>
+                @else
+                    <label for="" class="mt-2">Agendar con:</label>
+                    <input type="text" name="" value="" class="" placeholder="cedula/nombre de Paciente" id="input_search" disabled>
+                    <button type="button" name="button" class="btn btn-success btn-sm" onclick="search_medic()" disabled>Buscar</button>
+                    <button type="button" name="button" class="btn btn-secondary btn-sm text-secondary" onclick="vaciar_search()" disabled>vaciar</button>
+                    <div class="" id="result_search">
+                    </div>
+                    @endcita_create
+
+                @endif
+
+                @include('medico.includes.alert_calendar')
+                @include('medico.includes.card_edit')
+                @include('medico.includes.card_personal')
+
+                @include('medico.includes.modals_diary')
+                {{-- // --}}
+
+                {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
+                {{-- IF SHOW CALENDAR --}}
+                @if($countEventSchedule != 0)
+
+                    <div id='calendar' style=""></div>
+                    {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
+                    <div class="row text-center mt-2">
+                        <div class="col">
+                            <div class="" style="width:15px;height:15px;background:">
                             </div>
+                            <input type="radio" value="Disponible" name="opcion" onclick="filtro_todas()"/><br />
+                            <label for="" class="mx-2" style="background:rgb(230, 230, 230)">Todas</label>
+                        </div>
+                        <div class="col">
+                            <input type="radio" value="A" name="opcion" onclick="filtro_title('Cita por Internet')"/><br />
+                            <label for="" style="background:rgb(35, 44, 173);color:white">Cita por internet</label>
+                        </div>
+                        <div class="col">
+
+                            <input type="radio" value="A" name="opcion" onclick="filtro_state('Pagada y Pendiente')"/><br />
+                            <label for="" style="background:rgb(233, 21, 21)">Pagada y Pendiente</label>
+
+                        </div>
+                        {{-- <div class="col">
+                        <input type="radio" value="A" name="opcion" onclick="filtrar('Cita por internet')"/><br />
+                        <label for="">Paciente valorado</label>
+                    </div> --}}
+                    <div class="col">
+                        <input type="radio" value="A" name="opcion" onclick="filtro_state('Pagada y Completada')"/><br/>
+                        <label for="" style="border:solid 1px black">Pagada y Completada</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" value="A" name="opcion" onclick="filtro_state('Pendiente')"/><br />
+                        <label for=""  style="background:rgba(179, 193, 173, 0.75)">Pendiente y por Cobrar</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" value="A" name="opcion" onclick="filtro_state('Pasada y por Cobrar')"/><br />
+                        <label for="" style="background:rgb(190, 61, 13)">Pasada y por Cobrar</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" value="A" name="opcion" onclick="filtro_payment_method('Aseguradora')"/><br />
+                        <label for="" style="background:rgb(255, 152, 152)">Aseguradora</label>
+                    </div>
+                    <div class="col">
+                        <input type="radio" value="A" name="opcion" onclick="filtro_confirmed_medico('No')"/><br />
+                        <label for="" style="background:rgb(227, 227, 227)">Sin Confirmar</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="radio" value="A" name="opcion" onclick="filtro_state('Realizada y por cobrar')"/><br />
+                        <label for="" style="background:rgb(246, 43, 244)">Realizada y por cobrar</label>
+
+                    </div>
+                </div>
+
+
+                @include('medico.panel.config_reminder')
+
+                <div class="card mt-5 mb-5" >
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h4 class="font-title-blue text-center mt-3">Horario de trabajo</h4>
                         </div>
                     </div>
-                </div>
-                @else
-                <div class="card mt-5 mb-5">
-                    <div class="card-header">
-                        <h4>Bienevenido al Panel Mi Agenda</h4>
-                    </div>
-                    <div class="card-body">
-                        <h5>Para poder ver el Calendario de agenda y todas sus fucniones debe Otorgar un Horario de Trabajo</h5>
-                        @plan_agenda
-                        <a href="{{route('medico_schedule',\Hashids::encode($medico->id))}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
-                        @endplan_agenda
-                    </div>
-                </div>
-                 @endif
-            </div>
-        </div>
-        <div class="modal right fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
-                    <div class="modal-dialog animated bounceInRight" role="document">
-                        <div class="modal-content">
-                            <div class="modal-body px-0 pb-0">
-                                <div class="col-12">
-                                    @cita_person_create
-                                    <div id="dashboard">
-                                        <img  class="imgEventoPersonal" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
-                                        <div class="col-12 border-head-panel text-center">
-                                            <span>Médico:</span>
-                                            <span>{{$medico->nameComplete}}</span>
-                                        </div>
-                                        <div class="border-panel-blue my-1">
-                                            <div class="form-group text-center">
-                                                <button type="button" class="btn btn-sm btn-green" data-toggle="modal" data-target="#info1">
-                                                <i class="fas fa-info"></i> Ayuda
-                                                </button>
-                                                <div class="form-group mt-2">
-                                                    <label for="" class="label-title ">Agendar Evento Personal</label>
-                                                </div>
-                                                {!!Form::open(['route'=>'event_personal_store','method'=>'POST','id'=>'form_event','name'=>'form_event'])!!}
-                                                {!!Form::hidden('medico_id',$medico->id)!!}
-                                                {!!Form::select('title',['Personal'=>'Personal','Ausente'=>'Ausente'],null,['class'=>'form-control form-control-sm','id'=>'title6','Tipo de Evento'=>'Tipo de Cita'])!!}
-                                                <input class="form-control form-control-sm my-2" type="text" placeholder="Descripción (Opcional)" id="description6" name="description">
-                                                <label for="" class="mt-2 font-title">Datos de Inicio</label>
-                                                <div class="form-inline">
-                                                    <div class="col-12 my-1">
-                                                        <div class=" font-title">
-                                                            Fecha:
-                                                            {!!Form::date('date_start',null,['class'=>'form-control form-control-sm','id'=>'date_start2'])!!}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-inline">
-                                                    <div class="col-12 my-3">
-                                                        <div class=" font-title">
-                                                            Hora:
-                                                            {!!Form::select('hourStart',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control form-control-sm','id'=>'hourStart2','placeholder'=>'--'])!!}
-                                                            {!!Form::select('minsStart',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control form-control-sm','id'=>'minsStart2','placeholder'=>'--'])!!}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <label for="" class="mt-2 font-title">Datos de Culminación</label>
-                                                <div class="form-inline">
-                                                    <div class="col-12 my-3">
-                                                        <div class=" font-title">
-                                                            Hora:
-                                                            {!!Form::select('hourEnd',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control form-control-sm','id'=>'hourEnd2','placeholder'=>'--'])!!}
-                                                            {!!Form::select('minsEnd',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control form-control-sm','id'=>'minsEnd2','placeholder'=>'--'])!!}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div id="alert_error" class="alert alert-warning alert-dismissible fade show text-left hiddenbutton" role="alert">
-                                                    <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
-                                                    <p id="text_error" style="font-size:12px"></p>
-                                                </div>
-                                                <div id="alert_success" class="alert alert-success alert-dismissible fade show text-left hiddenbutton" role="alert">
-                                                    <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
-                                                    <p id="text_success" style="font-size:12px"></p>
-                                                </div>
-                                                <div class="row text-center mt-1">
-                                                    <div class="col-lg-6">
-                                                        @if($countEventSchedule != 0)
-                                                        <button type="submit" name="button" class="btn btn-azul btn-sm">Guardar</button>
-                                                        @else
-                                                        <button onclick=""type="button" class="btn btn-azul btn-sm" readOnly>Guardar</button>
-                                                        @endif
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <button data-dismiss="modal" onclick="vaciar()" type="button"class="btn btn-green btn-sm">Cancelar</button>
-                                                    </div>
-                                                    {!!Form::close()!!}
-                                                </div>
-                                            </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Lunes</th>
+                                            <th>Martes</th>
+                                            <th>Miercoles</th>
+                                            <th>Jueves</th>
+                                            <th>Viernes</th>
+                                            <th>Sabado</th>
+                                            <th>Domingo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                @foreach ($lunes as $day)
+                                                    <ul>
+                                                        <li>
+                                                            {{$day->start}}
+                                                            a
+                                                            {{$day->end}}
+                                                        </li>
+                                                        <hr>
+                                                    </ul>
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                @foreach ($martes as $day)
+                                                    <ul>
+                                                        <li>
+                                                            {{$day->start}}
+                                                            a
+                                                            {{$day->end}}
+
+                                                        </li>
+
+                                                        <hr>
+                                                    </ul>
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                @foreach ($miercoles as $day)
+                                                    <ul>
+                                                        <li>
+                                                            {{$day->start}}
+                                                            a
+                                                            {{$day->end}}
+
+
+                                                            <hr>
+                                                        </ul>
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    @foreach ($jueves as $day)
+                                                        <ul>
+                                                            <li>
+                                                                {{$day->start}}
+                                                                a
+                                                                {{$day->end}}
+
+
+                                                                <hr>
+                                                            </ul>
+                                                        @endforeach
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($viernes as $day)
+                                                            <ul>
+                                                                <li>
+                                                                    {{$day->start}}
+                                                                    a
+                                                                    {{$day->end}}
+
+                                                                </li>
+
+                                                                <hr>
+                                                            </ul>
+                                                        @endforeach
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($sabado as $day)
+                                                            <ul>
+                                                                <li>
+                                                                    {{$day->start}}
+                                                                    a
+                                                                    {{$day->end}}
+
+                                                                </li>
+
+                                                                <hr>
+                                                            </ul>
+                                                        @endforeach
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($domingo as $day)
+                                                            <ul>
+                                                                <li>
+                                                                    {{$day->start}}
+                                                                    a
+                                                                    {{$day->end}}
+
+                                                                </li>
+                                                                <hr>
+                                                            </ul>
+                                                        @endforeach
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+
+                                            </tfoot>
+                                        </table>
+                                        <div class="card-footer text-right">
+                                            <a href="{{route('medico_schedule',\Hashids::encode($medico->id))}}" class="btn btn-success ">Editar</a>
                                         </div>
                                     </div>
-                                    @endcita_person_create
                                 </div>
                             </div>
                         </div>
+                    @else
+                        <div class="card mt-5 mb-5">
+                            <div class="card-header">
+                                <h4>Bienevenido al Panel Mi Agenda</h4>
+                            </div>
+                            <div class="card-body">
+                                <h5>Para poder ver el Calendario de agenda y todas sus fucniones debe Otorgar un Horario de Trabajo</h5>
+                                @plan_agenda
+                                <a href="{{route('medico_schedule',\Hashids::encode($medico->id))}}" class="btn btn-primary">Otorgar un Horario de Trabajo</a>
+                                @endplan_agenda
+                            </div>
+                        </div>
+                        {{-- IF SHOW CALENDAR --}}
+                    @endif
+                </div>
+                {{-- </div> --}}
+                <div class="col-12 col-lg-3">
+                    @cita_person_create
+
+                    <div id="dashboard mt-2" style="margin-top:60px">
+                        <img  class="img-dashboard" src="{{asset('img/Medicossi-Marca original-04.png')}}" alt="">
+                        <div class="col-12 border-head-panel text-center">
+                            <span>Médico:</span>
+                            <span>{{$medico->nameComplete}}</span>
+                        </div>
+                        {{-- <div class="col-12 border-panel-green text-center my-1">
+                        <a class="btn btn-block btn-config-green" href="{{route('medico_schedule',\Hashids::encode($medico->id))}}">
+                        Editar horario de consulta
+                    </a>
+                </div> --}}
+                <div class="border-panel-blue my-1">
+                    <div class="form-group text-center">
+                        <button type="button" class="btn-info btn" data-toggle="modal" data-target="#info1"><i class="fas fa-info mr-2"></i>Ayuda</button>
+                        <div class="form-group" style="margin-top:35px">
+                            <label for="" class="label-title ">Agendar Evento Personal</label>
+                        </div>
+
+                        {!!Form::open(['route'=>'event_personal_store','method'=>'POST','id'=>'form_event','name'=>'form_event'])!!}
+                        {!!Form::hidden('medico_id',$medico->id)!!}
+                        {!!Form::select('title',['Personal'=>'Personal','Ausente'=>'Ausente'],null,['class'=>'form-control input-sm','id'=>'title6','Tipo de Evento'=>'Tipo de Cita'])!!}
+
+                        <input class="form-control input-sm my-2" type="text" placeholder="Descripción (Opcional)" id="description6" name="description">
+                        <label for="" class="mt-2 font-title">Datos de Inicio</label>
+                        <div class="row">
+
+                            <div class="col-4 font-title">
+                                Fecha
+                            </div>
+                            <div class="col-8">
+                                {!!Form::date('date_start',null,['class'=>'form-control input-sm','id'=>'date_start2'])!!}
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-3 font-title">
+                                Hora
+
+                            </div>
+                            <div class="form-inline">
+                                {!!Form::select('hourStart',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control input-sm','id'=>'hourStart2','placeholder'=>'--'])!!}
+
+                                {!!Form::select('minsStart',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control input-sm','id'=>'minsStart2','placeholder'=>'--'])!!}
+
+                                {{-- {!!Form::select('startFormatHour',['am'=>'am','pm'=>'pm'],null,['id'=>'startFormatHour3','class'=>'form-control input-sm  mb-1'])!!} --}}
+                            </div>
+
+                        </div>
+                        <label for="" class="mt-2 font-title">Datos de Culminacion</label>
+
+                        <div class="row mt-1">
+
+                            <div class="col-4 font-title">
+                                Hora
+                            </div>
+                            <div class="form-inline">
+                                {!!Form::select('hourEnd',['00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09','10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14','15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19','20'=>'20','21'=>'21','22'=>'22','23'=>'23'],null,['class'=>'form-control input-sm','id'=>'hourEnd2','placeholder'=>'--'])!!}
+
+                                {!!Form::select('minsEnd',['00'=>'00','15'=>'15','30'=>'30','45'=>'45'],null,['class'=>'form-control input-sm','id'=>'minsEnd2','placeholder'=>'--'])!!}
+
+                            </div>
+
+                        </div>
+
+                        <div id="alert_error" class="alert alert-warning alert-dismissible fade show text-left" role="alert" style="display:none">
+                            <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
+                            <p id="text_error" style="font-size:12px"></p>
+                        </div>
+
+                        <div id="alert_success" class="alert alert-success alert-dismissible fade show text-left" role="alert" style="display:none">
+                            <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
+                            <p id="text_success" style="font-size:12px"></p>
+                        </div>
+
+                        <div class="col-12 text-center mt-2 row">
+
+
+
+                            <div class="col-lg-6">
+                                @if($countEventSchedule != 0)
+                                    <button type="submit" name="button" class="btn btn-config-blue">Guardar</button>
+                                    {{-- <button onclick="store_event()"type="button" class="btn btn-config-blue">Guardar</button> --}}
+                                @else
+                                    <button onclick=""type="button" class="btn btn-config-blue" readOnly>Guardar</button>
+                                @endif
+                                {{-- <button type="submit" class="btn btn-config-blue">Guardar</button> --}}
+                            </div>
+                            <div class="col-lg-6">
+                                <button onclick="vaciar()" type="button"class="btn btn-config-secondary">Cancelar</button>
+                            </div>
+                            {!!Form::close()!!}
+                        </div>
                     </div>
+                </div>
+            </div>
+            @endcita_person_create
         </div>
     </div>
 </div>
-    {{-- </div> --}}
-    {{-- <button onclick="filtrar()" type="button" name="button">Filtrar</button> --}}
-    {{-- <input type="text" name="" value="" id="input1"> --}}
-    @isset($days_hide)
+{{-- </div> --}}
+
+
+
+{{-- <button onclick="filtrar()" type="button" name="button">Filtrar</button> --}}
+{{-- <input type="text" name="" value="" id="input1"> --}}
+
+@isset($days_hide)
     <input id="lunes" type="hidden" name="" value="{{$days_hide['lunes']}}">
     <input id="martes" type="hidden" name="" value="{{$days_hide['martes']}}">
     <input id="miercoles" type="hidden" name="" value="{{$days_hide['miercoles']}}">
@@ -336,26 +394,32 @@ border-width: 1px;
     <input id="viernes" type="hidden" name="" value="{{$days_hide['viernes']}}">
     <input id="sabado" type="hidden" name="" value="{{$days_hide['sabado']}}">
     <input id="domingo" type="hidden" name="" value="{{$days_hide['domingo']}}">
+
     <input id="max_lunes" type="hidden" name="" value="{{$lunes_libre_start = '11:30'}}">
     <input id="max_lunes" type="hidden" name="" value="{{$lunes_libre_end = '13:30'}}">
+
     <input id="max_hour" type="hidden" name="" value="{{$max_hour}}">
     <input id="min_hour" type="hidden" name="" value="{{$min_hour}}">
-    @endisset
-    <div class="modal fade" id="info1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-azul">
-                    <h5 class="modal-title" id="exampleModalLabel">Como agendar una cita</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+
+@endisset
+<div class="modal fade" id="info1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Como agendar una cita</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h5 class="font-title-grey">¿Como Agendar Cita con un Paciente Registrado?</h5>
-                    <p>Para agendar cita, debe buscar medico a travez del filtro "Agendar con" ubicado en la parte superior de la agenda, o seleccionar en la barra lateral izquierda la opcion "Mis Pacientes",seleccionar el
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <h5 class="font-title-grey">¿Como Agendar Cita con un Paciente Registrado?</h5>
+                <p>Para agendar cita, debe buscar medico a travez del filtro "Agendar con" ubicado en la parte superior de la agenda, o seleccionar en la barra lateral izquierda la opcion "Mis Pacientes",seleccionar el
                     paciente al que desea agendar la consulta, y luego hacer click en el boton "Agendar cita", con esto se abrira el panel correspondiente para agendar cita con el paciente seleccionado.</p>
+
                     <h5 class="font-title-grey">Mi Agenda</h5>
                     <p>El Panel mi Agenda le permite organizar sus eventos, y filtrarlos segun su tipo, tambien puede editar los eventos creados previamente; al hacer click sobre ellos se abrira una ventana que contendra la informacion de los mismos, en esta ventana podra modificar los datos del evento seleccionado, o eliminar el evento por completo.</p>
+
                     <h5 class="font-title-grey">Horario</h5>
                     <p>Las Horas disponibles del médico se marcan en el calendario con el color verde claro.</p>
                     <div class="" style="width:40px;height:40px; border:solid black 1px;background:rgba(162, 231, 50, 0.64);border-radius:5px"></div>
@@ -375,28 +439,34 @@ border-width: 1px;
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"><h5>¿Que desea realizar?</h5></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
+
                     <p>Si marca la cita como "pagada", el precio establecido no podra ser editado, es importante que el precio agregado a la cita sea real, para mostrar sus ingresos de forma correcta</p>
                     <div class="text-center">
                         <h5>Marcar Cita como:</h5>
                     </div>
+
                     <div class="row">
                         <div class="col-6">
                             <button onclick="confirmed_payment_app()" type="button" name="button" class="btn btn-info btn-block">Pagada</button>
+
                         </div>
                         <div class="col-6">
                             @if(Auth::check() and Auth::user()->role == 'medico')
-                            <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block">Pagada y Completada</button>
+                                <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block">Pagada y Completada</button>
+
                             @else
-                            @if(Auth::user()->assistant->permission->cita_confirm_completed != Null){
-                            <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block">Pagada y Completada</button>
-                            @else
-                            <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block" disabled>Pagada y Completada</button>
+                                @if(Auth::user()->assistant->permission->cita_confirm_completed != Null){
+                                    <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block">Pagada y Completada</button>
+                                @else
+                                    <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block" disabled>Pagada y Completada</button>
+                                @endif
                             @endif
-                            @endif
+
+
                         </div>
                     </div>
                 </div>
@@ -408,6 +478,7 @@ border-width: 1px;
         </div>
     </div>
 
+
     {{Form::hidden('filtro_state','Ninguno',['id'=>'filtro_state'])}}
     {{Form::hidden('filtro_title','Ninguno',['id'=>'filtro_title'])}}
     {{Form::hidden('filtro_payment_method','Ninguno',['id'=>'filtro_payment_method'])}}
@@ -417,9 +488,11 @@ border-width: 1px;
     <input type="hidden" name="" value="{{route('event_personal_update')}}" id="event_personal_update">
     <input type="hidden" name="" value="{{route('event_personal_delete')}}" id="event_personal_delete">
     {{Form::hidden('route',route('manage_patient',['m_id'=>'m_id','p_id'=>'p_id']),['id'=>'route_manage'])}}
-    @endsection
-    {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
-    @section('scriptJS')
+
+@endsection
+{{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
+
+@section('scriptJS')
     {{-- <script src="{{asset('fullcalendar/lib/jquery.min.js')}}"></script> --}}
     <script src="{{asset('fullcalendar/lib/moment.min.js')}}"></script>
     <script src="{{asset('fullcalendar/fullcalendar.js')}}"></script>
@@ -1117,7 +1190,6 @@ border-width: 1px;
                             return false;
                         }
                     }
-
                     if($('#filtro_title').val() != 'Ninguno'){
                         if(event.title != $('#filtro_title').val() &&  event.rendering != 'background'){
                             return false;
@@ -1129,8 +1201,6 @@ border-width: 1px;
                             return false;
                         }
                     }
-
-
                     if($('#filtro_confirmed_medico').val() != 'Ninguno'){
 
                         if(event.confirmed_medico == 'Si' &&  event.rendering != 'background'){
@@ -1143,7 +1213,6 @@ border-width: 1px;
                     }else{
                         element.find('.fc-title').append('<div class="hr-line-solid-no-margin"></div><span style="font-size: 10px">'+event.namePatient+'</span><span style="font-size: 10px"><p style="font-size: 10px">'+event.description+'</p></span>');
                     }
-
                 },
             });
         });

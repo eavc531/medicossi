@@ -14,7 +14,8 @@
               <h4>Ingresos Obtenidos:&nbsp;{{$ingresos_obtenidos}}</h4>
               {{-- <h4>Ingresos Pendientes:&nbsp;{{$ingresos_pendientes}}</h4> --}}
               <p>Cantidad de Citas Cobradas:&nbsp;{{$citas_cobradas}}</p>
-              <p>Cantidad de Citas por Cobrar:&nbsp;{{$citas_pendientes}}</p>
+			   <p>Cantidad de Citas Realizadas por Cobrar:&nbsp;{{$citas_pendientes}}</p>
+              <p>Cantidad de Citas Pendientes:&nbsp;{{$citas_pendientes}}</p>
             </div>
           </div>
 

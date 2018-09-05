@@ -352,6 +352,7 @@ class patientController extends Controller
 
     public function patient_edit_data($id)
     {
+        
       $patient = patient::find($id);
         return view('patient.patient_edit_data')->with('patient', $patient);
     }

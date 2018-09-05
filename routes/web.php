@@ -131,7 +131,7 @@ Route::post('patient/photo_profile/store','photoController@patient_image_profile
                 Route::resource('patient','patientController');
                 Route::get('stipulate/{id}/appointment','medico_diaryController@stipulate_appointment')->name('stipulate_appointment');
                 Route::get('patient/add/medic/{id}','patientController@patient_add_medic')->name('patient_add_medic');
-                Route::get('patient/{id}/edit','patientController@patient_edit_data')->name('patient_edit_data');
+                Route::get('patient/{id}/edit/profile','patientController@patient_edit_data')->name('patient_edit_data');
                 Route::post('patient/{id}/updates','patientController@patient_update')->name('patient_update');
                 Route::get('patient/{id}/profile','patientController@patient_profile')->name('patient_profile');
 

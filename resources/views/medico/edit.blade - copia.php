@@ -1,20 +1,20 @@
-@extends('layouts.app')
+ @extends('layouts.app')
  @section('css')
  <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
  @endsection
- @section('content')
+@section('content')
 
- <div class="row mt-5 mt-md-0">
+<div class="row">
   <div class="col-12">
-    <h2 class="font-title text-center" id="title">Perfil Profesional Médicos</h2>
+    <h2 class="font-title text-center" id="title">Perfil Profesional Médico</h2>
   </div>
 </div>
 @if (Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id == $medico->id)
 
 @else
-<div class="text-right">
-  <button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Volver</button>
-</div>
+    <div class="text-right">
+        <button onclick="window.history.back();" type="button" name="button" class="btn btn-secondary">Volver</button>
+    </div>
 @endif
 
 @if(Session::Has('successComplete'))
@@ -32,167 +32,151 @@
 @endif
 
 <div class="col-12">
-  <h2 class="text-azul text-center text-capitalize">{{$medico->name}} {{$medico->lastName}}</h2>
+  <h4 class="font-title-blue">Datos del Profesional: {{$medico->name}} {{$medico->lastName}}</h4>
 </div>
 {{-- <p>La información que se registra en su cuenta,le permite ser ubicado con mayor facilidad por sus clientes a travez del sistema, ademas le permite brindar, una mejor descripción de su profesión.</p> --}}
 <section class="box-register">
   <div class="container">
-   <div class="row">
+   <div class="register">
 
-    <div class="col-12 col-md-6">
-     <div class="col-12 text-center">
+    <div class="row mt-3">
+     <div class="col-lg-6 col-12">
 
-{{--       @isset($photo->path) --}}
-      <div class="my-2">
-        {!!Form::open(['route'=>'photo.store','method'=>'POST','files'=>true])!!}
-        {!!Form::hidden('email',$medico->email)!!}
-        {!!Form::hidden('medico_id',$medico->id)!!}
-        @isset($photo->path)
-        <img id="preview0" src="{{asset($photo->path)}}" name="image" alt="avatar" class="imgPerfilMedico"/>
-        @else
-        <img id="preview0" src="{{asset('img/profile.png')}}" name="image" alt="avatar" class="imgPerfilMedico"/>
-         @endisset
-        <input type="file" data-id="0" id="image0" name="image" class="hiddenbutton"/>
-        <a id="botonCamara" class="cambiarFoto hiddenList" href="javascript:changeProfile(0);">
-          <button type="button" class="btn btn-green cameraButtonMedico"><i class="fas fa-camera fa-2x"></i></button>
-        </a>
-        <br>
+      @isset($photo->path)
+      <div class="cont-img my-2">
+        <img src="{{asset($photo->path)}}" class="prof-img" alt="" id="img">
       </div>
-    </div>
-    <div class="col-12 text-center">
-      <button type="submit" class="btn btn-azul">Guardar</button>
-    </div>
-    {!!Form::close()!!}
-{{--     @else
-    <div class="col-lg-6 col-12">
-      <div class="my-2">
-        {!!Form::open(['route'=>'photo.store','method'=>'POST','files'=>true])!!}
-        {!!Form::hidden('email',$medico->email)!!}
-        {!!Form::hidden('medico_id',$medico->id)!!}
-        <img id="preview0" src="{{asset('img/profile.png')}}" name="image" alt="avatar" class="imgPerfilMedico"/>
-        <input type="file" data-id="0" id="image0" name="image" class="hiddenbutton"/>
-        <a id="botonCamara" class="cambiarFoto hiddenList" href="javascript:changeProfile(0);">
-          <button type="button" class="btn btn-green cameraButtonMedico"><i class="fas fa-camera fa-2x"></i></button>
-        </a>
-        <br>
+      @else
+      <div class="cont-img my-2">
+        <img src="{{asset('img/profile.png')}}" class="prof-img" alt="" id="img">
       </div>
-    </div>
-    <div class="col-12 text-center">
-      <button type="submit" class="btn btn-azul">Guardar</button>
-    </div>
-    {!!Form::close()!!}
-    @endisset --}}
-  </div>
-  @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id == $medico->id)
-  <div class="col-lg-6">
-    <h3>Calificación:</h3>
-    <span class="">@include('home.star_rate')</span>
-    <h6><span> de "{{$medico['votes']}}" voto(s).</span></h6>
-    @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-    <div class="">
-        <a href="{{route('calification_medic',['id'=>\Hashids::encode($medico->id),'back'=>\Request::route()->getName()])}}" class="btn btn-azul mt-2">Calificaciones y Comentarios</a>
-      {{-- <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p> --}}
-    </div>
+      @endisset
 
-    @else
-    <div class="">
-      <h4>
-        <a href="" class="btn btn-azul mt-2 disabled">Opinion de los Usuarios</a>
-      </h4>
-      <p class="text-green">Sección Disponible para los planes Profesional o Platino</p>
+      {!!Form::open(['route'=>'photo.store','method'=>'POST','files'=>true])!!}
+      {!!Form::hidden('email',$medico->email)!!}
+      {!!Form::hidden('medico_id',$medico->id)!!}
+      {!!Form::file('image')!!}
+      {!!Form::submit('Subir')!!}
+      {!!Form::close()!!}
     </div>
-    @endif
-  </div>
-  @else
-  <div class="col-lg-6 text-center">
-    <h3>Calificación:</h3>
-    <span class="">@include('home.star_rate')</span>
-    <h6><span> de "{{$medico['votes']}}" voto(s).</span></h6>
-    <div class="">
-      <button onclick="show_califications()" type="button" name="button" class="btn btn-azul">Calificaciones y Comentarios</button>
-    </div>
+    @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico_id == $medico->id)
+    <div class="col-lg-6">
+      <h3>Calificación:</h3>
+      <span class="">@include('home.star_rate')</span>
+      <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
+      @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+      <div class="">
+        <h4>
+          <a href="{{route('calification_medic',['id'=>\Hashids::encode($medico->id),'back'=>\Request::route()->getName()])}}" class="btn btn-primary mt-2">Calificaciones y Comentarios</a>
+        </h4>
+        {{-- <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p> --}}
+      </div>
 
-    <div class="form-group mt-5">
+      @else
+      <div class="">
+        <h4>
+          <a href="" class="btn btn-primary mt-2 disabled">Opinion de los Usuarios</a>
+        </h4>
+        <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
+      </div>
+      @endif
+    </div>
+@else
+    <div class="col-lg-6 text-center">
+      <h3>Calificación:</h3>
+      <span class="">@include('home.star_rate')</span>
+      <h3><span> de "{{$medico['votes']}}" voto(s).</span></h3>
+      <div class="">
+        <h4>
+
+            <button onclick="show_califications()" type="button" name="button" class="btn btn-success btn-block">Calificaciones y Comentarios</button>
+
+        </h4>
+      </div>
+
+      <div class="form-group mt-5">
 
       @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
-      <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-block btn-lg disabled" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
+        <a href="{{route('stipulate_appointment',$medico['id'])}}" class="btn btn-block btn-lg disabled" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
 
       @else
-      @if(Auth::check() and Auth::user()->role == 'Paciente')
-      @if(request()->get('search') != Null)
-      <a href="{{route('stipulate_appointment',[\Hashids::encode($medico['id']),'search'=>Request::fullUrl()])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+        @if(Auth::check() and Auth::user()->role == 'Paciente')
+            @if(request()->get('search') != Null)
+                <a href="{{route('stipulate_appointment',[\Hashids::encode($medico['id']),'search'=>Request::fullUrl()])}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
 
-      @else
-      <a href="{{route('stipulate_appointment',\Hashids::encode($medico['id']))}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
-      @endisset
+            @else
+                <a href="{{route('stipulate_appointment',\Hashids::encode($medico['id']))}}" class="btn btn-info btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+            @endisset
 
-      @else
-      <button onclick="verifySession()" class="btn btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
-      @endif
-      @endif
-    </div>
-  </div>
-  @endif
-</div>
-<hr>
-
-<div class="m-2">
-  <div class="row my-2">
-    <div class="col-12">
-      <h4 class="text-azul text-center">Datos personales</h4>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12 col-md-6">
-      <ul class="p-0">
-        <li class="texxt-capitalize"><b>Nombres</b>:&nbsp;{{$medico->name}}</li>
-        <li class="texxt-capitalize"><b>Apellidos</b>:&nbsp;{{$medico->lastName}}</li>
-        <li class="texxt-capitalize"><b>Cédula</b>:&nbsp;{{$medico->identification}}</li>
-        <li class="texxt-capitalize"><b>Sexo</b>:&nbsp;{{$medico->gender}}</li>
-      </ul>
-    </div>
-    <div class="col-12 col-md-6">
-      <ul class="p-0">
-        <li><b>Especialidad:&nbsp;</b> {{$medico->specialty}}</li>
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-        @if ($medico->showNumber == 'si')
-        <li><b>Teléfono celular</b>: {{$medico->phone}}</li>
-        @endif
-        @endif
-
-        @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-        @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice1 != Null)
-        <li><b>Telefono de oficina 1:</b>{{$medico->phoneOffice1}}</li>
-        @endif
-        @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice2 != Null)
-        <li><b>Telefono de oficina 2:</b>{{$medico->phoneOffice2}}</li>
-        @endif
-        @endif
-
-        @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-        <li><b>Mostrar Número Personal:&nbsp;</b><span class="text-green text-capitalize">{{$medico->showNumber}}</span></li>
-        <li><b>Mostrar Números de oficina:&nbsp;</b><span class="text-green text-capitalize">{{$medico->showNumberOffice}}</span></li>
         @else
-        <li><b>Mostrar Número Personal:&nbsp;</b><span class="text-green text-capitalize">No</span></li>
-        <li><b>Mostrar Números de oficina:&nbsp;</b><span class="text-green text-capitalize">No</span></li>
+        <button onclick="verifySession()" class="btn btn-block btn-lg"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
         @endif
-      </ul>
-      <div class="text-center text-md-right">
-        <a href="{{route('data_primordial_medico',\Hashids::encode($medico->id))}}" class="btn btn-green">Editar</a>
+      @endif
+      </div>
+    </div>
+    @endif
+
+  </div>
+  <hr>
+
+  <div class="m-2">
+    <div class="row my-2">
+      <div class="col-12">
+        <h4 class="font-title-blue text-center">Datos personales:</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <ul>
+          <li><b>Nombres</b>:&nbsp;{{$medico->name}}</li>
+          <li><b>Apellidos</b>:&nbsp;{{$medico->lastName}}</li>
+          <li><b>Cedula</b>:&nbsp;{{$medico->identification}}</li>
+          <li><b>Sexo</b>:&nbsp;{{$medico->gender}}</li>
+
+        </ul>
+      </div>
+      <div class="col-6">
+        <ul>
+          <li><b>Especialidad:&nbsp;</b>{{$medico->specialty}}</li>
+          @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+            @if ($medico->showNumber == 'si')
+            <li><b>Teléfono celular</b>: {{$medico->phone}}</li>
+            @endif
+          @endif
+
+          @if ($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+            @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice1 != Null)
+            <li><b>Telefono de oficina 1:</b>{{$medico->phoneOffice1}}</li>
+            @endif
+            @if ($medico->showNumberOffice == 'si' and $medico->phoneOffice2 != Null)
+            <li><b>Telefono de oficina 2:</b>{{$medico->phoneOffice2}}</li>
+            @endif
+          @endif
+
+          @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
+            <li><b>Mostrar Numero Personal:&nbsp;</b><span style="color:rgb(215, 141, 15)">{{$medico->showNumber}}</span></li>
+            <li><b>Mostrar Numeros de oficina:&nbsp;</b><span style="color:rgb(215,141,15)">{{$medico->showNumberOffice}}</span></li>
+          @else
+            <li><b>Mostrar Numero Personal:&nbsp;</b><span style="color:rgb(215, 141, 15)">No</span></li>
+            <li><b>Mostrar Numeros de oficina:&nbsp;</b><span style="color:rgb(215,141,15)">No</span></li>
+          @endif
+        </ul>
+        <a href="{{route('data_primordial_medico',\Hashids::encode($medico->id))}}" class="btn btn-block btn-success">Editar</a>
       </div>
     </div>
   </div>
-</div>
-<hr>
-<div class="row mt-3">
-  <div class="col-12">
-   <h4 class="text-azul text-center">Redes sociales</h4>
+  <hr>
+  <div class="row mt-3">
+    <div class="col-12">
+     <h4 class="font-title-blue text-center">Redes sociales</h4>
+
+     <hr>
+   </div>
  </div>
-</div>
-@if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico->plan != 'plan_profesional' and Auth::user()->medico->plan != 'plan_platino')
-<div class="text-center">
-  <p class="text-muted">Sección disponible para los planes profesional o platino</p>
+ @if(Auth::check() and Auth::user()->role == 'medico' and Auth::user()->medico->plan != 'plan_profesional' and Auth::user()->medico->plan != 'plan_platino')
+ <div class="text-center">
+  <p style="color:rgb(156, 141, 146)">Sección Disponible para los planes Profesional o Platino</p>
 </div>
 @endif
 <div class="row">
@@ -201,11 +185,11 @@
       <div class="col-lg-3 col-12">
         <div class="form-group">
           @if(Auth::check() and Auth::user()->role == 'medico')
-          @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-          {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control','placeholder'=>'Red Social','id'=>'name_social'])!!}
-          @else
-          {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control','placeholder'=>'Red Social','id'=>'name_social','disabled'])!!}
-          @endif
+            @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+              {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control','placeholder'=>'Red Social','id'=>'name_social'])!!}
+              @else
+              {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control','placeholder'=>'Red Social','id'=>'name_social','disabled'])!!}
+            @endif
 
           @endif
         </div>
@@ -213,25 +197,25 @@
       <div class="col-lg-7 col-12">
         <div class="form-group">
           @if(Auth::check() and Auth::user()->role == 'medico')
-          @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-          {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la dirección url del perfil de su red social','id'=>'link_social'])!!}
-          {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
-          @else
-          {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la dirección url del perfil de su red social','id'=>'link_social','disabled'])!!}
-          {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
-          @endif
+            @if (Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+              {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social'])!!}
+              {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
+              @else
+                {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social','disabled'])!!}
+                {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id'])!!}
+            @endif
           @endif
 
         </div>
       </div>
-      <div class="col-lg-2 col-12 text-center">
+      <div class="col-lg-2 col-12">
         <div class="form-group">
           @if(Auth::check() and Auth::user()->role == 'medico')
-          @if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
-          <button onclick="storeSocial()" type="button" name="button" class="btn btn-azul">Agregar</button>
-          @else
-          <button onclick="storeSocial()" type="button" name="button" class="btn btn-azul" disabled>Agregar</button>
-          @endif
+            @if(Auth::user()->medico->plan == 'plan_profesional' or Auth::user()->medico->plan == 'plan_platino')
+            <button onclick="storeSocial()" type="button" name="button" class="btn btn-block btn-success">Agregar</button>
+            @else
+            <button onclick="storeSocial()" type="button" name="button" class="btn btn-block btn-success" disabled>Agregar</button>
+            @endif
           @endif
         </div>
       </div>
@@ -246,88 +230,98 @@
     </div>
     {{-- BOTONES QUE SE MUESTRAN CON AJAX DESDE LISTA-Social --}}
     @if($medico->plan == 'plan_profesional' or $medico->plan == 'plan_platino')
-    <div id="list_social_ajax" class="text-center">
+    <div id="list_social_ajax">
     </div>
     @else
-    <div class="">
-      <div class="text-center">
-        <p class="text-muted">Sin Direcciones de Redes Sociales que Mostrar</p>
+      <div class="">
+        <div class="">
+          <p class="text-center">Sin Direcciones de Redes Sociales que Mostrar</p>
+
+        </div>
       </div>
-    </div>
     @endif
   </div>
 </div>
 <hr>
 
 
-<div class="row">
-  <div class="col-12 mb-2">
-    <h4 class="text-azul text-center">Dirección de Trabajo Principal</h4>
+<div class="row my-4">
+  <div class="col-12">
+    <h4 class="font-title-blue text-center">Dirección de Trabajo Principal</h4>
+  </div>
+</div>
+<div class="row text-left">
+  <div class="col-6">
+    <ul>
+      <li><strong>Nombre Comercial del Consultorio:</strong> @if($medico->name_comercial != Null){{$medico->name_comercial}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+      <li><strong>Tipo de Consultorio:</strong> @if($medico->type_consulting_room != Null){{$medico->type_consulting_room}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+      <li><strong>Clave unica:</strong> @if($medico->password_unique != Null) {{$medico->password_unique}} @else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+      <li><strong>Pais:</strong> {{$medico->country}}</li>
+      <li><strong>Estado:</strong> {{$medico->state}}</li>
+    </ul>
+  </div>
+  <div class="col-6">
+    <ul>
+      <li><strong>Ciudad:</strong> {{$medico->city}}</li>
+      <li><strong>Codigo POSTal:</strong> {{$medico->POSTal_code}}</li>
+      <li><strong>Colonia:</strong>
+        {{$medico->colony}}
+      </li>
+      <li><strong>Calle/av:</strong>{{$medico->street}}</li>
+      <li><strong>Numero Externo:</strong> {{$medico->number_ext}}</li>
+      <li><strong>Numero Interno:</strong> {{$medico->number_int}}</li>
+    </ul>
   </div>
 </div>
 <div class="row">
-  <div class="col-12 col-md-6">
-    <ul>
-      <li><b>Nombre Comercial del Consultorio:</b> @if($medico->name_comercial != Null){{$medico->name_comercial}}@else <span class="text-muted">No específica</span> @endif</li>
-      <li><b>Tipo de Consultorio:</b> @if($medico->type_consulting_room != Null){{$medico->type_consulting_room}}@else <span class="text-muted">No específica</span> @endif</li>
-      <li><b>Clave única:</b> @if($medico->password_unique != Null) {{$medico->password_unique}} @else <span class="text-muted">No específica</span> @endif</li>
-      <li><b>País:</b> {{$medico->country}}</li>
-      <li><b>Estado:</b> {{$medico->state}}</li>
-    </ul>
-  </div>
-  <div class="col-12 col-md-6">
-    <ul>
-      <li><b>Ciudad:</b> {{$medico->city}}</li>
-      <li><b>Código Postal:</b> {{$medico->POSTal_code}}</li>
-      <li><b>Colonia:</b>{{$medico->colony}}</li>
-      <li><b>Calle/Av:</b>{{$medico->street}}</li>
-      <li><b>Número Externo:</b> {{$medico->number_ext}}</li>
-      <li><b>Número Interno:</b> {{$medico->number_int}}</li>
-    </ul>
-  </div>
-</div>
-<div class="row">
-  <div class="col-12 text-center text-md-right">
+  <div class="col-6">
     @if($consulting_room->first() == Null)
-    <a class="btn btn-azul"href="{{route('consulting_room_create',\Hashids::encode($medico->id))}}">Agregar Consultorio</a>
+      <a class="btn btn-primary btn-block"href="{{route('consulting_room_create',\Hashids::encode($medico->id))}}">Agregar Consultorio</a>
     @endif
-    <a class="btn btn-green"href="{{route('medico_edit_address',\Hashids::encode($medico->id))}}">Editar</a>
+  </div>
+  <div class="col-6">
+    <a class="btn btn-success btn-block"href="{{route('medico_edit_address',\Hashids::encode($medico->id))}}">Editar</a>
   </div>
 </div>
 @if($consulting_room->first() != Null)
 <hr>
 <div class="row my-4">
   <div class="col-12">
-    <h4 class="text-azul text-center">Otros Consultorios</h4>
+    <h4 class="font-title-blue text-center">Otros Consultorios</h4>
   </div>
 </div>
-<div class="">
-  @foreach ($consulting_room as $value)
-  <div class="card mt-2">
+<div class="" style="max-height:500px;overflow:scroll;overflow-x:hidden;">
+@foreach ($consulting_room as $value)
+  <div class="card mt-2" style="border-radius:15px">
     <div class="card-body">
       <div class="row text-left">
-        <div class="col-12 col-md-6">
+        <div class="col-6">
           <ul>
-            <li><b>Nombre Comercial del Consultorio:</b> @if($value->name != Null){{$value->name}}@else <span class="text-muted">No específica</span> @endif</li>
-            <li><b>Tipo de Consultorio:</b> @if($value->type != Null){{$value->type}}@else <span class="text-muted">No específica</span> @endif</li>
-            <li><b>Clave unica:</b> @if($value->passwordUnique != Null) {{$value->passwordUnique}} @else <span class="text-muted">No específica</span> @endif</li>
-            <li><b>País:</b> {{$medico->country}}</li>
-            <li><b>Estado:</b> {{$value->state}}</li>
+            <li><strong>Nombre Comercial del Consultorio:</strong> @if($value->name != Null){{$value->name}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+            <li><strong>Tipo de Consultorio:</strong> @if($value->type != Null){{$value->type}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+            <li><strong>Clave unica:</strong> @if($value->passwordUnique != Null) {{$value->passwordUnique}} @else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+            <li><strong>Pais:</strong> {{$medico->country}}</li>
+            <li><strong>Estado:</strong> {{$value->state}}</li>
           </ul>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-6">
           <ul>
-            <li><b>Ciudad:</b> {{$value->city}}</li>
-            <li><b>Código Postal:</b> @if($value->POSTal_code != Null){{$value->POSTal_code}}@else <span class="text-muted">No específica</span> @endif</li>
-            <li><b>Colonia:</b>{{$value->colony}}</li>
-            <li><b>Calle/Av:</b>{{$value->street}}</li>
-            <li><b>Número Externo:</b> @if($value->numberExt != Null){{$value->numberExt}}@else <span class="text-muted">No específica</span> @endif</li>
-            <li><b>Número Interno:</b> @if($value->numberInt != Null){{$value->numberInt}}@else <span class="text-muted">No específica</span> @endif</li>
+            <li><strong>Ciudad:</strong> {{$value->city}}</li>
+            <li><strong>Codigo POSTal:</strong> @if($value->POSTal_code != Null){{$value->POSTal_code}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+            <li><strong>Colonia:</strong>
+              {{$value->colony}}
+            </li>
+            <li><strong>Calle/av:</strong>{{$value->street}}</li>
+            <li><strong>Numero Externo:</strong> @if($value->numberExt != Null){{$value->numberExt}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
+              <li><strong>Numero Interno:</strong> @if($value->numberInt != Null){{$value->numberInt}}@else <span style="color:rgb(187, 187, 187)">No especifica</span> @endif</li>
 
           </ul>
         </div>
-        <div class="col-12 text-right">
-          <a href="{{route('consulting_room_edit',\Hashids::encode($value->id))}}" class="btn btn-green"><i class="far fa-edit"></i></a>
+        <div class="col-6">
+
+        </div>
+        <div class="col-6 text-right">
+          <a href="{{route('consulting_room_edit',\Hashids::encode($value->id))}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
           <a href="{{route('consulting_room_delete',\Hashids::encode($value->id))}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
         </div>
       </div>
@@ -335,14 +329,14 @@
 
   </div>
 
-  @endforeach
+@endforeach
 </div>
 <div class="row">
   <div class="col-6">
 
   </div>
   <div class="col-6">
-    <a class="btn btn-azul mt-3"href="{{route('consulting_room_create',\Hashids::encode($medico->id))}}">Agregar Consultorio</a>
+  <a class="btn btn-success btn-block mt-3"href="{{route('consulting_room_create',\Hashids::encode($medico->id))}}">Agregar Consultorio</a>
   </div>
 </div>
 @endif
@@ -350,7 +344,7 @@
 {{-- section mapa --}}
 <div class="row my-4">
   <div class="col-12">
-    <h4 class="text-azul text-center">Ubicación en el mapa</h4>
+    <h4 class="font-title-blue text-center">Ubicacion en el mapa</h4>
   </div>
 
   <!-- Button trigger modal -->
@@ -358,84 +352,86 @@
 
 
 </div>
-<div class="mt-2">
+<div class="m-2">
   <div class="form-inline">
-   <input type="text" name="" value="" class="form-control mr-2" id="address">
-   <button onclick="searchInMap()" type="button" class="btn btn-azul" name="button">Buscar</button>
-   <button type="button" class="btn btn-green ml-auto" data-toggle="modal" data-target="#exampleModal222">
+   <input type="text" name="" value="" class="form-control" id="address">
+   <button onclick="searchInMap()" type="button" class="btn btn-primary" name="button">Buscar</button>
+   <button type="button" class="btn btn-info ml-auto" data-toggle="modal" data-target="#exampleModal222">
      Ayuda
    </button>
    @include('medico.includes_perfil.modals')
  </div>
+
 </div>
 <div class="mt-3">
   {{-- //div que muestra el mapa --}}
-  <div class="my-3  mapGoogle" id="map" >
+  <div class="m-1" id="map" style="height:300px;width:auto">
 
   </div>
-  <div class="text-center text-md-right">
-    <button id="store_coordinates" type="button" name="button" class="btn btn-azul mb-2 mb-md-0" onclick="store_coordinates()" disabled>Guardar Ubicación</button>
-    <button type="button" name="button"  class="btn btn-green" onclick="show_map()">Restablecer Marcador</button>
-  </div>
+  <button id="store_coordinates" type="button" name="button" class="btn btn-primary" onclick="store_coordinates()" disabled>Guardar Ubicacion</button>
+  <button type="button" name="button"  class="btn btn-secondary" onclick="show_map()">Restablecer Marcador</button>
   <input type="hidden" name="latitudSave" value="" id="latitudSave">
   <input type="hidden" name="longitudSave" value="" id="longitudSave">
 </div>
 </div>
 
-<hr>
-<div class="row mt-3">
- <div class="col-12">
-   <h4 class="text-azul text-center">Especialidad / Estudios Realizados</h4>
+ <hr>
+ <div class="row mt-3">
+   <div class="col-12">
+     <h4 class="font-title-blue text-center">Especialidad/Estudios Realizados</h4>
+     <hr>
+
+   </div>
  </div>
-</div>
-<div class="" style="max-height:500px;overflow:scroll;overflow-x:hidden;">
+ <div class="" style="max-height:500px;overflow:scroll;overflow-x:hidden;">
 
 
  @foreach ($medico_specialty as $info)
- <div class="card mt-2">
-   <div class="card-body">
-     <div class="row">
-       <div class="col-6">
-         <li><strong class="text-primary">Especialidad:</strong> {{$info->specialty}}</li>
-         <li><strong>Tipo:</strong> {{$info->type}}</li>
-         <li><strong>Institución:</strong> {{$info->institution}}</li>
-         <li><strong>Desde:</strong> {{\Carbon\Carbon::parse($info->from)->format('m-d-Y')}}</li>
-       </div>
-       <div class="col-6">
-         <li><strong>Hasta:</strong> {{\Carbon\Carbon::parse($info->until)->format('m-d-Y')}}</li>
-         <li><strong>Estado del estudio:</strong>{{$info->state}}</li>
-         <li><strong>información Adicional:</strong> @isset($info->aditional)
+   <div class="card mt-2">
+     <div class="card-body">
+       <div class="row">
+         <div class="col-6">
+           <li><strong class="text-primary">Especialidad:</strong> {{$info->specialty}}</li>
+           <li><strong>Tipo:</strong> {{$info->type}}</li>
+           <li><strong>Institución:</strong> {{$info->institution}}</li>
+           <li><strong>Desde:</strong> {{\Carbon\Carbon::parse($info->from)->format('m-d-Y')}}</li>
+         </div>
+         <div class="col-6">
+           <li><strong>Hasta:</strong> {{\Carbon\Carbon::parse($info->until)->format('m-d-Y')}}</li>
+           <li><strong>Estado del estudio:</strong>{{$info->state}}</li>
+           <li><strong>información Adicional:</strong> @isset($info->aditional)
            {{$info->aditional}}
            @else
-           <span style="color:rgb(173, 173, 173)">No específica</span>
-         @endisset </li>
-         <div class="text-right">
-           <a href="{{route('medico_specialty_edit',\Hashids::encode($info->id))}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
-           <a href="{{route('medico_specialty_delete',\Hashids::encode($info->id))}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+           <span style="color:rgb(173, 173, 173)">No especifica</span>
+           @endisset </li>
+           <div class="text-right">
+             <a href="{{route('medico_specialty_edit',\Hashids::encode($info->id))}}" class="btn btn-primary"><i class="far fa-edit"></i></a>
+             <a href="{{route('medico_specialty_delete',\Hashids::encode($info->id))}}" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+           </div>
+
+
          </div>
-
-
        </div>
      </div>
-   </div>
 
- </div>
+   </div>
 
 
  @endforeach
-</div>
-
-
-
-<div class="row">
- <div class="col-12 text-right mt-3">
-   <a href="{{route('medico_specialty_create',\Hashids::encode($medico->id))}}" class="btn btn-azul">Agregar Especialidad / Estudios Realizados</a>
  </div>
-</div>
-<hr>
-<div class="row">
+
+
+
+ <div class="row">
+   <div class="col-12 text-right mt-3">
+     <a href="{{route('medico_specialty_create',\Hashids::encode($medico->id))}}" class="btn btn-success">Agregar Especialidad/Estudios Realizados</a>
+   </div>
+ </div>
+ <hr>
+ <div class="row">
   <div class="col-12 mb-1">
-   <h4 class="text-azul text-center">Servicios otorgados</h4>
+   <h4 class="font-title-blue text-center">Servicios otorgados</h4>
+
  </div>
 </div>
 
@@ -444,29 +440,30 @@
 
 <div class="row my-3">
   <div class="col-12 text-right">
-   <button onclick="modal_service2()" class="btn btn-azul">Agregar servicio</button>
+   <button onclick="modal_service2()" class="btn btn-success">Agregar servicio</button>
    <hr>
  </div>
 </div>
 <div class="roww">
   <div class="col-12">
-    <h4 class="text-azul text-center mb-3">Experiencia en transtornos o enfermedades</h4>
+    <h4 class="font-title-blue text-center mb-3">Experiencia en transtornos o enfermedades</h4>
   </div>
 </div>
-<div id="medico_experience_ajax">
+<div id="medico_experience_ajax" style="text-align:justify">
 
 </div>
 <div class="row my-3">
   <div class="col-lg-12 col-12 text-right">
     <div class="form-group">
-      <button onclick="modal_experience()" type="button" href="" class="btn btn-azul">Agregar Experiencia</button>
+      <button onclick="modal_experience()" type="button" href="" class="btn btn-success">Agregar Experiencia</button>
     </div>
   </div>
 </div>
+
 <hr>
 <div class="row">
   <div class="col-12">
-   <h4 id="imgs" class="text-azul text-center">Imagenes</h4>
+   <h4 id="imgs" class="font-title-blue text-center">Imagenes</h4>
  </div>
 </div>
 <div class="text-right">
@@ -476,38 +473,41 @@
 
        <div class="row mt-5" id="">
          @foreach ($images as $image)
-         {{-- div que encierra cada imagen --}}
+  			 {{-- div que encierra cada imagen --}}
 
-         <div class="col-4 card">
-           <div class="card-body">
-            <img onclick="expandir(this)" id="myImg" src="{{asset($image->path)}}" width="auto" height="150px" alt="">
+  			 <div class="col-4 card">
+  				 <div class="card-body">
+  					 <img onclick="expandir(this)" id="myImg" src="{{asset($image->path)}}" width="auto" height="150px" alt="">
 
-          </div>
-          <div class="card-footer text-center">
-            <p>{{$image->name}}</p>
-          </div>
-        </div>
-        <!-- The Modal -->
-        <div id="myModal-img" class="modal-img">
-         <span class="cerrar">&times;</span>
-         <img class="modal-content-img" id="img01">
-         <div id="caption"></div>
-       </div>
-       @endforeach
-     </div>
-   </div>
- </div>
-</div>
-<a href="{{'add_image',\Hashids::encode($medico->id)}}" class="btn btn-azul">Agregar/Eliminar Imagenes</a>
+  				 </div>
+  				 <div class="card-footer text-center">
+  				 	<p>{{$image->name}}</p>
+  				 </div>
+  			 </div>
+  			 <!-- The Modal -->
+  			 <div id="myModal-img" class="modal-img">
+  				 <span class="cerrar">&times;</span>
+  				 <img class="modal-content-img" id="img01">
+  				 <div id="caption"></div>
+  			 </div>
+  			 @endforeach
+      </div>
+      <hr>
+
+    </div>
+  </div>
+  </div>
+  <a href="{{'add_image',\Hashids::encode($medico->id)}}" class="btn btn-success">Agregar/Eliminar Imagenes</a>
 
 </div>
 {{-- //videos --}}
 <hr>
 <div class="row">
   <div class="col-12">
-   <h4 id="imgs" class="text-azul text-center">Videos</h4>
+   <h4 id="imgs" class="font-title-blue text-center">Videos</h4>
  </div>
 </div>
+
 <div class="row">
   <div class="col-12">
     <div class="row">
@@ -525,8 +525,8 @@
       </div>
       <div class="col-lg-2 col-12">
         <div class="form-group">
-          {{-- <button onclick="storeSocial()" type="button" name="button" class="btn btn-block btn-azul">Agregar</button> --}}
-          <button type="submit" name="button" class="btn btn-azul">Agregar</button>
+          {{-- <button onclick="storeSocial()" type="button" name="button" class="btn btn-block btn-success">Agregar</button> --}}
+          <button type="submit" name="button" class="btn btn-block btn-success">Agregar</button>
         </div>
       </div>
       {!!Form::close()!!}
@@ -546,9 +546,10 @@
 <hr>
 <div class="row mt-3">
   <div class="col-12">
-    <h4 class="text-azul text-center">Aseguradoras</h4>
+    <h4 class="font-title-blue text-center">Aseguradoras</h4>
   </div>
 </div>
+<hr>
 <div class="row">
   <div class="col-12 my-3">
    <label><b>Clasificación de servicios profesionales otorgados</b></label>
@@ -556,37 +557,37 @@
 </div>
 
 <div class="row my-3">
-  <div class="col-12 m-auto">
-    <div class="">
+  <div class="col-lg-9 col-12 m-auto">
+    <div class="custom-control custom-radio">
       {{-- {{Form::radio('type_patient_service','Solo pacientes privados',['class'=>'custom-control-input','id'=>'radio'])}} --}}
 
       @if($medico->type_patient_service == "Solo pacientes privados")
-      <input class="radio0" type="radio" name="type_patient_service" value="solo medicos privados" checked="checked" id="radio" onclick="select_insurrances('Solo pacientes privados')">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo medicos privados" checked="checked" id="radio" onclick="select_insurrances('Solo pacientes privados')">
       @else
-      <input class="radio0" type="radio" name="type_patient_service" value="Solo pacientes privados" id="radio" onclick="select_insurrances('Solo pacientes privados')">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Solo pacientes privados" id="radio" onclick="select_insurrances('Solo pacientes privados')">
       @endif
       <label class="" for="show-question1" id="radio"  >Solo pacientes privados</label>
     </div>
 
-    <div class="">
+    <div class="custom-control custom-radio">
 
       @if($medico->type_patient_service == "solo pacientes de aseguradoras")
 
-      <input class="radio0" type="radio" name="type_patient_service" value="solo pacientes de aseguradora" checked="checked" id="radio2" onclick="select_insurrances('solo pacientes de aseguradoras')">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo pacientes de aseguradora" checked="checked" id="radio2" onclick="select_insurrances('solo pacientes de aseguradoras')">
       @else
-      <input class="radio0" type="radio" name="type_patient_service" value="solo pacientes de aseguradora" id="radio2" onclick="select_insurrances('solo pacientes de aseguradoras')">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="solo pacientes de aseguradora" id="radio2" onclick="select_insurrances('solo pacientes de aseguradoras')">
       @endif
       <label class="" for="show-question1" id="radioxxx" >solo pacientes de aseguradoras</label>
       <label class="" for="show-question2"></label>
     </div>
 
-    <div class="">
+    <div class="custom-control custom-radio">
 
       @if($medico->type_patient_service == "Pacientes por aseguradoras, convenios y privados")
 
-      <input class="radio0" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" checked="checked" id="radio2" onclick="select_insurrances('Pacientes por aseguradoras, convenios y privados')">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" checked="checked" id="radio2" onclick="select_insurrances('Pacientes por aseguradoras, convenios y privados')">
       @else
-      <input class="radio0" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" id="radio2" onclick="select_insurrances('Pacientes por aseguradoras, convenios y privados')">
+      <input style="margin-top: 6px;margin-right: 6px;" type="radio" name="type_patient_service" value="Pacientes por aseguradoras, convenios y privados" id="radio2" onclick="select_insurrances('Pacientes por aseguradoras, convenios y privados')">
       @endif
       <label class="" for="show-question1" id="radio">Pacientes por aseguradoras, convenios y privados</label>
       <label class="" for="show-question2"></label>
@@ -596,40 +597,44 @@
       <a href="{{route('create_add_insurrances',\Hashids::encode($medico->id))}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
     </div> --}}
     @if($medico->type_patient_service == "Solo pacientes privados")
-    <div class="aseguradoras" id="aseguradoras" style="display:none">
-      @else
-      <div class="aseguradoras" id="aseguradoras">
-        @endif
+        <div class="aseguradoras" id="aseguradoras" style="display:none">
+    @else
+        <div class="aseguradoras" id="aseguradoras">
+    @endif
 
-        <div class="card">
-          <div class="card-body">
+      <div class="card">
+        <div class="card-body">
             <div class="text-center my-3">
-              <h5 class="text-azul">Aseguradoras</h5>
+                <h5 class="font-title-blue">Aseguradoras</h5>
             </div>
-            <div class="row">
-              @foreach ($insurance_carrier as $key => $value)
-              <div class="col-6">
-                <li>{{$value->name}}</li>
-              </div>
-              @endforeach
+          <div class="row">
+            @foreach ($insurance_carrier as $key => $value)
+            <div class="col-6">
+              <li>{{$value->name}}</li>
             </div>
-            <div class="row">
-              <div class="col-12 mt-2 text-center text-md-right">
-                <a href="{{route('medico_create_add_insurrances',\Hashids::encode($medico->id))}}" class="btn btn-azul">Agregar Aseguradoras</a>
-              </div>
+            @endforeach
+          </div>
+          <div class="row">
+            <div class="col-6">
+
+            </div>
+            <div class="col-6 mt-2">
+              <a href="{{route('medico_create_add_insurrances',\Hashids::encode($medico->id))}}" class="btn btn-success btn-block">Agregar Aseguradoras</a>
             </div>
           </div>
         </div>
-
       </div>
-    </div>
-  </div>
 
-  <div class="row my-2">
-    <div class="col-12 text-right">
-      <a href="#title" class="btn btn-green"><i class="fas fa-arrow-up"></i></a>
     </div>
   </div>
+</div>
+
+<div class="row my-2">
+  <div class="col-12 text-center">
+    <a href="#title" class="btn btn-primary">Ir a Inicio de Pagina</a>
+
+  </div>
+</div>
 </section>
 
 
@@ -650,7 +655,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-azul btn-block">Agregar</button>
+        <button type="button" class="btn btn-primary btn-block">Agregar</button>
       </div>
     </div>
   </div>
@@ -1475,51 +1480,6 @@ $(document).ready(function(){
   list_videos();
   show_map();
   });
-</script>
-
-<script type="text/javascript">
-// Subir Foto Perfil
-function changeProfile(id) {
-  $('#image'+id).click();
-  $('#image'+id).change(function () {
-    var imgPath = this.value;
-    var ext = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
-    if (ext == "gif" || ext == "png" || ext == "jpg" || ext == "jpeg")
-      readURL(this);
-    else
-      M.toast({html: "La imagen debe tener la siguiente extensiones: jpg, jpeg, png, gif."})
-  });
-  function readURL(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-      reader.readAsDataURL(input.files[0]);
-      reader.onload = function (e) {
-        $('#preview'+id).attr('src', e.target.result);
-        $("#remove").val(0);
-        if(id != 0){
-          var file_data = input.files[0];
-          var formData = new FormData();
-          formData.append('image', file_data);
-          $.ajax({
-            type:'post',
-            url:'/api/Teams/image/'+id,
-            contentType: false,
-            processData: false,
-            data: formData,
-            success: function(data){
-              M.toast({html: data});
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-              console.log(xhr.status);
-              console.log(thrownError);
-              console.log(ajaxOptions);
-            }
-          });
-        }
-      };
-    }
-  }
-}
 </script>
 
 @endsection

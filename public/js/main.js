@@ -1,7 +1,12 @@
 //Dashboard
 
+//tooltip
 
-
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip({
+        position: { my: "left+15 top-50", at: "center top" }
+    })
+});
 
 $(document).ready(function(){
   $("#show").click(function(){
@@ -10,7 +15,7 @@ $(document).ready(function(){
   ////me
 
   /////
-  $("#filter").click(function(){
+  $(".filter").click(function(){
      $("#panel").slideToggle(200);
  });
 });
@@ -24,12 +29,6 @@ $(document).on('click', '.browse', function(){
 
 $(document).on('change', '.file', function(){
   $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
-});
-
-//tooltip
-
-$(document).ready(function(){
-  $('[data-toggle="tooltip"]').tooltip();
 });
 
 // Star raiting
