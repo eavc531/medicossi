@@ -256,11 +256,13 @@ class medicoController extends Controller
 
      public function medico_store_new_patient(Request $request)
      {
+
        $request->validate([
          'identification'=>'required|unique:patients',
          'gender'=>'required',
          'name'=>'required',
          'lastName'=>'required',
+         'birthdate'=>'required',
          'phone1'=>'required|numeric',
          'phone2'=>'numeric|nullable',
          'email'=>'required|email|unique:patients',
@@ -272,14 +274,24 @@ class medicoController extends Controller
          'street'=>'required',
        ]);
 
+
+
        if($request->city == 'opciones'){
          return back()->with('warning', 'El campo ciudad es requerido')->withInput();
        }
+       if(\Carbon\Carbon::parse($request->birthdate)->format('d-m-Y') >  \Carbon\Carbon::now()->format('d-m-Y')){
+            return back()->with('warning', 'Por favor ingrese una fecha de naciemiento valida.')->withInput();
+       }
 
-       $Coordinates = Geocoder::getCoordinatesForAddress($request->country.','.$request->city.','.$request->colony.','.$request->street.','.$request->number_ext);
+       // $Coordinates = Geocoder::getCoordinatesForAddress($request->country.','.$request->city.','.$request->colony.','.$request->street.','.$request->number_ext);
 
        $patient = new patient;
        $patient->fill($request->all());
+       $patient->birthdate = $request->birthdate;
+       $age = \Carbon\Carbon::now()->format('Y') - \Carbon\Carbon::parse($request->birthdate)->format('Y');
+
+
+       $patient->age = $age;
        $patient->nameComplete = $request->name.' '.$request->lastName;
        $patient->country = $request->country;
        $patient->state = $request->state;
@@ -289,8 +301,8 @@ class medicoController extends Controller
        $patient->street = $request->street;
        $patient->number_ext = $request->number_ext;
        $patient->number_int = $request->number_int;
-       $patient->longitud = $Coordinates['lng'];
-       $patient->latitud = $Coordinates['lat'];
+       // $patient->longitud = $Coordinates['lng'];
+       // $patient->latitud = $Coordinates['lat'];
        $patient->stateConfirm = 'complete';
        $patient->save();
 
@@ -333,7 +345,7 @@ class medicoController extends Controller
 
         });
 
-       return redirect()->route('medico_patients',\Hashids::encode($request->medico_id))->with('success','Se a registrado el paciente '.$patient->nameComplete.' de forma satisfactoria. Se ha enviado un mensaje al correo electronico asociado,con los datos necesarios para que el paciente pueda acceder a la cuenta creada, si asi lo desea, en donde podra ver el estado de sus citas, calificarle como médico en el sistema, agendar citas y mas.');
+       return redirect()->route('medico_patients',\Hashids::encode($request->medico_id))->with('success','Se a registrado el paciente '.$patient->nameComplete.' de forma satisfactoria. Se ha enviado un mensaje al correo electronico al nuevo paciente,con los datos necesarios para que pueda acceder a la cuenta creada,donde podra ver el estado de sus citas, calificarle como médico en el sistema, agendar citas y mas.');
      }
 
      public function medico_register_new_patient($id)
@@ -647,7 +659,7 @@ class medicoController extends Controller
 
          $type = 'Realizadas y por cobrar';
          $patient = patient::find($p_id);
-         
+
          return view('medico.patient.medico_patient_appointments',compact('appointments','type','medico','patient'));
 
      }
@@ -1215,8 +1227,8 @@ class medicoController extends Controller
 
          Mail::send('mails.confirmMedico',['medico'=>$medico,'user'=>$user,'code'=>$code],function($msj) use($medico){
             $msj->subject('Médicos Si');
-            $msj->to($medico->email);
-            // $msj->to('eavc53189@gmail.com');
+            // $msj->to($medico->email);
+            $msj->to('eavc53189@gmail.com');
         });
 
         return redirect()->route('successRegMedico',\Hashids::encode($medico->id))->with('success', 'Se ha reenviado el mensaje de confirmación al correo electronico asociado a tu cuenta MédicosSi')->with('user', $user);

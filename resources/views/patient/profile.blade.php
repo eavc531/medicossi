@@ -46,16 +46,20 @@
             {!!Form::hidden('email',$patient->email)!!}
             {!!Form::hidden('patient_id',$patient->id)!!}
             <img id="preview0" src="{{asset('img/profile.png')}}" name="image" alt="equipo" class="imgPerfilPaciente"/>
+            @if(Auth::check() and  Auth::user()->role == 'Paciente' and Auth::user()->patient_id == $patient->id)
             <input type="file" data-id="0" id="image0" name="image" class="hiddenbutton"/>
             <a id="botonCamara" class="cambiarFoto hiddenList" href="javascript:changeProfile(0);">
               <button type="button" class="btn btn-green cameraButton"><i class="fas fa-camera fa-2x"></i></button>
             </a>
+            @endif
             <br>
           </div>
         </div>
+        @if(Auth::check() and  Auth::user()->role == 'Paciente' and Auth::user()->patient_id == $patient->id)
         <div class="col-12 text-center">
           <button type="submit" class="btn btn-azul">Guardar</button>
         </div>
+        @endif
         {!!Form::close()!!}
         @endisset
       </div>
@@ -84,7 +88,10 @@
             </ul>
           </div>
           <div class="col-12 text-right">
-            <a href="{{route('patient_edit_data',\Hashids::encode($patient->id))}}" class="btn btn-green ">Editar</a>
+              @if(Auth::check() and  Auth::user()->role == 'Paciente' and Auth::user()->patient_id == $patient->id)
+                  <a href="{{route('patient_edit_data',\Hashids::encode($patient->id))}}" class="btn btn-green ">Editar</a>
+              @endif
+
           </div>
         </div>
       </div>
@@ -114,7 +121,9 @@
             </ul>
           </div>
           <div class="col-12 text-right">
+              @if(Auth::check() and  Auth::user()->role == 'Paciente' and Auth::user()->patient_id == $patient->id)
             <a href="{{route('patient_edit_data',\Hashids::encode($patient->id))}}" class="btn btn-green ">Editar</a>
+             @endif
           </div>
         </div>
         <hr>

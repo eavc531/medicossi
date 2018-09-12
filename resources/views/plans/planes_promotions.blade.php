@@ -189,7 +189,7 @@
            <p class="card-text ml-3">-Notas para cirugia</p>
            <p class="card-text">-Impresiones de recetas y estudios de laboratorios</p>
             <p class="card-text">-Adjuntar archivos a expedientes clinicos</p>
-            <p class="card-text">-Subir el expediente de su asistente:</p>
+            <p class="card-text">-Subir el expediente de su pasiente:</p>
             <p class="card-text">
                 <ul>
                     <li>Fotos</li>
@@ -210,7 +210,7 @@
                                     </ul>
                                 </p>
             <p class="card-text">-RESPALDO DE TODOS SUS ARCHIVOS EN LA NUBE CON LA MEJOR TECNOLOGIA DE SEGURIDAD</p>
-            <p class="card-text">-MODULO DE ESTADISTICAS (para la recopilación de información importante.)</p>                   
+            <p class="card-text">-MODULO DE ESTADISTICAS (para la recopilación de información importante.)</p>
 
         </div>
         <div class="my-2">

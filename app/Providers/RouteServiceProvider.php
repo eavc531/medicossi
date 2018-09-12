@@ -29,6 +29,9 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind('medico', function($id) {
             return \Hashids::decode($id)[0];
         });
+        Route::bind('medicalCenter', function($id) {
+            return \Hashids::decode($id)[0];
+        });
         ///////////////////////////////////////////
 
 

@@ -36,28 +36,28 @@
     <a href="{{route('patient_appointments_confirmed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-azul  mt-2" disabled> Citas confirmadas o creadas por médico</a>
 @endif
 
-@if($type == 'Pagadas y pendientes')
+@if($type == 'Pagadas y Pendientes')
     <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-green disabled mt-2"> Pagadas y pendientes</a>
 @else
     <a href="{{route('patient_appointments_paid_and_pending',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-green mt-2"> Pagadas y pendientes</a>
 @endif
 
-@if($type == 'Pasada y por Cobrar')
-    <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-azul text-white disabled mt-2">Pasadas y por cobrar</a>
+@if($type == 'Pasada y sin realizar')
+    <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-azul text-white disabled mt-2">Pasadas sin realizar</a>
     @else
-    <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-azul text-white mt-2">Pasadas sin realizar</a>
+    <a href="{{route('patient_appointments_past_collect',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-azul text-white mt-2">Pasadas y sin realizar</a>
 @endif
 @if($type == 'Pagadas y Completadas')
     <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-green disabled mt-2 text-black"> Completadas</a>
 @else
     <a href="{{route('patient_appointments_completed',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-green  mt-2 text-black"> Completadas</a>
 @endif
-@if($type == 'Rechazada/Cancelada')
+@if($type == 'canceladas')
     <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-azul disabled mt-2">Rechazadas/Canceladas</a>
 @else
     <a href="{{route('patient_appointments_canceled',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-azul mt-2">Rechazadas/Canceladas</a>
 @endif
-@if($type == 'Realizadas y por Cobrar')
+@if($type == 'Realizadas y por cobrar')
     <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-green disabled mt-2">Realizadas y por Cobrar</a>
 @else
     <a href="{{route('patient_app_realizada_por_cobrar',['m_id'=>\Hashids::encode(request()->m_id),'p_id'=>\Hashids::encode(request()->p_id)])}}" class="btn btn-green mt-2">Realizadas y por Cobrar</a>

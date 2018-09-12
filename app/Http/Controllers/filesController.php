@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\medico;
 use App\patient;
 use App\file;
+use App\expedient_file;
+use App\expedient;
+
 //validacion personalizada
 use Validator;
 use App\task_consultation;
@@ -28,11 +31,28 @@ class filesController extends Controller
 
 
     }
+
+    public function file_delete_expedient($id){
+        $expedient_file = expedient_file::find($id);
+        $name = $expedient_file->name;
+        $expedient_file->delete();
+
+        return back()->with('danger', 'Se a eliminado el archivo: "'.$name.'" del expediente. Este archivo aun se mantiene en el panel archivos del paciente.');
+    }
+
     public function file_delete($id){
-        $task_consultation = task_consultation::where('file_id',$id)->first();
-        $task_consultation->file_id = Null;
-        $task_consultation->save();
-        
+        // $task_consultation = task_consultation::where('file_id',$id)->first();
+        // $task_consultation->file_id = Null;
+        // $task_consultation->save();
+
+        // verificar si esta enlazado a un expediente
+        $expedient_file = expedient_file::where('file_id',$id)->first();
+
+        if($expedient_file != Null){
+            $expedient = expedient::find($expedient_file->expedient_id);
+            return back()->with('warning', 'Imposible eliminar archivo, este archivo esta enlazado al expediente: "'.$expedient->name.'" por favor eliminelo de dicho expediente para proceder a hacer el borrado completo por este panel.');
+        }
+
         $file = file::find($id);
 
         if(\File::exists(public_path($file->path))){
@@ -63,12 +83,9 @@ class filesController extends Controller
             'archivo'=>'required|mimes:jpg,jpeg,gif,png,xls,xlsx,doc,docx,pdf,txt,rtf',
         ]);
 
-
-
         $size = $request->file('archivo')->getClientSize();
         $patient = patient::find($request->patient_id);
         $medico = medico::find($request->medico_id);
-
 
         $extension = $request->file('archivo')->extension();
         $pathStore = 'img/users/'.$request->medico_id.'/archivos';
@@ -82,8 +99,6 @@ class filesController extends Controller
             if($verify_name != Null){
                 return back()->with('warning', 'El nombre ya esta siendo usado')->withInput();
             }
-
-
 
             $pathSave = 'img/users/'.$request->medico_id.'/archivos/'.$nameArchivo;
 
@@ -118,7 +133,12 @@ class filesController extends Controller
                $file->description = $request->description;
                $file->extension = $extension;
                $file->size = $size;
-               // $file->upload_for =
+               if(Auth::user()->role == 'medico'){
+                   $file->upload_for = Auth::user()->medico->nameComplete;
+               }else{
+                   $file->upload_for = Auth::user()->assistant->name.' '.Auth::user()->assistant->lastName;
+               }
+
                $file->save();
         }
             //anotar tarea en la consulta abierta
@@ -136,8 +156,28 @@ class filesController extends Controller
 
             }
 
+            if($request->expedient_id != Null){
+                $expedient_files = new expedient_file;
+                $expedient_files->file_id = $file->id;
+                $expedient_files->expedient_id = $request->expedient_id;
+                $expedient_files->patient_id = $request->patient_id;
+                $expedient_files->medico_id = $request->medico_id;
+                $expedient_files->path = $pathSave;
+                $expedient_files->name = $nameArchivo;
+                $expedient_files->description = $request->description;
+                $expedient_files->extension = $extension;
+                $expedient_files->size = $size;
+                if(Auth::user()->role == 'medico'){
+                    $file->upload_for = Auth::user()->medico->nameComplete;
+                }else{
+                    $file->upload_for = Auth::user()->assistant->name.' '.Auth::user()->assistant->lastName;
+                }
+                $expedient_files->save();
+            }
+
         return back()->with('success', 'El archivo a sido guardado con exito');
 
         }
+
 
 }

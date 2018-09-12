@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
+
 @section('content')
+
 <section class="box-register">
   <div class="container-fluid">
     <div class="row">
@@ -15,17 +17,14 @@
             @endisset
             <div class="input-group mt-3 col-xs-12">
               <span class="btn btn-config-blue"><i class="fas fa-images"></i></span>
-              <input type="text" class="form-control input-lg" disabled placeholder="Imagen">
+              <input type="text" class="form-control input-red input-lg" disabled placeholder="Imagen">
               <span class="input-group-btn">
                 <button class="browse btn btn-config-blue input-lg" type="button"> Agrega una imagen</button>
               </span>
             </div> --}}
           </div>
           <div class="col-lg-6 col-sm-6 col-12 text-center">
-            <label for="">Barra de progreso</label>
-            <div class="progress">
-              <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 25%; vertical-align: center;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
+
           </div>
           <hr>
         </div>
@@ -99,7 +98,7 @@
           </div>
           <div class="m-2">
             <div class="form-inline">
-              <input type="text" name="" class="form-control" value="" id="address">
+              <input type="text" name="" class="form-control input-red" value="" id="address">
               <button onclick="searchInMap()" class="btn btn-primary" type="button" name="button">Buscar</button>
             </div>
 
@@ -339,7 +338,7 @@
       <input type="file" name="image" class="file">
       <div class="input-group col-xs-12">
         <span class="btn btn-config-blue"><i class="fas fa-images"></i></span>
-        <input type="text" class="form-control input-lg" disabled placeholder="Imagen">
+        <input type="text" class="form-control input-red input-lg" disabled placeholder="Imagen">
         <span class="input-group-btn">
           <button class="browse btn btn-config-blue input-lg" type="button"> Agrega una imagen</button>
         </span>
@@ -361,12 +360,12 @@
 <div class="row">
   <div class="col-lg-3 col-sm-3 col-12">
     <div class="form-group">
-      {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control','placeholder'=>'Red Social','id'=>'name_social'])!!}
+      {!!Form::select('name',['Facebook'=>'Facebook','Twiter'=>'Twiter','Instagram'=>'Instagram'],null,['class'=>'form-control input-red','placeholder'=>'Red Social','id'=>'name_social'])!!}
     </div>
   </div>
   <div class="col-lg-7 col-sm-7 col-12">
     <div class="form-group">
-      {!!Form::text('link',null,['class'=>'form-control','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social'])!!}
+      {!!Form::text('link',null,['class'=>'form-control input-red','placeholder'=>'Ingrese la Dirección Url del perfil de su Red Social','id'=>'link_social'])!!}
       {!!Form::hidden('medicalCenter_id',$medicalCenter->id,['id'=>'medicalCenter_id'])!!}
     </div>
   </div>
@@ -458,6 +457,8 @@
 </div>
 </div>
 </div>
+
+
 </section>
 @include('medicalCenter/modal_edit/modals')
 @endsection

@@ -1,5 +1,11 @@
 @extends('layouts.app')
-
+@section('css')
+    <style media="screen">
+        .input-red{
+            border-color:#d62f2f;
+        }
+    </style>
+@endsection
 @section('content')
 <section class="box-register">
   <div class="container">
@@ -16,17 +22,17 @@
       <p>Por Favor rellene los datos a continuación, requeridos para poder gestionar correctamente todas las funciones de nuestro  sistema.</p>
     </div>
   </div>
-  {!!Form::model($medicalCenter,['route'=>['medicalCenter.update',$medicalCenter],'method'=>'PUT'])!!}
+  {!!Form::model($medicalCenter,['route'=>['medicalCenter.update',\Hashids::encode($medicalCenter->id)],'method'=>'PUT'])!!}
   <div class="row">
     <div class="col-lg-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="" class="font-title">Nombre de la Institución o Centro Medico</label>
-        {{Form::text('name',null,['class'=>'form-control','placeholder'=>'Nombre del Centro Medico'])}}
+        {{Form::text('name',null,['class'=>'form-control input-red','placeholder'=>'Nombre del Centro Medico'])}}
 
       </div>
       <div class="form-group">
         <label for="" class="font-title">Nombre del Administrador</label>
-        {{Form::text('nameAdmin',null,['class'=>'form-control','placeholder'=>'Nombre del Administrador'])}}
+        {{Form::text('nameAdmin',null,['class'=>'form-control input-red','placeholder'=>'Nombre del Administrador'])}}
       </div>
 
     </div>
@@ -39,7 +45,7 @@
       </div>
       <div class="form-group">
         <label for="" class="font-title">Teléfono del Administrador</label>
-        {{Form::text('phone_admin',null,['class'=>'form-control'])}}
+        {{Form::text('phone_admin',null,['class'=>'form-control input-red'])}}
       </div>
     </div>
   </div>
@@ -48,13 +54,13 @@
     <div class="col-lg-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="" class="font-title">Licencia sanitaria</label>
-        {{Form::text('sanitary_license',null,['class'=>'form-control'])}}
+        {{Form::text('sanitary_license',null,['class'=>'form-control input-red'])}}
       </div>
     </div>
     <div class="col-lg-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="" class="font-title">Id del Centro Medico</label>
-        {{Form::text('id_medicalCenter',null,['class'=>'form-control'])}}
+        {{Form::text('id_medicalCenter',null,['class'=>'form-control input-red'])}}
       </div>
     </div>
   </div>
@@ -62,7 +68,7 @@
     <div class="col-lg-6 col-sm-6 col-12">
       <div class="form-group">
         <label for="" class="font-title">Telefono de Oficina 1</label>
-        {{Form::text('phone',null,['class'=>'form-control'])}}
+        {{Form::text('phone',null,['class'=>'form-control input-red'])}}
       </div>
     </div>
     <div class="col-lg-6 col-sm-6 col-12">
@@ -81,37 +87,39 @@
   <div class="col-lg-6 col-sm-6 col-12">
     <div class="form-group">
       <label for="" class="font-title">Pais</label>
-      {{Form::select('country',['Mexíco'=>'Mexíco'],null,['class'=>'form-control'])}}
+      {{Form::text('country','México',['class'=>'form-control input-red','readOnly'])}}
     </div>
   </div>
   <div class="col-lg-6 col-sm-6 col-12">
     <div class="form-group">
-      <label for="" class="font-title">Estado</label>
-      {{Form::select('state',$states,null,['class'=>'form-control','id'=>'state','placeholder'=>'opciones'])}}
+        <label for="" class="font-title" >Codigo Postal</label>
+        {{Form::number('postal_code',null,['class'=>'form-control input-red'])}}
     </div>
   </div>
   <div class="col-lg-6 col-sm-6 col-12">
     <div class="form-group">
-      <label for="" class="font-title">Ciudad</label>
-      {{Form::select('city',$cities,null,['class'=>'form-control','id'=>'city','placeholder'=>'opciones'])}}
+        <label for="" class="font-title">Estado</label>
+        {{Form::select('state',$states,null,['class'=>'form-control input-red','id'=>'state','placeholder'=>'opciones'])}}
+
     </div>
   </div>
   <div class="col-lg-6 col-sm-6 col-12">
     <div class="form-group">
-      <label for="" class="font-title" >Codigo Postal</label>
-      {{Form::number('postal_code',null,['class'=>'form-control'])}}
+        <label for="" class="font-title">Ciudad</label>
+        {{Form::select('city',$cities,null,['class'=>'form-control input-red','id'=>'city','placeholder'=>'opciones'])}}
+
     </div>
   </div>
   <div class="col-lg-6 col-sm-6 col-12">
     <div class="form-group">
       <label for="" class="font-title" >Colonia</label>
-      {{Form::text('colony',null,['class'=>'form-control'])}}
+      {{Form::text('colony',null,['class'=>'form-control input-red'])}}
     </div>
   </div>
   <div class="col-lg-6 col-sm-6 col-12">
     <div class="form-group">
      <label for="[object Object]" class="font-title">Calle/Av (especifique)</label>
-     {{Form::text('street',null,['class'=>'form-control'])}}
+     {{Form::text('street',null,['class'=>'form-control input-red'])}}
    </div>
  </div>
  <div class="col-lg-6 col-sm-6 col-12">
@@ -132,7 +140,7 @@
 
   </div>
   <div class="col-lg-6 col-sm-6 col-12 mt-2">
-    <button type="submit" class="btn-config-green btn btn-block">Guardar</button>
+    <button onclick="loader()" type="submit" class="btn-config-green btn btn-block">Guardar</button>
   </div>
 </div>
 {!!Form::close()!!}

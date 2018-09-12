@@ -71,6 +71,6 @@ class Kernel extends HttpKernel
         'verify_conultation_open' => \App\Http\Middleware\verify_conultation_open ::class,
         //verifica si ahi consulta abierta
         'consultation_open'=> \App\Http\Middleware\consultation_open::class,
-
+        'verify_complete_medical_center'=> \App\Http\Middleware\verify_complete_medical_center::class,
     ];
 }

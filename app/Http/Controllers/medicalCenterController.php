@@ -33,7 +33,7 @@ class medicalCenterController extends Controller
    * @return \Illuminate\Http\Response
    */
   public function __construct(){
-    // $this->Middleware('medicalCenterConfirm',['only'=>['edit']]);
+    $this->Middleware('verify_complete_medical_center',['except'=>['update','data_primordial_medical_center']]);
 
   }
 
@@ -392,7 +392,7 @@ class medicalCenterController extends Controller
      */
     public function store(Request $request)
     {
-
+        // dd($request->all());
         $request->validate([
           'name'=>'required',
           'emailAdmin'=>'required|unique:medical_centers',
@@ -401,6 +401,12 @@ class medicalCenterController extends Controller
           'password'=>'required',
           'country'=>'required',
         ]);
+
+        // validar email users
+        $email_user_validate = user::where('email', $request->emailAdmin)->first();
+        if($email_user_validate != Null){
+            return back()->withInput()->with('warning','El campo Email de Administrador ya ha sido tomado.');
+        }
 
         if($request->terminos == Null){
           return back()->with('warning', 'Debes Aceptar los Términos y Condiciones, para poder continuar.')->withInput();
@@ -427,7 +433,7 @@ class medicalCenterController extends Controller
         Mail::send('mails.confirmMedicalCenter',['medicalCenter'=>$medicalCenter,'code'=>$code], function($msj) use ($medicalCenter){
            $msj->subject('Médicos Si');
            //$msj->to($medicalCenter->emailAdmin);
-           $msj->to($medicalCenter->emailAdmin);
+           $msj->to('eavc53189@gmail.com');
 
          });
          // if($request->id_promoter != Null){
@@ -468,7 +474,7 @@ class medicalCenterController extends Controller
      */
     public function edit($id)
     {
-
+         // dd($id);
       $images = photo::where('medicalCenter_id',$id)->get();
 
       $medicos = medico::where('medicalCenter_id', $id)->get();
@@ -485,7 +491,6 @@ class medicalCenterController extends Controller
       $sabado = day::where('medical_center_id', $id)->where('name', 'sabado')->orderBy('hour_ini','asc')->get();
       $domingo = day::where('medical_center_id', $id)->where('name', 'domingo')->orderBy('hour_ini','asc')->get();
 
-
       return view('medicalCenter.edit')->with('medicalCenter', $medicalCenter)->with('lunes', $lunes)->with('martes', $martes)->with('miercoles', $miercoles)->with('jueves', $jueves)->with('viernes', $viernes)->with('sabado', $sabado)->with('domingo', $domingo)->with('medicos', $medicos)->with('images',$images)->with('insurance_carrier',$insurance_carrier);
 
     }
@@ -499,7 +504,6 @@ class medicalCenterController extends Controller
      */
     public function update(Request $request, $id)
     {
-      //dd($request->all());
 
         $medicalCenter = medicalCenter::find($id);
 
@@ -517,23 +521,28 @@ class medicalCenterController extends Controller
           //'email_institution'=>'required',
           'phone_admin'=>'required',
           'phone'=>'required',
-          'city'=>'required',
           'country'=>'required',
           'sanitary_license'=>'required',
           'state'=>'required',
+          'city'=>'required',
           'postal_code'=>'required',
           'colony'=>'required',
           'street'=>'required',
-          'number_ext'=>'required',
+          // 'number_ext'=>'required',
 
         ]);
 
         if($request->city == 'opciones'){
-          return back()->with('warning', 'El campo ciudad es requerido');
+          return back()->with('warning', 'El campo ciudad es requerido')->withInput();
         }
+
+        $Coordinates = Geocoder::getCoordinatesForAddress($request->country.','.$request->city.','.$request->colony.','.$request->street.','.$request->number_ext);
 
         $medicalCenter = medicalCenter::find($id);
         $medicalCenter->fill($request->all());
+        $medicalCenter->statuss = 'complete';
+        $medicalCenter->latitud = $Coordinates['lat'];
+        $medicalCenter->longitud = $Coordinates['lng'];
         $medicalCenter->save();
 
         return redirect()->route('medicalCenter.edit',\Hashids::encode($id));

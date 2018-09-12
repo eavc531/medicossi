@@ -20,7 +20,7 @@ class CreatePatientsTable extends Migration
             $table->string('name');
             $table->string('lastName');
             $table->string('nameComplete');
-            $table->string('phone1');
+            $table->string('phone1')->nullable();
             $table->string('phone2')->nullable();
             $table->string('email');
             $table->string('age')->nullable();

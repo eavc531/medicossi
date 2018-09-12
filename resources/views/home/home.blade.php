@@ -1,7 +1,7 @@
 @extends('layouts.app')
-{{-- @section('css')
+@section('css')
 <link rel="stylesheet" href="{{asset('jqueryui/jquery-ui.css')}}">
-@endsection --}}
+@endsection
 @section('content')
 @if(!isset(Auth::user()->id))
 <div class="row">
@@ -35,7 +35,7 @@
            <div class="optionDisplay d-block d-sm-none filter">Busqueda Avanzada</div>
           <div class="input-group my-1 m-sm-0">
             <span class="mr-2 white d-none d-sm-block filter"><i class="fas fa-filter fa-2x" data-toggle="tooltip" data-placement="top" title="Busqueda Avanzada"></i></span>
-            {{Form::select('typeSearch',['Centro Médico'=>'Nombre del Centro Médico','Especialidad Médica'=>'Especialidad Médica','Nombre/Cedula del Medico'=>'Nombre/Cedula del Médico',],null,['class'=>'form-control noBorderFocus' ,'placeholder'=>'Buscar por:','id'=>'typeSearch'])}}
+            {{Form::select('typeSearch',['Centro Médico'=>'Nombre del Centro Médico','Especialidad Medica'=>'Especialidad Médica','Nombre/Cedula del Medico'=>'Nombre/Cedula del Médico',],null,['class'=>'form-control noBorderFocus' ,'placeholder'=>'Buscar por:','id'=>'typeSearch'])}}
           </div>
         </div>
         <div class="col-12 col-sm-8">
@@ -376,14 +376,15 @@
                   <div class="form-group">
                     {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
                     {{-- {{Route::currentRouteName()}} --}}
+
                     <a class="btn btn-primary" href="{{route('medico.edit',[\Hashids::encode($medico['id'])])}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
                   </div>
                   <div class="form-group">
                     @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
-                    <a href="" class="btn disabled" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i>Agendar cita</a>
+                    <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id'])])}}" class="btn btn-secondary"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
                     @else
                     @if(Auth::check() and Auth::user()->role == 'Paciente')
-                    <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id'])])}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+                    <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id'])])}}" class="btn btn-azul"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
                     @else
                     <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
                     @endif
@@ -633,6 +634,15 @@
   $(document).ready(function(){
   $('#modal-login').modal('show');
   $('#text-success-confirm').html('Su Cuenta ha sido Confirmada con exito, ya es posible iniciar sesión con sus Credenciales');
+  $('#alert-success-confirm').fadeIn();
+  });
+  </script>
+  @endif
+  @if(Session::Has('confirm_change_pass'))
+  <script type="text/javascript">
+  $(document).ready(function(){
+  $('#modal-login').modal('show');
+  $('#text-success-confirm').html('Su Contraseña ha sido renovada con exito, ya puede ingresar a su cuenta.');
   $('#alert-success-confirm').fadeIn();
   });
   </script>
@@ -958,7 +968,7 @@ $('#cityMedic').append($('<option>', {
     // alert("Your browser does not support geolocation");
     // },
     // always: function() {
-    
+
     // }
     // });
     function verifySession(){

@@ -16,6 +16,7 @@
             {!!Form::hidden('medico_id',$medico->id,['id'=>''])!!}
             {!!Form::hidden('event_id',null,['id'=>'event_id4'])!!}
             <button id="btn_ini_consul" style="display:none" type="submit" name="button" class="btn btn-primary btn-sm ">Iniciar Consulta</button>
+            <button onclick="return alert('Esta opcion esta disponible solo para el plan platino, que le permite iniciar la consulta, agregar notas, expedientes y archivos, y registrar dischos eventos en la consulta.')" id="btn_ini_consul_disabled" style="display:none" type="button" name="button" class="btn btn-secondary btn-sm ">Iniciar Consulta</button>
             {!!Form::close()!!}
 
             {!!Form::open(['route'=>['redirect_task_consultation'],'method'=>'POST'])!!}

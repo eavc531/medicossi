@@ -19,7 +19,7 @@
 				border-color:rgb(226, 78, 37);
 				color: #000;
 			}
-			
+
 		#loaderx {
 			position: fixed;
 			left: 50%;
@@ -95,9 +95,9 @@
 	</head>
 	<body>
 		{{-- LOADER --}}
-		<div class="" id="Bloquear">
+		{{-- <div class="" id="Bloquear">
 			<div id="loaderx"></div>
-		</div>
+		</div> --}}
 		<nav class="navbar navbar-expand-md navbar-config d-none d-lg-block">
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -115,6 +115,7 @@
 				<div class="form-inline">
 					<ul class="navbar-nav">
 						<li class="nav-item dropdown">
+
 							@if(Auth::check())
 							<a class="nav-link dropdown-toggle textAuth" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
 								@if(Auth::user()->role == 'Administrador')
@@ -131,6 +132,8 @@
 								<strong class="text-azul">Asistente:</strong> {{Auth::user()->assistant->nameComplete}}
 								@elseif (Auth::user()->role == 'Promotor')
 								<strong class="text-azul">Promotor:</strong> {{Auth::user()->promoter->name}} {{Auth::user()->promoter->lastName}}
+							@elseif (Auth::user()->role == 'medical_center')
+								{{Auth::user()->medicalCenter->nameAdmin}}
 								@endif
 							</a>
 							<div class="dropdown-menu bg-transparent" style="border:none"; aria-labelledby="navbarDropdown">
@@ -201,9 +204,9 @@
 								<div class="col-12 text-center my-2">
 									<span class="btn-block btn-lg btn-green d-block d-sm-none" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-plus mr-2 mb-2"></i>Menu</span>
 								</div>
-								
 
-								
+
+
 								<div class="col-12 col-sm-4 col-lg-3 mb-2">
 									<div class="collapse show" id="collapseExample">
 										@include('layouts.dashboard')
@@ -251,6 +254,7 @@
 				<script src="{{asset('fontawesome/js/fontawesome.js')}}"></script>
 				<script type="text/javascript" src="{{asset('js/main.js')}}"></script>
 				<script type="text/javascript">
+
 				$(window).on("load", function() {
 					preloaderFadeOutTime = 400;
 					function hidePreloader() {
@@ -261,6 +265,7 @@
 					}
 					hidePreloader();
 				});
+
 				function loader(){
 					$('#Bloquear').show();
 					$('#loaderx').show();

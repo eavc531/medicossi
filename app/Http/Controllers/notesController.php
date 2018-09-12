@@ -22,6 +22,8 @@ use App\disease_list;
 use Spatie\ArrayToXml\ArrayToXml;
 //validacion personalizada
 use App\task_consultation;
+use App\expedient_file;
+
 use Auth;
 use Validator;
 use File;
@@ -193,7 +195,7 @@ class notesController extends Controller
     //         return back()->with('error2','El campo Diagnostico de reporte es requerido, y debe ser menor a 255 cracteres.')
     //         ->withInput();
     //     }
-    //
+    //  use Validator;
     //     $request->validate([
     //
     //     ]);
@@ -518,7 +520,7 @@ class notesController extends Controller
 
     }
     public function expedient_open($m_id,$p_id,$ex_id){
-
+        $expedient_files = expedient_file::where('expedient_id',$ex_id)->get();
         $salubridad_report = salubridad_report::where('medico_id',$m_id)->where('patient_id', $p_id)->first();
         $notes_pre = note::where('type', 'default')->get();
         $expedient = expedient::find($ex_id);
@@ -528,7 +530,7 @@ class notesController extends Controller
         $medico = medico::find($m_id);
         $patient = patient::find($p_id);
 
-        return view('medico.expedients_patient.expedient_open',compact('expedient_notes','medico','patient','notes_pre','expedient','salubridad_report'));
+        return view('medico.expedients_patient.expedient_open',compact('expedient_notes','medico','patient','notes_pre','expedient','salubridad_report','expedient_files'));
 
     }
 

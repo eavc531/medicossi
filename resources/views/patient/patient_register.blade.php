@@ -1,5 +1,11 @@
 @extends('layouts.app')
-
+@section('css')
+    <style media="screen">
+        .form-red{
+            border-color: rgb(231, 60, 60);
+        }
+    </style>
+@endsection
 @section('content')
   <section class="box-register">
 
@@ -25,35 +31,36 @@
             <div class="col-lg-6 col-12">
               <label for="" class="font-title">Cedula</label>
 							<div class="form-group">
-							   {!!Form::text('identification',null,['class'=>'form-control',])!!}
+							   {!!Form::text('identification',null,['class'=>'form-control form-red',])!!}
 							</div>
 						</div>
 						<div class="col-lg-6 col-12">
               <label for="" class="font-title">Genero</label>
 							<div class="form-group">
-							    {!!Form::select('gender',['Masculino'=>'Masculino','Femenino'=>'Femenino'],null,['class'=>'form-control','placeholder'=>''])!!}
+							    {!!Form::select('gender',['Masculino'=>'Masculino','Femenino'=>'Femenino'],null,['class'=>'form-control form-red','placeholder'=>'opciones'])!!}
 							 </div>
 						</div>
 						<div class="col-lg-6 col-12">
               <label for="" class="font-title">Nombre</label>
 							<div class="form-group">
-							    {!!Form::text('name',null,['class'=>'form-control'])!!}
+							    {!!Form::text('name',null,['class'=>'form-control form-red'])!!}
 							</div>
 						</div>
 						<div class="col-lg-6 col-12">
               <label for="" class="font-title">Apellido</label>
 							<div class="form-group">
-							    {!!Form::text('lastName',null,['class'=>'form-control'])!!}
+							    {!!Form::text('lastName',null,['class'=>'form-control form-red'])!!}
 							 </div>
 						</div>
 						<div class="col-lg-6 col-12">
               <label for="" class="font-title">Fecha de Nacimiento</label>
               <div class="form-group">
-                  {!!Form::date('birthdate',null,['class'=>'form-control'])!!}
+
+                  {!!Form::date('birthdate',null,['class'=>'form-control form-red','max'=>\Carbon\Carbon::now()->format('d-m-Y')])!!}
               </div>
 						</div>
 						<div class="col-lg-6 col-12">
-              <label for="" class="font-title">Teléfono</label>
+              <label for="" class="font-title">Teléfono (Opcional)</label>
               <div class="form-group">
                   {!!Form::number('phone1',null,['class'=>'form-control'])!!}
               </div>
@@ -61,13 +68,13 @@
             <div class="col-lg-6 col-12">
               <label for="" class="font-title">Email</label>
 							<div class="form-group">
-							    {!!Form::email('email',null,['class'=>'form-control'])!!}
+							    {!!Form::email('email',null,['class'=>'form-control form-red'])!!}
 							</div>
 						</div>
 						<div class="col-lg-6 col-12">
               <label for="" class="font-title">Clave de Usuario</label>
 							<div class="form-group">
-							    {!!Form::password('password',['class'=>'form-control'])!!}
+							    {!!Form::password('password',['class'=>'form-control form-red'])!!}
 							</div>
 						</div>
 					</div>

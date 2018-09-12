@@ -38,7 +38,7 @@
             <div class="col-lg-6 col-12">
               <label for="" class="font-title">Genero</label>
               <div class="form-group">
-                  {!!Form::select('gender',['Masculino'=>'Masculino','Femenino'=>'Femenino'],null,['class'=>'form-control'])!!}
+                  {!!Form::select('gender',['Masculino'=>'Masculino','Femenino'=>'Femenino'],null,['class'=>'form-control','placeholder'=>'opciones'])!!}
                </div>
             </div>
             <div class="col-lg-6 col-12">
@@ -56,7 +56,7 @@
             <div class="col-lg-6 col-12">
               <label for="" class="font-title">Fecha de Nacimiento</label>
               <div class="form-group">
-                  {!!Form::date('birthdate',null,['class'=>'form-control'])!!}
+                   {!!Form::date('birthdate',null,['class'=>'form-control form-red'])!!}
               </div>
             </div>
             <div class="col-lg-6 col-12">

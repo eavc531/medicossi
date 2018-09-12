@@ -50,7 +50,7 @@
                 </a>
               </h5>
               <div class="form-inline">
-                <label class="m-0" for="" class="textGray">Cédula: &nbsp;</label> 
+                <label class="m-0" for="" class="textGray">Cédula: &nbsp;</label>
                 <span class="">{{$patient['identification']}}</span>
               </div>
               <div class="row align-self-end">
@@ -77,23 +77,7 @@
                 {{-- <div class="col-lg-2 col-2  col-sm-3 text-center">
                   <a class="btn btn-secondary" href="{{route('medico_appointments_patient',['medico_id'=>\Hashids::encode($medico->id),'patient_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>citas con paciente</em>"><i class="far fa-calendar-alt"><span style="font-size:11"></span></i></a>
                 </div> --}}
-                @plan_platino
-                {{-- <div class="col-lg-2 col-2  col-sm-4 text-center">
-                  <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Expedientes</em>" class="btn btn-secondary"><i class="fas fa-folder"></i></a>
-                </div>
-                <div class="col-lg-2 col-2  col-sm-3 text-center">
-                  <a href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="<em>Notas médicas</em>" class="btn btn-secondary"><i class="fas fa-notes-medical"></i></a>
-                </div> --}}
-                @else
-                <div class="col-12 col-sm-10 text-center">
-                  <div class="btn-group" role="group" aria-label="Buttons">
-                     <a class="btn btn-azul disabled" href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="Expedientes"><i class="fas fa-folder"></i>
-                     </a>
-                    <a class="btn btn-green disabled light" href="{{route('notes_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient['id'])])}}" data-toggle="tooltip" data-html="true" title="Notas médicas"><i class="fas fa-notes-medical"></i>
-                    </a>
-                  </div>
-                </div>
-                @endplan_platino
+
               </div>
               <div class="row">
                 <div class="col-12 col-sm-10 mt-2">

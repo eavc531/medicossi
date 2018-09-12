@@ -48,11 +48,11 @@ background: rgb(83, 36, 143);
         {{-- ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR  ////////////////////FULLCALENDAR --}}
     <div class="text-right my-2">
         @edit_schedule
-        <a class="btn btn-azul" href="{{route('medico_schedule',\Hashids::encode($medico->id))}}">
+        <a class="btn btn-azul" href="{{route('medico_schedule',[\Hashids::encode($medico->id),'back'=>'medico_reminders'])}}">
           Editar horario de consulta
         </a>
         @else
-        <a class="btn btn-azul disabled" href="{{route('medico_schedule',\Hashids::encode($medico->id))}}">
+        <a class="btn btn-azul disabled" href="">
           Editar horario de consulta
         </a>
         @endedit_schedule

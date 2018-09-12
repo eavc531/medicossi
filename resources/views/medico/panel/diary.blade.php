@@ -293,10 +293,20 @@ border-width: 1px;
                                                         </div>
                                                     </div>
                                                 </div>
+
                                                 <div id="alert_error" class="alert alert-warning alert-dismissible fade show text-left hiddenbutton" role="alert">
                                                     <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
                                                     <p id="text_error" style="font-size:12px"></p>
                                                 </div>
+
+                                                {{-- //CAMBIAR LOS ALERT DISMISIBLES POR DIV NORMALES --}}
+                                                {{-- <div class="hide" id="alert_error">
+                                                    oculto_test
+                                                    <p id="text_error" style="font-size:12px"></p>
+                                                    <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
+                                                    <p id="text_success" style="font-size:12px"></p>
+                                                </div> --}}
+
                                                 <div id="alert_success" class="alert alert-success alert-dismissible fade show text-left hiddenbutton" role="alert">
                                                     <button type="button" class="close" onclick="cerrar()"><span >&times;</span></button>
                                                     <p id="text_success" style="font-size:12px"></p>
@@ -413,10 +423,13 @@ border-width: 1px;
     {{Form::hidden('filtro_payment_method','Ninguno',['id'=>'filtro_payment_method'])}}
     {{Form::hidden('filtro_confirmed_medico','Ninguno',['id'=>'filtro_confirmed_medico'])}}
 
+
     <input type="hidden" name="id_medico_id" value="{{$medico->id}}" id="id_medico_id">
     <input type="hidden" name="" value="{{route('event_personal_update')}}" id="event_personal_update">
     <input type="hidden" name="" value="{{route('event_personal_delete')}}" id="event_personal_delete">
     {{Form::hidden('route',route('manage_patient',['m_id'=>'m_id','p_id'=>'p_id']),['id'=>'route_manage'])}}
+
+    <input type="hidden" name="" value="{{$medico->plan}}" id="plan_medico">
     @endsection
     {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
     @section('scriptJS')
@@ -606,6 +619,11 @@ border-width: 1px;
                 },
                 error:function(error){
                     $('#confirmed_payment').modal('hide');
+                    $('#btn_ini_consul').hide();
+                    $('#btn_ini_consul_disabled').hide();
+                    $('#acciones_realizadas').show();
+
+
                     console.log(error);
                 },
             });
@@ -904,9 +922,17 @@ border-width: 1px;
 
                     // boton Iniciar consulta
                     if(event.title != 'Ausente' & event.title != 'Personal' & event.state != 'Realizada y por cobrar' & event.state != 'Pagada y Completada' & event.confirmed_medico == 'Si'){
-                        $('#btn_ini_consul').show();
+                        // verifica plan de medico
+                        if($('#plan_medico').val() == 'plan_platino'){
+                            $('#btn_ini_consul').show();
+                            $('#btn_ini_consul_disabled').hide();
+                        }else{
+                            $('#btn_ini_consul').hide();
+                            $('#btn_ini_consul_disabled').show();
+                        }
                     }else{
                         $('#btn_ini_consul').hide();
+                        $('#btn_ini_consul_disabled').hide();
                     }
 
                     if(event.state == 'Realizada y por cobrar' || event.state == 'Pagada y Completada'){

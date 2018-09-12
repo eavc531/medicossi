@@ -12,14 +12,12 @@
     <div class="row">
 {{--       <div class="col-6 ">
           <a class="btn btn-secondary" href="{{route('medico_diary',\Hashids::encode($medico->id))}}" data-toggle="tooltip" data-placement="top" title="Atras" name="button" class="btn">Mi Agenda</a>
-
-
       </div> --}}
       <div class="col-12 text-right">
-          @if(request()->back)
-              <a class="btn btn-green ml-2" href="{{route('medico_diary',\Hashids::encode($medico->id))}}" name="button">Atras</a>
-        @else
-            <a class="btn btn-green ml-2" href="{{route('medico_reminders',\Hashids::encode($medico->id))}}" name="button">Atras</a>
+          @if(request()->back == 'medico_reminders')
+              <a class="btn btn-green ml-2" href="{{route('medico_reminders',\Hashids::encode($medico->id))}}" name="button">Atras</a>
+        @elseif(request()->back == 'medico_diary')
+            <a class="btn btn-green ml-2" href="{{route('medico_diary',\Hashids::encode($medico->id))}}" name="button">Atras</a>
         @endif
 
       </div>
@@ -70,8 +68,6 @@
               @else
                   <a class="btn btn-green ml-2" href="{{route('medico_reminders',\Hashids::encode($medico->id))}}" name="button">Cancelar</a>
               @endif
-
-
               <input type="submit" name="" value="Guardar" class="btn btn-azul">
             </div>
           </div>

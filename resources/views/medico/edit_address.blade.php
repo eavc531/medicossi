@@ -11,6 +11,7 @@
 @endsection
 
 @section('content')
+    
 <section class="box">
   <div class="row">
     <div class="col-12 mb-3">

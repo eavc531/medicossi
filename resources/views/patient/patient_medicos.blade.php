@@ -2,7 +2,12 @@
 
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('css/switch.css')}}">
-
+<style media="screen">
+.btn-azul-disabled-funcional {
+    background-color: #6d8cb4;
+    color: #d2d2d2;
+}
+</style>
 @endsection
 @section('content')
     {{-- 'back'=>Request::fullUrl() --}}
@@ -43,7 +48,7 @@
                          <span> de "{{$medico['votes']}}" voto(s).</span>
                          <button onclick="show_califications(this)" type="button" name="button" class="btn btn-secondary btn-sm" id="{{$medico['id']}}">opiniones</button>
                      @endif
-                     
+
            </div>
            {{-- <button onclick="show_calification(this)" type="button" name="{{$medico['id']}}">test</button>
            <a href"{{route('list_calification_medico',['medico_id'=>$medico['id']])}}">Opiniones de los usuarios</a> --}}
@@ -60,17 +65,19 @@
          {{-- <label for="">Primeras visitas:<b class="price">600MXN</b></label> --}}
          {{-- {{Route::currentRouteName()}} --}}
 
-         <a class="btn btn-primary" href="{{route('medico.edit',\Hashids::encode($medico['id']))}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
+         <a class="btn btn-green" href="{{route('medico.edit',\Hashids::encode($medico['id']))}}"><i class="fas fa-cogs mr-2"></i>Ver perfíl</a>
        </div>
+
        <div class="form-group">
        @if ($medico['plan'] != 'plan_profesional' and $medico['plan'] != 'plan_platino')
 
-         <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id']),'back'=>Request::fullUrl()])}}" class="btn" style="background:rgb(151, 156, 159);color:white"><i class="fa fa-envelope-open mr-2" ></i> cita</a>
+         <a href="{{route('stipulate_appointment',['id'=>\Hashids::encode($medico['id']),'back'=>Request::fullUrl()])}}" class="btn btn-azul-disabled-funcional"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
        @else
          @if(Auth::check() and Auth::user()->role == 'Paciente')
-         <a href="{{route('stipulate_appointment',\Hashids::encode($medico['id']))}}" class="btn btn-info"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
+         <a href="{{route('stipulate_appointment',\Hashids::encode($medico['id']))}}" class="btn btn-azul"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</a>
          @else
-         <button onclick="return verifySession()" class="btn"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
+
+         <button onclick="return verifySession()" class="btn btn-azul"><i class="fa fa-envelope-open mr-2"></i>Agendar cita</button>
          @endif
        @endif
        </div>

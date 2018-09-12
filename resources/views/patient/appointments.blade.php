@@ -68,7 +68,9 @@
         <div class="row">
           <div class="col-lg-4 col-sm-4 col-12">
            <div class="p-2">
-            <label for="" class="font-title-grey"> Médico:</label> <p><a href="{{route('medico.edit',\Hashids::encode($app->medico->id))}}"><strong>{{$app->medico->name}} {{$app->medico->lastName}}</strong></a></p>
+            <label for="" class="font-title-grey"> Médico:</label> <p>
+                <a class="btn btn-green" href="{{route('medico.edit',\Hashids::encode($app->medico->id))}}"><strong><i class="fas fa-user-md"></i> {{$app->medico->name}} {{$app->medico->lastName}}</strong></a>
+            </p>
             <label for="" class="font-title-grey">Tipo de Cita:</label> <p>{{$app->title}}</p>
             <label for="" class="font-title-grey">Especialidad del Medico:</label> <p>{{$app->medico->specialty}}</p>
             @isset($app->descriptión)
@@ -82,7 +84,9 @@
           <div class="p-2">
             <label for="" class="font-title-grey">Fecha:</label> <p>{{\Carbon\Carbon::parse($app->start)->format('d-m-Y')}}</p>
 
-            <label for="" class="font-title-grey">Hora:</label> <p>{{\Carbon\Carbon::parse($app->start)->format('H:i')}}</p>
+            <label for="" class="font-title-grey">Hora de inicio:</label> <p>{{\Carbon\Carbon::parse($app->start)->format('H:i')}}</p>
+
+            <label for="" class="font-title-grey">Hora de culminación:</label> <p>{{\Carbon\Carbon::parse($app->end)->format('H:i')}}</p>
             {{-- @isset($pending) --}}
             <label for="" class="font-title-grey">Estado:</label>
               {{$app->state}}
@@ -105,12 +109,12 @@
                   </div>
                 @elseif($app->medico->plan != 'plan_profesional' and $app->medico->plan != 'plan_platino')
                     <a href="#" class="btn btn-secondary disabled text-white" data-toggle="tooltip" data-placement="top" title="No podras Calificar al médico hasta despues de la cita.">Calificar/disabled</a>
-                @elseif($app->confirmed_medico == 'Si' and $app->state != 'Rechazada/Cancelada' and \Carbon\Carbon::parse($app->end)->format('Y-m-d H:i') < \Carbon\Carbon::now())
+                @elseif($app->confirmed_medico == 'Si' and $app->state != 'Rechazada/Cancelada' and \Carbon\Carbon::parse($app->end)->format('Y-m-d H:i') < \Carbon\Carbon::now()->format('Y-m-d H:i'))
 
-                    <a onclick="return alert('No podras calificar al médico hasta que la cita sea confirmada y halla pasado la fecha de la misma.')" href="#" class="btn btn-warning mt-4" data-toggle="tooltip" data-placement="top" title="No podras Calificar al médico hasta despues de la cita."><strong>Calificar Médico</strong></a>
+                    <a class="btn btn-azul" href="{{route('qualify_medic',['p_id'=>\Hashids::encode($app->patient_id) ,'m_id'=>\Hashids::encode($app->medico_id) , 'app_id'=>\Hashids::encode($app->id)])}}">Calificar Médico</a>
                 @else
-                    
-                  <a class="btn btn-primary mt-2" href="{{route('qualify_medic',['p_id'=>\Hashids::encode($app->patient_id),'m_id'=>\Hashids::encode($app->medico_id),'app_id'=>\Hashids::encode($app->id)])}}">Calificar Médico</a>
+
+                  <a class="btn btn-primary mt-2 disabled" href="" disabled>Calificar Médico</a>
 
                 @endif
                 <label for="" class="font-title-grey mt-2">Confirmada por Médico: </label> {{$app->confirmed_medico}}

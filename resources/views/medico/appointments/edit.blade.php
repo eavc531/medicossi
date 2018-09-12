@@ -21,6 +21,7 @@
 {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 
 @section('content')
+
     @if(Auth::user()->role == 'Asistente')
         <input type="hidden" name="" value="{{Auth::user()->role}}" id="auth_role">
 
@@ -38,7 +39,8 @@
       <div class="col-lg-9 col-12">
           <div class="row">
             <div class="col-12">
-               <h3 class="text-center font-title">Editar Cita: {{$event_edit->title}} {{\Carbon\Carbon::parse($event_edit->date_start)->format('d-m-Y')}}, Paciente: {{ $event_edit->namePatient}}</h3>
+
+               <h3 class="text-center font-title">Editar Cita: {{$event_edit->title}} {{\Carbon\Carbon::parse($event_edit->start)->format('d-m-Y H:i')}}, Paciente: {{ $event_edit->namePatient}}</h3>
             </div>
           </div>
           <div class="row">
@@ -183,10 +185,20 @@
   </div>
 </div>
 
-  {{Form::hidden('','Ninguno',['id'=>'filtro_state'])}}
-  {{Form::hidden('filtro_title','Ninguno',['id'=>'filtro_title'])}}
-  {{Form::hidden('filtro_payment_method','Ninguno',['id'=>'filtro_payment_method'])}}
+{{-- {{Form::hidden('filtro_state','Ninguno',['id'=>'filtro_state'])}}
+{{Form::hidden('filtro_title','Ninguno',['id'=>'filtro_title'])}}
+{{Form::hidden('filtro_payment_method','Ninguno',['id'=>'filtro_payment_method'])}}
+{{Form::hidden('filtro_confirmed_medico','Ninguno',['id'=>'filtro_confirmed_medico'])}} --}}
 
+
+<input type="hidden" name="id_medico_id" value="{{$medico->id}}" id="id_medico_id">
+{{-- <input type="hidden" name="" value="{{route('event_personal_update')}}" id="event_personal_update">
+<input type="hidden" name="" value="{{route('event_personal_delete')}}" id="event_personal_delete"> --}}
+{{Form::hidden('route',route('manage_patient',['m_id'=>'m_id','p_id'=>'p_id']),['id'=>'route_manage'])}}
+
+<input type="hidden" name="" value="{{$medico->plan}}" id="plan_medico">
+
+<input type="hidden" name="" value="{{$event_edit->start}}" id="date_edit">
   @endsection
   {{-- ///////////////////////////////////////////////////////CONTENIDO//////////////////// --}}
 
@@ -201,95 +213,100 @@
 
 
   function confirmed_payment_or_completed(){
-    if($('#price9').val().length == 0){
-      alert('Para marcar esta Cita como pagada, debe añadir el precio de la misma.El precio real de la cita es necesario para poder llevar el registro de los ingresos de forma correcta.');
-      return false;
-    }
-    $('#confirmed_payment').modal('show');
+      if($('#price9').val().length == 0){
+          alert('Para marcar esta Cita como pagada, debe añadir el precio de la misma.El precio real de la cita es necesario para poder llevar el registro de los ingresos de forma correcta.');
+          return false;
+      }
+      $('#confirmed_payment').modal('show');
   }
 
   function confirmed_completed(){
-    price = $('#price9').val();
+      price = $('#price9').val();
 
-    // medico_id = "{{\Hashids::encode($medico->id)}}";
-    event_id = $('#event_id9').val();
-    route = "{{route('confirmed_completed_app')}}";
-    $.ajax({
-      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      type: 'get',
-      url: route,
-      data:{price:price,event_id:event_id},
-      success:function(result){
-        $('#text_success_up1').html('Se a marcado el Cita como Completada');
-        $('#alert_success_up1').fadeIn();
-        $('#price9').attr('readonly',true);
-        $('#button_confirmed_payment').hide();
-        $('#button_confirmed_complete').show();
-        $('#calendar').fullCalendar('removeEvents');
-        $('#calendar').fullCalendar('refetchEvents');
+      // medico_id = "{{$medico->id}}";
+      event_id = $('#event_id9').val();
+      route = "{{route('confirmed_completed_app')}}";
+      $.ajax({
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          type: 'get',
+          url: route,
+          data:{price:price,event_id:event_id},
+          success:function(result){
+              $('#text_success_up1').html('Se a marcado el Cita como Completada');
+              $('#alert_success_up1').fadeIn();
+              $('#price9').attr('readonly',true);
+              $('#button_confirmed_payment').hide();
+              $('#button_confirmed_complete').show();
+              $('#calendar').fullCalendar('removeEvents');
+              $('#calendar').fullCalendar('refetchEvents');
+              $('#confirmed_patient9').attr('readOnly',true);
+              $('#confirmed_medico9').attr('readOnly',true);
+              $('#price9').attr('readOnly',true);
+              $('#title9').attr('readOnly',true);
+              $('#state9').attr('readOnly',true);
+              $('#description9').attr('readOnly',true);
+              $('#eventType9').attr('readOnly',true);
+              $('#payment_method9').attr('readOnly',true);
+              $('#dateStart9').attr('readOnly',true);
+              $('#hourStart9').attr('readOnly',true);
+              $('#minsStart9').attr('readOnly',true);
+              $('#dateEndU9').attr('readOnly',true);
+              $('#hourEnd9').attr('readOnly',true);
+              $('#minsEnd9').attr('readOnly',true);
+              $('#event_id9').attr('readOnly',true);
+              $('#event_id9').attr('readOnly',true);
+              $('#event_id_destroy9').attr('readOnly',true);
+              $('#namePatient9').attr('readOnly',true);
+              $('#payment_state9').attr('readOnly',true);
+              $('#confirmed_payment').modal('hide');
+              $('#rechazar').hide();
+              $('#button_confirmed_payment').hide();
+              $('#button_confirmed_complete').hide();
+              $('#but_save').hide();
+              $('#payment_state9').val('Si');
+              ajax_data_edit_event();
+
+          },
+          error:function(error){
+              $('#confirmed_payment').modal('hide');
+              $('#btn_ini_consul').hide();
+              $('#btn_ini_consul_disabled').hide();
+              $('#acciones_realizadas').show();
 
 
-        $('#confirmed_patient9').attr('disabled',true);
-        $('#confirmed_medico9').attr('disabled',true);
-        $('#price9').attr('disabled',true);
-        $('#title9').attr('disabled',true);
-        $('#state9').attr('disabled',true);
-        $('#description9').attr('disabled',true);
-        $('#eventType9').attr('disabled',true);
-        $('#payment_method9').attr('disabled',true);
-        $('#dateStart9').attr('disabled',true);
-        $('#hourStart9').attr('disabled',true);
-        $('#minsStart9').attr('disabled',true);
-        $('#dateEndU9').attr('disabled',true);
-        $('#hourEnd9').attr('disabled',true);
-        $('#minsEnd9').attr('disabled',true);
-        $('#event_id9').attr('disabled',true);
-        $('#event_id9').attr('disabled',true);
-        $('#event_id_destroy9').attr('disabled',true);
-        $('#namePatient9').attr('disabled',true);
-        $('#payment_state9').attr('disabled',true);
-        $('#confirmed_payment').modal('hide');
-        $('#rechazar').hide();
-        $('#button_confirmed_payment').hide();
-        $('#button_confirmed_complete').hide();
-        $('#but_save').hide();
-        $('#payment_state9').val('Si');
-
-      },
-      error:function(error){
-        $('#confirmed_payment').modal('hide');
-       console.log(error);
-     },
-  });
+              console.log(error);
+          },
+      });
   }
 
   function confirmed_payment_app(){
 
-    price = $('#price9').val();
-    // medico_id = "{{\Hashids::encode($medico->id)}}";
-    event_id = $('#event_id9').val();
-    route = "{{route('confirmed_payment_app')}}";
-    $.ajax({
-      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      type: 'get',
-      url: route,
-      data:{price:price,event_id:event_id},
-      success:function(result){
-        $('#text_success_up1').html('Se a marcado el Cita como Pagada');
-        $('#alert_success_up1').fadeIn();
-        console.log(result);
-        $('#price9').attr('readonly',true);
-        $('#button_confirmed_payment').hide();
-        $('#button_confirmed_complete').show();
-        $('#calendar').fullCalendar('removeEvents');
-        $('#calendar').fullCalendar('refetchEvents');
-        $('#confirmed_payment').modal('hide');
-      },
-      error:function(error){
-        $('#confirmed_payment').modal('hide');
-       console.log(error);
-     },
-  });
+      price = $('#price9').val();
+      // medico_id = "{{$medico->id}}";
+      event_id = $('#event_id9').val();
+      route = "{{route('confirmed_payment_app')}}";
+      $.ajax({
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          type: 'get',
+          url: route,
+          data:{price:price,event_id:event_id},
+          success:function(result){
+              $('#text_success_up1').html('Se a marcado el Cita como Pagada');
+              $('#alert_success_up1').fadeIn();
+              console.log(result);
+              $('#price9').attr('readonly',true);
+              $('#button_confirmed_payment').hide();
+              $('#button_confirmed_complete').show();
+              $('#calendar').fullCalendar('removeEvents');
+              $('#calendar').fullCalendar('refetchEvents');
+              $('#confirmed_payment').modal('hide');
+              ajax_data_edit_event();
+          },
+          error:function(error){
+              $('#confirmed_payment').modal('hide');
+              console.log(error);
+          },
+      });
   }
 
 
@@ -351,6 +368,7 @@
                   console.log(error);
                 },
                  success:function(result){
+
                      stop_loader();
 
                      console.log(result);
@@ -365,14 +383,17 @@
                      }else if(result.message.error == 'ya existe'){
                          alert('Imposible actualizar evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
                    }else if(result.message.error == 'fecha_editada'){
+                       ajax_data_edit_event();
                      $('#text_success_up1').html('Se ha cambiado la "Hora/Fecha" de la consulta con Exito. Se ha enviado un correo al Paciente para notificarle del cambio de la consulta.');
                      $('#alert_success_up1').fadeIn();
 
                  }else if(result.message.error == 'confirmado_editado'){
+                     ajax_data_edit_event();
                    $('#text_success_up1').html('Se ha cambiado la "Hora/Fecha" y Confirmada consulta con Exito. Se ha enviado un correo al Paciente para notificarle del cambio de la consulta.');
                    $('#alert_success_up1').fadeIn();
 
                }else if(result.message.error == 'cita_confirmada'){
+                   ajax_data_edit_event();
                      $('#text_success_up1').html(result.message.message_error);
                      $('#alert_success_up1').fadeIn();
                      $('#alert_error_up1').fadeOut();
@@ -380,6 +401,7 @@
                      $('#calendar').fullCalendar('refetchEvents');
 
                  }else if(result.message.error == 'ok'){
+                     ajax_data_edit_event();
                        console.log(result);
 
                        $('#text_success_up1').html('Los datos de la cita, han sido guardados con exito.');
@@ -438,6 +460,7 @@
         domingo = 0;
       }
 
+      date_edit = $('#date_edit').val();
         //comentario fc
     // function calendario(){
       $('#calendar').fullCalendar({
@@ -447,7 +470,7 @@
           center: 'title',
           right: 'month,agendaWeek,agendaDay,listWeek'
         },
-        // defaultDate: '2018-03-12',
+        defaultDate: date_edit,
         defaultView: 'agendaWeek',
         eventStartEditable: false, //desabilita el arrastre
         eventDurationEditable: false,//desabilita el estiramiento
@@ -518,38 +541,6 @@
             });
   });
 
-  function filtro_state(result){
-    $('#filtro_state').val(result);
-    $('#filtro_title').val('Ninguno');
-    $('#filtro_payment_method').val('Ninguno');
-    $('#calendar').fullCalendar('removeEvents');
-    $('#calendar').fullCalendar('refetchEvents');
-  }
-
-  function filtro_title(result){
-    $('#filtro_title').val(result);
-    $('#filtro_state').val('Ninguno');
-    $('#filtro_payment_method').val('Ninguno');
-    $('#calendar').fullCalendar('removeEvents');
-    $('#calendar').fullCalendar('refetchEvents');
-  }
-
-  function filtro_payment_method(result){
-    $('#filtro_payment_method').val(result);
-    $('#filtro_state').val('Ninguno');
-    $('#filtro_title').val('Ninguno');
-    $('#calendar').fullCalendar('removeEvents');
-    $('#calendar').fullCalendar('refetchEvents');
-  }
-
-
-  function filtro_todas(){
-    $('#filtro_title').val('Ninguno');
-    $('#filtro_state').val('Ninguno');
-    $('#filtro_payment_method').val('Ninguno');
-    $('#calendar').fullCalendar('removeEvents');
-    $('#calendar').fullCalendar('refetchEvents');
-  }
 
       function newConsultation(){
         $('#eventType').val('Consulta Medica');
@@ -606,116 +597,96 @@
 
 
 
-      $('#form_event').submit(function() {
-
-      title = $('#title2').val();
-      eventType = $('#eventType2').val();
-      description = $('#description2').val();
-      price = $('#price2').val();
-      date_start = $('#date_start2').val();
-      hourStart = $('#hourStart2').val();
-      minsStart = $('#minsStart2').val();
-      startFormatHour = $('#startFormatHour3').val();
-      dateEnd = $('#date_end3').val();
-      hourEnd = $('#hourEnd2').val();
-      minsEnd = $('#minsEnd2').val();
-      endFormatHour = $('#endFormatHour2').val();
-      medico_id = "{{$medico->id}}";
-      errormsj = '';
-      $.ajax({
-       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-       type:'post',
-       url: $(this).attr('action'),
-       data: $(this).serialize(),
-       error:function(error){
-         console.log(error);
-        $.each(error.responseJSON.errors, function(index, val){
-          errormsj+='<li>'+val+'</li>';
-        });
-        $('#text_error').html('<ul style="list-style:none;">'+errormsj+'</ul>');
-        $('#alert_error').fadeIn();
-        $('#alert_success').fadeOut();
-
-        console.log(errormsj);
-
-      },
-      success:function(result){
-          alert(result);
-        if(result == 'fuera del horario'){
-          $('#text_error').html('Imposible crear evento fuera del horario establecido');
-          $('#alert_error').fadeIn();
-          $('#alert_success').fadeOut();
-        }else if(result == 'ya existe'){
-          $('#text_error').html('Imposible crear evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
-          $('#alert_error').fadeIn();
-          $('#alert_success').fadeOut();
-      }else if(result == 'end menor start'){
-            $('#text_error_up1').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
-            $('#alert_error_up1').fadeIn();
-        }else{
-          console.log(result);
-          $('#text_success').html('Guardado con Exito');
-          $('#alert_success').fadeIn();
-          $('#alert_error').fadeOut();
-          $('#calendar').fullCalendar('removeEvents');
-          $('#calendar').fullCalendar('refetchEvents');
-        }
-
-      }
-    });
-      return false;
-    });
+    // $('#form_event').submit(function() {
+    //
+    //     title = $('#title2').val();
+    //     eventType = $('#eventType2').val();
+    //     description = $('#description2').val();
+    //     price = $('#price2').val();
+    //     date_start = $('#date_start2').val();
+    //     hourStart = $('#hourStart2').val();
+    //     minsStart = $('#minsStart2').val();
+    //     startFormatHour = $('#startFormatHour3').val();
+    //     dateEnd = $('#date_end3').val();
+    //     hourEnd = $('#hourEnd2').val();
+    //     minsEnd = $('#minsEnd2').val();
+    //     endFormatHour = $('#endFormatHour2').val();
+    //     medico_id = "{{$medico->id}}";
+    //     errormsj = '';
+    //     $.ajax({
+    //         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    //         type:'post',
+    //         url: $(this).attr('action'),
+    //         data: $(this).serialize(),
+    //         error:function(error){
+    //             console.log(error);
+    //             $.each(error.responseJSON.errors, function(index, val){
+    //                 errormsj+='<li>'+val+'</li>';
+    //             });
+    //             $('#text_error').html('<ul style="list-style:none;">'+errormsj+'</ul>');
+    //             $('#alert_error').fadeIn();
+    //             $('#alert_success').fadeOut();
+    //
+    //         },
+    //         success:function(result){
+    //             if(result == 'fuera del horario'){
+    //                 $('#text_error').html('Imposible crear evento fuera del horario establecido');
+    //                 $('#alert_error').fadeIn();
+    //                 $('#alert_success').fadeOut();
+    //             }else if(result == 'end menor start'){
+    //                 $('#text_error').html('imposible guardar evento, la fecha/hora de incio de la cita, debe ser menor a la fecha de culminacion');
+    //                 $('#alert_error').fadeIn();
+    //                 $('#alert_success').fadeOut();
+    //             }else if(result == 'ya existe'){
+    //                 $('#text_error').html('Imposible crear evento,Ya existe un Evento en las horas seleccionadas, por favor compruebe la fecha en el calendario e intente nuevamente');
+    //                 $('#alert_error').fadeIn();
+    //                 $('#alert_success').fadeOut();
+    //             }else{
+    //                 console.log(result);
+    //                 $('#text_success').html('Guardado con Exito');
+    //                 $('#alert_success').fadeIn();
+    //                 $('#alert_error').fadeOut();
+    //                 $('#calendar').fullCalendar('removeEvents');
+    //                 $('#calendar').fullCalendar('refetchEvents');
+    //             }
+    //
+    //         }
+    //     });
+    //     return false;
+    // });
 
     function cancel(result){
         loader();
         $('#mail_cancel').modal('hide');
-      cerrar();
-     //  question = confirm('Esta a punto de Rechazar/Cancelar esta Cita,se enviara un corredo al paciente para notificarle de este suceso,¿Esta segur@ de Continuar?.');
-     //  if(question == false){
-     //   return false;
-     // }
-     send = result;
-     $('#alert_carga5').fadeIn();
-     $('#guardar5').attr("disabled", true);
-     $('#delete5').attr("disabled", true);
-     $('#cancelar5').attr("disabled", true);
-      event_id = $('#event_id9').val();
+        cerrar();
 
-      route = "{{route('cancel_appointment')}}";
-      $.ajax({
-       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-       type:'post',
-       url:route,
-       data:{event_id:event_id,send:send},
-       error:function(error){
-           stop_loader();
-         console.log(error);
-      },
-      success:function(result){
-           stop_loader();
-        console.log(result);
-        $('#alert_carga5').fadeOut();
-         $('#guardar5').attr("disabled", false);
-         $('#delete5').attr("disabled", false);
-         $('#cancelar5').attr("disabled", false);
-        $('#text_danger_up1').html(result);
-        $('#alert_danger_up1').fadeIn();
-        $('#alert_error_up1').fadeOut();
-        $('#calendar').fullCalendar('removeEvents');
-        $('#calendar').fullCalendar('refetchEvents');
+        send = result;
 
-        $('#but_save').hide();
-        $('#rechazar').hide();
-        $('#button_confirmed_payment').hide();
-        $('#confirmed_completed').hide();
+        event_id = $('#event_id9').val();
 
+        route = "{{route('cancel_appointment')}}";
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            type:'post',
+            url:route,
+            data:{event_id:event_id,send:send},
+            error:function(error){
+                stop_loader();
+                console.log(error);
+            },
+            success:function(result){
+                stop_loader();
+                console.log(result);
+                // alert(result);
 
-
-
-
-        //
-      }
-    });
+                $('#text_danger_up1').html(result);
+                $('#alert_danger_up1').fadeIn();
+                $('#alert_error_up1').fadeOut();
+                $('#calendar').fullCalendar('removeEvents');
+                $('#calendar').fullCalendar('refetchEvents');
+                $('#card_edit').fadeOut();
+            }
+        });
 
     }
 
@@ -781,64 +752,6 @@
 
 
 
-    $('#input_search').keyup(function(){
-      medico_id = "{{$medico->id}}";
-      search = $('#input_search').val();
-      route = "{{route('search_patients_diary')}}";
-        $.ajax({
-         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-         type:'post',
-         url:route,
-         data:{search:search,medico_id:medico_id},
-         error:function(error){
-           console.log(error);
-        },
-        success:function(result){
-          $('#result_search').html(result);
-          $('#result_search').show();
-          if(search.length == 0){
-            $('#result_search').hide();
-          }
-          console.log(result);
-          cerrar();
-
-        }
-      });
-    });
-
-      function search_medic(){
-
-      medico_id = "{{$medico->id}}";
-      search = $('#input_search').val();
-      route = "{{route('search_patients_diary')}}";
-        $.ajax({
-         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-         type:'post',
-         url:route,
-         data:{search:search,medico_id:medico_id},
-         error:function(error){
-           console.log(error);
-        },
-        success:function(result){
-          $('#result_search').html(result);
-          $('#result_search').show();
-          if(search.length == 0){
-            $("#input_search").fadeTo(200, .2)
-            .fadeTo(200, 1).fadeTo(200, .2).fadeTo(200, 1);
-            $('#result_search').hide();
-          }
-          console.log(result);
-          cerrar();
-
-        }
-      });
-    }
-
-    function vaciar_search(){
-      $("#input_search").val('');
-      $('#result_search').hide();
-    }
-
     function mail_cancel(){
         $('#mail_cancel').modal('show');
     }
@@ -858,14 +771,56 @@
         success:function(event){
             console.log(event);
 
+
             var start = $.fullCalendar.moment(event.start).format('YYYY-MM-DD');
             var end = $.fullCalendar.moment(event.end).format('YYYY-MM-DD');
             hour_start = $.fullCalendar.moment(event.start).format('HH');
             mins_start = $.fullCalendar.moment(event.start).format('mm');
             hour_end = $.fullCalendar.moment(event.end).format('HH');
             mins_end = $.fullCalendar.moment(event.end).format('mm');
+            // boton Iniciar consulta
 
-            $('#calendar').fullCalendar('gotoDate',start);
+            if(event.title != 'Ausente' & event.title != 'Personal' & event.state != 'Realizada y por cobrar' & event.state != 'Pagada y Completada' & event.confirmed_medico == 'Si'){
+                // verifica plan de medico
+                if($('#plan_medico').val() == 'plan_platino'){
+                    $('#btn_ini_consul').show();
+                    $('#btn_ini_consul_disabled').hide();
+                }else{
+                    $('#btn_ini_consul').hide();
+                    $('#btn_ini_consul_disabled').show();
+                }
+            }else{
+                $('#btn_ini_consul').hide();
+                $('#btn_ini_consul_disabled').hide();
+            }
+
+            if(event.state == 'Realizada y por cobrar' || event.state == 'Pagada y Completada'){
+
+                $('#acciones_realizadas').show();
+            }else{
+                $('#acciones_realizadas').hide();
+            }
+            // Realizada y por cobrar
+            if(event.title == 'Ausente' || event.title == 'Personal'){
+                cerrar();
+                $('#event_id10').val(event.id);
+                $('#title10').val(event.title);                        $('#description10').val(event.description);
+                $('#date_start10').val(start);
+                $('#hour_start10').val(hour_start);
+                $('#mins_start10').val(mins_start);
+                $('#hour_end10').val(hour_end);
+                $('#mins_end10').val(mins_end);
+                $('#card_personal').fadeIn();
+                $('#card_edit').hide();
+                return false;
+            }
+            $('#event_id4').val(event.id);
+            $('#event_id5').val(event.id);
+
+            /////////////
+            $('#patient_id9').val(event.patient_id);
+            $('#patient_id10').val(event.patient_id);
+            $('#patient_id11').val(event.patient_id);
 
             $('#confirmed_patient9').val(event.confirmed_patient);
             $('#confirmed_medico9').val(event.confirmed_medico);
@@ -899,90 +854,81 @@
 
 
 
-            $('#alert_success_up1').fadeOut();
             vaciar();
-            if(event.confirmed_medico == 'Si'){
-
-              $('#but_save').attr('value','Guardar Cambios');
-            }else{
-              $('#but_save').attr('value','Guardar y Confirmar');
-
-            }
 
             if(event.state == 'Pagada y Completada'){
-              $('#rechazar').hide();
-              $('#button_confirmed_payment').hide();
-              $('#button_confirmed_complete').hide();
-              $('#but_save').hide();
+                $('#rechazar').hide();
+                $('#button_confirmed_payment').hide();
+                $('#button_confirmed_complete').hide();
+                $('#but_save').hide();
             }else if(event.payment_state == 'Si'){
-              $('#price9').attr('readonly',true);
-              $('#rechazar').hide();
-              $('#button_confirmed_payment').hide();
-              $('#button_confirmed_complete').show();
-              $('#but_save').show();
+                $('#price9').attr('readonly',true);
+                $('#rechazar').hide();
+                $('#button_confirmed_payment').hide();
+                $('#button_confirmed_complete').show();
+                $('#but_save').show();
             }else{
-              $('#rechazar').show();
-              $('#price9').attr('readonly',false);
-              $('#button_confirmed_payment').show();
-              $('#button_confirmed_complete').hide();
-              $('#but_save').show();
+                $('#rechazar').show();
+                $('#price9').attr('readonly',false);
+                $('#button_confirmed_payment').show();
+                $('#button_confirmed_complete').hide();
+                $('#but_save').show();
             }
 
             if(event.state == 'Pagada y Completada'){
-              $('#confirmed_patient9').attr('disabled',true);
-              $('#confirmed_medico9').attr('disabled',true);
-              $('#price9').attr('disabled',true);
-              $('#title9').attr('disabled',true);
-              $('#state9').attr('disabled',true);
-              $('#description9').attr('disabled',true);
-              $('#eventType9').attr('disabled',true);
-              $('#payment_method9').attr('disabled',true);
-              $('#dateStart9').attr('disabled',true);
-              $('#hourStart9').attr('disabled',true);
-              $('#minsStart9').attr('disabled',true);
-              $('#dateEndU9').attr('disabled',true);
-              $('#hourEnd9').attr('disabled',true);
-              $('#minsEnd9').attr('disabled',true);
-              $('#event_id9').attr('disabled',true);
-              $('#event_id9').attr('disabled',true);
-              $('#event_id_destroy9').attr('disabled',true);
-              $('#namePatient9').attr('disabled',true);
-              $('#payment_state9').attr('disabled',true);
+                $('#confirmed_patient9').attr('readOnly',true);
+                $('#confirmed_medico9').attr('readOnly',true);
+                $('#price9').attr('readOnly',true);
+                $('#title9').attr('readOnly',true);
+                $('#state9').attr('readOnly',true);
+                $('#description9').attr('readOnly',true);
+                $('#eventType9').attr('readOnly',true);
+                $('#payment_method9').attr('readOnly',true);
+                $('#dateStart9').attr('readOnly',true);
+                $('#hourStart9').attr('readOnly',true);
+                $('#minsStart9').attr('readOnly',true);
+                $('#dateEndU9').attr('readOnly',true);
+                $('#hourEnd9').attr('readOnly',true);
+                $('#minsEnd9').attr('readOnly',true);
+                $('#event_id9').attr('readOnly',true);
+                $('#event_id9').attr('readOnly',true);
+                $('#event_id_destroy9').attr('readOnly',true);
+                $('#namePatient9').attr('readOnly',true);
+                $('#payment_state9').attr('readOnly',true);
 
             }else{
-              $('#confirmed_patient9').attr('disabled',false);
-              $('#confirmed_medico9').attr('disabled',false);
-              $('#price9').attr('disabled',false);
-              $('#title9').attr('disabled',false);
-              $('#state9').attr('disabled',false);
-              $('#description9').attr('disabled',false);
-              $('#eventType9').attr('disabled',false);
-              $('#payment_method9').attr('disabled',false);
-              $('#dateStart9').attr('disabled',false);
-              $('#hourStart9').attr('disabled',false);
-              $('#minsStart9').attr('disabled',false);
-              $('#dateEndU9').attr('disabled',false);
-              $('#hourEnd9').attr('disabled',false);
-              $('#minsEnd9').attr('disabled',false);
-              $('#event_id9').attr('disabled',false);
-              $('#event_id9').attr('disabled',false);
-              $('#event_id_destroy9').attr('disabled',false);
-              $('#namePatient9').attr('disabled',false);
-              $('#payment_state9').attr('disabled',false);
-
+                $('#confirmed_patient9').attr('readOnly',false);
+                $('#confirmed_medico9').attr('readOnly',true);
+                $('#price9').attr('readOnly',false);
+                // $('#title9').attr('readOnly',false);
+                $('#state9').attr('readOnly',true);
+                $('#description9').attr('readOnly',false);
+                $('#eventType9').attr('readOnly',false);
+                $('#payment_method9').attr('readOnly',false);
+                $('#dateStart9').attr('readOnly',false);
+                $('#hourStart9').attr('readOnly',false);
+                $('#minsStart9').attr('readOnly',false);
+                $('#dateEndU9').attr('readOnly',false);
+                $('#hourEnd9').attr('readOnly',false);
+                $('#minsEnd9').attr('readOnly',false);
+                $('#event_id9').attr('readOnly',false);
+                $('#event_id9').attr('readOnly',false);
+                $('#event_id_destroy9').attr('readOnly',false);
+                $('#namePatient9').attr('readOnly',true);
+                $('#payment_state9').attr('readOnly',true);
             }
 
             //verifica permisos de asistente
             if($('#auth_role').val() == 'Asistente'){
+
                 if($('#cita_edit').val() != 1){
-                     $('#eventType9').attr('readOnly',true);
-                      $('#price9').attr('readOnly',true);
-                      $('#description9').attr('readOnly',true);
-                       $('#payment_method9').attr('readOnly',true);
-                       $('#confirmed_patient9').attr('readOnly',true);
+                    $('#eventType9').attr('readOnly',true);
+                    $('#price9').attr('readOnly',true);
+                    $('#description9').attr('readOnly',true);
+                    $('#payment_method9').attr('readOnly',true);
+                    $('#confirmed_patient9').attr('readOnly',true);
 
-                       $('#title9').attr('readOnly',true);
-
+                    $('#title9').attr('readOnly',true);
                 }
 
                 if($('#cita_change_date').val() != 1){
@@ -1021,19 +967,15 @@
                         $('#button_confirmed_complete').hide();
                         $('#but_save').hide();
                         $('#text_confirm').show();
-
                     }else{
                         $('#text_confirm').hide();
                     }
 
-
                 }else{
                     $('#text_confirm').hide();
                 }
-
-
             }
-
+            //////////////////////////////////////////////
             if(event.confirmed_medico != 'Si'){
                 $('#but_save').attr('value','Guardar y Confirmar');
                 $('#button_confirmed_payment').attr('disabled',true);
@@ -1041,7 +983,27 @@
                 $('#but_save').attr('value','Guardar');
                 $('#button_confirmed_payment').attr('disabled',false);
             }
-          cerrar();
+            /////////////////////////////////////////////////
+            $('#card_personal').hide();
+            $('#card_edit').fadeIn();
+            // Realizada y por cobrar
+            if(event.state == 'Realizada y por cobrar'){
+                $('#but_save').hide();
+
+            }
+
+            if(event.state == 'Rechazada/Cancelada'){
+
+                $('#rechazar').hide();
+                $('#but_save').hide();
+                $('#button_confirmed_payment').hide();
+                $('#button_confirmed_complete').hide();
+                $('#gestion_patient_btn').hide();
+                $('#btn_ini_consul').hide();
+                $('#btn_ini_consul_disabled').hide();
+                $('#acciones_realizadas').hide();
+
+            }
 
         }
       });

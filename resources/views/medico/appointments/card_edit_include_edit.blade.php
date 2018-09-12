@@ -1,11 +1,38 @@
-
 <div class="card p-2 mb-2" id="card_edit">
   <div class="row">
     <div class="col-12">
+      {{-- <button type="button" class="close" onclick="cerrar_edit()"><span >&times;</span></button> --}}
+    {{-- </button> --}}
+    <div class="form-inline">
+        {!!Form::open(['route'=>['redierct_manage_patient'],'method'=>'POST'])!!}
+        {!!Form::hidden('patient_id',null,['id'=>'patient_id9'])!!}
+        {!!Form::hidden('medico_id',$medico->id,['id'=>'patient_id9'])!!}
 
-      {{-- &times; --}}
-      <a href="{{route('manage_patient',['m_id'=>Hashids::encode($medico->id),'p_id'=>Hashids::encode($patient->id)])}}" class="btn btn-primary btn-sm float-right"><i class="fas  fa-user-cog"></i> Gestionar Paciente</a>
+        <button id="gestion_patient_btn" style="" type="submit" name="button" class="btn btn-success btn-sm mr-3">Gestion Paciente</button>
+        {!!Form::close()!!}
 
+            {!!Form::open(['route'=>['redierct_manage_patient'],'method'=>'POST'])!!}
+            {!!Form::hidden('patient_id',null,['id'=>'patient_id10'])!!}
+            {!!Form::hidden('medico_id',$medico->id,['id'=>''])!!}
+            {!!Form::hidden('event_id',null,['id'=>'event_id4'])!!}
+            <button id="btn_ini_consul" style="display:none" type="submit" name="button" class="btn btn-primary btn-sm ">Iniciar Consulta</button>
+            <button onclick="return alert('Esta opcion esta disponible solo para el plan platino, que le permite iniciar la consulta, agregar notas, expedientes y archivos, y registrar dischos eventos en la consulta.')" id="btn_ini_consul_disabled" style="display:none" type="button" name="button" class="btn btn-secondary btn-sm ">Iniciar Consulta</button>
+            {!!Form::close()!!}
+
+            {!!Form::open(['route'=>['redirect_task_consultation'],'method'=>'POST'])!!}
+            {!!Form::hidden('event_id',null,['id'=>'event_id5'])!!}
+            {!!Form::hidden('patient_id',null,['id'=>'patient_id11'])!!}
+
+            {!!Form::hidden('medico_id',$medico->id)!!}
+
+            <button id="acciones_realizadas" style="display:none" type="submit" name="button" class="btn btn-secondary btn-sm " >Acciones Realizadas</button>
+
+            {!!Form::close()!!}
+    </div>
+
+
+
+    {{-- <a href="{{route('manage_patient',['m_id'=>$medico->id,'p_id'=>$patient->id])}}" class="btn btn-success btn-sm float-right"><i class="fas fa-user-cog"></i> Gestionar Paciente</a> --}}
     <h3 class="font-title-blue text-center my-2">Editar</h3>
   </div>
 </div>
@@ -15,10 +42,12 @@
 
     {!!Form::open(['route'=>'update_event','method'=>'POST','id'=>'fo3'])!!}
     {!!Form::hidden('medico_id',$medico->id,['id'=>'medico_id9'])!!}
+                    {{-- /////////////////////////////////////////////////////// --}}
+
+                                            {{-- /////////////////////////////// --}}
     {!!Form::hidden('event_id',null,['id'=>'event_id9'])!!}
     {!!Form::hidden('event_id3',null,['id'=>'event_id3'])!!}
     {{-- //clones --}}
-
         {!!Form::hidden('event_id3',null,['id'=>'dateStart99'])!!}
         {!!Form::hidden('event_id3',null,['id'=>'hourStart99'])!!}
         {!!Form::hidden('event_id3',null,['id'=>'minsStart99'])!!}
@@ -35,6 +64,7 @@
     <div class="form-group">
       <label for="" class="font-title">Tipo de evento</label>
       {!!Form::text('title',null,['class'=>'form-control','id'=>'title9','placeholder'=>'Tipo de Cita','readonly'])!!}
+
     </div>
   </div>
   <div class="col-lg-3 col-12">
@@ -60,8 +90,6 @@
   <div class="col-lg-3 col-12">
     <div class="form-group">
       <label for="" class="font-title">Fecha de inicio</label>
-
-
       {!!Form::date('date_start',null,['class'=>'form-control','id'=>'dateStart9'])!!}
 
     </div>
@@ -111,53 +139,43 @@
 
     </div>
     <div class="col-6">
-      <div class="form-inline" id="confirmed_medico_div">
-        <label for="" class="font-title">Médico:</label>
-        {{Form::text('confirmed_medico',null,['class'=>'form-control','style'=>'width:70px','readonly','id'=>'confirmed_medico9'])}}
+        <div class="form-inline" id="confirmed_medico_div">
+          <label for="" class="font-title">Médico:</label>
+          {{Form::text('confirmed_medico',null,['class'=>'form-control','style'=>'width:70px','readonly','id'=>'confirmed_medico9'])}}
 
-      </div>
-      {{-- <div class="form-inline" id="button_confirm_app_div">
-        <button onclick="confirmar2()" type="button" name="button" class="btn btn-warning btn-block" id="button_confirm_app">Confirmar Cita</button>
-      </div> --}}
+        </div>
+        {{-- <div class="form-inline" id="button_confirm_app_div">
+          <button onclick="confirmar2()" type="button" name="button" class="btn btn-warning btn-block" id="button_confirm_app">Confirmar Cita</button>
+        </div> --}}
+
     </div>
   </div>
 
 </div>
 <div class="row mt-3">
-  <div class="col-4">
+  <div class="col-3">
      <button onclick="mail_cancel()" type="button" name="button" class="btn btn-danger btn-block" id="rechazar">Rechazar/cancelar</button>
     {{-- <button onclick="cancel()" type="button" name="button" class="btn btn-danger btn-block" id="rechazar">Rechazar/cancelar</button> --}}
   </div>
-  <div class="col-4">
+  <div class="col-3">
 
-    <input name="mysubmit" type="submit" value="Guardar y Confirmar" class="btn btn-success btn-block" id="but_save"/>
+    <input name="mysubmit" type="submit" value="Guardar" class="btn btn-success btn-block" id="but_save"/>
 
   </div>
-    <div class="col-4">
+    <div class="col-3">
       <button onclick="confirmed_payment_or_completed()" type="button" name="button" class="btn btn-info btn-block" id="button_confirmed_payment" value="55">Confirmar Pago</button>
 
       <button onclick="confirmed_completed()" type="button" name="button" class="btn btn-warning btn-block" id="button_confirmed_complete" style="display:none">Finalizar/completada</button>
     </div>
-  {{-- <div class="col-3">
-      @if(Auth::user()->role == 'medico')
-          @plan_agenda
-              <a href="{{route('appointments_confirmed', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas   </span></a>
-            @else
-              <a href="{{route('appointments', Auth::user()->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas  </span></a>
-          @endplan_agenda
-      @else
-          @plan_agenda
-              <a href="{{route('appointments_confirmed', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas   </span></a>
-            @else
-              <a href="{{route('appointments', Auth::user()->assistant->medico_id)}}" class="btn btn-block btn-secondary"> <span>volver a Citas  </span></a>
-          @endplan_agenda
-    @endif --}}
-
-
+  <div class="col-3">
+    {{-- <button onclick="cerrar_edit()" type="button" name="button" class="btn btn-secondary btn-block" id="">Cerrar</button> --}}
   </div>
-  <div id="text_confirm" class="col-12" style="display:none">
-      <p class="text-secondary">No tienes permisos para confirmar esta cita. antes de poder de ditar se debe confirmar.</p>
 
-  </div>
-  {!!Form::close()!!}
+<div id="text_confirm" class="col-12" style="display:none">
+    <p class="text-secondary">No tienes permisos para confirmar esta cita. antes de poder de ditar se debe confirmar.</p>
+
+</div>
+
+</div>
+{!!Form::close()!!}
 </div>

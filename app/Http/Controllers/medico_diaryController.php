@@ -92,38 +92,7 @@ class medico_diaryController extends Controller
 
     }
 
-    // public function appointment_cancel(Request $request,$id)
-    // {
-    //     dd($request->all());
-    //     $event = event::find($id);
-    //     $event->state = 'Rechazada/Cancelada';
-    //     $event->color = 'rgb(139, 139, 139)';
-    //     $event->save();
-    //     $medico = medico::find($event->medico_id);
-    //     $patient = patient::find($event->patient_id);
-    //
-    //     $count_event = event::where('medico_id',$medico->id)->where('confirmed_medico','No')->where('state','!=', 'Rechazada/Cancelada')->where('state','!=','Pagada y Completada')->whereNull('rendering')->count();
-    //     $medico->notification_number = $count_event;
-    //     $medico->event_id = Null;
-    //
-    //     $medico->save();
-    //
-    //
-    //     Mail::send('mails.cancel_appointment',['medico'=>$medico,'patient'=>$patient,'event'=>$event],function($msj) use($medico){
-    //         $msj->subject('Notificación Cancelacion de Cita, MédicosSi');
-    //         $msj->to($patient->email);
-    //         // $msj->to('eavc53189@gmail.com');
-    //     });
-    //
-    //     if(request()->ajax){
-    //         return response()->json(['danger'=>'Se a Rechazado/Cancelado la cita '.$event->title.' '.$event->start.' con el paciente: '.$event->namePatient]);
-    //     }else{
-    //         return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('danger','Se a Rechazado/Cancelado la cita '.$event->title.' '.$event->start.' con el paciente: '.$event->namePatient);
-    //     }
-    //
-    //
-    // }
-    //de tipo post la enterior es get
+
     public function cancel_appointment(Request $request)
     {
         $event = event::find($request->event_id);
@@ -150,7 +119,7 @@ class medico_diaryController extends Controller
                 // $msj->to('eavc53189@gmail.com');
             });
 
-            if(request()->ajax){
+            if(request()->ajax()){
                 return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.' y se le a enviado una notificacion a su correo, Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
             }else{
                 return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('danger', 'Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.' y se le a enviado una notificacion a su correo, Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
@@ -159,7 +128,7 @@ class medico_diaryController extends Controller
         }
 
 
-        if(request()->ajax){
+        if(request()->ajax()){
             return response()->json('Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.'. Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
         }else{
             return redirect()->route('medico_diary',\Hashids::encode($medico->id))->with('danger','Se ha Rechazado/Cancelado la cita con el paciente: '.$event->namePatient.' estipulada para la fecha: '.$event->start.'. Las citas canceladas no se muestran en el calendario, es posible acceder a estas en el panel citas/citas canceladas.');
@@ -715,6 +684,7 @@ class medico_diaryController extends Controller
     public function edit_appointment($id,$p_id,$app_id)
     {
         $event_edit = event::find($app_id);
+
         $app = event::find($app_id);
         $medico = medico::find($id);
         $patient =  patient::find($p_id);
@@ -1245,7 +1215,7 @@ class medico_diaryController extends Controller
 
         $medico = medico::find($id);
         if($medico->plan != 'plan_profesional' and $medico->plan != 'plan_platino'){
-            return back()->with('warning','La opcion de agendar citas online con el médico: "'.$medico->name.' '.$medico->lastName.'" estas desabilitadas en este momento,por favor intente contactarlo por otro medio o intente con otro médico, para los Médicos que poseen esta opcion habilitida  se muestra el boton "Agendar Cita" en color "Azul Claro".');
+            return back()->with('warning','La opcion de agendar citas online con el médico: "'.$medico->name.' '.$medico->lastName.'" esta desabilitada en este momento. Los médicos con la opcion agendar cita disponible muestran en la lista dicho boton en color azul.');
         }
         // $months = month::where('user_id',Auth::user()->id)->get();
 

@@ -49,7 +49,68 @@
 
     @include('medico.expedients_patient.main_notes_create_config')
 
+    <button onclick="show()" type="button" name="button" class="btn btn-green">Adjuntar/Subir Archivo</button>
+    {{-- //card - adjuntar archivo --}}
+    @if($errors->any() or Session::has('warning'))
+        <div class="card mt-4" style="max-width:400px" style="" id="div_upload">
+            <div class="card-header bg-primary text-white">
+                Subir Archivo o Imagen
+                <button type="button" name="button" class="btn close" onclick="$(this).parent('.card-header').parent('.card').hide()">x</button>
 
+            </div>
+            <div class="card-body">
+
+                    {{Form::open(['route'=>'patient_file_store','method'=>'POST','files'=>true])}}
+                    {{Form::hidden('expedient_id',$expedient->id)}}
+                    {{Form::hidden('patient_id',$patient->id)}}
+                    {{Form::hidden('medico_id',$medico->id)}}
+                    {{Form::text('name',null,['class'=>'form-control','placeholder'=>'Nombre del Archivo (Opcional)'])}}
+                    {{Form::text('description',null,['class'=>'form-control mt-2','placeholder'=>'Descripción (Opcional)'])}}
+
+                    <label for="">
+                    {{Form::file('archivo',['class'=>'mt-3'])}}
+                    </label>
+
+                    <div class="mt-3">
+                        <button type="submit" name="button" class="btn btn-primary"><i class="fas fa-upload"></i> subir</button>
+                    </div>
+
+                    {{Form::close()}}
+
+
+            </div>
+        </div>
+    @else
+
+        <div class="card mt-4" style="max-width:400px;display:none" id="div_upload">
+            <div class="card-header bg-primary text-white">
+                Subir Archivo o Imagen
+                <button type="button" name="button" class="btn close" onclick="$(this).parent('.card-header').parent('.card').hide()">x</button>
+            </div>
+            <div class="card-body">
+
+                    {{Form::open(['route'=>'patient_file_store','method'=>'POST','files'=>true])}}
+                    {{Form::hidden('expedient_id',$expedient->id)}}
+                    {{Form::hidden('patient_id',$patient->id)}}
+                    {{Form::hidden('medico_id',$medico->id)}}
+                    {{Form::text('name',null,['class'=>'form-control','placeholder'=>'Nombre del Archivo (Opcional)'])}}
+                    {{Form::text('description',null,['class'=>'form-control mt-2','placeholder'=>'Descripción (Opcional)'])}}
+
+                    <label for="">
+                    {{Form::file('archivo',['class'=>'mt-3'])}}
+                    </label>
+
+                    <div class="mt-3">
+                        <button type="submit" name="button" class="btn btn-primary"><i class="fas fa-upload"></i> subir</button>
+
+                    </div>
+
+                    {{Form::close()}}
+
+
+            </div>
+        </div>
+    @endif
 
     <a href="{{route('expedients_patient',['m_id'=>\Hashids::encode($medico->id),'p_id'=>\Hashids::encode($patient->id)])}}" class="btn btn-secondary float-right ml-1">atras</a>
 
@@ -62,7 +123,7 @@
   </div>
 
   <div class="" style="background:red">
-    
+
     <a href="{{route('expedient_preview',\Hashids::encode($expedient->id))}}" class="btn btn-secondary float-right mb-2">Vista previa Expediente</a>
     <a href="{{route('download_expedient_pdf',\Hashids::encode($expedient->id))}}" class="btn btn-info float-right mb-2 ml-1">Descargar Expediente pdf</a>
   </div>
@@ -117,6 +178,32 @@
     </div>
   </div>
 @endif
+
+
+@if($expedient_files->first() != Null)
+
+    <div class="card">
+        <div class="card-header">
+            Archivos Adjuntos
+        </div>
+        <div class="card-body">
+            <div class="row">
+            @foreach ($expedient_files as $files)
+                <div class="col">
+                        {{$files->name}}
+                        <a onclick="return confirm('¿Esta seguro de eliminar el archivo de este expediente?')" href="{{route('file_delete_expedient',Hashids::encode($files->id))}}" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
+
+                        <a onclick="" href="{{route('file_download',Hashids::encode($files->file_id))}}" class="btn btn-info btn-sm"><i class="fas fa-download"></i></a>
+                </div>
+
+            @endforeach
+        </div>
+
+        </div>
+    </div>
+
+
+@endif
 {{-- //////////centro de menu////////////centro de menu////////////centro de menu////////////centro de menu// --}}
 </div>
 {{-- <div class="col-12 col-sm-6 m-sm-auto col-lg-3 bg-primary">
@@ -139,6 +226,11 @@
 @section('scriptJS')
     <script src="{{asset('jqueryui/jquery-ui.js')}}"></script>
   <script type="text/javascript">
+
+      function show(){
+          $('#div_upload').fadeIn();
+      }
+
 
   function verify_empty(result){
 

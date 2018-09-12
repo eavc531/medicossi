@@ -75,6 +75,7 @@
         </div>
     </div>
 
+    @plan_platino
     <div class="col-6 mt-3">
         <div class="card mb-1">
 
@@ -94,7 +95,7 @@
 
             </div>
         </div>
-
+        @endplan_platino
     </div>
 </div>
 @endsection

@@ -27,6 +27,7 @@
          </div>
       @endif
 
+
    @if (count($errors) > 0)
      <div class="div-alert" style="padding:20px">
          <div class="alert alert-warning">

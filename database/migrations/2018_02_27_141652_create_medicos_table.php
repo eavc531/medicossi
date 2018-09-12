@@ -60,7 +60,7 @@ class CreateMedicosTable extends Migration
             $table->string('calification_not_see')->nullable();
             $table->string('votes')->default(0);
             $table->string('show_comentary')->default('No');
-            $table->string('plan')->nullable();
+            $table->string('plan')->default('plan_basico');
             $table->string('specialty_category')->nullable();
             //esta sera la cita con que estara trabajando para obligar q la cierre antes de inicar con otra
             $table->integer('event_id')->unsigned()->nullable();

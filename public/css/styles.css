@@ -1,3 +1,17 @@
+/* /////////AGREGADO POR EDWAR/////////// */
+
+/* solo para chacer entender q esta desabilitado pero dejo el boton funcional para
+mostrar el por que */
+.btn-azul-disabled-funcional {
+	background-color: rgba(#0060db, 0.53);
+	color: #fff;
+}
+
+
+
+
+
+/* /////////////////// */
 .checked {
 	color:orange;
 }

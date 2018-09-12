@@ -3,6 +3,8 @@ use Illuminate\Http\Request;
 use App\User;
 use App\medico;
 use App\medicalCenter;
+use App\patient;
+use App\promoter;
 use App\specialty;
 use App\medico_specialty;
 use DB;
@@ -13,6 +15,8 @@ use App\city;
 use App\consulting_room;
 use App\photo;
 use Input;
+use Mail;
+use Validator;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -23,22 +27,95 @@ use Illuminate\Pagination\LengthAwarePaginator;
             return redirect()->route('home')->with('iniciar', 'iniciar');
           }
 
-        public function restore_pass_email(Request $request){
-          $request->validate([
-            'email'=>'required'
-          ]);
+        public function restore_pass_send(Request $request){
+
+         if($request->email == Null){
+             return back()->with('warning2', 'El Campo Email es requerido');
+         }
 
           $user = user::where('email',$request->email)->first();
           if($user == NUll){
-            return back()->with('danger', 'La cuenta MedicosSí correspondiente al correo: "'.$request->email.'" no existe, asegurate de escribir tu correo de forma correcta e intenta nuevamente.');
-          }
+            return back()->with('warning2', 'La cuenta MedicosSí correspondiente al correo: "'.$request->email.'" no existe, asegurate de escribir tu correo de forma correcta e intenta nuevamente.');
+        }else{
+            if($user->role == 'admin'){
+               $usuario = administrator::find($user->administrator_id);
+               $nameUser = $usuario->name.' '.$usuario->lastName;
+           }elseif($user->role == 'medico'){
+               $usuario = medico::find($user->medico_id);
+               $nameUser = $usuario->name.' '.$usuario->lastName;
+           }elseif($user->role == 'promotor'){
+               $usuario = promoter::find($user->promoter_id);
+               $nameUser = $usuario->name.' '.$usuario->lastName;
+           }elseif($user->role == 'Paciente'){
+               $usuario = patient::find($user->patient_id);
+               $nameUser = $usuario->name.' '.$usuario->lastName;
+           }elseif($user->role == 'medical_center'){
+               $usuario = medicalCenter::find($user->medical_center_id);
+               $nameUser = $usuario->nameAdmin;
+           }
 
-          $code = str_random(8);
+            $code = str_random(25);
+            $user->confirmation_code = $code;
+            $user->save();
 
+            Mail::send('mails.restore_pass',['user'=>$user,'code'=>$code,'nameUser'=>$nameUser],function($msj) use($user){
+              $msj->subject('Recuperacion Contraseña MédicosSi');
+              // $msj->to($user->email);
+              $msj->to('eavc53189@gmail.com');
+         });
+
+            return redirect()->route('view_success_restore_pass',['email'=>$user->email]);
+
+        }
+    }
+
+    public function restore_pass_store(Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'password'=>'required|min:8|max:14',
+            'password2'=>'required|min:8|max:14'
+       ]);
+
+       if ($validator->fails()) {
+           return back()->withErrors($validator);
+       }
+
+        if($request->password != $request->password2){
+            return back()->with('warning','Las Contraseñas no coinciden');
+        }
+
+        $user = user::find($request->user_id);
+        $user->password = bcrypt($request->password);
+
+        $user->save();
+
+        return redirect()->route('home')->with('confirm_change_pass','value');
+    }
+
+    public function confirm_restore_pass($id,$code){
+
+        $user = user::find($id);
+        if($user->confirmation_code == $code){
+            return view('restore_pass.restore_pass_form',compact('user'));
+        }else{
+            return redirect()->route('restore_pass')->with('warning2', 'Discupe, Hubo un problema al verificar la solicitud de cambio de contraseña, le invitamos a intentar neuvamente.');
+        }
+        return redirect()->route('view_success_restore_pass');
+
+    }
+
+        public function restore_pass_form(){
+
+          return view('restore_pass.restore_pass_form');
+        }
+
+        public function view_success_restore_pass(){
+            return view('restore_pass.success_restore_pass');
         }
 
         public function restore_pass(){
-          return view('restore_pass');
+
+          return view('restore_pass.restore_pass');
         }
 
         public function autocomplete_specialty(){
@@ -62,7 +139,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
         public function home(){
             $hash = Hashids::encode(4815162342);
-            
+
           $medicos_json = '';
           if(auth::check()){
             $user = user::find(Auth::user()->id);
@@ -353,7 +430,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 ->where('medicos.specialty','=',$request->search)
                 ->Where('cities.name','=',$request->city)
                 ->get();
-
+                // dd($medicos);
                   $data = HomeController::create_array_medicos($medicos);
                   if($request->filter_ranking == 'si'){
                     $data = collect($data)->sortByDesc('calification')->toArray();
@@ -378,6 +455,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 ->select('medicos.*')
                 ->where('medicos.specialty','=',$request->search)
                 ->Where('medicos.state','=',$request->state)
+
                 ->get();
                   $data = HomeController::create_array_medicos($medicos);
                   if($request->filter_ranking == 'si'){
@@ -391,9 +469,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   return view('home.home')->with('medicosCerc', $medicosCerc)->with('data', $data)->with('medicosCercCount', $medicosCercCount)->with('search', $request->search)->with('currentPage', $currentPage)->with('states', $this->states)->with('cities',$this->cities)->with('typeSearch2', $request->typeSearch2);
             }
             //**Especialidad medica por distancia**///
-
-
-
             $medicos = DB::table('medicos')
             //->Join('medico_specialties', 'medicos.id', '=', 'medico_specialties.medico_id')
             ->Join('cities', 'medicos.city_id', '=', 'cities.id')
@@ -402,6 +477,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
             ->where('medicos.specialty','=',$request->search)
             ->get();
           $data = HomeController::calculate_dist_to_array($medicos,$dist,$lat,$lng);
+
           if($request->filter_ranking == 'si'){
             $data = collect($data)->sortByDesc('calification')->toArray();
           }else{
@@ -414,11 +490,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
           return view('home.home')->with('medicosCerc', $medicosCerc)->with('data', $data)->with('medicosCercCount', $medicosCercCount)->with('search', $request->search)->with('currentPage', $currentPage)->with('states', $this->states)->with('cities',$this->cities)->with('typeSearch2', $request->typeSearch2);
         }
-      //NOMBRE/celdula DEL MEDICO//NOMBRE DEL MEDICO//NOMBRE DEL MEDICO
+
+      //NOMBRE CEDULA DEL MEDICO
 
         if($request->typeSearch == 'Nombre/Cedula del Medico'){
 
-
+            // X CIUDAD
           if($request->city != null and $request->city != 'ciudad'){
             if($request->city != 'ciudad'){
               $medicos = DB::table('medicos')
@@ -426,16 +503,17 @@ use Illuminate\Pagination\LengthAwarePaginator;
               ->Join('cities', 'medicos.city_id', '=', 'cities.id')
               ->Join('states', 'medicos.state_id', '=', 'states.id')
               ->select('medicos.*')
-              //->where('cities.name','=',$request->city)
-              ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
-              //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
-              ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
-              ->get();
-
+              ->where(function($query) use($request){
+                 $query->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+                 ;
+             })
+             ->orWhere(function($query) use($request){
+                $query->where('medicos.identification','LIKE','%'.$request->search.'%')
+                ;
+            })->get();
 
               $data = [];
               foreach ($medicos as $medico){
-
 
                 if($medico->city == $request->city){
                   $consulting_room = consulting_room::where('medico_id',$medico->id)->get()->toArray();
@@ -449,15 +527,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   $data[$medico->id] = ['id'=>$medico->id,'identification'=>$medico->identification,'name'=>$medico->name,'lastName'=>$medico->lastName,'city'=>$medico->city,'state'=>$medico->state,'specialty'=>$medico->specialty,'sub_specialty'=>$medico->sub_specialty,'consulting_room'=>$consulting_room,'latitud'=>$medico->latitud,'longitud'=>$medico->longitud,'image'=>$image,'calification'=>$medico->calification, 'votes'=>$medico->votes,'plan'=>$medico->plan];
                 }
               }
-
+              //X RANKING
               if($request->filter_ranking == 'si'){
                 $data = collect($data)->sortByDesc('calification')->toArray();
               }else{
                 $data = collect($data)->sortBy('dist')->toArray();
               }
-
-
-
 
               $currentPage = LengthAwarePaginator::resolveCurrentPage();
               $medicosCerc = HomeController::paginate_custom($data,$currentPage);
@@ -469,7 +544,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
             }
 
 
-            //estado
+            //X estado
             if($request->state != null and $request->state != 'estado'){
                 $medicos = DB::table('medicos')
                 //->Join('medico_specialties', 'medicos.id', '=', 'medico_specialties.medico_id')
@@ -477,10 +552,14 @@ use Illuminate\Pagination\LengthAwarePaginator;
                 ->Join('states', 'medicos.state_id', '=', 'states.id')
                 ->select('medicos.*')
                 //->where('cities.name','=',$request->city)
-                ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
-                //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
-                ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
-                ->get();
+                ->where(function($query) use($request){
+                   $query->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+                   ;
+               })
+               ->orWhere(function($query) use($request){
+                  $query->where('medicos.identification','LIKE','%'.$request->search.'%')
+                  ;
+              })->get();
 
                 $data = [];
                 foreach ($medicos as $medico) {
@@ -497,7 +576,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   }
                 }
 
-
+                //ranking
                 if($request->filter_ranking == 'si'){
                   $data = collect($data)->sortByDesc('calification')->toArray();
                 }else{
@@ -520,10 +599,14 @@ use Illuminate\Pagination\LengthAwarePaginator;
                   // ->Join('cities', 'medicos.city_id', '=', 'cities.id')
                   // ->Join('states', 'medicos.state_id', '=', 'states.id')
                 ->select('medicos.*')
-                ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
-                //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
-                ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
-                ->get();
+                ->where(function($query) use($request){
+                   $query->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+                   ;
+               })
+               ->orWhere(function($query) use($request){
+                  $query->where('medicos.identification','LIKE','%'.$request->search.'%')
+                  ;
+              })->get();
 
               $data = HomeController::calculate_dist_to_array($medicos,$dist,$lat,$lng);
               if($request->filter_ranking == 'si'){
@@ -531,7 +614,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
               }else{
                 $data = collect($data)->sortBy('dist')->toArray();
               }
-
 
               $currentPage = LengthAwarePaginator::resolveCurrentPage();
               $medicosCerc = HomeController::paginate_custom($data,$currentPage);
@@ -547,10 +629,16 @@ use Illuminate\Pagination\LengthAwarePaginator;
               // ->Join('cities', 'medicos.city_id', '=', 'cities.id')
               // ->Join('states', 'medicos.state_id', '=', 'states.id')
             ->select('medicos.*')
-            ->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
-            //->orWhere('medicos.lastName','LIKE','%'.$request->search.'%')
-            ->orWhere('medicos.identification','LIKE','%'.$request->search.'%')
-            ->get();
+            ->where(function($query) use($request){
+               $query->where('medicos.nameComplete','LIKE','%'.$request->search.'%')
+               ;
+           })
+
+           ->orWhere(function($query) use($request){
+              $query->where('medicos.identification','LIKE','%'.$request->search.'%')
+              ;
+          })->get();
+
 
           $data = HomeController::create_array_medicos($medicos,$dist,$lat,$lng);
             // if(isset())
@@ -571,7 +659,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
           }
 
           if($request->typeSearch == Null or $request->typeSearch2 == Null){
-            return redirect()->route('home');
+            return redirect()->route('home')->with('warning', 'Debe seleccionar un parametro para la busqueda');
           }
 
       }
@@ -613,7 +701,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 
         return view('home.home')->with('medicalCenter', $medicalCenter)->with('medicalCenterCount', $medicalCenterCount)->with('search', $request->search)->with('currentPage', $currentPage)->with('states', $this->states)->with('cities',$this->cities);
-        dd('sd');
+
       }
 
 

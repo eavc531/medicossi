@@ -124,7 +124,7 @@
                                 <td>{{$value->extension}}</td>
                                 <td>{{$value->size}}</td>
                                 <td>
-                                    <a onclick="return confirm('¿Esta seguro de elimianr este archivo?')" href="{{route('file_delete',Hashids::encode($value->id))}}" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
+                                    <a onclick="return confirm('¿Esta seguro de eliminar este archivo?')" href="{{route('file_delete',Hashids::encode($value->id))}}" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></a>
 
                                     <a onclick="" href="{{route('file_download',Hashids::encode($value->id))}}" class="btn btn-info btn-sm"><i class="fas fa-download"></i></a>
 

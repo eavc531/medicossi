@@ -21,15 +21,15 @@
 
         @rol_edit
     @isset($views)
-        <a href="{{route('calification_medic',Hashids::encode($medico->id))}}" class="btn btn-primary">Calificaciónes sin comprobar</a>
-        <a href="{{route('calification_medic_viewed',Hashids::encode($medico->id))}}" class="btn btn-success disabled">Calificaciónes Vistas</a>
+        <a href="{{route('calification_medic',Hashids::encode($medico->id))}}" class="btn btn-primary">Nuevas Calificaciónes</a>
+        <a href="{{route('calification_medic_viewed',Hashids::encode($medico->id))}}" class="btn btn-success disabled">Calificaciónes verificadas</a>
     @else
-        <a href="{{route('calification_medic',Hashids::encode($medico->id))}}" class="btn btn-primary disabled">Calificaciónes sin comprobar</a>
-        <a href="{{route('calification_medic_viewed',Hashids::encode($medico->id))}}" class="btn btn-success">Calificaciónes Vistas</a>
+        <a href="{{route('calification_medic',Hashids::encode($medico->id))}}" class="btn btn-primary disabled">Nuevas Calificaciónes</a>
+        <a href="{{route('calification_medic_viewed',Hashids::encode($medico->id))}}" class="btn btn-success">Calificaciónes verificadas</a>
     @endisset
 
     @endrol_edit
-    
+
     @if($medico->calification != Null)
         <div class="card mt-2" style="max-width:300px">
             <div class="card-body">
