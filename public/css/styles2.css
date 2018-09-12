@@ -1,3 +1,4 @@
+
 .checked {
 	color:orange;
 }
@@ -208,41 +209,6 @@ body{
 	background-color: #fff;
 	color: #000;
 }
-
-.facebook {
-	background-color: #3A5795;
-	color: #fff;
-}
-
-.twitter {
-	background-color: #5EA9DD;
-	color:#fff;
-}
-
-.instagram {
-	background-color: #fff;
-	color:#000;
-}
-
-.facebook:hover {
-	background-color: #3A5795;
-	color: #fff;
-	box-shadow: 2px 2px 15px #444;
-}
-
-.twitter:hover {
-	background-color: #5EA9DD;
-	color:#fff;
-	box-shadow: 2px 2px 15px #444;
-}
-
-.instagram:hover {
-	background-color: #fff;
-	color:#000;
-	box-shadow: 2px 2px 15px #444;
-}
-
-
 
 .btn-transparent {
 	background-color: transparent;
@@ -853,9 +819,6 @@ body{
 	padding-top: 100px; /* Location of the box */
 	left: 0;
 	top: 0;
-	bottom: 0;
-	right: 0;
-	margin: 0 auto;
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
 	overflow: auto; /* Enable scroll if needed */
@@ -932,11 +895,6 @@ body{
 	width: 80%;
 	max-height: 350px;
 	border-radius: 15px;
-}
-
-.newImage {
-	width: 90%;
-	height: 100%;
 }
 
 .logo-team {
@@ -1765,6 +1723,34 @@ input[type="radio"].radio8:after {
 input[type="radio"].radio8:checked:after {
     background-color: #444;
 }
+
+
+/*=========Radio 9 ===========*/
+
+input[type="radio"].radio9 {
+    background-color: transparent;
+    border: 1px solid #f62bf4;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    position: relative;
+    -webkit-appearance: none;
+}
+input[type="radio"].radio9:after {
+    background-color: transparent;
+    content: '';
+    display: block;
+    width: 15px;
+    height: 15px;
+    top:4px;
+    left:4px;
+    position: relative;
+}
+/* #f62bf4 */
+input[type="radio"].radio9:checked:after {
+    background-color: #f62bf4;
+}
+
 
 .fontSizeLabel {
 	font-size: 0.8rem;

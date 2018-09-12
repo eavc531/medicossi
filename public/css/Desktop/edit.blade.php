@@ -392,7 +392,7 @@
              {{$info->aditional}}
               @else
                 <span class="text-muted">No específica</span>
-              @endisset
+              @endisset 
             </li>
          </ul>
          <div class="text-right">
@@ -760,6 +760,11 @@
 <input type="hidden" name="img_marker" value="{{asset('img/marker-icon.png')}}" id="img_marker">
 <input type="hidden" name="medico_store_coordinates" value="{{route('medico_store_coordinates',\Hashids::encode($medico->id))}}" id="medico_store_coordinates">
 <input type="hidden" name="verifySession" value="{{route('verifySession')}}" id="verifySession">
+
+
+
+
+
 
 @endsection
 

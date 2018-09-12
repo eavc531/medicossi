@@ -49,7 +49,7 @@ Route::group(['middleware' => ['verify_conultation_open'],'except' => ['update_e
     Route::post('medico/list/services','medicoController@medico_service_list')->name('medico_service_list');
 
     Route::post('medico/list/experience','medicoController@medico_experience_list')->name('medico_experience_list');
-
+    Route::post('medicalCenter/select/insurrances/medico','medicoController@select_insurrances2')->name('select_insurrances2');
     Route::post('medico_list_videos','medicoController@medico_list_videos')->name('medico_list_videos');
     //
     //patient
@@ -416,7 +416,7 @@ Route::group(['middleware' => ['verify_conultation_open'],'except' => ['index', 
 
         Route::post('medicalCenter/{id}/coordinates/store','medicalCenterController@medicalCenter_store_coordinates')->name('medicalCenter_store_coordinates');
         Route::post('medicalCenter/select/insurrances','medicalCenterController@select_insurrances')->name('select_insurrances');
-        Route::post('medicalCenter/select/insurrances/medico','medicoController@select_insurrances2')->name('select_insurrances2');
+
         //
         Route::post('medicalCenter/social/store','medicalCenterController@medicalCenter_social_store')->name('medicalCenter_social_store');
         Route::get('medicalCenter/{id}/search/medico','medicalCenterController@search_medico_medical_center')->name('search_medico_medical_center');
